@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+
+ Copyright 2003 - 2009 The eFaps Team
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+
+ Author:          The eFaps Team
+ Revision:        $Rev$
+ Last Changed:    $Date$
+ Last Changed By: $Author$
+
+-->
+
+<ui-table xmlns="http://www.efaps.org/xsd"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>406f313a-9c50-4937-8a88-d98219684930</uuid>
+    <file-application>eFaps-ERP-Products</file-application>
+    <file-revision>$Rev$</file-revision>
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <name>Products_PriceListTable</name>
+        <!-- fields -->
+        <field name="name">
+            <property name="SelectAlternateOID">linkto[ProductPricelist].linkto[ProductAbstractLink].oid</property>
+            <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
+            <property name="Select">linkto[ProductPricelist].linkto[ProductAbstractLink].attribute[Name]</property>
+            <property name="Label">Products_PriceListTable.name.Label</property>
+            </field>
+        <field name="description">
+            <property name="Select">linkto[ProductPricelist].linkto[ProductAbstractLink].attribute[Description]</property>
+            <property name="Label">Products_PriceListTable.description.Label</property>
+        </field>
+        <field name="active">
+            <property name="Select">linkto[ProductPricelist].linkto[ProductAbstractLink].attribute[Active]</property>
+            <property name="Label">Products_PriceListTable.active.Label</property>
+        </field>
+        <field name="dimension">
+            <property name="Select">linkto[ProductPricelist].linkto[ProductAbstractLink].linkto[Dimension].attribute[Name]</property>
+            <property name="Label">Products_PriceListTable.dimension.Label</property>
+        </field>
+        <field name="dateRange">
+            <property name="FilterType">FREETEXT</property>
+            <property name="FilterRequired">TRUE</property>
+            <property name="FilterBase">DATABASE</property>
+            <property name="FilterDefault">TODAY</property>
+            <property name="FilterAttributes">Products_ProductPricelistAbstract/ValidFrom,Products_ProductPricelistAbstract/ValidUntil</property>
+            <property name="Phrase">$&lt;linkto[ProductPricelist].attribute[ValidFrom]&gt; - $&lt;linkto[ProductPricelist].attribute[ValidUntil]&gt;</property>
+            <property name="Label">Products_PriceListTable.dateRange.Label</property>
+            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+        </field>
+        <field name="validFrom">
+            <property name="Select">linkto[ProductPricelist].attribute[ValidFrom]</property>
+            <property name="Label">Products_PriceListTable.validFrom.Label</property>
+        </field>
+        <field name="validUntil">
+            <property name="Select">linkto[ProductPricelist].attribute[ValidUntil]</property>
+            <property name="Label">Products_PriceListTable.validUntil.Label</property>
+        </field>
+        <field name="price">
+            <property name="Attribute">Price</property>
+            <property name="Label">Products_ProductPricelistPosition/Price.Label</property>
+            <property name="Align">right</property>
+        </field>
+        <field name="currencyId">
+            <property name="Select">linkto[CurrencyId].attribute[Name]</property>
+            <property name="Label">Products_ProductPricelistPosition/CurrencyId.Label</property>
+        </field>
+        <field name="fromUoM">
+            <property name="Attribute">FromUoM</property>
+            <property name="Label">Products_ProductPricelistPosition/FromUoM.Label</property>
+        </field>
+        <field name="toUoM">
+            <property name="Attribute">ToUoM</property>
+            <property name="Label">Products_ProductPricelistPosition/ToUoM.Label</property>
+        </field>
+    </definition>
+</ui-table>

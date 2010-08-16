@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+
+ Copyright 2003 - 2010 The eFaps Team
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+
+ Author:          The eFaps Team
+ Revision:        $Rev$
+ Last Changed:    $Date$
+ Last Changed By: $Author$
+
+-->
+
+<datamodel-type  xmlns="http://www.efaps.org/xsd"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>eaf2397c-3a3a-4201-a458-ad3b0bbd0989</uuid>
+    <file-application>eFaps-ERP-Products</file-application>
+    <file-revision>$Rev$</file-revision>
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <name>Products_ProductPricelistPosition</name>
+        <attribute>
+            <name>OID</name>
+            <type>OID</type>
+            <sqltable>Products_ProductPricelistPositionSQLTable</sqltable>
+            <sqlcolumn>ID</sqlcolumn>
+        </attribute>
+        <attribute>
+            <name>ID</name>
+            <type>Long</type>
+            <sqltable>Products_ProductPricelistPositionSQLTable</sqltable>
+            <sqlcolumn>ID</sqlcolumn>
+        </attribute>
+        <attribute>
+            <name>ProductPricelist</name>
+            <type>Link</type>
+            <typelink>Products_ProductPricelistAbstract</typelink>
+            <sqltable>Products_ProductPricelistPositionSQLTable</sqltable>
+            <sqlcolumn>PRODPRICEID</sqlcolumn>
+        </attribute>
+        <attribute>
+            <name>FromUoM</name>
+            <type>Decimal</type>
+            <sqltable>Products_ProductPricelistPositionSQLTable</sqltable>
+            <sqlcolumn>FROMUOM</sqlcolumn>
+        </attribute>
+        <attribute>
+            <name>ToUoM</name>
+            <type>Decimal</type>
+            <sqltable>Products_ProductPricelistPositionSQLTable</sqltable>
+            <sqlcolumn>TOUOM</sqlcolumn>
+        </attribute>
+        <attribute>
+            <name>Price</name>
+            <type>Decimal</type>
+            <sqltable>Products_ProductPricelistPositionSQLTable</sqltable>
+            <sqlcolumn>PRICE</sqlcolumn>
+        </attribute>
+        <attribute>
+            <name>CurrencyId</name>
+            <type>LinkWithRanges</type>
+            <typelink>ERP_Currency</typelink>
+            <sqltable>Products_ProductPricelistPositionSQLTable</sqltable>
+            <sqlcolumn>CURRENCYID</sqlcolumn>
+            <trigger program="org.efaps.esjp.admin.datamodel.RangesValue"
+                     name="Products_ProductPricelistPosition.CurrencyId.RANGE_VALUE"
+                     event="RANGE_VALUE">
+                <property name="Value">Name</property>
+                <property name="Type">ERP_Currency</property>
+            </trigger>
+        </attribute>
+        <trigger program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType"
+                 name="Products_ProductPricelistPosition.ACCESSCHECK"
+                 event="ACCESSCHECK" />
+    </definition>
+</datamodel-type>

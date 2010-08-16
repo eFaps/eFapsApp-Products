@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+
+ Copyright 2003 - 2010 The eFaps Team
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+
+ Author:          The eFaps Team
+ Revision:        $Rev$
+ Last Changed:    $Date$
+ Last Changed By: $Author$
+
+-->
+
+<access-set xmlns="http://www.efaps.org/xsd"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>5d4b7ef3-d443-42b6-b07c-a989f85a2051</uuid>
+    <file-application>eFaps-Contacts</file-application>
+    <file-revision>$Rev$</file-revision>
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <name>Products_Reader</name>
+        <access-type>show</access-type>
+        <access-type>read</access-type>
+
+        <type>Products_ProductFeedstock</type>
+        <type>Products_ProductStandart</type>
+        <type>Products_ProductUnique</type>
+        <type>Products_ProductUniqueComponent</type>
+        <type>Products_ProductComponent</type>
+        <type>Products_ProductService</type>
+        <type>Products_ProductPricelistRetail</type>
+        <type>Products_ProductPricelistPosition</type>
+        <type>Products_Inventory</type>
+        <type>Products_Warehouse</type>
+        <type>Products_BinLocation</type>
+        <type>Products_TransactionInbound</type>
+        <type>Products_TransactionOutbound</type>
+        <type>Products_TransactionReservationInbound</type>
+        <type>Products_TransactionReservationOutbound</type>
+        <type>Products_ProductTextPosition</type>
+        <type>Products_ProductPricelistMinRetail</type>
+
+        <role>Products_Reader</role>
+    </definition>
+
+</access-set>
+
+

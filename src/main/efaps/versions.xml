@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+
+  Copyright 2003 - 2010 The eFaps Team
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+  Author:          The eFaps Team
+  Revision:        $Rev$
+  Last Changed:    $Date$
+  Last Changed By: $Author$
+
+-->
+
+<install xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <application>eFaps-ERP-Products</application>
+    <dependencies>
+        <dependency order="0">
+            <groupId>org.efaps</groupId>
+            <artifactId>efaps-kernel-install</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency order="1">
+            <groupId>org.efaps</groupId>
+            <artifactId>efaps-webapp-install</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency order="2">
+            <groupId>org.efaps.module</groupId>
+            <artifactId>efaps-crm-contacts</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency order="3">
+            <groupId>org.efaps.module</groupId>
+            <artifactId>efaps-erp-commons</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+    <version number="1" reloadCache="false" login="true" compile="true">
+        <description>Install ERP-Products Basic Modul.</description>
+        <script type="groovy">
+        import org.efaps.admin.runlevel.RunLevel;
+        import org.efaps.db.Context;
+        import org.efaps.db.SearchQuery;
+        import org.efaps.esjp.admin.ui.UIUpdate;
+        import org.efaps.importer.DataImport;
+
+        import java.net.URL
+        import java.io.File;
+
+        EFAPS_LOGGER.info("Importing Data for eFaps-ERP-Products");
+
+        RunLevel.init("shell");
+        RunLevel.execute();
+
+        SearchQuery query = new SearchQuery();
+        query.setQueryTypes("Admin_User_JAASKey");
+        query.addWhereExprEqValue("Key", "Products_Admin");
+        query.addSelect("OID");
+        query.execute();
+        if (!query.next()) {
+            URL url1 = new URL(EFAPS_ROOTURL, "Data/IMPORT_UserJAASKey.xml");
+            DataImport imp1 = DataImport.readFile(url1);
+            imp1.updateInDB();
+        }
+        <!-- Products_MyDesk, MainToolBar -->
+        UIUpdate update = new UIUpdate();
+        update.add2Menu("0ff70869-361c-4971-bd09-6cf79a0a7dfb", "87001cc3-c45c-44de-b8f1-776df507f268", 1);
+
+        <!-- connect the Products_Contacts_ContactTree_Product Menu to the Contacts_ContactTree menu from contacts -->
+        update.add2Menu("0ecba961-c0bf-48b8-93a5-4d098bc0c022", "6de1b9bb-6a03-4c3b-82dd-363fde0aea0a", -1);
+
+     </script>
+    </version>
+</install>

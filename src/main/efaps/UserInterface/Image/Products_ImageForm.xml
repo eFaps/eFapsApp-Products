@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+
+  Copyright 2003 - 2009 The eFaps Team
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+  Author:          The eFaps Team
+  Revision:        $Rev$
+  Last Changed:    $Date$
+  Last Changed By: $Author$
+
+-->
+
+<ui-form xmlns="http://www.efaps.org/xsd"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+
+  <uuid>874cf3ff-0c8a-4799-b7ae-4cd10aa3cb61</uuid>
+  <file-application>eFaps-ERP-Products</file-application>
+  <file-revision>$Rev$</file-revision>
+
+  <definition>
+    <version-expression>(version==latest)</version-expression>
+    <name>Products_ImageForm</name>
+
+    <field name="upload">
+      <property name="ModeCreate">EDITABLE</property>
+      <property name="ModeEdit">NONE</property>
+      <property name="ModeView">NONE</property>
+      <property name="ModePrint">NONE</property>
+      <property name="Label">Products_ImageForm.upload.Label</property>
+      <trigger name="Products_ImageForm.upload.UI_FIELD_VALUE"
+                event="UI_FIELD_VALUE"
+                program="org.efaps.esjp.common.file.FileField"
+                method="getFieldValueUI">
+        <property name="FileNameField">description4Create</property>
+      </trigger>
+    </field>
+
+    <field name="image">
+      <property name="Label">Products_ImageForm.image.Label</property>
+      <trigger name="Products_ImageForm.upload.UI_FIELD_VALUE"
+                event="UI_FIELD_VALUE"
+                program="org.efaps.esjp.common.file.ImageField"
+                method="getViewFieldValueUI">
+        <property name="max-width">200px</property>
+        <property name="max-height">200px</property>
+      </trigger>
+    </field>
+
+    <field name="description4Create">
+      <property name="ModeCreate">EDITABLE</property>
+      <property name="ModeView">NONE</property>
+      <property name="ModeEdit">NONE</property>
+      <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+      <property name="Label">Products_ImageAbstract/Description.Label</property>
+      <property name="Required">true</property>
+    </field>
+    <field name="description">
+      <property name="ModeEdit">EDITABLE</property>
+      <property name="Attribute">Description</property>
+    </field>
+
+    <field name="original">
+      <property name="ModeEdit">NONE</property>
+      <property name="SelectAlternateOID">linkto[Original].oid</property>
+      <property name="Select">linkto[Original].type.label</property>
+      <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
+      <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+      <property name="Label">Products_ImageForm.original.Label</property>
+      <trigger name="Products_ImageForm.original.UI_ACCESSCHECK"
+                event="UI_ACCESSCHECK"
+                program="org.efaps.esjp.products.Image"
+                method="access4OriginalFieldUI"/>
+    </field>
+
+   <field name="caption">
+      <property name="ModeCreate">EDITABLE</property>
+      <property name="ModeEdit">NONE</property>
+      <property name="ModeView">NONE</property>
+      <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+      <property name="Label">Products_ImageForm.caption.Label</property>
+      <property name="Required">true</property>
+   </field>
+
+    <field name="group1" character="Group">
+      <property name="GroupCount">2</property>
+    </field>
+    <field name="WidthPx">
+      <property name="Attribute">WidthPx</property>
+      <property name="ModeSearch">EDITABLE</property>
+    </field>
+    <field name="HeightPx">
+      <property name="Attribute">HeightPx</property>
+      <property name="ModeSearch">EDITABLE</property>
+    </field>
+
+    <field name="group2" character="Group">
+      <property name="GroupCount">2</property>
+    </field>
+    <field name="WidthDPI">
+      <property name="Attribute">WidthDPI</property>
+      <property name="ModeSearch">EDITABLE</property>
+    </field>
+    <field name="HeightDPI">
+      <property name="Attribute">HeightDPI</property>
+      <property name="ModeSearch">EDITABLE</property>
+    </field>
+
+    <field name="group2" character="Group">
+      <property name="GroupCount">2</property>
+    </field>
+    <field name="WidthInch">
+      <property name="Attribute">WidthInch</property>
+      <property name="ModeSearch">EDITABLE</property>
+    </field>
+    <field name="HeightInch">
+      <property name="Attribute">HeightInch</property>
+      <property name="ModeSearch">EDITABLE</property>
+    </field>
+
+    <field name="NumberOfImages">
+      <property name="Attribute">NumberOfImages</property>
+      <property name="ModeSearch">EDITABLE</property>
+    </field>
+
+    <field name="group2" character="Group">
+      <property name="GroupCount">2</property>
+    </field>
+    <field name="Format">
+      <property name="Attribute">Format</property>
+      <property name="ModeSearch">EDITABLE</property>
+    </field>
+    <field name="ColorType">
+      <property name="Attribute">ColorType</property>
+      <property name="ModeSearch">EDITABLE</property>
+    </field>
+
+    <field name="fileGroup" character="Group">
+      <property name="GroupCount">2</property>
+   </field>
+    <field name="fileName">
+      <property name="Attribute">FileName</property>
+      <property name="ModeSearch">EDITABLE</property>
+    </field>
+    <field name="fileLength">
+      <property name="Attribute">FileLength</property>
+      <property name="ModeSearch">EDITABLE</property>
+    </field>
+
+    <field name="createGroup" character="Group">
+      <property name="GroupCount">2</property>
+    </field>
+    <field name="creator">
+      <property name="SelectAlternateOID">linkto[Creator].oid</property>
+      <property name="Attribute">Creator</property>
+      <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
+      <property name="ModeSearch">EDITABLE</property>
+      <property name="ShowTypeIcon">true</property>
+    </field>
+    <field name="created">
+      <property name="Attribute">Created</property>
+    </field>
+    <field name="modifyGroup" character="Group">
+      <property name="GroupCount">2</property>
+    </field>
+    <field name="modifier">
+      <property name="SelectAlternateOID">linkto[Modifier].oid</property>
+      <property name="Attribute">Modifier</property>
+      <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
+      <property name="ModeSearch">EDITABLE</property>
+      <property name="ShowTypeIcon">true</property>
+    </field>
+    <field name="modified">
+      <property name="Attribute">Modified</property>
+    </field>
+
+
+  </definition>
+
+</ui-form>
