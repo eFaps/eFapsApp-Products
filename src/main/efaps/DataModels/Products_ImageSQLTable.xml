@@ -2,7 +2,7 @@
 
 <!--
 
- Copyright 2003 - 2009 The eFaps Team
+ Copyright 2003 - 2010 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -26,38 +26,37 @@
 <datamodel-sqltable  xmlns="http://www.efaps.org/xsd"
                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                      xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-  <uuid>d773dbe5-f55a-4408-84eb-6b8f07e58eff</uuid>
-  <file-application>eFaps-ERP</file-application>
-  <file-revision>$Rev$</file-revision>
+    <uuid>d773dbe5-f55a-4408-84eb-6b8f07e58eff</uuid>
+    <file-application>eFapsApp-Products</file-application>
+    <file-revision>$Rev$</file-revision>
 
-  <definition>
-    <version-expression>(version==latest)</version-expression>
-    <name>Products_ImageSQLTable</name>
-    <typeid-column>TYPEID</typeid-column>
-    <database>
-      <table-name>T_PRODIMAGE</table-name>
-      <!-- columns -->
-      <column name="TYPEID"          type="INTEGER"                     not-null="true"/>
-      <column name="ORIGINALID"      type="INTEGER"/>
-      <column name="DESCR"           type="STRING_SHORT"   length="255" not-null="true"/>
-      <column name="WIDTH"           type="INTEGER"/>
-      <column name="HEIGHT"          type="INTEGER"/>
-      <column name="WIDTHDPI"        type="INTEGER"/>
-      <column name="HEIGHTDPI"       type="INTEGER"/>
-      <column name="WIDTHINCH"       type="INTEGER"/>
-      <column name="HEIGHTINCH"      type="INTEGER"/>
-      <column name="NUMBERIMG"       type="INTEGER"/>
-      <column name="FORMAT"          type="STRING_SHORT" length="128"/>
-      <column name="COLORTYPE"       type="STRING_SHORT" length="128"/>
-      <column name="FILELENGTH"      type="INTEGER"/>
-      <column name="FILENAME"        type="STRING_SHORT"   length="128" />
-      <column name="CREATOR"         type="INTEGER"                      not-null="true"/>
-      <column name="CREATED"         type="DATETIME"                     not-null="true"/>
-      <column name="MODIFIER"        type="INTEGER"                      not-null="true"/>
-      <column name="MODIFIED"        type="DATETIME"                     not-null="true"/>
-      <foreign name="T_PRODIMAGES_FK_CRTR"      key="CREATOR"       reference="T_USERPERSON(ID)"/>
-      <foreign name="T_PRODIMAGES_FK_MDFR"      key="MODIFIER"      reference="T_USERPERSON(ID)"/>
-    </database>
-  </definition>
-
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <name>Products_ImageSQLTable</name>
+        <typeid-column>TYPEID</typeid-column>
+        <database>
+            <table-name>T_PRODIMAGE</table-name>
+            <!-- columns -->
+            <column name="TYPEID"       type="INTEGER"      not-null="true" />
+            <column name="ORIGINALID"   type="INTEGER" />
+            <column name="DESCR"        type="STRING_SHORT" not-null="true" length="255" />
+            <column name="WIDTH"        type="INTEGER" />
+            <column name="HEIGHT"       type="INTEGER" />
+            <column name="WIDTHDPI"     type="INTEGER" />
+            <column name="HEIGHTDPI"    type="INTEGER" />
+            <column name="WIDTHINCH"    type="INTEGER" />
+            <column name="HEIGHTINCH"   type="INTEGER" />
+            <column name="NUMBERIMG"    type="INTEGER" />
+            <column name="FORMAT"       type="STRING_SHORT"                 length="128" />
+            <column name="COLORTYPE"    type="STRING_SHORT"                 length="128" />
+            <column name="FILELENGTH"   type="INTEGER" />
+            <column name="FILENAME"     type="STRING_SHORT"                 length="128" />
+            <column name="CREATOR"      type="INTEGER"      not-null="true" />
+            <column name="CREATED"      type="DATETIME"     not-null="true" />
+            <column name="MODIFIER"     type="INTEGER"      not-null="true" />
+            <column name="MODIFIED"     type="DATETIME"     not-null="true" />
+            <foreign name="T_PRODIMAGES_FK_CRTR" key="CREATOR"  reference="T_USERPERSON(ID)" />
+            <foreign name="T_PRODIMAGES_FK_MDFR" key="MODIFIER" reference="T_USERPERSON(ID)" />
+        </database>
+    </definition>
 </datamodel-sqltable>

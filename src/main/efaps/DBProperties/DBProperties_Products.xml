@@ -28,7 +28,7 @@
               xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
 
     <uuid>83788dcc-699b-43eb-a286-160dea817b62</uuid>
-    <bundle name="eFaps-ERP-Products" sequence="1" />
+    <bundle name="eFapsApp-Products" sequence="1" />
     <resource>
         <type>Properties</type>
         <language></language>
