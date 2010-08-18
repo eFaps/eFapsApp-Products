@@ -26,14 +26,14 @@
 <datamodel-type  xmlns="http://www.efaps.org/xsd"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>7aa247a2-8fbf-487a-86a9-c5779a1c11d2</uuid>
+    <uuid>193f712d-fb69-4ce7-b10f-2813c7ff280a</uuid>
     <file-application>eFapsApp-Products</file-application>
     <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductService</name>
+        <name>Products_ProductProductionPartList</name>
         <parent>Products_NonStockProductAbstract</parent>
         <trigger program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType"
-                 name="Products_ProductService.ACCESSCHECK" event="ACCESSCHECK" />
+                 name="Products_ProductProductionPartList.ACCESSCHECK" event="ACCESSCHECK" />
     </definition>
 </datamodel-type>
