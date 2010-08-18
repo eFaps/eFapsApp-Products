@@ -2,7 +2,7 @@
 
 <!--
 
- Copyright 2003 - 2009 The eFaps Team
+ Copyright 2003 - 2010 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -34,6 +34,6 @@
         <name>Products_ProductUnique</name>
         <parent>Products_ProductUniqueAbstract</parent>
         <trigger program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType"
-                 name="Products_ProductStandart.ACCESSCHECK" event="ACCESSCHECK" />
+                 name="Products_ProductUnique.ACCESSCHECK" event="ACCESSCHECK" />
     </definition>
 </datamodel-type>

@@ -32,6 +32,7 @@
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductUniqueAbstract</name>
-        <parent>Products_ProductAbstract</parent>
+        <parent>Products_StockProductAbstract</parent>
+        <purpose abstract="true" />
     </definition>
 </datamodel-type>

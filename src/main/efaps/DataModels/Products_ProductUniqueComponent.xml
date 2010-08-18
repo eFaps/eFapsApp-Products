@@ -34,6 +34,6 @@
         <name>Products_ProductUniqueComponent</name>
         <parent>Products_ProductUniqueAbstract</parent>
         <trigger program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType"
-                 name="Products_ProductStandart.ACCESSCHECK" event="ACCESSCHECK" />
+            name="Products_ProductUniqueComponent.ACCESSCHECK" event="ACCESSCHECK" />
     </definition>
 </datamodel-type>
