@@ -42,7 +42,7 @@
         <access-type>statusModify</access-type>
         <access-type>delete</access-type>
 
-        <type>Products_ProductFeedstock</type>
+        <type>Products_ProductMaterial</type>
         <type>Products_ProductStandart</type>
         <type>Products_ProductUnique</type>
         <type>Products_ProductUniqueComponent</type>
