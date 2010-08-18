@@ -31,9 +31,9 @@
     <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductFeedstock</name>
-        <parent>Products_ProductAbstract</parent>
+        <name>Products_ProductMaterial</name>
+        <parent>Products_StockProductAbstract</parent>
         <trigger program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType"
-                 name="Products_ProductFeedstock.ACCESSCHECK" event="ACCESSCHECK" />
+                 name="Products_ProductMaterial.ACCESSCHECK" event="ACCESSCHECK" />
     </definition>
 </datamodel-type>
