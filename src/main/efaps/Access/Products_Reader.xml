@@ -52,6 +52,7 @@
         <type>Products_TransactionReservationOutbound</type>
         <type>Products_ProductTextPosition</type>
         <type>Products_ProductPricelistMinRetail</type>
+        <type>Products_ProductSalesPartList</type>
 
         <role>Products_Reader</role>
     </definition>
