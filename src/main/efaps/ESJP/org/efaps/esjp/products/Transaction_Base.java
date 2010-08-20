@@ -93,7 +93,7 @@ public abstract class Transaction_Base
         final Return ret = new Return();
         final FieldValue fieldValue = (FieldValue) _parameter.get(ParameterValues.UIOBJECT);
 
-        final Type transAbstract = Type.get(Products.TRANSABSTRACT.getUuid());
+        final Type transAbstract = CIProducts.TransactionAbstract.getType();
         final Map <String, Long> values = new TreeMap<String, Long>();
         for (final Type child : transAbstract.getChildTypes()) {
             values.put(DBProperties.getProperty(child.getName() + ".Label"), child.getId());

@@ -92,13 +92,13 @@ public abstract class Product_Base
             final Instance instance = Instance.get(prodOid);
             final Map<String, Object> map = new HashMap<String, Object>();
             map.put("Name", name);
-            final Instance uniqueInst = cloneProduct(instance, Type.get(Products.UNIQUE.getUuid()), map);
+            final Instance uniqueInst = cloneProduct(instance, CIProducts.ProductUnique.getType(), map);
 
             final PrintQuery print = new PrintQuery(uniqueInst);
             print.addAttribute("Dimension");
             print.execute();
 
-            final Insert insert = new Insert(Products.TRANSIN.getUuid());
+            final Insert insert = new Insert(CIProducts.TransactionInbound);
             insert.add("Quantity", 1);
             insert.add("UoM", Dimension.get(print.<Long>getAttribute("Dimension")).getBaseUoM().getId());
             insert.add("Storage", warehouse);
@@ -107,7 +107,7 @@ public abstract class Product_Base
             insert.add("Date", new DateTime());
             insert.execute();
 
-            final Insert insert2 = new Insert(Products.TRANSOUT.getUuid());
+            final Insert insert2 = new Insert(CIProducts.TransactionOutbound);
             insert2.add("Quantity", 1);
             insert2.add("UoM", Dimension.get(print.<Long>getAttribute("Dimension")).getBaseUoM().getId());
             insert2.add("Storage", warehouse);
@@ -360,9 +360,9 @@ public abstract class Product_Base
         }
 
         // make the relation between original and copy
-        if (_instance.getType().getUUID().equals(Products.STANDART.getUuid())
-                        && ret.getType().getUUID().equals(Products.UNIQUE.getUuid())) {
-            final Insert relInsert = new Insert(Products.STANADRT2UNIQUE.getUuid());
+        if (_instance.getType().getUUID().equals(CIProducts.ProductStandart.uuid)
+                        && ret.getType().getUUID().equals(CIProducts.ProductUnique.uuid)) {
+            final Insert relInsert = new Insert(CIProducts.ProductStandart2Unique);
             relInsert.add("FromLink", _instance.getId());
             relInsert.add("ToLink", ret.getId());
             relInsert.execute();
