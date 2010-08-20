@@ -91,7 +91,7 @@
         </attribute>
         <attribute>
             <name>Quantity</name>
-            <type>Integer</type>
+            <type>Decimal</type>
             <sqltable>Products_BOMSQLTable</sqltable>
             <sqlcolumn>QUANTITY</sqlcolumn>
             <defaultvalue>1</defaultvalue>
