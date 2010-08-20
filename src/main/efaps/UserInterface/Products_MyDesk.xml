@@ -33,7 +33,7 @@
         <version-expression>(version==latest)</version-expression>
         <name>Products_MyDesk</name>
         <childs>
-            <child>Products_ProductMyDesk</child>
+            <child>Products_ProductInStockMyDesk</child>
             <child>Products_InventoryMyDesk</child>
             <child>Products_InventoryValueMyDesk</child>
             <child>Products_StorageAbstractMyDesk</child>

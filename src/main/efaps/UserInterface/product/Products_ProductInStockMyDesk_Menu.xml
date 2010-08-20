@@ -27,22 +27,17 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
 
-    <uuid>3edb2fe4-eb10-437e-867d-2451e8e23a9a</uuid>
+    <uuid>c287d280-49b3-4eaf-9289-7ab8478642e3</uuid>
     <file-application>eFapsApp-Products</file-application>
     <file-revision>$Rev$</file-revision>
 
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductMyDesk_Menu_Action</name>
+        <name>Products_ProductInStockMyDesk_Menu</name>
         <!-- childs -->
         <childs>
-            <child>Products_ProductMyDesk_Menu_Action_Create</child>
-            <child>Products_ProductMyDesk_Menu_Action_CreateComponent</child>
-            <child>Products_ProductMyDesk_Menu_Action_CreateMaterial</child>
-            <child>Products_ProductMyDesk_Menu_Action_CreateSalesPartList</child>
-            <child>Products_ProductMyDesk_Menu_Action_CreateTextPosition</child>
-            <child>Products_ProductMyDesk_Menu_Action_CreateUnique</child>
-            <child>Products_ProductMyDesk_Menu_Action_Delete</child>
+            <child>Products_ProductInStockMyDesk_Menu_Action</child>
         </childs>
     </definition>
+
 </ui-menu>

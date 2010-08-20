@@ -2,7 +2,7 @@
 
 <!--
 
- Copyright 2003 - 2009 The eFaps Team
+ Copyright 2003 - 2010 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -26,12 +26,12 @@
 <ui-command xmlns="http://www.efaps.org/xsd"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>b6a278b3-9ba5-4223-9e86-efa57970deca</uuid>
+    <uuid>d3a4f3be-0fd9-49ec-9757-94128ebc915c</uuid>
     <file-application>eFapsApp-Products</file-application>
     <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductMyDesk_Menu_Action_CreateUnique</name>
+        <name>Products_ProductInStockMyDesk_Menu_Action_Create</name>
         <access>
             <role>Products_Admin</role>
             <role>Products_Modifier</role>
@@ -39,18 +39,16 @@
 
         <!-- target definitions -->
         <target>
-            <form>Products_ProductCreateUniqueForm</form>
-            <execute program="org.efaps.esjp.products.Product" method="createUnique"/>
+            <form>Products_ProductForm</form>
+            <execute program="org.efaps.esjp.common.uiform.Create" />
         </target>
 
         <!-- properties -->
         <property name="Target">modal</property>
-        <property name="TargetCreateType">Products_ProductUnique</property>
+        <property name="TargetCreateType">Products_ProductStandart</property>
         <property name="TargetMode">create</property>
         <property name="WindowHeight">460</property>
         <property name="WindowWidth">515</property>
-        <property name="Submit">true</property>
-        <property name="SubmitSelectedRows">-1</property>
     </definition>
 
 </ui-command>
