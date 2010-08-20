@@ -26,16 +26,18 @@
 <ui-menu xmlns="http://www.efaps.org/xsd"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>0ff70869-361c-4971-bd09-6cf79a0a7dfb</uuid>
-    <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
-    <definition>
-        <version-expression>(version==latest)</version-expression>
-        <name>Products_MyDesk</name>
-        <childs>
-            <child>Products_Product_MyDesk</child>
-            <child>Products_PartList_MyDesk</child>
-            <child>Products_PriceListMyDesk</child>
-        </childs>
-    </definition>
+
+  <uuid>c59dfc9c-21ca-4c07-82ca-722c4aa37c3d</uuid>
+  <file-application>eFapsApp-Products</file-application>
+  <file-revision>$Rev$</file-revision>
+
+  <definition>
+    <version-expression>(version==latest)</version-expression>
+    <name>Products_ProductNonStockMyDesk_Menu</name>
+    <!-- childs -->
+    <childs>
+      <child>Products_ProductNonStockMyDesk_Menu_Action</child>
+    </childs>
+  </definition>
+
 </ui-menu>

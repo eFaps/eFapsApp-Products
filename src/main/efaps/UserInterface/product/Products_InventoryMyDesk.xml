@@ -23,19 +23,29 @@
 
 -->
 
-<ui-menu xmlns="http://www.efaps.org/xsd"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>0ff70869-361c-4971-bd09-6cf79a0a7dfb</uuid>
+<ui-command xmlns="http://www.efaps.org/xsd"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>ebcda8b3-4850-4069-983a-b46cfd69a48d</uuid>
     <file-application>eFapsApp-Products</file-application>
     <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_MyDesk</name>
-        <childs>
-            <child>Products_Product_MyDesk</child>
-            <child>Products_PartList_MyDesk</child>
-            <child>Products_PriceListMyDesk</child>
-        </childs>
+        <name>Products_InventoryMyDesk</name>
+        <access>
+            <role>Products_Admin</role>
+            <role>Products_Modifier</role>
+            <role>Products_Reader</role>
+        </access>
+        <target>
+            <table>Products_InventoryTable</table>
+            <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
+                <property name="Types">Products_Inventory</property>
+            </evaluate>
+        </target>
+
+        <!-- properties -->
+        <property name="Target">content</property>
+        <property name="TargetShowCheckBoxes">true</property>
     </definition>
-</ui-menu>
+</ui-command>
