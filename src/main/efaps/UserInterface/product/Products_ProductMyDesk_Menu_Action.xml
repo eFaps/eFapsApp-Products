@@ -39,6 +39,7 @@
             <child>Products_ProductMyDesk_Menu_Action_Create</child>
             <child>Products_ProductMyDesk_Menu_Action_CreateComponent</child>
             <child>Products_ProductMyDesk_Menu_Action_CreateMaterial</child>
+            <child>Products_ProductMyDesk_Menu_Action_CreateSalesPartList</child>
             <child>Products_ProductMyDesk_Menu_Action_CreateTextPosition</child>
             <child>Products_ProductMyDesk_Menu_Action_CreateUnique</child>
             <child>Products_ProductMyDesk_Menu_Action_Delete</child>
