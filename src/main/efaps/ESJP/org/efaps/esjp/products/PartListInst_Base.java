@@ -120,17 +120,19 @@ public class PartListInst_Base
         }
         boolean check = true;
         this.stockQuantity = 0;
-        while (check) {
-            for (final Entry<String, BigDecimal> entry : must.entrySet()) {
-                if (stock.containsKey(entry.getKey())
-                                && stock.get(entry.getKey()).subtract(entry.getValue()).signum() > -1) {
-                      stock.put(entry.getKey(), stock.get(entry.getKey()).subtract(entry.getValue()));
-                } else {
-                    check = false;
+        if (!must.isEmpty()) {
+            while (check) {
+                for (final Entry<String, BigDecimal> entry : must.entrySet()) {
+                    if (stock.containsKey(entry.getKey())
+                                    && stock.get(entry.getKey()).subtract(entry.getValue()).signum() > -1) {
+                          stock.put(entry.getKey(), stock.get(entry.getKey()).subtract(entry.getValue()));
+                    } else {
+                        check = false;
+                    }
                 }
-            }
-            if (check) {
-                this.stockQuantity++;
+                if (check) {
+                    this.stockQuantity++;
+                }
             }
         }
     }
