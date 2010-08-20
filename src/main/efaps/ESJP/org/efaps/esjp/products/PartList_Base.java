@@ -21,8 +21,18 @@
 
 package org.efaps.esjp.products;
 
+import org.efaps.admin.datamodel.ui.FieldValue;
+import org.efaps.admin.event.Parameter;
+import org.efaps.admin.event.Return;
+import org.efaps.admin.event.Parameter.ParameterValues;
+import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
+import org.efaps.db.Instance;
+import org.efaps.db.InstanceQuery;
+import org.efaps.db.QueryBuilder;
+import org.efaps.esjp.ci.CIProducts;
+import org.efaps.util.EFapsException;
 
 
 /**
@@ -36,4 +46,26 @@ import org.efaps.admin.program.esjp.EFapsUUID;
 public abstract class PartList_Base
 {
 
+    public Return getPartListInstances(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductSalesPartList);
+        final InstanceQuery query = queryBldr.getQuery();
+        ret.put(ReturnValues.VALUES, query.execute());
+        return ret;
+    }
+
+    public Return getPartListQuantityFieldValue(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+
+        final FieldValue fieldValue = (FieldValue) _parameter.get(ParameterValues.UIOBJECT);
+        final Instance instance = fieldValue.getInstance();
+        final PartListInst partList = new PartListInst(instance);
+
+        ret.put(ReturnValues.VALUES, partList.getStockQuantity());
+        return ret;
+    }
 }

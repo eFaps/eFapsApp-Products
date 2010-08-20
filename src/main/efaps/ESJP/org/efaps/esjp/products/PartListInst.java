@@ -23,6 +23,7 @@ package org.efaps.esjp.products;
 
 import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
+import org.efaps.db.Instance;
 
 
 /**
@@ -33,10 +34,17 @@ import org.efaps.admin.program.esjp.EFapsUUID;
  * @author The eFaps Team
  * @version $Id$
  */
-@EFapsUUID("bdb14d9d-bfcf-4f2c-b93c-a7cbe11415e7")
+@EFapsUUID("ba3f1861-8f83-4bb9-b470-473e21d3f95e")
 @EFapsRevision("$Rev$")
-public class PartList
-    extends PartList_Base
+public class PartListInst
+    extends PartListInst_Base
 {
 
+    /**
+     * @param _instance
+     */
+    public PartListInst(final Instance _instance)
+    {
+        super(_instance);
+    }
 }
