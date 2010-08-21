@@ -31,11 +31,11 @@
     <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductNonTree</name>
+        <name>Products_ProductNonStockTree</name>
         <!-- targets -->
         <target>
             <menu>Products_ProductTree_Menu</menu>
-            <form>Products_ProductForm</form>
+            <form>Products_ProductNonStockForm</form>
         </target>
         <!-- type tree for -->
         <type>Products_NonStockProductAbstract</type>
@@ -48,7 +48,6 @@
             <child>Products_ProductTree_BOM</child>
             <child>Products_ProductTree_Image</child>
             <child>Products_ProductTree_Contacts</child>
-            <child>Products_ProductTree_Transaction</child>
         </childs>
         <!-- properties -->
         <property name="Target">content</property>

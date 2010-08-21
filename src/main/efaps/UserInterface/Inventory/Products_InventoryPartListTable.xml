@@ -45,6 +45,7 @@
         <field name="product">
             <property name="Attribute">Name</property>
             <property name="Label">Products_ProductPartList/Product.Label</property>
+             <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
         </field>
         <field name="productdesc">
             <property name="Attribute">Description</property>
