@@ -103,7 +103,7 @@ public class PartListInst_Base
         final AttributeQuery attrQuery = attrQueryBldr.getAttributeQuery(CIProducts.SalesBOM.To);
 
         final QueryBuilder stockQueryBldr = new QueryBuilder(CIProducts.Inventory);
-        stockQueryBldr.addWhereAttrInQuery(CIProducts.Inventory.ID, attrQuery);
+        stockQueryBldr.addWhereAttrInQuery(CIProducts.Inventory.Product, attrQuery);
         final MultiPrintQuery stockMulti = stockQueryBldr.getPrint();
         stockMulti.addAttribute(CIProducts.Inventory.Quantity);
         final SelectBuilder sel2 = new SelectBuilder().linkto(CIProducts.Inventory.Product).oid();
