@@ -2,7 +2,7 @@
 
 <!--
 
- Copyright 2003 - 2009 The eFaps Team
+ Copyright 2003 - 2010 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -26,12 +26,12 @@
 <ui-command xmlns="http://www.efaps.org/xsd"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>38141d55-3a00-4fe7-bf9b-7e161ac6cf74</uuid>
+    <uuid>1a2d1c7a-2936-47a5-a9a7-e3e13631c629</uuid>
     <file-application>eFapsApp-Products</file-application>
     <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductInStockMyDesk_Menu_Action_CreateTextPosition</name>
+        <name>Products_ProductNonStockMyDesk_Menu_Action_CreateService</name>
         <access>
             <role>Products_Admin</role>
             <role>Products_Modifier</role>
@@ -45,7 +45,7 @@
 
         <!-- properties -->
         <property name="Target">modal</property>
-        <property name="TargetCreateType">Products_ProductTextPosition</property>
+        <property name="TargetCreateType">Products_ProductService</property>
         <property name="TargetMode">create</property>
         <property name="WindowHeight">460</property>
         <property name="WindowWidth">515</property>
