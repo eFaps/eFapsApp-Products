@@ -112,7 +112,7 @@
         </attribute>
         <attribute>
             <name>FileLength</name>
-            <type>Integer</type>
+            <type>Long</type>
             <sqltable>Products_ImageSQLTable</sqltable>
             <sqlcolumn>FILELENGTH</sqlcolumn>
         </attribute>
