@@ -54,6 +54,7 @@
             <sqltable>Products_ClassSQLTable</sqltable>
             <sqlcolumn>PRODUCTID</sqlcolumn>
         </attribute>
-        <classifies type="Products_ProductAbstract" relType="Products_Product2Class" relLinkAttribute="Product" relTypeAttribute="ClassTypeId" />
+        <classifies type="Products_ProductAbstract" relType="Products_Product2Class"
+                    relLinkAttribute="Product" relTypeAttribute="ClassTypeId" multipleSelect="true"/>
     </definition>
 </datamodel-type>
