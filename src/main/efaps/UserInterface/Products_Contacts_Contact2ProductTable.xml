@@ -41,18 +41,18 @@
       <property name="ShowTypeIcon">true</property>
     </field>
     <field name="fromname">
-      <property name="SelectAlternateOID">linkto[From].oid</property>
-      <property name="Select">linkto[From].attribute[Name]</property>
+      <property name="SelectAlternateOID">linkto[FromAbstract].oid</property>
+      <property name="Select">linkto[FromAbstract].attribute[Name]</property>
       <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
       <property name="Label">Products_Contacts_Contact2ProductTable/FromName.Label</property>
     </field>
     <field name="fromdesc">
-      <property name="Select">linkto[From].attribute[Description]</property>
+      <property name="Select">linkto[FromAbstract].attribute[Description]</property>
       <property name="Label">Products_Contacts_Contact2ProductTable.fromdesc.Label</property>
     </field>
     <field name="buttonOpenInNewWindow">
       <icon>eFapsActionNewWindow</icon>
-      <property name="SelectAlternateOID">linkto[From].oid</property>
+      <property name="SelectAlternateOID">linkto[FromAbstract].oid</property>
       <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
       <property name="Target">popup</property>
       <property name="Width">15px</property>
