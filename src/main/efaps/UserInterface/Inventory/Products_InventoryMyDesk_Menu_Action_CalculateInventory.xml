@@ -17,36 +17,40 @@
  limitations under the License.
 
  Author:          The eFaps Team
- Revision:        $Rev$
- Last Changed:    $Date$
- Last Changed By: $Author$
+ Revision:        $Rev: 5316 $
+ Last Changed:    $Date: 2010-08-16 11:37:54 -0500 (Mon, 16 Aug 2010) $
+ Last Changed By: $Author: miguel.a.aranya $
 
 -->
 
 <ui-command xmlns="http://www.efaps.org/xsd"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>ebcda8b3-4850-4069-983a-b46cfd69a48d</uuid>
+    <uuid>ac7333e8-9f75-4fc1-ae2b-3cae06af0425</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
+    <file-revision>$Rev: 5316 $</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_InventoryMyDesk</name>
+        <name>Products_InventoryMyDesk_Menu_Action_CalculateInventory</name>
         <access>
-            <role>Products_Admin</role>
             <role>Products_Modifier</role>
-            <role>Products_Reader</role>
+            <role>Products_Admin</role>
         </access>
+        <!-- target definitions -->
         <target>
-            <menu>Products_InventoryMyDesk_Menu</menu>
-            <table>Products_InventoryTable</table>
-            <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
-                <property name="Types">Products_Inventory</property>
-            </evaluate>
+            <form>Products_InventoryCalculateForm</form>
+            <execute program="org.efaps.esjp.common.jasperreport.StandartReport">
+                <property name="JasperReport">Products_CalculateInventory</property>
+                <property name="DataSourceClass">org.efaps.esjp.products.CalculateInventorySource</property>
+            </execute>
         </target>
 
         <!-- properties -->
-        <property name="Target">content</property>
-        <property name="TargetShowCheckBoxes">true</property>
+        <property name="Target">modal</property>
+        <property name="TargetMode">create</property>
+        <property name="TargetShowFile">true</property>
+        <property name="WindowHeight">460</property>
+        <property name="WindowWidth">515</property>
     </definition>
+
 </ui-command>

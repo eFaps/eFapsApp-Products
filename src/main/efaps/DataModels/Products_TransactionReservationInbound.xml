@@ -34,7 +34,7 @@
 
         <version-expression>(version==latest)</version-expression>
         <name>Products_TransactionReservationInbound</name>
-        <parent>Products_TransactionAbstract</parent>
+        <parent>Products_TransactionReservationAbstract</parent>
 
         <trigger program="org.efaps.esjp.products.Transaction"
                  method="reservationInboundTrigger"

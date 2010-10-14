@@ -23,26 +23,26 @@
 
 -->
 
-<datamodel-type  xmlns="http://www.efaps.org/xsd" 
-                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"   
+<datamodel-type  xmlns="http://www.efaps.org/xsd"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
   <uuid>85140a94-5221-4778-b3c3-c4114891013d</uuid>
   <file-application>eFapsApp-Products</file-application>
   <file-revision>$Rev$</file-revision>
-  
+
   <definition>
-  
+
     <version-expression>(version==latest)</version-expression>
     <name>Products_TransactionInbound</name>
-    <parent>Products_TransactionAbstract</parent>
-    
-    <trigger program="org.efaps.esjp.products.Transaction" 
-             method="inboundTrigger"  
-             name="Products_TransactionInbound.INSERT_POST" 
+    <parent>Products_TransactionInOutAbstract</parent>
+
+    <trigger program="org.efaps.esjp.products.Transaction"
+             method="inboundTrigger"
+             name="Products_TransactionInbound.INSERT_POST"
              event="INSERT_POST"/>
-             
-    <trigger program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType" 
-             name="Products_TransactionInbound.ACCESSCHECK" 
+
+    <trigger program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType"
+             name="Products_TransactionInbound.ACCESSCHECK"
              event="ACCESSCHECK"/>
   </definition>
 </datamodel-type>
