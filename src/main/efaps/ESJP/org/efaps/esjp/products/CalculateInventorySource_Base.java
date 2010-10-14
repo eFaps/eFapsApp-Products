@@ -23,6 +23,8 @@ package org.efaps.esjp.products;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -131,6 +133,15 @@ public abstract class CalculateInventorySource_Base
             value.put("UoM", uom.getName());
             value.put("Quantity", actual.get(multiRes.getCurrentInstance().getOid()));
         }
-
+        Collections.sort(getValues(), new Comparator<Map<String, Object>>(){
+            @Override
+            public int compare(final Map<String, Object> _map1,
+                               final Map<String, Object> _map2)
+            {
+                final String name1 = (String) _map1.get("Name");
+                final String name2 = (String) _map2.get("Name");
+                return name1.compareTo(name2);
+            }
+        });
     }
 }

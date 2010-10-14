@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Products_CalculateInventory" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
-	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="221"/>
 	<property name="ireport.y" value="0"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.band.2" value="pageFooter"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.keep.first.band.1" value="pageHeader"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.band.4" value="columnFooter"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.keep.first.band.3" value="columnHeader"/>
 	<import value="org.efaps.admin.datamodel.ui.DecimalUI"/>
 	<parameter name="EFAPS_DEFINITION" class="java.lang.String" isForPrompting="false">
 		<property name="UUID" value="10309fae-7e7c-4d1f-9809-5f363e7b0b4b"/>
@@ -27,19 +31,24 @@
 	<pageHeader>
 		<band height="17" splitType="Stretch">
 			<textField pattern="dd MMMMM yyyy">
-				<reportElement x="702" y="0" width="100" height="12"/>
-				<textElement/>
+				<reportElement x="561" y="0" width="241" height="12"/>
+				<textElement textAlignment="Right"/>
 				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="0" width="182" height="12"/>
+				<reportElement x="0" y="0" width="200" height="12"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{Storage}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd MMMMM yyyy">
-				<reportElement x="513" y="0" width="136" height="12"/>
+				<reportElement x="347" y="0" width="214" height="12"/>
 				<textElement/>
 				<textFieldExpression class="java.util.Date"><![CDATA[$P{Date}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="200" y="0" width="147" height="12"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{Products_InventoryCalculateForm.date.Label} + ":"]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>

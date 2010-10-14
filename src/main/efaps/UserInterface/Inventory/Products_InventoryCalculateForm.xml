@@ -34,7 +34,14 @@
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_InventoryCalculateForm</name>
-
+        <field name="mime">
+            <property name="ModeCreate">READONLY</property>
+            <property name="Label">Common_Main_PrintForm.mime.Label</property>
+            <trigger program="org.efaps.esjp.ui.print.UserInterface"
+                method="getMimeFieldValueUI"
+                name="Products_InventoryCalculateForm.mime.UI_FIELD_VALUE"
+                event="UI_FIELD_VALUE"/>
+        </field>
         <field name="date">
             <property name="Attribute">Date</property>
             <property name="ModeCreate">EDITABLE</property>
