@@ -97,13 +97,18 @@ public abstract class CalculateInventorySource_Base
         transQueryBldr.getQuery();
 
         final MultiPrintQuery transMulti = transQueryBldr.getPrint();
-        transMulti.addAttribute(CIProducts.TransactionInOutAbstract.Quantity);
+        transMulti.addAttribute(CIProducts.TransactionInOutAbstract.Quantity,
+                                CIProducts.TransactionInOutAbstract.UoM);
         final SelectBuilder transSel = new SelectBuilder().linkto(CIProducts.TransactionInOutAbstract.Product).oid();
         transMulti.addSelect(transSel);
         transMulti.execute();
         while (transMulti.next()) {
             final String oid = transMulti.<String>getSelect(transSel);
             BigDecimal quantity = transMulti.<BigDecimal>getAttribute(CIProducts.TransactionInbound.Quantity);
+            final Long uoMId = transMulti.<Long>getAttribute(CIProducts.TransactionInbound.UoM);
+            final UoM uoM = Dimension.getUoM(uoMId);
+            quantity = quantity.multiply(new BigDecimal(uoM.getNumerator())
+                                            .divide(new BigDecimal(uoM.getDenominator())));
             final Instance inst = transMulti.getCurrentInstance();
             if (inst.getType().isKindOf(CIProducts.TransactionInbound.getType())) {
                 quantity = quantity.negate();
