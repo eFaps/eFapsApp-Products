@@ -25,13 +25,13 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.efaps.admin.datamodel.Dimension;
-import org.efaps.admin.datamodel.Type;
 import org.efaps.admin.datamodel.Dimension.UoM;
+import org.efaps.admin.datamodel.Type;
 import org.efaps.admin.datamodel.ui.FieldValue;
 import org.efaps.admin.dbproperty.DBProperties;
 import org.efaps.admin.event.Parameter;
-import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Parameter.ParameterValues;
+import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
@@ -96,7 +96,9 @@ public abstract class Transaction_Base
         final Type transAbstract = CIProducts.TransactionAbstract.getType();
         final Map <String, Long> values = new TreeMap<String, Long>();
         for (final Type child : transAbstract.getChildTypes()) {
-            values.put(DBProperties.getProperty(child.getName() + ".Label"), child.getId());
+            if (!child.isAbstract()) {
+                values.put(DBProperties.getProperty(child.getName() + ".Label"), child.getId());
+            }
         }
 
         final StringBuilder html = new StringBuilder();
