@@ -27,29 +27,28 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
 
-  <uuid>a9dfb0af-ab22-4d4f-b02c-0aade6f008f8</uuid>
-  <file-application>eFapsApp-Products</file-application>
-  <file-revision>$Rev$</file-revision>
+    <uuid>a9dfb0af-ab22-4d4f-b02c-0aade6f008f8</uuid>
+    <file-application>eFapsApp-Products</file-application>
+    <file-revision>$Rev$</file-revision>
 
-  <definition>
-    <version-expression>(version==latest)</version-expression>
-    <name>Products_ClassExampleForm</name>
-    <type>Products_ClassExample</type>
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <name>Products_ClassExampleForm</name>
+        <type>Products_ClassExample</type>
 
-  <field name="height">
-      <property name="Columns">10</property>
-      <property name="ModeCreate">EDITABLE</property>
-      <property name="ModeEdit">EDITABLE</property>
-      <property name="Expression">Height</property>
-      <property name="Required">true</property>
-    </field>
-    <field name="width">
-      <property name="Columns">10</property>
-      <property name="ModeCreate">EDITABLE</property>
-      <property name="ModeEdit">EDITABLE</property>
-      <property name="Expression">Width</property>
-      <property name="Required">true</property>
-    </field>
-  </definition>
-
+        <field name="height">
+            <property name="Columns">10</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="Attribute">Height</property>
+            <property name="Required">true</property>
+        </field>
+        <field name="width">
+            <property name="Columns">10</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="Attribute">Width</property>
+            <property name="Required">true</property>
+        </field>
+    </definition>
 </ui-form>
