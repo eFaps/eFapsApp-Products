@@ -37,10 +37,9 @@ import org.apache.sanselan.ImageInfo;
 import org.apache.sanselan.ImageReadException;
 import org.apache.sanselan.ImageWriteException;
 import org.apache.sanselan.Sanselan;
-
 import org.efaps.admin.event.Parameter;
-import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Parameter.ParameterValues;
+import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
@@ -113,7 +112,7 @@ public abstract class Image_Base
         final AbstractCommand command = (AbstractCommand) _parameter.get(ParameterValues.UIOBJECT);
 
         for (final Field field : command.getTargetForm().getFields()) {
-            final String attrName = field.getExpression() == null ? field.getAttribute() : field.getExpression();
+            final String attrName = field.getAttribute();
             if (attrName == null && field.isEditableDisplay(TargetMode.CREATE)) {
                 final Context.FileParameter fileItem = context.getFileParameters().get(field.getName());
                 if (fileItem != null) {
