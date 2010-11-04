@@ -56,7 +56,7 @@
         <field name="product">
             <property name="Attribute">Product</property>
             <property name="ModeCreate">EDITABLE</property>
-            <property name="ModeEdit">READONLY</property>
+            <property name="ModeEdit">NONE</property>
             <property name="ModeSearch">EDITABLE</property>
             <property name="ModeView">NONE</property>
             <property name="Required">true</property>
