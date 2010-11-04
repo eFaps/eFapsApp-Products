@@ -35,6 +35,7 @@
         <!-- fields -->
         <field name="type">
             <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">NONE</property>
             <property name="ModeView">NONE</property>
             <property name="Required">true</property>
             <property name="Label">Products_TransactionAbstractForm.type.Label</property>
@@ -55,7 +56,7 @@
         <field name="product">
             <property name="Attribute">Product</property>
             <property name="ModeCreate">EDITABLE</property>
-            <property name="ModeEdit">NONE</property>
+            <property name="ModeEdit">READONLY</property>
             <property name="ModeSearch">EDITABLE</property>
             <property name="ModeView">NONE</property>
             <property name="Required">true</property>
@@ -73,25 +74,27 @@
         <field name="quantity">
             <property name="Attribute">Quantity</property>
             <property name="ModeCreate">EDITABLE</property>
-            <property name="ModeEdit">EDITABLE</property>
+            <property name="ModeEdit">READONLY</property>
             <property name="ModeSearch">EDITABLE</property>
             <property name="Required">true</property>
         </field>
         <field name="uoM">
             <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">NONE</property>
             <property name="ModeView">NONE</property>
             <property name="ModePrint">NONE</property>
             <property name="Attribute">UoM</property>
         </field>
         <field name="uom4View">
             <property name="ModeCreate">NONE</property>
+            <property name="ModeEdit">READONLY</property>
             <property name="Select">linkto[UoM].attribute[Name]</property>
             <property name="Label">Products_TransactionAbstract/UoM.Label</property>
         </field>
         <field name="storage">
             <property name="Attribute">Storage</property>
             <property name="ModeCreate">EDITABLE</property>
-            <property name="ModeEdit">EDITABLE</property>
+            <property name="ModeEdit">NONE</property>
             <property name="ModeSearch">EDITABLE</property>
             <property name="ModeView">NONE</property>
             <property name="Required">true</property>
