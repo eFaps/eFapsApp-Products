@@ -118,6 +118,14 @@
             <property name="Attribute">Description</property>
             <property name="Required">true</property>
         </field>
+        <field name="document">
+            <property name="SelectAlternateOID">linkto[Document].oid</property>
+            <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
+            <property name="Phrase">$&lt;linkto[Document].type.label&gt; - $&lt;linkto[Document].attribute[Name]&gt;</property>
+            <property name="ModeEdit">NONE</property>
+            <property name="ModeSearch">NONE</property>
+            <property name="Label">Products_TransactionAbstract/Document.Label</property>
+        </field>
         <field name="createGroup" character="Group">
             <property name="GroupCount">2</property>
         </field>

@@ -96,6 +96,13 @@
             <sqltable>Products_TransactionAbstractSQLTable</sqltable>
             <sqlcolumn>DATE</sqlcolumn>
         </attribute>
+         <attribute>
+            <name>Document</name>
+            <type>Link</type>
+            <typelink>ERP_DocumentAbstract</typelink>
+            <sqltable>Products_TransactionAbstractSQLTable</sqltable>
+            <sqlcolumn>DOCID</sqlcolumn>
+        </attribute>
         <attribute>
             <name>Creator</name>
             <type>CreatorLink</type>
