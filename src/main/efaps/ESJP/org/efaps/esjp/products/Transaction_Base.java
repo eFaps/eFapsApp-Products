@@ -35,6 +35,7 @@ import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
+import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
 import org.efaps.db.Delete;
 import org.efaps.db.Insert;
 import org.efaps.db.Instance;
@@ -455,12 +456,16 @@ public abstract class Transaction_Base
         throws EFapsException
     {
         final Return ret = new Return();
-        final PrintQuery print = new PrintQuery(_parameter.getInstance());
-        print.addAttribute(CIProducts.TransactionAbstract.Document);
-        if (print.executeWithoutAccessCheck()) {
-            final Object doc = print.getAttribute(CIProducts.TransactionAbstract.Document);
-            if (doc != null) {
-                ret.put(ReturnValues.TRUE, true);
+        final TargetMode accmod = (TargetMode) _parameter.get(ParameterValues.ACCESSMODE);
+        final Instance inst = _parameter.getInstance();
+        if (accmod.equals(TargetMode.VIEW) && inst.isValid()) {
+            final PrintQuery print = new PrintQuery(inst);
+            print.addAttribute(CIProducts.TransactionAbstract.Document);
+            if (print.executeWithoutAccessCheck()) {
+                final Object doc = print.getAttribute(CIProducts.TransactionAbstract.Document);
+                if (doc != null) {
+                    ret.put(ReturnValues.TRUE, true);
+                }
             }
         }
         return ret;
