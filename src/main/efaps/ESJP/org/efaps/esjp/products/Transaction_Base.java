@@ -442,4 +442,27 @@ public abstract class Transaction_Base
         return ret;
     }
 
+
+    /**
+     * Check the access for the document link field in the transaction formular.
+     * Access will only be granted if a document is connected.
+     *
+     * @param _parameter Parameter as passed from the eFaps API.
+     * @return new Return.
+     * @throws EFapsException on error.
+     */
+    public Return documentAccessCheck(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        final PrintQuery print = new PrintQuery(_parameter.getInstance());
+        print.addAttribute(CIProducts.TransactionAbstract.Document);
+        if (print.executeWithoutAccessCheck()) {
+            final Object doc = print.getAttribute(CIProducts.TransactionAbstract.Document);
+            if (doc != null) {
+                ret.put(ReturnValues.TRUE, true);
+            }
+        }
+        return ret;
+    }
 }

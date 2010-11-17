@@ -125,6 +125,10 @@
             <property name="ModeEdit">NONE</property>
             <property name="ModeSearch">NONE</property>
             <property name="Label">Products_TransactionAbstract/Document.Label</property>
+            <trigger program="org.efaps.esjp.products.Transaction"
+                method="documentAccessCheck"
+                name="Products_TransactionAbstractForm.document.UI_ACCESSCHECK"
+                event="UI_ACCESSCHECK"/>
         </field>
         <field name="createGroup" character="Group">
             <property name="GroupCount">2</property>
