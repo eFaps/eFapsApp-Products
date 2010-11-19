@@ -36,8 +36,8 @@ import org.efaps.admin.datamodel.Attribute;
 import org.efaps.admin.datamodel.AttributeType;
 import org.efaps.admin.datamodel.Classification;
 import org.efaps.admin.datamodel.Dimension;
-import org.efaps.admin.datamodel.Type;
 import org.efaps.admin.datamodel.Dimension.UoM;
+import org.efaps.admin.datamodel.Type;
 import org.efaps.admin.datamodel.attributetype.CompanyLinkType;
 import org.efaps.admin.datamodel.attributetype.CreatedType;
 import org.efaps.admin.datamodel.attributetype.CreatorLinkType;
@@ -48,8 +48,8 @@ import org.efaps.admin.datamodel.attributetype.TypeType;
 import org.efaps.admin.datamodel.ui.FieldValue;
 import org.efaps.admin.dbproperty.DBProperties;
 import org.efaps.admin.event.Parameter;
-import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Parameter.ParameterValues;
+import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
@@ -134,32 +134,37 @@ public abstract class Product_Base
         final String input = (String) _parameter.get(ParameterValues.OTHERS);
         final List<Map<String, String>> list = new ArrayList<Map<String, String>>();
         final Map<String, Map<String, String>> orderMap = new TreeMap<String, Map<String, String>>();
-        final SearchQuery query = new SearchQuery();
-        if (types == null) {
-            query.setQueryTypes("Products_ProductAbstract");
-            query.setExpandChildTypes(true);
-        } else {
-            query.setQueryTypes(types);
+        if(input.length() > 0) {
+            final boolean nameSearch = Character.isDigit(input.charAt(0));
+            final QueryBuilder queryBldr = (types == null) ? new QueryBuilder(CIProducts.ProductAbstract)
+                                                     : new QueryBuilder(Type.get(types));
+            if (nameSearch) {
+                queryBldr.addWhereAttrMatchValue(CIProducts.ProductAbstract.Name, input + "*");
+                queryBldr.addOrderByAttributeAsc(CIProducts.ProductAbstract.Name);
+            } else {
+                queryBldr.addWhereAttrMatchValue(CIProducts.ProductAbstract.Description, input + "*")
+                                                                                                .setIgnoreCase(true);
+                queryBldr.addOrderByAttributeAsc(CIProducts.ProductAbstract.Description);
+            }
+            final MultiPrintQuery multi = queryBldr.getPrint();
+            multi.addAttribute(CIProducts.ProductAbstract.OID, CIProducts.ProductAbstract.Name,
+                            CIProducts.ProductAbstract.Description, CIProducts.ProductAbstract.Dimension);
+            multi.execute();
+
+            while (multi.next()) {
+                final String name = (String) multi.getAttribute(CIProducts.ProductAbstract.Name);
+                final String desc = (String) multi.getAttribute(CIProducts.ProductAbstract.Description);
+                final String oid = (String) multi.getAttribute(CIProducts.ProductAbstract.OID);
+                final String choice = nameSearch ? name + " - " + desc : desc + " - " + name;
+                final Map<String, String> map = new HashMap<String, String>();
+                map.put("eFapsAutoCompleteKEY", oid);
+                map.put("eFapsAutoCompleteVALUE", name);
+                map.put("eFapsAutoCompleteCHOICE", choice);
+                map.put("uoM", getUoMFieldStr((Long) multi.getAttribute("Dimension")));
+                orderMap.put(choice, map);
+            }
+            list.addAll(orderMap.values());
         }
-        query.addWhereExprMatchValue("Name", input + "*");
-        query.addSelect("OID");
-        query.addSelect("Name");
-        query.addSelect("Description");
-        query.addSelect("Dimension");
-        query.execute();
-        while (query.next()) {
-            final String name = (String) query.get("Name");
-            final String desc = (String) query.get("Description");
-            final String oid = ((String) query.get("OID"));
-            final String choice = name + " - " + desc;
-            final Map<String, String> map = new HashMap<String, String>();
-            map.put("eFapsAutoCompleteKEY", oid);
-            map.put("eFapsAutoCompleteVALUE", (String) query.get("Name"));
-            map.put("eFapsAutoCompleteCHOICE", choice);
-            map.put("uoM", getUoMFieldStr((Long) query.get("Dimension")));
-            orderMap.put(choice, map);
-        }
-        list.addAll(orderMap.values());
         final Return retVal = new Return();
         retVal.put(ReturnValues.VALUES, list);
         return retVal;
