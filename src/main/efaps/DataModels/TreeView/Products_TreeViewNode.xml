@@ -17,29 +17,29 @@
  limitations under the License.
 
  Author:          The eFaps Team
- Revision:        $Rev: 5375 $
- Last Changed:    $Date: 2010-08-20 14:31:15 -0500 (Fri, 20 Aug 2010) $
+ Revision:        $Rev: 5626 $
+ Last Changed:    $Date: 2010-10-05 11:56:11 -0500 (Tue, 05 Oct 2010) $
  Last Changed By: $Author: jorge.m.cueva $
 
 -->
 
-<ui-table xmlns="http://www.efaps.org/xsd"
-          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>46b93fc6-93c5-40f6-9ac7-bb28d673ca20</uuid>
+<datamodel-type  xmlns="http://www.efaps.org/xsd"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>b3546e76-371e-4a44-8a23-312765281db2</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev: 5375 $</file-revision>
+    <file-revision>$Rev: 5626 $</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_TreeViewTable</name>
-        <!-- fields -->
-        <field name="label">
-            <property name="Attribute">Label</property>
-            <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
-        </field>
-         <field name="label2">
-            <property name="Attribute">Label</property>
-            <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
-        </field>
+        <name>Products_TreeViewNode</name>
+        <parent>Products_TreeViewAbstract</parent>
+        <attribute>
+            <name>ParentLink</name>
+            <type>Link</type>
+            <typelink>Products_TreeViewAbstract</typelink>
+            <sqltable>Products_TreeViewSQLTable</sqltable>
+            <sqlcolumn>PARENTID</sqlcolumn>
+        </attribute>
+
     </definition>
-</ui-table>
+</datamodel-type>

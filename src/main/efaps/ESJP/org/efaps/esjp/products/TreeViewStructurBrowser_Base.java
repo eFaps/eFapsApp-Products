@@ -36,7 +36,7 @@ import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Instance;
 import org.efaps.db.InstanceQuery;
 import org.efaps.db.QueryBuilder;
-import org.efaps.db.SearchQuery;
+import org.efaps.esjp.ci.CIProducts;
 import org.efaps.ui.wicket.models.objects.UIStructurBrowser;
 import org.efaps.ui.wicket.models.objects.UIStructurBrowser.ExecutionStatus;
 import org.efaps.util.EFapsException;
@@ -110,15 +110,15 @@ public abstract class TreeViewStructurBrowser_Base
      * @return Return with true or false
      * @throws EFapsException on error
      */
-    private Return checkForChildren(final Instance _instance) throws EFapsException
+    private Return checkForChildren(final Instance _instance)
+        throws EFapsException
     {
         final Return ret = new Return();
-        final SearchQuery query = new SearchQuery();
-        query.setQueryTypes("Accounting_AccountAbstract");
-        query.setExpandChildTypes(true);
-        query.addWhereExprEqValue("ParentLink", _instance.getId());
+        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.TreeViewNode);
+        queryBldr.addWhereAttrEqValue(CIProducts.TreeViewNode.ParentLink, _instance.getId());
+        final InstanceQuery query = queryBldr.getQuery();
+        query.setLimit(1);
         query.execute();
-
         if (query.next()) {
             ret.put(ReturnValues.TRUE, true);
         }
@@ -133,20 +133,17 @@ public abstract class TreeViewStructurBrowser_Base
      * @return Return with instances
      * @throws EFapsException on error
      */
-    private Return addChildren(final Instance _instance) throws EFapsException
+    private Return addChildren(final Instance _instance)
+        throws EFapsException
     {
         final Return ret = new Return();
-
-        final SearchQuery query = new SearchQuery();
-        query.setQueryTypes("Accounting_AccountAbstract");
-        query.setExpandChildTypes(true);
-        query.addWhereExprEqValue("ParentLink", _instance.getId());
-        query.addSelect("OID");
+        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.TreeViewNode);
+        queryBldr.addWhereAttrEqValue(CIProducts.TreeViewNode.ParentLink, _instance.getId());
+        final InstanceQuery query = queryBldr.getQuery();
         query.execute();
-
         final Map<Instance, Boolean> map = new LinkedHashMap<Instance, Boolean>();
         while (query.next()) {
-            map.put(Instance.get((String) query.get("OID")), null);
+            map.put(query.getCurrentValue(), null);
         }
         ret.put(ReturnValues.VALUES, map);
         return ret;
