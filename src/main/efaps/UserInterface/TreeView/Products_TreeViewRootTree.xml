@@ -36,6 +36,9 @@
         <target>
             <menu>Products_TreeViewRootTree_Menu</menu>
             <form>Products_TreeViewRootForm</form>
+            <evaluate program="org.efaps.esjp.products.TreeViewStructurBrowser">
+                <property name="Types">Products_TreeViewRoot</property>
+            </evaluate>
         </target>
         <!-- type tree for -->
         <type>Products_TreeViewRoot</type>

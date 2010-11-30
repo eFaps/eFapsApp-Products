@@ -23,27 +23,20 @@
 
 -->
 
-<ui-command xmlns="http://www.efaps.org/xsd"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>28785521-3b63-40b8-94ac-7136b80cd584</uuid>
+<ui-menu xmlns="http://www.efaps.org/xsd"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+
+    <uuid>8e513f55-9d33-415d-9b33-2fbba583f2aa</uuid>
     <file-application>eFapsApp-Products</file-application>
     <file-revision>$Rev: 5316 $</file-revision>
+
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_TreeViewTree_Node_Menu_Action_Create</name>
-        <!-- target definitions -->
-        <target>
-            <form>Products_TreeViewNodeForm</form>
-            <execute program="org.efaps.esjp.common.uiform.Create" />
-        </target>
-
-        <!-- properties -->
-        <property name="Target">modal</property>
-        <property name="TargetCreateType">Products_TreeViewNode</property>
-        <property name="TargetConnectAttribute">Products_TreeViewNode/ParentLink</property>
-        <property name="TargetMode">create</property>
-        <property name="WindowHeight">460</property>
-        <property name="WindowWidth">515</property>
+        <name>Products_TreeViewProductTree_Menu_Action</name>
+        <!-- childs -->
+        <childs>
+            <child>Products_TreeViewProductTree_Menu_Action_Edit</child>
+        </childs>
     </definition>
-</ui-command>
+</ui-menu>

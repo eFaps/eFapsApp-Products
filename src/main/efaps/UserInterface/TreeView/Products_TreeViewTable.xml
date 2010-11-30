@@ -33,13 +33,19 @@
         <version-expression>(version==latest)</version-expression>
         <name>Products_TreeViewTable</name>
         <!-- fields -->
+        <field name="type">
+            <property name="Attribute">Type</property>
+            <property name="Label">Products_TreeViewAbstract/Type.Label</property>
+        </field>
         <field name="label">
             <property name="Attribute">Label</property>
             <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
+            <property name="Label">Products_TreeViewAbstract/Label.Label</property>
         </field>
-         <field name="label2">
-            <property name="Attribute">Label</property>
+         <field name="description">
+            <property name="Select">linkto[ProductAbstractLink].attribute[Description]</property>
             <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
+            <property name="Label">Products_TreeViewTable.description.Label</property>
         </field>
     </definition>
 </ui-table>

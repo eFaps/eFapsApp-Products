@@ -27,17 +27,17 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
 
-    <uuid>750f324a-6b7b-4d86-8e4d-c4b6d3a2093a</uuid>
+    <uuid>0ee8127f-2a75-404f-a49f-66c2f950f759</uuid>
     <file-application>eFapsApp-Products</file-application>
     <file-revision>$Rev: 5316 $</file-revision>
 
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_TreeViewTree_Node_Menu_Action</name>
+        <name>Products_TreeViewProductTree_Menu</name>
+        <!-- childs -->
         <childs>
-            <child>Products_TreeViewTree_Node_Menu_Action_CreateNode</child>
-            <child>Products_TreeViewTree_Node_Menu_Action_CreateProduct</child>
-            <child>Products_TreeViewTree_Node_Menu_Action_Delete</child>
+            <child>Products_TreeViewProductTree_Menu_Action</child>
         </childs>
     </definition>
+
 </ui-menu>

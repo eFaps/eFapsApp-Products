@@ -63,6 +63,13 @@
             <sqltable>Products_TreeViewSQLTable</sqltable>
             <sqlcolumn>LABEL</sqlcolumn>
         </attribute>
+        <attribute>
+            <name>ProductAbstractLink</name>
+            <type>Link</type>
+            <typelink>Products_ProductAbstract</typelink>
+            <sqltable>Products_TreeViewSQLTable</sqltable>
+            <sqlcolumn>PRODUCTID</sqlcolumn>
+        </attribute>
          <attribute>
             <name>Creator</name>
             <type>CreatorLink</type>

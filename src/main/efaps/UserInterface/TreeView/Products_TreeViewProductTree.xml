@@ -26,25 +26,19 @@
 <ui-menu xmlns="http://www.efaps.org/xsd"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>63ab9f56-3d6b-4dd1-880a-2b96abdd8154</uuid>
+    <uuid>07ec8a2c-6567-43e9-9b82-73745fcda2c0</uuid>
     <file-application>eFapsApp-Products</file-application>
     <file-revision>$Rev: 5372 $</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_TreeViewNodeTree</name>
+        <name>Products_TreeViewProductTree</name>
         <!-- targets -->
         <target>
-            <menu>Products_TreeViewNodeTree_Menu</menu>
-            <form>Products_TreeViewNodeForm</form>
-            <evaluate program="org.efaps.esjp.products.TreeViewStructurBrowser">
-                <property name="Types">Products_TreeViewRoot</property>
-            </evaluate>
+            <menu>Products_TreeViewProductTree_Menu</menu>
+            <form>Products_TreeViewProductForm</form>
         </target>
         <!-- type tree for -->
-        <type>Products_TreeViewNode</type>
-        <childs>
-            <child>Products_TreeViewTree_Node</child>
-        </childs>
+        <type>Products_TreeViewProduct</type>
         <!-- properties -->
         <property name="Target">content</property>
         <property name="TargetMode">view</property>
