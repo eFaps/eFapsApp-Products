@@ -42,7 +42,8 @@
             <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
             <property name="Label">Products_TreeViewAbstract/Label.Label</property>
         </field>
-         <field name="description">
+        <field name="description">
+            <property name="SelectAlternateOID">linkto[ProductAbstractLink].oid</property>
             <property name="Select">linkto[ProductAbstractLink].attribute[Description]</property>
             <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
             <property name="Label">Products_TreeViewTable.description.Label</property>
