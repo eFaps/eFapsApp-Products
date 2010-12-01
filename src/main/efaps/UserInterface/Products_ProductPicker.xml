@@ -34,7 +34,10 @@
         <name>Products_ProductPicker</name>
         <!-- target definitions -->
         <target>
-            <form>Products_ProductPickerForm</form>
+            <table>Products_ProductPickerTable</table>
+            <evaluate program="org.efaps.esjp.products.TreeViewStructurBrowser">
+                <property name="Types">Products_TreeViewRoot</property>
+            </evaluate>
             <trigger program="org.efaps.esjp.products.TreeView"
                 method="picker4Product"
                 name="Products_ProductPickerForm.UI_PICKER"
@@ -42,7 +45,9 @@
         </target>
         <!-- properties -->
         <property name="Target">modal</property>
-        <property name="TargetMode">create</property>
+        <property name="TargetMode">view</property>
+        <property name="TargetShowCheckBoxes">true</property>
+        <property name="TargetStructurBrowserField">label</property>
         <property name="WindowHeight">460</property>
         <property name="WindowWidth">515</property>
     </definition>
