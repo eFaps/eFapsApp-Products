@@ -100,4 +100,14 @@ public abstract class TreeView_Base
         retVal.put(ReturnValues.VALUES, list);
         return retVal;
     }
+
+
+    public Return picker4Product(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return retVal = new Return();
+        final Map<String, String> map = new HashMap<String, String>();
+        retVal.put(ReturnValues.VALUES, map);
+        return retVal;
+    }
 }
