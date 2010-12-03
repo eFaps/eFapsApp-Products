@@ -34,9 +34,13 @@ import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
+import org.efaps.db.Instance;
 import org.efaps.db.MultiPrintQuery;
+import org.efaps.db.PrintQuery;
 import org.efaps.db.QueryBuilder;
+import org.efaps.db.SelectBuilder;
 import org.efaps.esjp.ci.CIProducts;
+import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
 
 
@@ -88,9 +92,9 @@ public abstract class TreeView_Base
                 final Long id =  multi.<Long>getAttribute(CIProducts.ProductAbstract.ID);
                 final String choice = nameSearch ? name + " - " + desc : desc + " - " + name;
                 final Map<String, String> map = new HashMap<String, String>();
-                map.put("eFapsAutoCompleteKEY", id.toString());
-                map.put("eFapsAutoCompleteVALUE", name);
-                map.put("eFapsAutoCompleteCHOICE", choice);
+                map.put(EFapsKey.AUTOCOMPLETE_KEY.getKey(), id.toString());
+                map.put(EFapsKey.AUTOCOMPLETE_VALUE.getKey(), name);
+                map.put(EFapsKey.AUTOCOMPLETE_CHOICE.getKey(), choice);
                 map.put("label", name);
                 orderMap.put(choice, map);
             }
@@ -108,6 +112,25 @@ public abstract class TreeView_Base
         final Return retVal = new Return();
         final Map<String, String> map = new HashMap<String, String>();
         retVal.put(ReturnValues.VALUES, map);
+
+        final Instance viewOid = Instance.get(_parameter.getParameterValue("selectedRow"));
+        if (viewOid.isValid()) {
+            final PrintQuery print = new PrintQuery(viewOid);
+            final SelectBuilder selProd = new SelectBuilder().linkto(CIProducts.TreeViewProduct.ProductLink);
+            final SelectBuilder selProdOid = new SelectBuilder(selProd).oid();
+            final SelectBuilder selProdName = new SelectBuilder(selProd).attribute(CIProducts.ProductAbstract.Name);
+            final SelectBuilder selProdDesc = new SelectBuilder(selProd).attribute(
+                            CIProducts.ProductAbstract.Description);
+            print.addSelect(selProdOid, selProdName, selProdDesc);
+            if (print.execute()) {
+                final String oid = print.<String>getSelect(selProdOid);
+                final String name = print.<String>getSelect(selProdName);
+                final String desc = print.<String>getSelect(selProdDesc);
+                map.put(EFapsKey.PICKER_VALUE.getKey(), name);
+                map.put("product", oid);
+                map.put("productDesc", desc);
+            }
+        }
         return retVal;
     }
 }
