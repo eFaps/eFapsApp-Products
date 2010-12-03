@@ -48,6 +48,7 @@
         <property name="TargetMode">view</property>
         <property name="TargetShowCheckBoxes">true</property>
         <property name="TargetStructurBrowserField">label</property>
+        <property name="NoUpdateAfterCOMMAND">true</property>
         <property name="WindowHeight">460</property>
         <property name="WindowWidth">515</property>
     </definition>
