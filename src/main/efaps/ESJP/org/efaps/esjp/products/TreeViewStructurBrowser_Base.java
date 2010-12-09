@@ -20,9 +20,11 @@
 
 package org.efaps.esjp.products;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.efaps.admin.datamodel.Type;
@@ -33,6 +35,7 @@ import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
+import org.efaps.db.AttributeQuery;
 import org.efaps.db.Instance;
 import org.efaps.db.InstanceQuery;
 import org.efaps.db.QueryBuilder;
@@ -40,6 +43,8 @@ import org.efaps.esjp.ci.CIProducts;
 import org.efaps.ui.wicket.models.objects.UIStructurBrowser;
 import org.efaps.ui.wicket.models.objects.UIStructurBrowser.ExecutionStatus;
 import org.efaps.util.EFapsException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * TODO description!
@@ -52,13 +57,18 @@ import org.efaps.util.EFapsException;
 public abstract class TreeViewStructurBrowser_Base
     implements EventExecution
 {
+    /**
+     * Logger for this class.
+     */
+    protected final Logger LOG = LoggerFactory.getLogger(TreeViewStructurBrowser_Base.class);
 
     /**
      * @param _parameter Parameter
      * @throws EFapsException on error
      * @return Return
      */
-    public Return execute(final Parameter _parameter) throws EFapsException
+    public Return execute(final Parameter _parameter)
+        throws EFapsException
     {
         Return ret = null;
 
@@ -67,11 +77,11 @@ public abstract class TreeViewStructurBrowser_Base
         if (status.equals(ExecutionStatus.EXECUTE)) {
             ret = internalExecute(_parameter);
         } else if (status.equals(ExecutionStatus.CHECKFORCHILDREN)) {
-            ret = checkForChildren(_parameter.getInstance());
+            ret = checkForChildren(_parameter);
         } else if (status.equals(ExecutionStatus.ADDCHILDREN)) {
-            ret = addChildren(_parameter.getInstance());
+            ret = addChildren(_parameter);
         } else if (status.equals(ExecutionStatus.SORT)) {
-            ret = sort(strBro);
+            ret = sort(_parameter);
         }
         return ret;
     }
@@ -83,7 +93,8 @@ public abstract class TreeViewStructurBrowser_Base
      * @return Return with instances
      * @throws EFapsException on error
      */
-    private Return internalExecute(final Parameter _parameter) throws EFapsException
+    protected Return internalExecute(final Parameter _parameter)
+        throws EFapsException
     {
         final Return ret = new Return();
         final Map<Instance, Boolean> tree = new LinkedHashMap<Instance, Boolean>();
@@ -106,21 +117,76 @@ public abstract class TreeViewStructurBrowser_Base
      * Method to check if an instance has children. It is used in the tree to
      * determine if a "plus" to open the children must be rendered.
      *
-     * @param _instance Instance to check for children
+     * @param _parameter Parameter as passed from the eFaps API
      * @return Return with true or false
      * @throws EFapsException on error
      */
-    private Return checkForChildren(final Instance _instance)
+    protected Return checkForChildren(final Parameter _parameter)
         throws EFapsException
     {
         final Return ret = new Return();
-        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.TreeViewNode);
-        queryBldr.addWhereAttrEqValue(CIProducts.TreeViewNode.ParentLink, _instance.getId());
-        final InstanceQuery query = queryBldr.getQuery();
-        query.setLimit(1);
-        query.execute();
-        if (query.next()) {
+        final Map<Instance, Boolean> map = getChildren(_parameter, true);
+        if (!map.isEmpty()) {
             ret.put(ReturnValues.TRUE, true);
+        }
+        return ret;
+    }
+
+    /**
+     * @param _parameter    Parameter as passed from the eFaps API
+     * @param _check        check only?
+     * @return map with instances
+     * @throws EFapsException on error
+     */
+    protected Map<Instance, Boolean> getChildren(final Parameter _parameter,
+                                                 final boolean _check)
+        throws EFapsException
+    {
+        final Map<Instance, Boolean> ret = new LinkedHashMap<Instance, Boolean>();
+        final Map<?, ?> properties = (Map<?, ?>) _parameter.get(ParameterValues.PROPERTIES);
+        final String productTypesStr = (String) properties.get("ProductTypes");
+        if (productTypesStr != null && !productTypesStr.isEmpty()) {
+            final String[] productTypes = productTypesStr.split(";");
+            final List<Long> typeIds = new ArrayList<Long>();
+            for (final String productType : productTypes) {
+                typeIds.add(Type.get(productType).getId());
+            }
+            final QueryBuilder attrQueryBldr = new QueryBuilder(CIProducts.ProductAbstract);
+            attrQueryBldr.addWhereAttrEqValue(CIProducts.ProductAbstract.Type, typeIds.toArray());
+            final AttributeQuery attrQuery = attrQueryBldr.getAttributeQuery(CIProducts.ProductAbstract.ID);
+            final QueryBuilder queryBldr = new QueryBuilder(CIProducts.TreeViewProduct);
+            queryBldr.addWhereAttrEqValue(CIProducts.TreeViewProduct.ParentLink, _parameter.getInstance().getId());
+            queryBldr.addWhereAttrInQuery(CIProducts.TreeViewProduct.ProductLink, attrQuery);
+            final InstanceQuery query = queryBldr.getQuery();
+            if (_check) {
+                query.setLimit(1);
+            }
+            query.execute();
+            while (query.next()) {
+                ret.put(query.getCurrentValue(), null);
+            }
+
+            if (!_check || (_check && ret.isEmpty())) {
+                final QueryBuilder queryBldr2 = new QueryBuilder(CIProducts.TreeViewNode);
+                queryBldr2.addWhereAttrEqValue(CIProducts.TreeViewProduct.ParentLink, _parameter.getInstance().getId());
+                queryBldr2.addWhereAttrIsNull(CIProducts.TreeViewProduct.ProductAbstractLink);
+                final InstanceQuery query2 = queryBldr2.getQuery();
+                query2.execute();
+                while (query2.next()) {
+                    ret.put(query2.getCurrentValue(), null);
+                }
+            }
+        } else {
+            final QueryBuilder queryBldr = new QueryBuilder(CIProducts.TreeViewNode);
+            queryBldr.addWhereAttrEqValue(CIProducts.TreeViewNode.ParentLink, _parameter.getInstance().getId());
+            final InstanceQuery query = queryBldr.getQuery();
+            if (_check) {
+                query.setLimit(1);
+            }
+            query.execute();
+            while (query.next()) {
+                ret.put(query.getCurrentValue(), null);
+            }
         }
         return ret;
     }
@@ -129,22 +195,15 @@ public abstract class TreeViewStructurBrowser_Base
      * Method to add the children to an instance. It is used to expand the
      * children of a node in the tree.
      *
-     * @param _instance Instance the children must be retrieved for.
+     * @param _parameter Paraemter as passed from the eFasp API
      * @return Return with instances
      * @throws EFapsException on error
      */
-    private Return addChildren(final Instance _instance)
+    protected Return addChildren(final Parameter _parameter)
         throws EFapsException
     {
         final Return ret = new Return();
-        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.TreeViewNode);
-        queryBldr.addWhereAttrEqValue(CIProducts.TreeViewNode.ParentLink, _instance.getId());
-        final InstanceQuery query = queryBldr.getQuery();
-        query.execute();
-        final Map<Instance, Boolean> map = new LinkedHashMap<Instance, Boolean>();
-        while (query.next()) {
-            map.put(query.getCurrentValue(), null);
-        }
+        final Map<Instance, Boolean> map = getChildren(_parameter, false);
         ret.put(ReturnValues.VALUES, map);
         return ret;
     }
@@ -152,38 +211,37 @@ public abstract class TreeViewStructurBrowser_Base
     /**
      * Method to sort the values of the StructurBrowser.
      *
-     * @param _structurBrowser _sructurBrowser to be sorted
+     * @param _parameter _sructurBrowser to be sorted
      * @return empty Return;
      */
-    private Return sort(final UIStructurBrowser _structurBrowser)
+    protected Return sort(final Parameter _parameter)
     {
-        Collections.sort(_structurBrowser.getChilds(), new Comparator<UIStructurBrowser>() {
+        final UIStructurBrowser strBro = (UIStructurBrowser) _parameter.get(ParameterValues.CLASS);
 
-            public int compare(final UIStructurBrowser _structurBrowser1, final UIStructurBrowser _structurBrowser2)
+        Collections.sort(strBro.getChilds(), new Comparator<UIStructurBrowser>() {
+
+            public int compare(final UIStructurBrowser _structurBrowser1,
+                               final UIStructurBrowser _structurBrowser2)
             {
-
                 final String value1 = getSortString(_structurBrowser1);
                 final String value2 = getSortString(_structurBrowser2);
-
                 return value1.compareTo(value2);
             }
 
-            private String getSortString(final UIStructurBrowser _structurBrowser)
+            protected String getSortString(final UIStructurBrowser _structurBrowser)
             {
                 final StringBuilder ret = new StringBuilder();
-                try {
-                    if (_structurBrowser.getInstance() != null) {
-                        _structurBrowser.getInstance().getType();
+                    try {
+                        if (_structurBrowser.getInstance() != null) {
+                            _structurBrowser.getInstance().getType();
+                        }
+                    } catch (final EFapsException e) {
+                        TreeViewStructurBrowser_Base.this.LOG.error("error during sorting", e);
                     }
-                } catch (final EFapsException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
                 ret.append(_structurBrowser.getLabel());
                 return ret.toString();
             }
         });
         return new Return();
     }
-
 }
