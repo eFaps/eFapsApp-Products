@@ -46,6 +46,9 @@
             <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
             <property name="ModeEdit">NONE</property>
         </field>
+        <field name="createGroup" character="Group">
+            <property name="GroupCount">2</property>
+        </field>
         <field name="creator">
             <property name="SelectAlternateOID">linkto[Creator].oid</property>
             <property name="Attribute">Creator</property>

@@ -63,6 +63,9 @@
                 name="Products_TreeViewProductForm.product4Create.UI_FIELD_AUTOCOMPLETE"
                 event="UI_FIELD_AUTOCOMPLETE"/>
         </field>
+        <field name="createGroup" character="Group">
+            <property name="GroupCount">2</property>
+        </field>
         <field name="creator">
             <property name="SelectAlternateOID">linkto[Creator].oid</property>
             <property name="Attribute">Creator</property>
