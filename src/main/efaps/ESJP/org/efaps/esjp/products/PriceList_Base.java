@@ -30,8 +30,8 @@ import org.efaps.admin.datamodel.Attribute;
 import org.efaps.admin.datamodel.Type;
 import org.efaps.admin.datamodel.ui.FieldValue;
 import org.efaps.admin.event.Parameter;
-import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Parameter.ParameterValues;
+import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
@@ -97,15 +97,21 @@ public abstract class PriceList_Base
         final Map<?, ?> values = (Map<?, ?>) _parameter.get(ParameterValues.NEW_VALUES);
         final Instance costInstance = _parameter.getInstance();
         final Map<String, Object[]> name2Value = new HashMap<String, Object[]>();
+        String typename = null;
         for (final Entry<?, ?> entry : values.entrySet()) {
             final Attribute attr = (Attribute) entry.getKey();
+            if (typename == null) {
+                typename = attr.getParent().getName();
+            }
             name2Value.put(attr.getName(), (Object[]) entry.getValue());
         }
-        final Object from = name2Value.get("ValidFrom")[0];
+        final Object from = name2Value.get(CIProducts.ProductPricelistAbstract.ValidFrom.name)[0];
         final DateTime date = new DateTime(from);
 
         final Map<?, ?> properties = (Map<?, ?>) _parameter.get(ParameterValues.PROPERTIES);
-        final String typename = (String) properties.get("Type");
+        if (properties.containsKey("Type")) {
+            typename = (String) properties.get("Type");
+        }
         final QueryBuilder queryBldr = new QueryBuilder(Type.get(typename));
         queryBldr.addWhereAttrGreaterValue(CIProducts.ProductPricelistAbstract.ValidUntil, date);
         queryBldr.addWhereAttrEqValue(CIProducts.ProductPricelistAbstract.ProductAbstractLink, getProdId(costInstance));
