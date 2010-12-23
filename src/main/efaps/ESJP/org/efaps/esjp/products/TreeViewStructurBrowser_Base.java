@@ -76,6 +76,8 @@ public abstract class TreeViewStructurBrowser_Base
         final ExecutionStatus status = strBro.getExecutionStatus();
         if (status.equals(ExecutionStatus.EXECUTE)) {
             ret = internalExecute(_parameter);
+        } else if (status.equals(ExecutionStatus.ALLOWSCHILDREN)) {
+            ret = allowChildren(_parameter);
         } else if (status.equals(ExecutionStatus.CHECKFORCHILDREN)) {
             ret = checkForChildren(_parameter);
         } else if (status.equals(ExecutionStatus.ADDCHILDREN)) {
@@ -110,6 +112,27 @@ public abstract class TreeViewStructurBrowser_Base
             }
         }
         ret.put(ReturnValues.VALUES, tree);
+        return ret;
+    }
+
+    /**
+     * Method to check if an instance allows children. It is used in the tree to
+     * determine "folder" or an "item" must be rendered and if the checkForChildren
+     * method must be executed.
+     *
+     * @param _parameter Parameter as passed from the eFaps API
+     * @return Return with true or false
+     * @throws EFapsException on error
+     */
+    protected Return allowChildren(final Parameter _parameter)
+    {
+        final Return ret = new Return();
+        final Instance inst = _parameter.getInstance();
+        if (inst != null && inst.isValid()) {
+            if (!inst.getType().isKindOf(CIProducts.TreeViewProduct.getType())) {
+                ret.put(ReturnValues.TRUE, true);
+            }
+        }
         return ret;
     }
 
