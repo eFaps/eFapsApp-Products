@@ -64,6 +64,7 @@
         <type>Products_ProductTextPosition</type>
         <type>Products_ProductPricelistMinRetail</type>
         <type>Products_ProductSalesPartList</type>
+        <type>Products_ProductGeneric</type>
 
         <role>Products_Admin</role>
     </definition>
