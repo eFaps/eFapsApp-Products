@@ -34,7 +34,7 @@
         <name>Products_ProductGenericTree</name>
         <!-- targets -->
         <target>
-            <menu>Products_ProductGenericTree_Menu</menu>
+            <menu>Products_ProductGenericTree_Product_Menu</menu>
             <form>Products_ProductForm</form>
         </target>
         <!-- type tree for -->
