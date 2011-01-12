@@ -71,6 +71,7 @@ public abstract class CalculateInventorySource_Base
     {
         final String storageOid = _parameter.getParameterValue("storage");
         final String dateStr = _parameter.getParameterValue("date");
+        // get a new DateTime from the ISO Date String fomr the Parameters
         final DateTime date = new DateTime(dateStr);
         _jrParameters.put("Storage", _parameter.getParameterValue("storageAutoComplete"));
         _jrParameters.put("Date", date.toDate());
@@ -137,6 +138,7 @@ public abstract class CalculateInventorySource_Base
             final UoM uom = Dimension.get(multiRes.<Long>getAttribute(CIProducts.ProductAbstract.Dimension)).getBaseUoM();
             value.put("UoM", uom.getName());
             value.put("Quantity", actual.get(multiRes.getCurrentInstance().getOid()));
+            value.put("ProductOid", multiRes.getCurrentInstance().getOid());
         }
         Collections.sort(getValues(), new Comparator<Map<String, Object>>(){
             @Override
