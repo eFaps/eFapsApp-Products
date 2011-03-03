@@ -37,9 +37,9 @@
             <menu>Products_ProductTree_Product_Menu</menu>
             <table>Products_Product2ProductTable</table>
             <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
-                <property name="Types">Products_Product2ProductAbstract</property>
-                <property name="LinkFroms">FromAbstract</property>
-                <property name="AlternateAttribute">ToAbstract</property>
+                <property name="Types">Products_Product2ProductAbstract;Products_Product2ProductAbstract</property>
+                <property name="LinkFroms">FromAbstract;ToAbstract</property>
+                <property name="AlternateAttribute">ToAbstract;FromAbstract</property>
             </evaluate>
         </target>
         <!-- properties -->
