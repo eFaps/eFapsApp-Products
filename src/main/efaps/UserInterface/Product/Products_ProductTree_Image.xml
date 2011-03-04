@@ -38,8 +38,12 @@
             <table>Products_Product2ImageTable</table>
             <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
                 <property name="Types">Products_Product2ImageAbstract</property>
-                <property name="LinkFroms">Product</property>
+                <property name="LinkFroms">ProductAbstractLink</property>
             </evaluate>
+            <trigger program="org.efaps.esjp.products.Image"
+                method="access4Image"
+                name="Products_ProductTree_Image.UI_ACCESSCHECK"
+                event="UI_ACCESSCHECK"/>
         </target>
         <!-- properties -->
         <property name="Target">content</property>

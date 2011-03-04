@@ -46,13 +46,13 @@
       <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
     </field>
     <field name="description">
-      <property name="SelectAlternateOID">linkto[Image].oid</property>
-      <property name="Select">linkto[Image].attribute[Description]</property>
+      <property name="SelectAlternateOID">linkto[ImageAbstractLink].oid</property>
+      <property name="Select">linkto[ImageAbstractLink].attribute[Description]</property>
       <property name="Label">Products_Product2ImageTable.description.Label</property>
       <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
     </field>
     <field name="size">
-      <property name="Phrase">$&lt;linkto[Image].attribute[WidthPx]&gt;px x $&lt;linkto[Image].attribute[HeightPx]&gt;px - $&lt;linkto[Image].attribute[FileLength].format[#,###]&gt;</property>
+      <property name="Phrase">$&lt;linkto[ImageAbstractLink].attribute[WidthPx]&gt;px x $&lt;linkto[ImageAbstractLink].attribute[HeightPx]&gt;px - $&lt;linkto[ImageAbstractLink].attribute[FileLength].format[#,###]&gt;</property>
       <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
       <property name="Label">Products_Product2ImageTable.size.Label</property>
     </field>

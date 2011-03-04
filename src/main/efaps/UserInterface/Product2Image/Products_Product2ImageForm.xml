@@ -40,7 +40,7 @@
     </field>
 
     <field name="description">
-      <property name="Select">linkto[Image].attribute[Description]</property>
+      <property name="Select">linkto[ImageAbstractLink].attribute[Description]</property>
     </field>
 
     <field name="caption">
