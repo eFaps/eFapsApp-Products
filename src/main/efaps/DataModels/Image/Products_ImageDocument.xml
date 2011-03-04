@@ -2,7 +2,7 @@
 
 <!--
 
- Copyright 2003 - 2009 The eFaps Team
+ Copyright 2003 - 2011 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -17,39 +17,29 @@
  limitations under the License.
 
  Author:          The eFaps Team
- Revision:        $Rev$
- Last Changed:    $Date$
- Last Changed By: $Author$
+ Revision:        $Rev: 5870 $
+ Last Changed:    $Date: 2010-11-29 09:12:58 -0500 (Mon, 29 Nov 2010) $
+ Last Changed By: $Author: jan@moxter.net $
 
 -->
 
 <datamodel-type  xmlns="http://www.efaps.org/xsd"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>563462aa-3033-4957-97b8-aeaa4d43e660</uuid>
+    <uuid>309bc1cf-23eb-4e49-a0e7-42ceb61f5918</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
+    <file-revision>$Rev: 5870 $</file-revision>
 
     <definition>
-
         <version-expression>(version==latest)</version-expression>
-        <name>Products_Product2ImageOriginal</name>
-        <parent>Products_Product2ImageAbstract</parent>
-
-        <!-- attributes -->
+        <name>Products_ImageDocument</name>
+        <parent>Products_ImageCopy</parent>
         <attribute>
-            <name>ProductLink</name>
-            <type>Link</type>
-            <typelink>Products_ProductAbstract</typelink>
-            <sqltable>Products_Product2ImageSQLTable</sqltable>
-            <sqlcolumn>PRODUCTID</sqlcolumn>
-        </attribute>
-        <attribute>
-            <name>ImageLink</name>
+            <name>OriginalLink</name>
             <type>Link</type>
             <typelink>Products_ImageOriginal</typelink>
-            <sqltable>Products_Product2ImageSQLTable</sqltable>
-            <sqlcolumn>IMAGEID</sqlcolumn>
+            <sqltable>Products_ImageSQLTable</sqltable>
+            <sqlcolumn>ORIGINALID</sqlcolumn>
         </attribute>
     </definition>
 </datamodel-type>

@@ -17,23 +17,23 @@
  limitations under the License.
 
  Author:          The eFaps Team
- Revision:        $Rev$
- Last Changed:    $Date$
- Last Changed By: $Author$
+ Revision:        $Rev: 5870 $
+ Last Changed:    $Date: 2010-11-29 09:12:58 -0500 (Mon, 29 Nov 2010) $
+ Last Changed By: $Author: jan@moxter.net $
 
 -->
 
 <datamodel-type  xmlns="http://www.efaps.org/xsd"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>563462aa-3033-4957-97b8-aeaa4d43e660</uuid>
+    <uuid>7d28d6f8-c74c-47d3-825d-38306f64a2f6</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
+    <file-revision>$Rev: 5870 $</file-revision>
 
     <definition>
 
         <version-expression>(version==latest)</version-expression>
-        <name>Products_Product2ImageOriginal</name>
+        <name>Products_Product2ImageThumbnail</name>
         <parent>Products_Product2ImageAbstract</parent>
 
         <!-- attributes -->

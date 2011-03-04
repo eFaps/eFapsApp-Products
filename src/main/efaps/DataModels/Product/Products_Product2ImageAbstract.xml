@@ -81,14 +81,14 @@
             <sqlcolumn>MODIFIED</sqlcolumn>
         </attribute>
         <attribute>
-            <name>Product</name>
+            <name>ProductAbstractLink</name>
             <type>Link</type>
             <typelink>Products_ProductAbstract</typelink>
             <sqltable>Products_Product2ImageSQLTable</sqltable>
             <sqlcolumn>PRODUCTID</sqlcolumn>
         </attribute>
         <attribute>
-            <name>Image</name>
+            <name>ImageAbstractLink</name>
             <type>Link</type>
             <typelink>Products_ImageAbstract</typelink>
             <sqltable>Products_Product2ImageSQLTable</sqltable>

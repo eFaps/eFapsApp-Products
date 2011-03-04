@@ -2,7 +2,7 @@
 
 <!--
 
- Copyright 2003 - 2009 The eFaps Team
+ Copyright 2003 - 2011 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -27,20 +27,20 @@
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
   <uuid>33520c45-7260-47de-b1cc-0f8e591e946a</uuid>
-  <file-application>eFapsApp-Products</file-application>
-  <file-revision>$Rev$</file-revision>
+    <file-application>eFapsApp-Products</file-application>
+    <file-revision>$Rev$</file-revision>
 
-  <definition>
-    <version-expression>(version==latest)</version-expression>
-    <name>Products_ImageCopy</name>
-    <parent>Products_ImageAbstract</parent>
-    <attribute>
-      <name>Original</name>
-      <type>Link</type>
-      <typelink>Products_ImageOriginal</typelink>
-      <sqltable>Products_ImageSQLTable</sqltable>
-      <sqlcolumn>ORIGINALID</sqlcolumn>
-    </attribute>
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <name>Products_ImageCopy</name>
+        <parent>Products_ImageAbstract</parent>
+        <attribute>
+            <name>OriginalAbstractLink</name>
+            <type>Link</type>
+            <typelink>Products_ImageOriginal</typelink>
+            <sqltable>Products_ImageSQLTable</sqltable>
+            <sqlcolumn>ORIGINALID</sqlcolumn>
+        </attribute>
 
-  </definition>
+    </definition>
 </datamodel-type>

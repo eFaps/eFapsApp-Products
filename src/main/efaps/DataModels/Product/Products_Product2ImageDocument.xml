@@ -26,30 +26,29 @@
 <datamodel-type  xmlns="http://www.efaps.org/xsd"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-  <uuid>8450e376-3332-4dd2-aaef-280d7dd28891</uuid>
-  <file-application>eFapsApp-Products</file-application>
-  <file-revision>$Rev$</file-revision>
+    <uuid>8450e376-3332-4dd2-aaef-280d7dd28891</uuid>
+    <file-application>eFapsApp-Products</file-application>
+    <file-revision>$Rev$</file-revision>
 
-  <definition>
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <name>Products_Product2ImageDocument</name>
+        <parent>Products_Product2ImageAbstract</parent>
 
-    <version-expression>(version==latest)</version-expression>
-    <name>Products_Product2ImageDocument</name>
-    <parent>Products_Product2ImageAbstract</parent>
-
-    <!-- attributes -->
-    <attribute>
-      <name>Product</name>
-      <type>Link</type>
-      <typelink>Products_ProductAbstract</typelink>
-      <sqltable>Products_Product2ImageSQLTable</sqltable>
-      <sqlcolumn>PRODUCTID</sqlcolumn>
-    </attribute>
-    <attribute>
-      <name>Image</name>
-      <type>Link</type>
-      <typelink>Products_ImageAbstract</typelink>
-      <sqltable>Products_Product2ImageSQLTable</sqltable>
-      <sqlcolumn>IMAGEID</sqlcolumn>
-    </attribute>
-  </definition>
+        <!-- attributes -->
+        <attribute>
+            <name>ProductLink</name>
+            <type>Link</type>
+            <typelink>Products_ProductAbstract</typelink>
+            <sqltable>Products_Product2ImageSQLTable</sqltable>
+            <sqlcolumn>PRODUCTID</sqlcolumn>
+        </attribute>
+        <attribute>
+            <name>ImageLink</name>
+            <type>Link</type>
+            <typelink>Products_ImageAbstract</typelink>
+            <sqltable>Products_Product2ImageSQLTable</sqltable>
+            <sqlcolumn>IMAGEID</sqlcolumn>
+        </attribute>
+    </definition>
 </datamodel-type>
