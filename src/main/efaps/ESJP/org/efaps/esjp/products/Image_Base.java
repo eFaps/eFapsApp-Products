@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2009 The eFaps Team
+ * Copyright 2003 - 2011 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,15 +20,16 @@
 
 package org.efaps.esjp.products;
 
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.UUID;
 
 import javax.imageio.ImageIO;
 
@@ -37,6 +38,8 @@ import org.apache.sanselan.ImageInfo;
 import org.apache.sanselan.ImageReadException;
 import org.apache.sanselan.ImageWriteException;
 import org.apache.sanselan.Sanselan;
+import org.efaps.admin.common.SystemConfiguration;
+import org.efaps.admin.datamodel.Type;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
 import org.efaps.admin.event.Return;
@@ -48,17 +51,24 @@ import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
 import org.efaps.admin.ui.field.Field;
 import org.efaps.db.Checkin;
 import org.efaps.db.Context;
+import org.efaps.db.Context.FileParameter;
 import org.efaps.db.Insert;
 import org.efaps.db.Instance;
+import org.efaps.db.InstanceQuery;
+import org.efaps.db.PrintQuery;
+import org.efaps.db.QueryBuilder;
+import org.efaps.db.SelectBuilder;
 import org.efaps.db.Update;
+import org.efaps.esjp.ci.CIProducts;
+import org.efaps.esjp.common.file.FileUtil;
+import org.efaps.esjp.common.file.ImageField;
 import org.efaps.util.EFapsException;
 
 import com.mortennobel.imagescaling.DimensionConstrain;
 import com.mortennobel.imagescaling.ResampleOp;
 
 /**
- * TODO comment!
- * First fast draft for testing purpose only!!!
+ * TODO comment! First fast draft for testing purpose only!!!
  *
  * @author The eFaps Team
  * @version $Id$
@@ -67,7 +77,37 @@ import com.mortennobel.imagescaling.ResampleOp;
 @EFapsRevision("$Rev$")
 public abstract class Image_Base
 {
-    public Return access4OriginalFieldUI(final Parameter _parameter) throws EFapsException
+
+    /**
+     * Access is defined by a SystemConfiguration.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return Return with true if access is granted
+     * @throws EFapsException on error
+     */
+    public Return access4Image(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        // Products-Configuration
+        final SystemConfiguration config = SystemConfiguration.get(
+                        UUID.fromString("e53cd705-e463-47dc-a400-4ace4ed72071"));
+        if (config != null) {
+            if (config.getAttributeValueAsBoolean("ImagesActivated")) {
+                ret.put(ReturnValues.TRUE, true);
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * Grants access to the field used as a link to the original file.
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return Return with true if access is granted
+     * @throws EFapsException on error
+     */
+    public Return access4OriginalFieldUI(final Parameter _parameter)
+        throws EFapsException
     {
         final Return ret = new Return();
         final Instance instance = _parameter.getInstance();
@@ -79,212 +119,317 @@ public abstract class Image_Base
         return ret;
     }
 
-
-    public Return create(final Parameter _parameter) throws EFapsException
+    /**
+     * Grants access to the field used as a link to the original file.
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return Return with true if access is granted
+     * @throws EFapsException on error
+     */
+    public Return getImageFieldValueUI(final Parameter _parameter)
+        throws EFapsException
     {
-        final Insert insert = new Insert("Products_ImageOriginal");
-        insert.add("Description", _parameter.getParameterValue("description4Create"));
-        insert.execute();
-        final Instance instance = insert.getInstance();
-        fileUpload(_parameter, instance);
+        final Map<?, ?> properties = (Map<?, ?>) _parameter.get(ParameterValues.PROPERTIES);
+        final Type type;
+        if (properties.containsKey("RelationType")) {
+            type = Type.get((String) properties.get("RelationType"));
+        } else {
+            type = CIProducts.Product2ImageAbstract.getType();
+        }
+        final QueryBuilder queryBldr = new QueryBuilder(type);
+        queryBldr.addWhereAttrEqValue(CIProducts.Product2ImageAbstract.ProductAbstractLink,
+                        _parameter.getInstance().getId());
+        final InstanceQuery query = queryBldr.getQuery();
+        query.setLimit(1);
+        final List<Instance> res = query.execute();
+        final String imageOid;
+        final String linkOid;
+        if (!res.isEmpty()) {
+            final PrintQuery print = new PrintQuery(res.get(0));
+            final SelectBuilder selImageOid = new SelectBuilder()
+                .linkto(CIProducts.Product2ImageAbstract.ImageAbstractLink).oid();
+            print.addSelect(selImageOid);
+            print.execute();
+            imageOid = print.<String>getSelect(selImageOid);
+            final Instance imageInst = Instance.get(imageOid);
+            if (imageInst.getType().equals(CIProducts.ImageThumbnail.getType())) {
+                final PrintQuery imPrint = new PrintQuery(imageInst);
+                final SelectBuilder selLinkOid = new SelectBuilder()
+                    .linkto(CIProducts.ImageThumbnail.OriginalLink).oid();
+                imPrint.addSelect(selLinkOid);
+                imPrint.execute();
+                linkOid = imPrint.<String>getSelect(selLinkOid);
+            } else {
+                linkOid = imageOid;
+            }
+        } else {
+            linkOid = null;
+            imageOid = null;
+        }
+        Return retVal;
+        if (imageOid != null) {
+            retVal = new ImageField(){
 
-        final Instance parent = _parameter.getInstance();
-        final Insert middle = new Insert("Products_Product2ImageOriginal");
-        middle.add("Product", ((Long) parent.getId()).toString());
-        middle.add("Image", ((Long) instance.getId()).toString());
-        middle.add("Caption", _parameter.getParameterValue("caption"));
-        middle.execute();
+                @Override
+                protected String getImageOid(final Parameter _parameter)
+                    throws EFapsException
+                {
+                    return imageOid ;
+                }
 
+                @Override
+                protected String getTargetOid(final Parameter _parameter)
+                    throws EFapsException
+                {
+                    return linkOid ;
+                }
+
+            }.getViewFieldValueUI(_parameter);
+        } else {
+            retVal = new Return();
+            retVal.put(ReturnValues.SNIPLETT, "");
+        }
+        return retVal;
+    }
+
+
+    /**
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return Return with true if access is granted
+     * @throws EFapsException on error
+     */
+    public Return create(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Instance parentInst = _parameter.getInstance();
+
+        final Instance imageInst = createImage(_parameter, CIProducts.ImageOriginal.getType(), null);
+        connectImage(_parameter, CIProducts.Product2ImageOriginal.getType(), parentInst, imageInst);
+        final FileParameter fileItem = getFileParameter(_parameter);
+        uploadImage(_parameter, imageInst, fileItem);
+        final Properties props = getProperties(_parameter);
+        if (props.containsKey("Image4Doc_Create") && "true".equalsIgnoreCase(props.getProperty("Image4Doc_Create"))) {
+            final int width = Integer.parseInt(props.getProperty("Image4Doc_Width", "250"));
+            final int height = Integer.parseInt(props.getProperty("Image4Doc_Height", "250"));
+            final boolean enlarge = "true".equalsIgnoreCase(props.getProperty("Image4Doc_Enlarge", "false"));
+            final DimensionConstrain dim = DimensionConstrain.createMaxDimension(width, height, !enlarge);
+            final File img = createNewImageFile(_parameter, "Image4Doc_", fileItem, dim);
+            final Instance copyInst = createImage(_parameter, CIProducts.ImageDocument.getType(), imageInst);
+            connectImage(_parameter, CIProducts.Product2ImageDocument.getType(), parentInst, copyInst);
+            uploadImage(_parameter, copyInst, img);
+        }
+        if (props.containsKey("Thumbnail_Create") && "true".equalsIgnoreCase(props.getProperty("Thumbnail_Create"))) {
+            final int width = Integer.parseInt(props.getProperty("Thumbnail_Width", "150"));
+            final int height = Integer.parseInt(props.getProperty("Thumbnail_Height", "150"));
+            final boolean enlarge = "true".equalsIgnoreCase(props.getProperty("Thumbnail_Enlarge", "false"));
+            final DimensionConstrain dim = DimensionConstrain.createMaxDimension(width, height, !enlarge);
+            final File img = createNewImageFile(_parameter, "Thumbnail_", fileItem, dim);
+            final Instance copyInst = createImage(_parameter, CIProducts.ImageThumbnail.getType(), imageInst);
+            connectImage(_parameter, CIProducts.Product2ImageThumbnail.getType(), parentInst, copyInst);
+            uploadImage(_parameter, copyInst, img);
+        }
         return new Return();
     }
 
     /**
-     * Method to upload the file.
-     *
-     * @param _parameter Parameter as passed from the efaps API.
-     * @param _instance Instance of the new object
+     * @param _parameter    Parameter as passed by the eFaps API
+     * @param _prefix       Prefix
+     * @param _fileItem     FileItem the new image will be created from
+     * @param _dim          Dimension of the new image
+     * @throws EFapsException on error
+     * @return new File
+     */
+    @SuppressWarnings("rawtypes")
+    protected File createNewImageFile(final Parameter _parameter,
+                                      final String _prefix,
+                                      final FileParameter _fileItem,
+                                      final DimensionConstrain _dim)
+        throws EFapsException
+    {
+        final File ret;
+        try {
+            final ImageInfo info = Sanselan.getImageInfo(_fileItem.getInputStream(), _fileItem.getName());
+            ret = new FileUtil().getFile(_prefix + _fileItem.getName(), info.getFormat().extension);
+
+            final FileOutputStream os = new FileOutputStream(ret);
+
+            if (info.getFormat().equals(ImageFormat.IMAGE_FORMAT_JPEG)) {
+                final BufferedImage img = ImageIO.read(_fileItem.getInputStream());
+                final ResampleOp resampleOp = new ResampleOp(_dim);
+                final BufferedImage rescaledTomato = resampleOp.filter(img, null);
+                ImageIO.write(rescaledTomato, "jpg", os);
+            } else {
+                final BufferedImage image = Sanselan.getBufferedImage(_fileItem.getInputStream());
+                final ResampleOp resampleOp = new ResampleOp(_dim);
+                // resampleOp.setUnsharpenMask(AdvancedResizeOp.UnsharpenMask.Normal);
+                final BufferedImage rescaledTomato = resampleOp.filter(image, null);
+                Sanselan.writeImage(rescaledTomato, os, info.getFormat(), new HashMap());
+            }
+        } catch (final ImageReadException e) {
+            throw new EFapsException(this.getClass(), "createNewImage", e, _parameter);
+        } catch (final IOException e) {
+            throw new EFapsException(this.getClass(), "createNewImage", e, _parameter);
+        } catch (final ImageWriteException e) {
+            throw new EFapsException(this.getClass(), "createNewImage", e, _parameter);
+        }
+        return ret;
+    }
+
+    /**
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return FileParameter from the context
      * @throws EFapsException on error
      */
-    protected void fileUpload(final Parameter _parameter, final Instance _instance) throws EFapsException
+    protected FileParameter getFileParameter(final Parameter _parameter)
+        throws EFapsException
     {
         final Context context = Context.getThreadContext();
 
         final AbstractCommand command = (AbstractCommand) _parameter.get(ParameterValues.UIOBJECT);
-
+        FileParameter ret = null;
         for (final Field field : command.getTargetForm().getFields()) {
             final String attrName = field.getAttribute();
             if (attrName == null && field.isEditableDisplay(TargetMode.CREATE)) {
-                final Context.FileParameter fileItem = context.getFileParameters().get(field.getName());
+                final FileParameter fileItem = context.getFileParameters().get(field.getName());
                 if (fileItem != null) {
-                    final Checkin checkin = new Checkin(_instance);
-                    try {
-                        checkin.execute(fileItem.getName(), fileItem.getInputStream(), (int) fileItem.getSize());
-
-                        final ImageInfo info = Sanselan.getImageInfo(fileItem.getInputStream(), fileItem.getName());
-
-                        final Update update = new Update(_instance);
-                        update.add("WidthPx", info.getWidth());
-                        update.add("HeightPx", info.getHeight());
-                        update.add("HeightDPI", info.getPhysicalHeightDpi());
-                        update.add("WidthDPI", info.getPhysicalWidthDpi());
-                        update.add("HeightInch", info.getPhysicalHeightInch());
-                        update.add("WidthInch", info.getPhysicalWidthInch());
-                        update.add("NumberOfImages", info.getNumberOfImages());
-                        update.add("Format", info.getFormatName());
-                        update.add("ColorType", info.getColorTypeDescription());
-                        update.execute();
-                        final File temp = File.createTempFile("asda", "." + info.getFormat().extension);
-                        final FileOutputStream os = new FileOutputStream(temp);
-                        final DimensionConstrain dim = DimensionConstrain.createMaxDimension(200, 200, true);
-                        if (info.getFormat().equals(ImageFormat.IMAGE_FORMAT_JPEG)) {
-                            final BufferedImage img = ImageIO.read(fileItem.getInputStream());
-                            final ResampleOp  resampleOp = new ResampleOp(dim);
-                            final BufferedImage rescaledTomato = resampleOp.filter(img, null);
-                            //final BufferedImage img2 = createThumbnail(img, 400);
-                            ImageIO.write(rescaledTomato, "jpg", os);
-                        } else {
-                            final BufferedImage image = Sanselan.getBufferedImage(fileItem.getInputStream());
-                            final ResampleOp  resampleOp = new ResampleOp(dim);
-                            //resampleOp.setUnsharpenMask(AdvancedResizeOp.UnsharpenMask.Normal);
-                            final BufferedImage rescaledTomato = resampleOp.filter(image, null);
-                            Sanselan.writeImage(rescaledTomato, os, info.getFormat(), new HashMap());
-                        }
-                        os.close();
-
-                        addImage(_parameter, _instance, temp);
-
-                    } catch (final IOException e) {
-                        throw new EFapsException(this.getClass(), "execute", e, _parameter);
-                    } catch (final ImageReadException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (final ImageWriteException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
+                    ret = fileItem;
+                    break;
                 }
             }
         }
+        return ret;
     }
 
-    private void addImage(final Parameter _parameter, final Instance _parent, final File _file) throws EFapsException, ImageReadException, IOException {
-        final Insert insert = new Insert("Products_ImageCopy");
-        insert.add("Description", _parameter.getParameterValue("description4Create"));
-        insert.add("Original", _parent.getId());
-        insert.execute();
-        final Instance instance = insert.getInstance();
-        final FileInputStream in = new FileInputStream(_file);
-        final Checkin checkin = new Checkin(instance);
-        checkin.execute(_file.getName(), in, ((Long) _file.length()).intValue());
-
-        final Instance parent = _parameter.getInstance();
-        final Insert middle = new Insert("Products_Product2ImageDocument");
-        middle.add("Product", ((Long) parent.getId()).toString());
-        middle.add("Image", ((Long) instance.getId()).toString());
-        middle.add("Caption", _parameter.getParameterValue("caption"));
-        middle.execute();
-
-
-        final ImageInfo info = Sanselan.getImageInfo(_file);
-
-        final Update update = new Update(instance);
-        update.add("WidthPx", info.getWidth());
-        update.add("HeightPx", info.getHeight());
-        update.add("HeightDPI", info.getPhysicalHeightDpi());
-        update.add("WidthDPI", info.getPhysicalWidthDpi());
-        update.add("HeightInch", info.getPhysicalHeightInch());
-        update.add("WidthInch", info.getPhysicalWidthInch());
-        update.add("NumberOfImages", info.getNumberOfImages());
-        update.add("Format", info.getFormatName());
-        update.add("ColorType", info.getColorTypeDescription());
-        update.execute();
-
-    }
-
-
-    public BufferedImage createThumbnail(final BufferedImage image, final int newSize)
+    /**
+     * @param _parameter    Parameter as passed by the eFaps API
+     * @param _imageInst    Instance the imgae will be check in to
+     * @param _fileItem      file to be checked in
+     * @throws EFapsException on error
+     */
+    protected void uploadImage(final Parameter _parameter,
+                               final Instance _imageInst,
+                               final FileParameter _fileItem)
+        throws EFapsException
     {
-        int width = image.getWidth();
-        int height = image.getHeight();
-
-        final boolean isTranslucent = image.getTransparency() != Transparency.OPAQUE;
-        final boolean isWidthGreater = width > height;
-
-        if (isWidthGreater) {
-            if (newSize >= width) {
-                throw new IllegalArgumentException("newSize must be lower than" + " the image width");
-            }
-        } else if (newSize >= height) {
-            throw new IllegalArgumentException("newSize must be lower than" + " the image height");
-        }
-
-        if (newSize <= 0) {
-            throw new IllegalArgumentException("newSize must" + " be greater than 0");
-        }
-
-        final float ratioWH = (float) width / (float) height;
-        final float ratioHW = (float) height / (float) width;
-
-        BufferedImage thumb = image;
-        BufferedImage temp = null;
-
-        Graphics2D g2 = null;
-
+        final Checkin checkin = new Checkin(_imageInst);
         try {
-            int previousWidth = width;
-            int previousHeight = height;
-
-            do {
-                if (isWidthGreater) {
-                    width /= 2;
-                    if (width < newSize) {
-                        width = newSize;
-                    }
-                    height = (int) (width / ratioWH);
-                } else {
-                    height /= 2;
-                    if (height < newSize) {
-                        height = newSize;
-                    }
-                    width = (int) (height / ratioHW);
-                }
-
-                if (temp == null || isTranslucent) {
-                    if (g2 != null) {
-                        // do not need to wrap with finally
-                        // outer finally block will ensure
-                        // that resources are properly reclaimed
-                        g2.dispose();
-                    }
-                    temp = new BufferedImage(width, height, image.getType());
-                    g2 = temp.createGraphics();
-                    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-                }
-                g2.drawImage(thumb, 0, 0, width, height, 0, 0, previousWidth, previousHeight, null);
-
-                previousWidth = width;
-                previousHeight = height;
-
-                thumb = temp;
-            } while (newSize != (isWidthGreater ? width : height));
-        } finally {
-            g2.dispose();
+            checkin.execute(_fileItem.getName(), _fileItem.getInputStream(), (int) _fileItem.getSize());
+            final ImageInfo info = Sanselan.getImageInfo(_fileItem.getInputStream(), _fileItem.getName());
+            updateImage(_parameter, _imageInst, info);
+        } catch (final IOException e) {
+            throw new EFapsException(this.getClass(), "uploadImage", e, _parameter);
+        } catch (final ImageReadException e) {
+            throw new EFapsException(this.getClass(), "uploadImage", e, _parameter);
         }
+    }
 
-        if (width != thumb.getWidth() || height != thumb.getHeight()) {
-            temp = new BufferedImage(width, height, image.getType());
-            g2 = temp.createGraphics();
 
-            try {
-                g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-                g2.drawImage(thumb, 0, 0, width, height, 0, 0, width, height, null);
-            } finally {
-                g2.dispose();
-            }
-
-            thumb = temp;
+    /**
+     * @param _parameter    Parameter as passed by the eFaps API
+     * @param _imageInst    Instance the imgae will be check in to
+     * @param _file         file to be checked in
+     * @throws EFapsException on error
+     */
+    protected void uploadImage(final Parameter _parameter,
+                               final Instance _imageInst,
+                               final File _file)
+        throws EFapsException
+    {
+        final Checkin checkin = new Checkin(_imageInst);
+        try {
+            final FileInputStream in = new FileInputStream(_file);
+            checkin.execute(_file.getName(), in, ((Long) _file.length()).intValue());
+            final ImageInfo info = Sanselan.getImageInfo(_file);
+            updateImage(_parameter, _imageInst, info);
+        } catch (final IOException e) {
+            throw new EFapsException(this.getClass(), "uploadImage", e, _parameter);
+        } catch (final ImageReadException e) {
+            throw new EFapsException(this.getClass(), "uploadImage", e, _parameter);
         }
+    }
 
-        return thumb;
+
+    /**
+     * @param _parameter    Parameter as passed by the eFaps API
+     * @param _imageInst    instance of the image to be update with the info
+     * @param _info         ImageInfo
+     * @throws EFapsException on error
+     */
+    protected void updateImage(final Parameter _parameter,
+                               final Instance _imageInst,
+                               final ImageInfo _info)
+        throws EFapsException
+    {
+        final Update update = new Update(_imageInst);
+        update.add(CIProducts.ImageAbstract.WidthPx, _info.getWidth());
+        update.add(CIProducts.ImageAbstract.HeightPx, _info.getHeight());
+        update.add(CIProducts.ImageAbstract.HeightDPI, _info.getPhysicalHeightDpi());
+        update.add(CIProducts.ImageAbstract.WidthDPI, _info.getPhysicalWidthDpi());
+        update.add(CIProducts.ImageAbstract.HeightInch, _info.getPhysicalHeightInch());
+        update.add(CIProducts.ImageAbstract.WidthInch, _info.getPhysicalWidthInch());
+        update.add(CIProducts.ImageAbstract.NumberOfImages, _info.getNumberOfImages());
+        update.add(CIProducts.ImageAbstract.Format, _info.getFormatName());
+        update.add(CIProducts.ImageAbstract.ColorType, _info.getColorTypeDescription());
+        update.execute();
+    }
+
+    /**
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return properties for Images
+     * @throws EFapsException on error
+     */
+    protected Properties getProperties(final Parameter _parameter)
+        throws EFapsException
+    {
+        Properties props = null;
+        // Products-Configuration
+        final SystemConfiguration config = SystemConfiguration.get(
+                        UUID.fromString("e53cd705-e463-47dc-a400-4ace4ed72071"));
+        if (config != null) {
+            props = config.getAttributeValueAsProperties("ImagesProperties");
+        }
+        return props;
+    }
+
+    /**
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _type Type of connection
+     * @param _imageInst Instance of the Image to be connected
+     * @param _prodInst instance of the product to connect to
+     * @return instance of newly create connection
+     * @throws EFapsException on error
+     */
+    protected Instance connectImage(final Parameter _parameter,
+                                    final Type _type,
+                                    final Instance _prodInst,
+                                    final Instance _imageInst)
+        throws EFapsException
+    {
+        final Insert insert = new Insert(_type);
+        insert.add(CIProducts.Product2ImageAbstract.ProductAbstractLink, _prodInst.getId());
+        insert.add(CIProducts.Product2ImageAbstract.ImageAbstractLink, _imageInst.getId());
+        insert.add(CIProducts.Product2ImageAbstract.Caption, _parameter.getParameterValue("caption"));
+        insert.execute();
+        return insert.getInstance();
+    }
+
+    /**
+     * @param _parameter    Parameter as passed by the eFaps API
+     * @param _type Type    of image to be created
+     * @param _origInst     Instance of the original file
+     * @return instance of newly create file
+     * @throws EFapsException on error
+     */
+    protected Instance createImage(final Parameter _parameter,
+                                   final Type _type,
+                                   final Instance _origInst)
+        throws EFapsException
+    {
+        final Insert insert = new Insert(_type);
+        insert.add(CIProducts.ImageAbstract.Description, _parameter.getParameterValue("description4Create"));
+        if (_origInst != null && _type.isKindOf(CIProducts.ImageCopy.getType())) {
+            insert.add(CIProducts.ImageCopy.OriginalAbstractLink, _origInst.getId());
+        }
+        insert.execute();
+        return insert.getInstance();
     }
 }
