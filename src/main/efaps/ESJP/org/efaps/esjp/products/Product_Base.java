@@ -341,24 +341,30 @@ public abstract class Product_Base
                     relInsert.add(classType.getRelTypeAttributeName(), typeid);
                     relInsert.execute();
 
-                    final SearchQuery subquery = new SearchQuery();
-                    subquery.setExpand(_instance, subClassType.getName() + "\\" + subClassType.getLinkAttributeName());
+                    final QueryBuilder queryBldr = new QueryBuilder(subClassType);
+                    queryBldr.addWhereAttrEqValue(subClassType.getLinkAttributeName(), _instance.getId());
+                    MultiPrintQuery multi = queryBldr.getPrint();
                     for (final Attribute attr : subClassType.getAttributes().values()) {
-                        subquery.addSelect(attr.getName());
+                        multi.addAttribute(attr);
                     }
-                    subquery.execute();
-                    while (subquery.next()) {
+                    multi.execute();
+                    while (multi.next()) {
                         final Insert subInsert = new Insert(subClassType);
                         subInsert.add(subClassType.getLinkAttributeName(), ret.getId());
                         for (final Attribute attr : subClassType.getAttributes().values()) {
                             if (addAttribute(attr, addedAttributes)
                                             && !subClassType.getLinkAttributeName().equals(attr.getName())) {
-                                subInsert.add(attr, subquery.get(attr.getName()));
+                                Object object = multi.getAttribute(attr);
+                                if (object instanceof Object[]) {
+                                    subInsert.add(attr, (Object[]) object);
+                                } else {
+                                    subInsert.add(attr, object);
+                                }
+
                             }
                         }
                         subInsert.execute();
                     }
-                    subquery.close();
                 }
             }
             relQuery.close();
