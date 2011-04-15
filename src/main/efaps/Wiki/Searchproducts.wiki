@@ -1,0 +1,28 @@
+<wiki:comment>
+@eFapsPackage  org.efaps.wiki.products
+@eFapsUUID     508c924b-5a66-4dea-83d4-a39b5d03fbd8
+@eFapsRevision $Rev: 6408 $
+</wiki:comment>
+
+
+
+
+#summary Buscar moto
+<wiki:toc max_depth="3"/>
+
+----
+
+En este Manual de Usuario usted encontrará toda la información necesaria referente a la inicialización y uso del modulo
+buscar moto, de manera que usted esté informado de todas las funcionalidades de este modulo para que pueda trabajar en
+toda su potencialidad.
+
+Este documento explica:
+
+  * Buscar moto.
+
+==Buscar moto==
+Se visualiza la ventana buscar moto donde encontramos dos campos, en donde debe ingresar información(siempre colocar la
+información con el {{{*}}} al final) o colocar {{{*}}}(visualiza el listado de todas las motos) y entra a la búsqueda de moto
+por medio del botón buscar.
+Ingresa inmediatamente a otra ventana en donde le aparece un listado de motos, ahora usted pondrá seleccionar las motos
+que desea haciendo un check en la casilla de la columna tipo.

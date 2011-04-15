@@ -1,0 +1,276 @@
+<wiki:comment>
+@eFapsPackage  org.efaps.wiki.products
+@eFapsUUID     508c924b-5a66-4dea-83d4-a39b5d03fbd8
+@eFapsRevision $Rev: 6408 $
+</wiki:comment>
+
+
+
+
+#summary Acceso a un producto
+<wiki:toc max_depth="3"/>
+
+----
+
+La información del producto que se muestra en la ventana puede ser editable, ingresando a editar que se encuentra en la
+opción acción y también cuenta con la opción exportar, que le sirve para poder imprimir una o varias hojas con todos los
+datos que se encuentran en el modulo, en dos tipos de formatos PDF o XLS. A continuación se mostrara con mas detalle el
+contenido de este producto.
+
+
+Este documento explica:
+
+  # Lista de precios de venta.
+  # Documentos adjuntos.
+  # Lista de precios mínimos.
+  # Lista de precios de compra.
+  # Costos.
+  # Productos.
+  # Imágenes.
+  # Fabricante/Proveedor.
+  # Transacciones.
+
+==1. Lista de precios de venta==
+El modulo lista de precios de venta contiene lo siguiente:
+
+  * Crear.
+  * Borrar seleccionado.
+  * Exportar.
+
+===Crear===
+Se dirige a la opción acción y entra a crear, donde le muestra la ventana llamada crear nueva lista de precios de venta,
+en ella se visualiza los campos en donde debe ingresar datos, a continuación se le mostrara que campo es obligatorio y
+secundario,
+
+Obligatorio: vigente hasta.
+Secundario: vigente desde.
+
+Importancia:
+1. Colocar los datos obligatorios porque de lo contrario ocurrirá un error.
+2. Para ingresar precio debe realizarlo entrando a la fecha vigente desde, inmediatamente le aparece una tabla llamada
+posición de lista de precios en donde usted se va dirijir a crear que se encuentra en la opción acción, nos aparece una
+ventana en donde solo llenamos el primer campo que es precio y el campo moneda solo lo elegimos.
+
+===Borrar seleccionado===
+Seleccione uno o varios precios de venta, dirigirse a la opción acción y elija borrar seleccionado.
+
+===Exportar===
+Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el modulo, en dos tipos de
+formatos PDF o XLS.
+
+
+==2. Documentos adjuntos==
+El modulo documentos adjuntos contiene lo siguiente:
+
+  * Crear.
+  * Añadir existente.
+  * Desconectar.
+  * Exportar.
+
+===Crear===
+Se dirige a la opción acción y entra a crear, donde le muestra la ventana llamada crear, en ella se visualiza los campos
+en donde debe ingresar datos, a continuación se le mostrara que campo es obligatorio y secundario{{{:}}}
+
+Obligatorio: Descripción.
+Secundario: Subir archivo, podemos subir un archivo por medio del botón examinar.
+
+Importancia: Colocar los datos obligatorios porque de lo contrario ocurrirá un error.
+
+===Añadir existente===
+Se dirige a la opción acción y entra a añadir existente, donde le muestra la ventana llamada crear, en ella se visualiza
+los campos en donde debe ingresar datos, a continuación se le mostrara que campo es obligatorio y secundario{{{:}}}
+
+Obligatorio: Descripción.
+Secundario: Subir archivo. Con el botón examinar nosotros podemos elegir un documento y subirla.
+
+Importancia
+Colocar los datos obligatorios porque de lo contrario ocurrirá un error.
+
+===Desconectar===
+Seleccione uno o varios documentos adjuntos, dirigirse a la opción acción y elija desconectar.
+
+===Exportar===
+Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el modulo, en dos tipos de
+formatos PDF o XLS.
+
+
+==3. Lista de precios mínimos==
+El modulo lista de precios mínimos contiene lo siguiente:
+
+  * Crear.
+  * Borrar seleccionado(s).
+  * Exportar.
+
+===Crear===
+Se dirige a la opción acción y entra a crear, donde le muestra la ventana llamada lista de precios mínimos, en ella se
+visualiza los campos en donde debe ingresar datos, a continuación se le mostrara que campo es obligatorio y secundario{{{:}}}
+
+Obligatorio: Vigente hasta.
+Secundario: Vigente desde.
+
+Importancia:
+1. Colocar los datos obligatorios porque de lo contrario ocurrirá un error.
+2. Para ingresar precio debe realizarlo entrando a la fecha vigente desde, inmediatamente le aparece una tabla llamada
+posición de lista de precios en donde usted se va dirijir a crear que se encuentra en la opción acción, nos aparece una
+ventana en donde solo llenamos el primer campo que es precio y en el campo moneda solo elegimos el tipo de moneda.
+
+===Borrar seleccionado===
+Seleccione uno o varios precios mínimos, dirigirse a la opción acción y elija borrar seleccionado.
+
+===Exportar===
+Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el modulo, en dos tipos de
+formatos PDF o XLS.
+
+
+==4. Lista de precios de compra==
+El modulo lista de precios de compra contiene lo siguiente:
+
+  * Crear.
+  * Borrar seleccionado(s).
+  * Exportar.
+
+===Crear===
+Se dirige a la opción acción y entra a crear, donde le muestra la ventana llamada lista de precios de compra, en ella se
+visualiza los campos en donde debe ingresar datos, a continuación se le mostrara que campo es obligatorio y secundario{{{:}}}
+
+Obligatorio: Vigente hasta.
+Secundario: Vigente desde.
+
+Importancia
+1. Colocar los datos obligatorios porque de lo contrario ocurrirá un error.
+2. Para ingresar precio debe realizarlo entrando a la fecha vigente desde, inmediatamente le aparece una tabla llamada
+posición de lista de precios en donde usted se va dirijir a crear que se encuentra en la opción acción, nos aparece una
+ventana en donde solo llenamos el primer campo que es precio y en el campo moneda solo elegimos el tipo de moneda.
+
+
+===Borrar seleccionado===
+Seleccione uno o varios precios de compra, dirigirse a la opción acción y elija borrar seleccionado.
+
+===Exportar===
+Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el modulo, en dos tipos de
+formatos PDF o XLS.
+
+
+==5. Costos==
+El modulo costos contiene lo siguiente:
+
+  * Crear.
+  * Borrar seleccionado(s).
+  * Exportar.
+
+===Crear===
+Se dirige a la opción acción y entra a crear, donde le muestra la ventana llamada crear nuevo costo de producto, en ella
+se visualiza los campos en donde debe ingresar datos, a continuación se le mostrara que campo es obligatorio y secundario{{{:}}}
+
+Obligatorio: costo, vigente desde y vigente hasta.
+Secundario: moneda, elegir el tipo de moneda.
+
+Importancia
+Colocar los datos obligatorios porque de lo contrario ocurrirá un error.
+
+===Borrar seleccionado===
+Seleccione uno o varios costos, dirigirse a la opción acción y elija borrar seleccionado.
+
+===Exportar===
+Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el modulo, en dos tipos de
+formatos PDF o XLS.
+
+
+==6. Productos==
+El modulo productos contiene lo siguiente:
+
+  * Accesorios.
+  * Desconectar.
+  * Exportar.
+
+===Accesorios===
+Se dirige a la opción acción y entra a accesorios, donde le muestra la ventana llamada buscar accesorios, en ella se
+visualiza los campos en donde debe ingresar información (siempre colocar la información con el * al final) o colocar * a
+los dos campos (visualiza todo el listado de accesorios) y entra a la búsqueda de accesorios por medio del botón buscar.
+Ingresa inmediatamente a otra ventana en donde le aparece un listado de accesorios, ahora usted pondrá seleccionar los
+accesorios que desea haciendo un check en la casilla de la columna tipo.
+
+===Desconectar===
+Seleccione uno o varios productos, dirigirse a la opción acción y elija desconectar.
+
+===Exportar===
+Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el modulo, en dos tipos de
+formatos PDF o XLS.
+
+
+==7. Imágenes==
+El modulo imágenes contiene lo siguiente:
+
+  * Subir.
+  * Añadir existente.
+  * Desconectar.
+  * Exportar.
+
+===Subir===
+Se dirige a la opción acción y entra a subir, donde le muestra la ventana llamada subir nueva imagen, en ella se visualiza
+los campos en donde debe ingresar datos, a continuación se le mostrara que campo es obligatorio y secundario:
+
+Obligatorio: descripción y leyenda.
+Secundario: seleccionar imagen. Con el botón examinar nosotros podemos elegir la imagen y subirla.
+
+Importancia
+Colocar los datos obligatorios porque de lo contrario ocurrirá un error.
+
+===Añadir existente===
+Usted podrá elegir una imagen que ya a sido creada con anterioridad, se dirige a la opción acción y entra a añadir
+existente, donde le muestra la ventana llamada buscar imagen, en ella se visualiza los campos en donde debe ingresar
+información(siempre colocar la información con el {{{*}}} al final) o colocar {{{*}}}(visualiza todo el listado de imágenes) y entra
+a la búsqueda de imágenes por medio del botón buscar.
+Ingresa inmediatamente a otra ventana en donde le aparece un listado de imágenes, ahora usted pondrá seleccionar las
+imágenes que desea haciendo un check en la casilla de la columna tipo.
+
+===Desconectar===
+Seleccione una o varias imágenes, dirigirse a la opción acción y elija desconectar.
+
+===Exportar===
+Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el modulo, en dos tipos de
+formatos PDF o XLS.
+
+
+==8. Fabricante / proveedor==
+El modulo imágenes contiene lo siguiente:
+
+  * Conectar fabricante.
+  * Conectar proveedor.
+  * Desconectar.
+  * Exportar.
+
+===Conectar fabricante===
+Se dirige a la opción acción y entra a conectar fabricante, donde le muestra la ventana llamada buscar contacto, en ella
+se visualiza los campos en donde debe ingresar información(siempre colocar la información con el {{{*}}} al final) o
+colocar {{{*}}}(visualiza todo el listado de fabricantes) y entra a la búsqueda de fabricantes por medio del botón buscar.
+Ingresa inmediatamente a otra ventana en donde le aparece un listado de fabricantes, ahora usted pondrá seleccionar los
+fabricantes que desea haciendo un check en la casilla de la columna tipo.
+
+===Conectar proveedor===
+Se dirige a la opción acción y entra a conectar fabricante, donde le muestra la ventana llamada buscar contacto, en ella
+se visualiza los campos en donde debe ingresar información(siempre colocar la información con el {{{*}}} al final) o
+colocar {{{*}}}(visualiza todo el listado de proveedores) y entra a la búsqueda de proveedores por medio del botón buscar.
+Ingresa inmediatamente a otra ventana en donde le aparece un listado de proveedores, ahora usted pondrá seleccionar los
+proveedores que desea haciendo un check en la casilla de la columna tipo.
+
+===Desconectar===
+Seleccione uno o varios proveedores / fabricantes, dirigirse a la opción acción y elija desconectar.
+
+===Exportar===
+Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el modulo fabricante / proveedor
+en dos tipos de formatos PDF o XLS.
+
+
+==9. Transacciones==
+El modulo imágenes contiene lo siguiente:
+
+  * Exportar.
+
+===Exportar===
+Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el modulo, en dos tipos de
+formatos PDF o XLS.
+
+
+
+

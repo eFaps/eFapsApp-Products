@@ -1,0 +1,174 @@
+<wiki:comment>
+@eFapsPackage  org.efaps.wiki.products
+@eFapsUUID     508c924b-5a66-4dea-83d4-a39b5d03fbd8
+@eFapsRevision $Rev: 6408 $
+</wiki:comment>
+
+
+
+
+#summary Producto
+<wiki:toc max_depth="3"/>
+
+----
+
+En este Manual de Usuario usted encontrará toda la información necesaria referente a la inicialización y uso
+del modulo productos, de manera que usted esté informado de todas las funcionalidades de este modulo para que
+pueda trabajar en toda su potencialidad.
+
+Este documento explica:
+
+  # Crear productos.
+  # Borrar productos seleccionados.
+  # Exportar
+  # Inventario virtual
+  # Inventario
+  # Inventario valorizado
+  # Almacenes
+  # Transacciones
+
+==1. Crear productos==
+Para crear un producto usted debe ingresar a crear que se encuentra en la opción acción.
+La ventana crear nuevo producto, nos da la alternativa de crear a partir de los primeros campos mostrados en
+la ventana o a partir de una clasificación de producto(ingresando a la lupa).
+
+Clasificación de producto: nos muestra una nueva ventana en donde visualizamos un árbol de clasificación, usted
+deberá elegir el tipo de producto que desea y una vez realizada la elección nos muestra los nuevos campos que
+debemos ingresar información.
+
+Importante
+
+Activo: nos muestra dos  opciones, seleccionable es para que el producto aparezca en la lista y activado es para que
+el producto no se pueda visualizar en la lista.
+
+Agregar atributos: ingresar a atributos para que pueda visualizar cuales corresponden a producto y usted mismo pueda
+insertar información.
+
+==2. Borrar productos seleccionados==
+Seleccionamos uno o varios productos haciendo check en las casillas, dirigirse a la opción acción y elija borrar
+productos seleccionados.
+
+==3. Exportar==
+Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el modulo, en dos tipos
+de formatos PDF o XLS.
+
+==4. Inventario virtual==
+El modulo inventario virtual contiene lo siguiente:
+
+  * Exportar
+
+===Exportar===
+Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el modulo, en dos
+tipos de formatos PDF o XLS.
+
+Importante
+
+Columna cantidad: para que un producto ingrese a un almacén, usted debe realizar una transacción entrante y la cantidad
+de esta transacción aparece en la columna cantidad del modulo inventario virtual.
+
+Columna reserva: para que un producto se encuentre en reserva debe realizar una reserva y para que este salga de la
+reserva utilice reserva saliente(véase transacción).
+
+Columna pedido: para que un producto se encuentre en pedido, debemos de crear una orden de compra con este producto y
+además en la columna tipo dirá “En entrega”.
+
+==5. Inventario==
+El modulo inventario contiene lo siguiente:
+
+  * Inventario por fecha.
+  * Exportar.
+
+===Inventario por fecha===
+Debe dirigirse a la opción acción y entrar a inventario por fecha, donde le mostrara una ventana en donde debe
+ingresar los siguientes datos obligatorios fecha del inventario y almacén, además de elegir el tipo de formato
+que desea usted que muestre la hoja al momento de imprimir.
+
+Importante
+Colocar los datos obligatorios porque de lo contrario ocurrirá un error.
+
+===Exportar===
+Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el modulo, en dos
+tipos de formatos PDF o XLS.
+
+Importante
+
+Columna cantidad: para que un producto ingrese a un almacén, usted debe realizar una transacción entrante y la cantidad de
+esta transacción aparece en la columna cantidad del modulo inventario virtual.
+
+Columna reserva: para que un producto se encuentre en reserva debe realizar una reserva y para que este salga de la
+reserva utilice reserva saliente.
+
+
+==6. Inventario valorizado==
+El modulo inventario valorizado contiene lo siguiente:
+
+  * Inventario por fecha.
+  * Exportar.
+
+===Inventario por fecha===
+Debe dirigirse a la opción acción y entrar a inventario por fecha, donde le mostrara una ventana en donde debe
+ingresar los siguientes datos obligatorios fecha del inventario y almacén, además de elegir el tipo de formato
+que desea imprimir la hoja.
+
+===Exportar===
+Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el modulo, en dos
+tipos de formatos PDF o XLS.
+
+Importante
+
+Columna precio, total y moneda: para que el producto tenga precio debemos ingresar al producto y colocar el precio a
+costo(véase Ingreso a un producto), luego el total es resultado de la cantidad con el precio y en moneda muestra el tipo
+de moneda que ha sido elegida.
+
+==7. Almacén==
+El modulo almacén contiene lo siguiente:
+
+  * Crear almacén.
+  * Borrar seleccionado.
+  * Exportar
+
+===Crear almacén===
+Se dirige a la opción acción y entra a crear almacén, donde le muestra la ventana llamada crear nuevo almacén, en ella
+visualiza los campos en donde debe ingresar datos, que son{{{:}}}
+
+Nombre: es el identificador del almacén.
+Descripción: es un concepto mas detallado del almacén.
+
+===Borrar seleccionado===
+Selecciona uno o varios almacenes haciendo check en las casillas, diríjase a la opción acción y elija borrar seleccionado.
+
+===Exportar===
+Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el modulo, en dos tipos de
+formatos PDF o XLS.
+
+==8. Transacciones==
+El modulo transacciones contiene lo siguiente:
+
+  * Crear transacción.
+  * Borrar seleccionado.
+  * Exportar.
+
+===Crear transacción===
+Se dirige a la opción acción y entra a crear, donde le muestra la ventana llamada crear transacción, en ella
+visualiza los campos en donde debe ingresar datos, a continuación se le mostrara que campo es obligatorio y
+secundario,
+
+Obligatorio: tipo, fecha, producto, cantidad, almacén y descripción.
+Secundario: Unidad.
+
+Importante
+
+  # Colocar los datos obligatorios porque de lo contrario ocurrirá un error.
+  # Seleccionar el tipo según la operación que desea realizar. El tipo puede ser reserva saliente, reserva
+entrante, transacción entrante o transacción saliente.
+
+===Borrar seleccionado===
+Selecciona una o varias transacciones haciendo check en las casillas, diríjase a la opción acción y elija
+borrar seleccionado.
+
+===Exportar===
+Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el modulo, en dos
+tipos de formatos PDF o XLS.
+
+
+

@@ -1,0 +1,111 @@
+<wiki:comment>
+@eFapsPackage  org.efaps.wiki.products
+@eFapsUUID     508c924b-5a66-4dea-83d4-a39b5d03fbd8
+@eFapsRevision $Rev: 6408 $
+</wiki:comment>
+
+
+
+
+#summary Acceso a una moto
+<wiki:toc max_depth="3"/>
+
+----
+
+La información de la moto que se muestra en la ventana puede ser editable, ingresando a editar que se encuentra en la
+opción acción y también cuenta con la opción exportar, que le sirve para poder imprimir una o varias hojas con todos los
+datos que se encuentran en el modulo, en dos tipos de formatos PDF o XLS. A continuación se mostrara con mas detalle el
+contenido de esta moto.
+
+Este documento explica:
+
+  # Costos
+  # Productos
+  # Fabricante/Proveedor
+  # Transacciones
+
+==1. Costos==
+El modulo costos contiene lo siguiente:
+
+  * Crear
+  * Borrar seleccionado(s)
+  * Exportar
+
+===Crear===
+Se dirige a la opción acción y entra a crear, donde le muestra la ventana llamada crear nuevo costo de producto, en ella
+se visualiza los campos en donde debe ingresar datos, a continuación se le mostrara que campo es obligatorio y secundario.
+
+Obligatorio: costo, vigente desde y vigente hasta.
+Secundario: moneda.
+
+Importancia: Colocar los datos obligatorios porque de lo contrario ocurrirá un error.
+
+===Borrar seleccionado===
+Seleccione uno o varios costos, dirigirse a la opción acción y elija borrar seleccionado.
+
+===Exportar===
+Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el modulo, en dos tipos de
+formatos PDF o XLS.
+
+==2. Productos==
+El modulo productos contiene lo siguiente:
+
+  * Accesorios
+  * Desconectar
+  * Exportar
+
+===Accesorios===
+Se dirige a la opción acción y entra a accesorios, donde le muestra la ventana llamada buscar accesorios, en ella se
+visualiza los campos en donde debe ingresar información (siempre colocar la información con el{{{*}}} al final) o
+colocar {{{*}}} a los dos campos (visualiza todo el listado de accesorios) y entra a la búsqueda de accesorios por medio
+del botón buscar.
+Ingresa inmediatamente a otra ventana en donde le aparece un listado de accesorios, ahora usted pondrá seleccionar los
+accesorios que desea haciendo un check en la casilla de la columna tipo.
+
+===Desconectar===
+Seleccione uno o varios productos, dirigirse a la opción acción y elija desconectar.
+
+===Exportar===
+Tenemos otra opción en el modulo costos llamado exportar y le sirve para poder imprimir una o varias hojas con todos los
+datos que se encuentran en el modulo, en dos tipos de formatos PDF o XLS.
+
+==3. Fabricante / proveedor==
+El modulo fabricante / proveedor contiene lo siguiente:
+
+  * Conectar fabricante
+  * Conectar proveedor
+  * Desconectar
+  * Exportar
+
+===Conectar fabricante===
+Se dirige a la opción acción y entra a conectar fabricante, donde le muestra la ventana llamada buscar contacto, en ella
+se visualiza los campos en donde debe ingresar información(siempre colocar la información con el {{{*}}} al final) o
+colocar {{{*}}} a todos los campos (visualiza todo el listado de fabricantes) y entra a la búsqueda de fabricantes por
+medio del botón buscar.
+Ingresa inmediatamente a otra ventana en donde le aparece un listado de fabricantes, en donde usted pondrá seleccionar
+los fabricantes que desea haciendo un check en la casilla de la columna tipo.
+
+===Conectar proveedor===
+Se dirige a la opción acción y entra a conectar proveedor, donde le muestra la ventana llamada buscar contacto, en ella
+se visualiza los campos en donde debe ingresar información(siempre colocar la información con el {{{*}}} al final) o
+colocar {{{*}}} a todos los campos (visualiza todo el listado de proveedores) y entra a la búsqueda de proveedores por
+medio del botón buscar.
+Ingresa inmediatamente a otra ventana en donde le aparece un listado de proveedores, en donde usted pondrá seleccionar los
+proveedores que desea haciendo un check en la casilla de la columna tipo.
+
+===Desconectar===
+Seleccione uno o varios proveedores / fabricantes, dirigirse a la opción acción y elija desconectar.
+
+===Exportar===
+Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el modulo, en dos tipos de
+formatos PDF o XLS.
+
+==4. Transacciones==
+El modulo transacciones contiene lo siguiente:
+
+  * Exportar.
+
+===Exportar===
+Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el modulo, en dos tipos de
+formatos PDF o XLS.
+
