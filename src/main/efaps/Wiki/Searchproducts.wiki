@@ -1,6 +1,6 @@
 <wiki:comment>
 @eFapsPackage  org.efaps.wiki.products
-@eFapsUUID     508c924b-5a66-4dea-83d4-a39b5d03fbd8
+@eFapsUUID     74469835-d618-4824-a4cd-6e20cbd2c157
 @eFapsRevision $Rev: 6408 $
 </wiki:comment>
 
