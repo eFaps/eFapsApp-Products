@@ -49,5 +49,9 @@
             <sqltable>Products_BOMSQLTable</sqltable>
             <sqlcolumn>TOID</sqlcolumn>
         </attribute>
+        <trigger program="org.efaps.esjp.products.BOM"
+            method="insertTrigger"
+            name="Products_SalesBOM.INSERT_POST"
+            event="INSERT_POST"/>
     </definition>
 </datamodel-type>

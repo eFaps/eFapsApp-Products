@@ -96,5 +96,12 @@
             <sqlcolumn>QUANTITY</sqlcolumn>
             <defaultvalue>1</defaultvalue>
         </attribute>
+        <attribute>
+            <name>UoM</name>
+            <type>Link</type>
+            <typelink>Admin_DataModel_UoM</typelink>
+            <sqltable>Products_BOMSQLTable</sqltable>
+            <sqlcolumn>UOMID</sqlcolumn>
+        </attribute>
     </definition>
 </datamodel-type>

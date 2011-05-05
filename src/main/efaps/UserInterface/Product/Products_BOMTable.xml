@@ -43,6 +43,12 @@
             <property name="Label">Products_BOMAbstract/Quantity.Label</property>
             <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
         </field>
+        <field name="uom4View">
+            <property name="Width">1</property>
+            <property name="ModeCreate">NONE</property>
+            <property name="Select">linkto[UoM].attribute[Name]</property>
+            <property name="Label">Products_BOMAbstract/UoM.Label</property>
+        </field>
         <field name="toName">
             <property name="SelectAlternateOID">linkto[ToAbstract].oid</property>
             <property name="Select">linkto[ToAbstract].attribute[Name]</property>
