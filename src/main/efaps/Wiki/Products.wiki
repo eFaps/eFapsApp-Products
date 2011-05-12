@@ -13,7 +13,7 @@
 ----
 
 En este Manual de Usuario usted encontrará toda la información necesaria referente a la inicialización y uso
-del modulo productos, de manera que usted esté informado de todas las funcionalidades de este modulo para que
+del menú productos, de manera que usted esté informado de todas las funcionalidades de este menú para que
 pueda trabajar en toda su potencialidad.
 
 Este documento explica:
@@ -41,24 +41,27 @@ Importante
 Activo: nos muestra dos  opciones, seleccionable es para que el producto aparezca en la lista y activado es para que
 el producto no se pueda visualizar en la lista.
 
-Agregar atributos: ingresar a atributos para que pueda visualizar cuales corresponden a producto y usted mismo pueda
+Agregar atributos: ingresar a [http://localhost:8080/intimotors/servlet/help/org.efaps.wiki.sales.Administration.wiki#2.1_Atributos atributos] para que pueda visualizar cuales corresponden a producto y usted mismo pueda
 insertar información.
+
 
 ==2. Borrar productos seleccionados==
 Seleccionamos uno o varios productos haciendo check en las casillas, dirigirse a la opción acción y elija borrar
 productos seleccionados.
 
+
 ==3. Exportar==
-Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el modulo, en dos tipos
+Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el menú, en dos tipos
 de formatos PDF o XLS.
 
+
 ==4. Inventario virtual==
-El modulo inventario virtual contiene lo siguiente:
+El menú inventario virtual contiene lo siguiente:
 
   * Exportar
 
 ===Exportar===
-Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el modulo, en dos
+Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el menú, en dos
 tipos de formatos PDF o XLS.
 
 Importante
@@ -72,8 +75,9 @@ reserva utilice reserva saliente(véase transacción).
 Columna pedido: para que un producto se encuentre en pedido, debemos de crear una orden de compra con este producto y
 además en la columna tipo dirá “En entrega”.
 
+
 ==5. Inventario==
-El modulo inventario contiene lo siguiente:
+El menú inventario contiene lo siguiente:
 
   * Inventario por fecha.
   * Exportar.
@@ -87,7 +91,7 @@ Importante
 Colocar los datos obligatorios porque de lo contrario ocurrirá un error.
 
 ===Exportar===
-Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el modulo, en dos
+Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el menú, en dos
 tipos de formatos PDF o XLS.
 
 Importante
@@ -117,8 +121,9 @@ tipos de formatos PDF o XLS.
 Importante
 
 Columna precio, total y moneda: para que el producto tenga precio debemos ingresar al producto y colocar el precio a
-costo(véase Ingreso a un producto), luego el total es resultado de la cantidad con el precio y en moneda muestra el tipo
+costo(véase [http://localhost:8080/intimotors/servlet/help/org.efaps.wiki.products.Showproducts.wiki Acceso a un producto]), luego el total es resultado de la cantidad con el precio y en moneda muestra el tipo
 de moneda que ha sido elegida.
+
 
 ==7. Almacén==
 El modulo almacén contiene lo siguiente:
@@ -132,6 +137,7 @@ Se dirige a la opción acción y entra a crear almacén, donde le muestra la ven
 visualiza los campos en donde debe ingresar datos, que son{{{:}}}
 
 Nombre: es el identificador del almacén.
+
 Descripción: es un concepto mas detallado del almacén.
 
 ===Borrar seleccionado===
@@ -140,6 +146,7 @@ Selecciona uno o varios almacenes haciendo check en las casillas, diríjase a la
 ===Exportar===
 Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el modulo, en dos tipos de
 formatos PDF o XLS.
+
 
 ==8. Transacciones==
 El modulo transacciones contiene lo siguiente:
@@ -154,6 +161,7 @@ visualiza los campos en donde debe ingresar datos, a continuación se le mostrar
 secundario,
 
 Obligatorio: tipo, fecha, producto, cantidad, almacén y descripción.
+
 Secundario: Unidad.
 
 Importante

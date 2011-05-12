@@ -31,10 +31,12 @@
             <wiki>org.efaps.wiki.products.Products.wiki</wiki>
         </target>
          <childs>
+        <child>Bikesprovider_Products</child>
         <child>Reservations_Products</child>
         <child>Registeredmotorcycles_Products</child>
         <child>Searchproducts_Products</child>
         <child>Showproducts_Products</child>
+        <child>Pricelist_Products</child>
         </childs>
          </definition>
 </help-menu>

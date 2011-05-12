@@ -14,7 +14,7 @@
 
 La información de la moto que se muestra en la ventana puede ser editable, ingresando a editar que se encuentra en la
 opción acción y también cuenta con la opción exportar, que le sirve para poder imprimir una o varias hojas con todos los
-datos que se encuentran en el modulo, en dos tipos de formatos PDF o XLS. A continuación se mostrara con mas detalle el
+datos que se encuentran en el menú, en dos tipos de formatos PDF o XLS. A continuación se mostrara con mas detalle el
 contenido de esta moto.
 
 Este documento explica:
@@ -25,7 +25,7 @@ Este documento explica:
   # Transacciones
 
 ==1. Costos==
-El modulo costos contiene lo siguiente:
+El menú costos contiene lo siguiente:
 
   * Crear
   * Borrar seleccionado(s)
@@ -36,6 +36,7 @@ Se dirige a la opción acción y entra a crear, donde le muestra la ventana llam
 se visualiza los campos en donde debe ingresar datos, a continuación se le mostrara que campo es obligatorio y secundario.
 
 Obligatorio: costo, vigente desde y vigente hasta.
+
 Secundario: moneda.
 
 Importancia: Colocar los datos obligatorios porque de lo contrario ocurrirá un error.
@@ -44,8 +45,9 @@ Importancia: Colocar los datos obligatorios porque de lo contrario ocurrirá un 
 Seleccione uno o varios costos, dirigirse a la opción acción y elija borrar seleccionado.
 
 ===Exportar===
-Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el modulo, en dos tipos de
+Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el menú, en dos tipos de
 formatos PDF o XLS.
+
 
 ==2. Productos==
 El modulo productos contiene lo siguiente:
@@ -67,7 +69,8 @@ Seleccione uno o varios productos, dirigirse a la opción acción y elija descon
 
 ===Exportar===
 Tenemos otra opción en el modulo costos llamado exportar y le sirve para poder imprimir una o varias hojas con todos los
-datos que se encuentran en el modulo, en dos tipos de formatos PDF o XLS.
+datos que se encuentran en el menú, en dos tipos de formatos PDF o XLS.
+
 
 ==3. Fabricante / proveedor==
 El modulo fabricante / proveedor contiene lo siguiente:
@@ -97,15 +100,16 @@ proveedores que desea haciendo un check en la casilla de la columna tipo.
 Seleccione uno o varios proveedores / fabricantes, dirigirse a la opción acción y elija desconectar.
 
 ===Exportar===
-Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el modulo, en dos tipos de
+Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el menú, en dos tipos de
 formatos PDF o XLS.
 
+
 ==4. Transacciones==
-El modulo transacciones contiene lo siguiente:
+Aqui se visualiza todas las transacciones entrantes y salientes de la moto, a continuación veremos lo que contiene:
 
   * Exportar.
 
 ===Exportar===
-Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el modulo, en dos tipos de
+Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el menú, en dos tipos de
 formatos PDF o XLS.
 
