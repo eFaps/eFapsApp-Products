@@ -7,7 +7,7 @@
 
 
 
-#summary Acceso a un producto
+#summary Lista de precios
 <wiki:toc max_depth="3"/>
 
 ----
@@ -15,7 +15,7 @@
 En este Manual de Usuario usted encontrará toda la información necesaria referente a la inicialización y uso del menú
 Lista de precios, de manera que usted esté informado de todas las funcionalidades de este menú para que pueda trabajar
 en toda su potencialidad.
-Este modulo nos muestra la lista de precios de venta de los productos.
+Este menú nos muestra la lista de precios de venta de los productos.
 
 Este documento explica:
 

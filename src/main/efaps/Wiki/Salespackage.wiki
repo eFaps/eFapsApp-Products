@@ -1,0 +1,111 @@
+<wiki:comment>
+@eFapsPackage  org.efaps.wiki.products
+@eFapsUUID     6b84ec1e-562a-4eba-b8b9-a5b8932f63d3
+@eFapsRevision $Rev: 6408 $
+</wiki:comment>
+
+
+
+
+#summary Paquetes de venta
+<wiki:toc max_depth="3"/>
+
+----
+
+En este Manual de Usuario usted encontrará toda la información necesaria referente a la inicialización y uso del menú
+paquetes de venta, de manera que usted esté informado de todas las funcionalidades de este menú para que pueda trabajar
+en toda su potencialidad.
+Paquetes de venta son los productos que no se encuentran en stock.
+
+Este documento explica:
+
+  # Paquetes de venta producto.
+  # Paquetes de venta inventario
+
+==1 Paquetes de venta producto==
+En este menú veremos los siguientes puntos:
+
+  * 1.1 Crear paquete de venta
+  * 1.2 Crear servicio
+  * 1.3 Crear nueva posición de texto
+  * 1.4 Crear producto genérico
+  * 1.5 Borrar productos seleccionados
+  * 1.6 Exportar
+
+===1.1 Crear paquete de venta===
+Para crear un paquete usted debe ingresar a crear paquete de venta que se encuentra en la opción acción.
+La ventana crear nuevo paquete de venta, nos brinda la alternativa de crear a partir de los primeros campos mostrados en
+la ventana o a partir de una clasificación de producto(ingresando a la lupa).
+
+Clasificación de producto: nos muestra una nueva ventana en donde visualizamos un árbol de clasificación, usted deberá
+elegir el tipo de producto que desea y una vez realizada la elección nos muestra los nuevos campos obligatorios y
+secundarios que debemos ingresar información,
+
+Obligatorio:
+  * Nombre: es el código con el cual se va identificar a este producto(ingresar solo numero).
+  * Descripción: es la información principal detallada del producto.
+  * Unidad de venta: es la cantidad que viene del producto.
+
+Secundario:
+  * Dimensión: esta relacionado con el producto que ingresa.
+  * Categoría de impuesto: se puede colocar  VAT(IGV) o TaxFree(sin IGV).
+  * Activo: se coloca TRUE para que se visualice en la lista o FALSE para que no se visualice.
+
+===1.2 Crear servicio===
+Para crear un servicio usted debe ingresar a crear servicio que se encuentra en la opción acción.
+La ventana crear nuevo servicio, nos brinda la alternativa de crear a partir de los primeros campos mostrados en
+la ventana o a partir de una clasificación de producto(ingresando a la lupa).
+
+Clasificación de producto: nos muestra una nueva ventana en donde visualizamos un árbol de clasificación, usted deberá
+elegir el tipo de producto que desea y una vez realizada la elección nos muestra los nuevos campos obligatorios y
+secundarios que debemos ingresar información,
+
+Obligatorio:
+  * Nombre: es el código con el cual se va identificar a este producto(ingresar solo numero).
+  * Descripción: es la información principal detallada del producto.
+  * Unidad de venta: es la cantidad que viene del producto.
+
+Secundario:
+  * Dimensión: esta relacionado con el producto que ingresa.
+  * Categoría de impuesto: se puede colocar  VAT(IGV) o TaxFree(sin IGV).
+  * Activo: se coloca TRUE para que se visualice en la lista o FALSE para que no se visualice.
+
+===1.3 Crear nueva posición de texto===
+La posición de texto nos va ayudar a poder modificar la descripción, es decir cuando auntocompletamos en algun formulario con este producto, los datos
+que nos va aparecer son los que ingresamos al crear el producto, pero podemos sobre escribir en la descripción cambiando
+el texto sin necesidad de entrar al producto y editarlo. Para crear una posición de texto usted debe ingresar a crear nueva posición de texto que se encuentra en la opción acción.
+La ventana crear nueva posición de texto, nos brinda la alternativa de crear a partir de los primeros campos mostrados en
+la ventana o a partir de una clasificación de producto(ingresando a la lupa).
+
+Clasificación de producto: nos muestra una nueva ventana en donde visualizamos un árbol de clasificación, usted deberá
+elegir el tipo de producto que desea y una vez realizada la elección nos muestra los nuevos campos obligatorios y
+secundarios que debemos ingresar información,
+
+Obligatorio:
+  * Nombre: es el código con el cual se va identificar a este producto(ingresar solo numero).
+  * Descripción: es la información principal detallada del producto.
+  * Unidad de venta: es la cantidad que viene del producto.
+
+Secundario:
+  * Dimensión: esta relacionado con el producto que ingresa.
+  * Categoría de impuesto: se puede colocar  VAT(IGV) o TaxFree(sin IGV).
+  * Activo: se coloca TRUE para que se visualice en la lista o FALSE para que no se visualice.
+
+===1.4 Crear producto genérico===
+Para crear un producto generico usted debe ingresar a crear producto generico que se encuentra en la opción acción.
+La ventana crear producto generico, nos brinda la alternativa de crear a partir de los primeros campos mostrados en
+la ventana o a partir de una clasificación de producto(ingresando a la lupa).
+
+Clasificación de producto: nos muestra una nueva ventana en donde visualizamos un árbol de clasificación, usted deberá
+elegir el tipo de producto que desea y una vez realizada la elección nos muestra los nuevos campos obligatorios y
+secundarios que debemos ingresar información,
+
+Obligatorio:
+  * Nombre: es el código con el cual se va identificar a este producto(ingresar solo numero).
+  * Descripción: es la información principal detallada del producto.
+  * Unidad de venta: es la cantidad que viene del producto.
+
+Secundario:
+  * Dimensión: esta relacionado con el producto que ingresa.
+  * Categoría de impuesto: se puede colocar  VAT(IGV) o TaxFree(sin IGV).
+  * Activo: se coloca TRUE para que se visualice en la lista o FALSE para que no se visualice.

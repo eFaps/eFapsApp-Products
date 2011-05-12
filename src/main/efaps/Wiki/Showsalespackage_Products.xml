@@ -19,16 +19,18 @@
   Last Changed:    $Date: 2011-04-06 16:30:27 -0500 (mié, 06 abr 2011) $
   Last Changed By: $Author: melissa.rojas@moxter.net $
 
---><help-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>a141ffbf-9dc8-4177-8afa-7dc551985759</uuid>
+--><help-menu xmlns="http://www.efaps.org/xsd"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>5d2d4268-c6d9-41b4-9872-70d354547bc4</uuid>
     <file-application>eFaps-Kernel</file-application>
     <file-revision>$Rev: 6408 $</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Searchproducts_Products</name>
+        <name>Showsalespackage_Products</name>
         <!-- targets -->
         <target>
-            <wiki>org.efaps.wiki.products.Searchproducts.wiki</wiki>
+            <wiki>org.efaps.wiki.products.Showsalespackage.wiki</wiki>
         </target>
-         </definition>
+    </definition>
 </help-menu>

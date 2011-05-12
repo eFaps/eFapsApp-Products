@@ -18,7 +18,10 @@ pueda trabajar en toda su potencialidad.
 
 Este documento explica:
 
-  # Crear productos.
+  # Crear
+  # Crear nuevo componente.
+  # Crear nueva materia prima.
+  # Crear producto individual.
   # Borrar productos seleccionados.
   # Exportar
   # Inventario virtual
@@ -27,9 +30,9 @@ Este documento explica:
   # Almacenes
   # Transacciones
 
-==1. Crear productos==
+==1. Crear ==
 Para crear un producto usted debe ingresar a crear que se encuentra en la opción acción.
-La ventana crear nuevo producto, nos da la alternativa de crear a partir de los primeros campos mostrados en
+La ventana crear nuevo producto, nos brinda la alternativa de crear a partir de los primeros campos mostrados en
 la ventana o a partir de una clasificación de producto(ingresando a la lupa).
 
 Clasificación de producto: nos muestra una nueva ventana en donde visualizamos un árbol de clasificación, usted
@@ -38,51 +41,90 @@ debemos ingresar información.
 
 Importante
 
-Activo: nos muestra dos  opciones, seleccionable es para que el producto aparezca en la lista y activado es para que
+Activo: nos muestra dos opciones las cuales son, seleccionable es para que el producto aparezca en la lista y desactivado es para que
 el producto no se pueda visualizar en la lista.
 
-Agregar atributos: ingresar a [http://localhost:8080/intimotors/servlet/help/org.efaps.wiki.sales.Administration.wiki#2.1_Atributos atributos] para que pueda visualizar cuales corresponden a producto y usted mismo pueda
+Agregar atributos: ingresar a [http://localhost:8080/mn/servlet/help/org.efaps.wiki.sales.Administration.wiki#2.1_Atributos atributos] para que pueda visualizar cuales corresponden a producto y usted mismo pueda
 insertar información.
 
 
-==2. Borrar productos seleccionados==
+==2. Crear nuevo componente ==
+Para crear un nuevo componente debe de ingresar acción y elegir crear nuevo componente, inmediatamente le aparecerá la
+ventana crear nuevo componente en donde le mostrara los campos que son obligatorios y secundarios:
+
+Obligatorio:
+  * Nª de serie: es el código del producto con el cual se va identificar.
+  * Descripción: es la la información principal detallada del producto.
+
+Secundario:
+  * Dimensión: seleccionar el tipo de dimensión según el producto que se esta ingresando.
+  * Activo: es para que el producto aparezca en la lista o no, para ello deberá elegir TRUE si desea que aparezca y FALSE si no desea que aparezca.
+
+
+==3. Crear nueva materia prima ==
+Para crear el producto usted debe ingresar a crear que se encuentra en la opción acción.
+La ventana crear nueva materia prima, nos brinda la alternativa de crear a partir de los primeros campos mostrados en la
+ventana o a partir de una clasificación de producto(ingresando a la lupa).
+
+Clasificación de producto: nos muestra una nueva ventana en donde visualizamos un árbol de clasificación, usted deberá
+elegir el tipo de producto que desea y una vez realizada la elección nos muestra los nuevos campos obligatorios y
+secundarios que debemos ingresar información.
+
+Obligatorio:
+  * Nombre: es el código con el cual se va identificar a este producto(ingresar solo numero).
+  * Descripción: es la información principal detallada del producto.
+  * Unidad de venta: es la cantidad que viene del producto.
+
+Secundario:
+  * Dimensión: va relacionado con el producto que ingresa.
+  * Categoría de impuesto: se puede colocar  VAT(IGV) o TaxFree(sin IGV).
+  * Activo: se coloca TRUE para que se visualice en la lista o FALSE para que no se visualice.
+
+
+==4. Crear producto individual ==
+Para crear el producto debe dirigirse a acción y elegir crear producto individual, inmediatamente se le mostrara la
+ventana crear producto individual en donde debe ingresar la siguiente información en los campos:
+
+  * Producto: colocar el nombre del producto.
+  * Nº: colocar el código que identifique al producto.
+  * Almacén: seleccionar el almacén. Para crear un almacén debe dirigirse al menú [Almacén#Almacén].
+
+
+==5. Borrar productos seleccionados==
 Seleccionamos uno o varios productos haciendo check en las casillas, dirigirse a la opción acción y elija borrar
 productos seleccionados.
 
 
-==3. Exportar==
+==6. Exportar==
 Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el menú, en dos tipos
 de formatos PDF o XLS.
 
 
-==4. Inventario virtual==
+==7. Inventario virtual==
 El menú inventario virtual contiene lo siguiente:
 
-  * Exportar
+  * 7.1. Exportar
 
-===Exportar===
+===7.1 Exportar===
 Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el menú, en dos
 tipos de formatos PDF o XLS.
 
 Importante
 
 Columna cantidad: para que un producto ingrese a un almacén, usted debe realizar una transacción entrante y la cantidad
-de esta transacción aparece en la columna cantidad del modulo inventario virtual.
-
-Columna reserva: para que un producto se encuentre en reserva debe realizar una reserva y para que este salga de la
-reserva utilice reserva saliente(véase transacción).
+de esta transacción aparece en la columna cantidad del menú inventario virtual.
 
 Columna pedido: para que un producto se encuentre en pedido, debemos de crear una orden de compra con este producto y
 además en la columna tipo dirá “En entrega”.
 
 
-==5. Inventario==
+==8. Inventario==
 El menú inventario contiene lo siguiente:
 
-  * Inventario por fecha.
-  * Exportar.
+  * 8.1 Inventario por fecha.
+  * 8.2 Exportar.
 
-===Inventario por fecha===
+===8.1 Inventario por fecha===
 Debe dirigirse a la opción acción y entrar a inventario por fecha, donde le mostrara una ventana en donde debe
 ingresar los siguientes datos obligatorios fecha del inventario y almacén, además de elegir el tipo de formato
 que desea usted que muestre la hoja al momento de imprimir.
@@ -90,7 +132,7 @@ que desea usted que muestre la hoja al momento de imprimir.
 Importante
 Colocar los datos obligatorios porque de lo contrario ocurrirá un error.
 
-===Exportar===
+===8.2 Exportar===
 Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el menú, en dos
 tipos de formatos PDF o XLS.
 
@@ -103,79 +145,76 @@ Columna reserva: para que un producto se encuentre en reserva debe realizar una 
 reserva utilice reserva saliente.
 
 
-==6. Inventario valorizado==
-El modulo inventario valorizado contiene lo siguiente:
+==9. Inventario valorizado==
+El menú inventario valorizado contiene lo siguiente:
 
-  * Inventario por fecha.
-  * Exportar.
+  * 9.1 Inventario por fecha.
+  * 9.2 Exportar.
 
-===Inventario por fecha===
+===9.1 Inventario por fecha===
 Debe dirigirse a la opción acción y entrar a inventario por fecha, donde le mostrara una ventana en donde debe
 ingresar los siguientes datos obligatorios fecha del inventario y almacén, además de elegir el tipo de formato
 que desea imprimir la hoja.
 
-===Exportar===
-Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el modulo, en dos
+===9.2 Exportar===
+Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el menú, en dos
 tipos de formatos PDF o XLS.
 
 Importante
 
 Columna precio, total y moneda: para que el producto tenga precio debemos ingresar al producto y colocar el precio a
-costo(véase [http://localhost:8080/intimotors/servlet/help/org.efaps.wiki.products.Showproducts.wiki Acceso a un producto]), luego el total es resultado de la cantidad con el precio y en moneda muestra el tipo
+costo(véase [http://localhost:8080/mn/servlet/help/org.efaps.wiki.products.Showproducts.wiki Acceso a un producto]), luego el total es resultado de la cantidad con el precio y en moneda muestra el tipo
 de moneda que ha sido elegida.
 
 
-==7. Almacén==
-El modulo almacén contiene lo siguiente:
+==10. Almacén==
+El menú almacén contiene lo siguiente:
 
-  * Crear almacén.
-  * Borrar seleccionado.
-  * Exportar
+  * 10.1 Crear almacén.
+  * 10.2 Borrar seleccionado.
+  * 10.3 Exportar
 
-===Crear almacén===
+===10.1 Crear almacén===
 Se dirige a la opción acción y entra a crear almacén, donde le muestra la ventana llamada crear nuevo almacén, en ella
-visualiza los campos en donde debe ingresar datos, que son{{{:}}}
+visualiza los campos en donde debe ingresar datos, que son:
 
-Nombre: es el identificador del almacén.
+  * Nombre: es el identificador del almacén.
+  * Descripción: es un concepto mas detallado del almacén.
 
-Descripción: es un concepto mas detallado del almacén.
-
-===Borrar seleccionado===
+===10.2 Borrar seleccionado===
 Selecciona uno o varios almacenes haciendo check en las casillas, diríjase a la opción acción y elija borrar seleccionado.
 
-===Exportar===
-Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el modulo, en dos tipos de
+===10.3 Exportar===
+Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el menú, en dos tipos de
 formatos PDF o XLS.
 
 
-==8. Transacciones==
-El modulo transacciones contiene lo siguiente:
+==11. Transacciones==
+El menú transacciones contiene lo siguiente:
 
-  * Crear transacción.
-  * Borrar seleccionado.
-  * Exportar.
+  * 11.1 Crear transacción.
+  * 11.2 Borrar seleccionado.
+  * 11.3 Exportar.
 
-===Crear transacción===
+===11.1 Crear transacción===
 Se dirige a la opción acción y entra a crear, donde le muestra la ventana llamada crear transacción, en ella
 visualiza los campos en donde debe ingresar datos, a continuación se le mostrara que campo es obligatorio y
 secundario,
 
-Obligatorio: tipo, fecha, producto, cantidad, almacén y descripción.
-
-Secundario: Unidad.
+  * Obligatorio: tipo, fecha, producto, cantidad, almacén y descripción.
+  * Secundario: Unidad.
 
 Importante
 
   # Colocar los datos obligatorios porque de lo contrario ocurrirá un error.
-  # Seleccionar el tipo según la operación que desea realizar. El tipo puede ser reserva saliente, reserva
-entrante, transacción entrante o transacción saliente.
+  # Seleccionar el tipo según la operación que desea realizar. El tipo puede ser reserva saliente, reserva entrante, transacción entrante o transacción saliente.
 
-===Borrar seleccionado===
+===11.2 Borrar seleccionado===
 Selecciona una o varias transacciones haciendo check en las casillas, diríjase a la opción acción y elija
 borrar seleccionado.
 
-===Exportar===
-Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el modulo, en dos
+===11.3 Exportar===
+Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el menú, en dos
 tipos de formatos PDF o XLS.
 
 
