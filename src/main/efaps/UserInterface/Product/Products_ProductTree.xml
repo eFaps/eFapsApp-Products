@@ -36,6 +36,7 @@
         <target>
             <menu>Products_ProductTree_Menu</menu>
             <form>Products_ProductForm</form>
+            <help>org.efaps.wiki.products.Showproducts.wiki</help>
         </target>
         <!-- type tree for -->
         <type>Products_StockProductAbstract</type>

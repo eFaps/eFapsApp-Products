@@ -84,7 +84,7 @@
         update.add2Menu("0ecba961-c0bf-48b8-93a5-4d098bc0c022", "6de1b9bb-6a03-4c3b-82dd-363fde0aea0a", -1);
 
         <!-- Products_Products, Admin_Help_MainMenu -->
-            update.add2Help("8e74046b-28cd-4079-bac4-5cf0a04f47e5", "dead549e-5cc6-49f9-9a79-8e33aa139f6d", -1);
+        update.add2Help("8e74046b-28cd-4079-bac4-5cf0a04f47e5", "dead549e-5cc6-49f9-9a79-8e33aa139f6d", -1);
 
      </script>
     </version>

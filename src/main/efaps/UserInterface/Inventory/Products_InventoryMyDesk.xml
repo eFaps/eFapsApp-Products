@@ -43,6 +43,7 @@
             <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
                 <property name="Types">Products_Inventory</property>
             </evaluate>
+            <help>org.efaps.wiki.products.Products.wiki</help>
         </target>
 
         <!-- properties -->

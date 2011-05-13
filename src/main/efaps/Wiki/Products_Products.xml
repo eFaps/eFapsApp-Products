@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
 
   Copyright 2003 - 2010 The eFaps Team
 
@@ -19,11 +20,12 @@
   Last Changed:    $Date: 2011-04-06 16:30:27 -0500 (mié, 06 abr 2011) $
   Last Changed By: $Author: melissa.rojas@moxter.net $
 
---><help-menu xmlns="http://www.efaps.org/xsd"
+-->
+<help-menu xmlns="http://www.efaps.org/xsd"
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>8e74046b-28cd-4079-bac4-5cf0a04f47e5</uuid>
-    <file-application>eFaps-Kernel</file-application>
+    <file-application>eFapsApp-Products</file-application>
     <file-revision>$Rev: 6408 $</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
@@ -36,6 +38,7 @@
             <child>Salespackage_Products</child>
             <child>Showproducts_Products</child>
             <child>Pricelist_Products</child>
+            <child>Showsalespackage_Products</child>
         </childs>
     </definition>
 </help-menu>

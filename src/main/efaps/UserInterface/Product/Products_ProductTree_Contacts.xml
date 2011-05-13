@@ -45,6 +45,7 @@
                 <property name="Types">Products_Product2ContactAbstract</property>
                 <property name="LinkFroms">FromAbstract</property>
             </evaluate>
+            <help>org.efaps.wiki.products.Showproducts.wiki</help>
         </target>
         <!-- properties -->
         <property name="Target">content</property>

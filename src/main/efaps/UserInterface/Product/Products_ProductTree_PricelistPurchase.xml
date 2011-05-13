@@ -44,6 +44,7 @@
                 <property name="Types">Products_ProductPricelistPurchase</property>
                 <property name="LinkFroms">ProductLink</property>
             </evaluate>
+            <help>org.efaps.wiki.products.Showproducts.wiki</help>
         </target>
         <!-- properties -->
         <property name="Target">content</property>

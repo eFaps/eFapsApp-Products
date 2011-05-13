@@ -42,6 +42,7 @@
             <evaluate program="org.efaps.esjp.products.PriceList" method="getPriceListPositionInstances">
                 <property name="Types">Products_ProductPricelistRetail</property>
             </evaluate>
+            <help>org.efaps.wiki.products.Pricelist.wiki</help>
         </target>
 
         <!-- properties -->
