@@ -51,6 +51,14 @@
             <property name="Label">Products_ProductNonStockTable/Description.Label</property>
             <property name="ModeSearch">READONLY</property>
         </field>
+        <field name="classification">
+            <property name="Select">class.type</property>
+            <property name="Label">Products_ProductNonStockTable.classification.Label</property>
+            <trigger program="org.efaps.esjp.common.uiform.Field"
+                method="classificationFieldFormat"
+                name="Contacts_ContactTable.classification"
+                event="UI_FIELD_FORMAT" />
+        </field>
         <field name="active">
             <property name="Attribute">Active</property>
             <property name="Label">Products_ProductNonStockTable/Active.Label</property>
