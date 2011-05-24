@@ -24,7 +24,6 @@ Este documento explica:
   # Crear producto individual.
   # Borrar productos seleccionados.
   # Exportar
-  # Inventario virtual
   # Inventario
   # Inventario valorizado
   # Almacenes
@@ -71,13 +70,13 @@ elegir el tipo de producto que desea y una vez realizada la elección nos muestr
 secundarios que debemos ingresar información.
 
 Obligatorio:
-  * Nombre: es el código con el cual se va identificar a este producto(ingresar solo numero).
+  * Nombre: es el código con el cual se va identificar a este producto(ingresar solo número).
   * Descripción: es la información principal detallada del producto.
   * Unidad de venta: es la cantidad que viene del producto.
 
 Secundario:
   * Dimensión: va relacionado con el producto que ingresa.
-  * Categoría de impuesto: se puede colocar  VAT(IGV) o TaxFree(sin IGV).
+  * Categoría de impuesto: se puede colocar VAT (IGV) o TaxFree (sin IGV).
   * Activo: se coloca TRUE para que se visualice en la lista o FALSE para que no se visualice.
 
 
@@ -87,7 +86,7 @@ ventana crear producto individual en donde debe ingresar la siguiente informaci�
 
   * Producto: colocar el nombre del producto.
   * Nº: colocar el código que identifique al producto.
-  * Almacén: seleccionar el almacén. Para crear un almacén debe dirigirse al menú [Almacén#Almacén].
+  * Almacén: seleccionar el almacén. Para crear un almacén debe dirigirse al menú [http://localhost:8080/mn/servlet/help/org.efaps.wiki.products.Products.wiki#10._Almacenes Almacenes].
 
 
 ==5. Borrar productos seleccionados==
@@ -100,39 +99,18 @@ Le sirve para poder imprimir una o varias hojas con todos los datos que se encue
 de formatos PDF o XLS.
 
 
-==7. Inventario virtual==
-El menú inventario virtual contiene lo siguiente:
-
-  * 7.1. Exportar
-
-===7.1 Exportar===
-Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el menú, en dos
-tipos de formatos PDF o XLS.
-
-Importante
-
-Columna cantidad: para que un producto ingrese a un almacén, usted debe realizar una transacción entrante y la cantidad
-de esta transacción aparece en la columna cantidad del menú inventario virtual.
-
-Columna pedido: para que un producto se encuentre en pedido, debemos de crear una orden de compra con este producto y
-además en la columna tipo dirá “En entrega”.
-
-
-==8. Inventario==
+==7. Inventario==
 El menú inventario contiene lo siguiente:
 
-  * 8.1 Inventario por fecha.
-  * 8.2 Exportar.
+  * 7.1 Inventario por fecha.
+  * 7.2 Exportar.
 
-===8.1 Inventario por fecha===
+===7.1 Inventario por fecha===
 Debe dirigirse a la opción acción y entrar a inventario por fecha, donde le mostrara una ventana en donde debe
 ingresar los siguientes datos obligatorios fecha del inventario y almacén, además de elegir el tipo de formato
 que desea usted que muestre la hoja al momento de imprimir.
 
-Importante
-Colocar los datos obligatorios porque de lo contrario ocurrirá un error.
-
-===8.2 Exportar===
+===7.2 Exportar===
 Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el menú, en dos
 tipos de formatos PDF o XLS.
 
@@ -145,18 +123,18 @@ Columna reserva: para que un producto se encuentre en reserva debe realizar una 
 reserva utilice reserva saliente.
 
 
-==9. Inventario valorizado==
+==8. Inventario valorizado==
 El menú inventario valorizado contiene lo siguiente:
 
-  * 9.1 Inventario por fecha.
-  * 9.2 Exportar.
+  * 8.1 Inventario por fecha.
+  * 8.2 Exportar.
 
-===9.1 Inventario por fecha===
+===8.1 Inventario por fecha===
 Debe dirigirse a la opción acción y entrar a inventario por fecha, donde le mostrara una ventana en donde debe
 ingresar los siguientes datos obligatorios fecha del inventario y almacén, además de elegir el tipo de formato
 que desea imprimir la hoja.
 
-===9.2 Exportar===
+===8.2 Exportar===
 Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el menú, en dos
 tipos de formatos PDF o XLS.
 
@@ -167,36 +145,44 @@ costo(véase [http://localhost:8080/mn/servlet/help/org.efaps.wiki.products.Show
 de moneda que ha sido elegida.
 
 
-==10. Almacén==
+==9. Almacenes==
 El menú almacén contiene lo siguiente:
 
   * 10.1 Crear almacén.
-  * 10.2 Borrar seleccionado.
-  * 10.3 Exportar
+  * 10.2 Crear ubicación para producto.
+  * 10.3 Crear almacén estático.
+  * 10.4 Borrar seleccionado.
+  * 10.5 Exportar
 
-===10.1 Crear almacén===
+===9.1 Crear almacén===
 Se dirige a la opción acción y entra a crear almacén, donde le muestra la ventana llamada crear nuevo almacén, en ella
 visualiza los campos en donde debe ingresar datos, que son:
 
   * Nombre: es el identificador del almacén.
   * Descripción: es un concepto mas detallado del almacén.
 
-===10.2 Borrar seleccionado===
+===9.2 Crear ubicación para producto===
+Este tipo de almacén nos ayuda con la ubicación o posición exacta de un producto que se encuentra dentro de un almacén
+
+===9.3 Crear almacén estático===
+Es la copia de un almaceń con los datos ingresados hasta ese momento.
+
+===9.4 Borrar seleccionado===
 Selecciona uno o varios almacenes haciendo check en las casillas, diríjase a la opción acción y elija borrar seleccionado.
 
-===10.3 Exportar===
+===9.5 Exportar===
 Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el menú, en dos tipos de
 formatos PDF o XLS.
 
 
-==11. Transacciones==
+==10. Transacciones==
 El menú transacciones contiene lo siguiente:
 
-  * 11.1 Crear transacción.
-  * 11.2 Borrar seleccionado.
-  * 11.3 Exportar.
+  * 10.1 Crear transacción.
+  * 10.2 Borrar seleccionado.
+  * 10.3 Exportar.
 
-===11.1 Crear transacción===
+===10.1 Crear transacción===
 Se dirige a la opción acción y entra a crear, donde le muestra la ventana llamada crear transacción, en ella
 visualiza los campos en donde debe ingresar datos, a continuación se le mostrara que campo es obligatorio y
 secundario,
@@ -209,11 +195,11 @@ Importante
   # Colocar los datos obligatorios porque de lo contrario ocurrirá un error.
   # Seleccionar el tipo según la operación que desea realizar. El tipo puede ser reserva saliente, reserva entrante, transacción entrante o transacción saliente.
 
-===11.2 Borrar seleccionado===
+===10.2 Borrar seleccionado===
 Selecciona una o varias transacciones haciendo check en las casillas, diríjase a la opción acción y elija
 borrar seleccionado.
 
-===11.3 Exportar===
+===10.3 Exportar===
 Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el menú, en dos
 tipos de formatos PDF o XLS.
 

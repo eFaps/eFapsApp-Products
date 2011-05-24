@@ -109,3 +109,13 @@ Secundario:
   * Dimensión: esta relacionado con el producto que ingresa.
   * Categoría de impuesto: se puede colocar  VAT(IGV) o TaxFree(sin IGV).
   * Activo: se coloca TRUE para que se visualice en la lista o FALSE para que no se visualice.
+
+===1.5 Borrar productos seleccionados===
+Debe de escoger uno o mas centros de costos haciendo un check en las casillas, dirigirse a acción y seleccionar borrar productos seleccionados.
+
+===1.6 Exportar===
+Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el menú, en dos tipos de formatos PDF o XLS.
+
+==2. Paquetes de venta inventario==
+Cuando creamos un paquete de venta(véase [http://localhost:8080/mn/servlet/help/org.efaps.wiki.products.Salespackage.wiki#1.1_Crear_paquete_de_venta crear paquete de venta]), nos aparecera registrado
+en el listado del inventario.

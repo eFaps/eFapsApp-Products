@@ -156,33 +156,30 @@ formatos PDF o XLS.
 
 
 ==6. BOM==
-El menú imágenes contiene lo siguiente:
+El menú BOM contiene lo siguiente:
 
-  * 6.1 Subir.
-  * 6.2 Añadir existente.
-  * 6.3 Desconectar.
-  * 6.4 Exportar.
+  * 6.1 Agregar a BOM de venta
+  * 6.2 Agregar como BOM alternativo
+  * 6.3 Desconectar
+  * 6.4 Exportar
 
-===6.1 Subir===
-Se dirige a la opción acción y entra a subir, donde le muestra la ventana llamada subir nueva imagen, en ella se visualiza
-los campos en donde debe ingresar datos, a continuación se le mostrara que campo es obligatorio y secundario:
+===6.1 Agregar a BOM de venta===
+Para poder agregar usted debe dirigirse a acción y elegir agregar a BOM de venta, inmediatamente le aparecerá la ventana
+buscar producto en donde ingresará en cualquiera de los dos campos información(colocar {{{*}}} al final de la información)
+o puede colocar solo {{{*}}} en todos los campos que se encuentren en la ventana(le aparecerá una lista completa de productos).
+Ingresa con el botón buscar en donde seleccionara el producto haciendo un check en la casilla y una vez seleccionados los productos
+interconecta.
 
-  * Obligatorio: descripción y leyenda.
-  * Secundario: seleccionar imagen. Con el botón examinar nosotros podemos elegir la imagen y subirla.
-
-Importancia
-Colocar los datos obligatorios porque de lo contrario ocurrirá un error.
-
-===6.2 Añadir existente===
-Usted podrá elegir una imagen que ya a sido creada con anterioridad, se dirige a la opción acción y entra a añadir
-existente, donde le muestra la ventana llamada buscar imagen, en ella se visualiza los campos en donde debe ingresar
-información(siempre colocar la información con el {{{*}}} al final) o colocar {{{*}}}(visualiza todo el listado de imágenes)
-y entra a la búsqueda de imágenes por medio del botón buscar.
-Ingresa inmediatamente a otra ventana en donde le aparece un listado de imágenes, ahora usted pondrá seleccionar las
-imágenes que desea haciendo un check en la casilla de la columna tipo.
+===6.2 Agregar como BOM alternativo===
+Para poder agregar usted debe dirigirse a acción y elegir agregar como BOM alternativo, inmediatamente le aparecerá
+la ventana buscar producto en donde ingresará en cualquiera de los dos campos información(colocar {{{*}}} al final de
+la información) o puede colocar solo{{{*}}} en todos los campos que se encuentren en la ventana(le aparecerá una lista
+completa de productos).
+Ingresa con el botón buscar en donde seleccionara el producto haciendo un check en la casilla y una vez seleccionados
+los productos interconecta.
 
 ===6.3 Desconectar===
-Seleccione una o varias imágenes, dirigirse a la opción acción y elija desconectar.
+Seleccione uno o varios productos, dirigirse a la opción acción y elija desconectar.
 
 ===6.4 Exportar===
 Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el menú, en dos tipos de
@@ -190,7 +187,7 @@ formatos PDF o XLS.
 
 
 ==7. Fabricante / proveedor==
-El modulo imágenes contiene lo siguiente:
+El menú fabricante/proveedor contiene lo siguiente:
 
   * 7.1 Conectar fabricante.
   * 7.2 Conectar proveedor.
