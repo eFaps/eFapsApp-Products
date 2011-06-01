@@ -25,6 +25,6 @@ Este documento explica:
 Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el menú, en dos tipos de
 formatos PDF o XLS.
 
-Importante
+Importante:
 Para que aparesca un producto con su debido precio de venta, tiene que entrar a este producto y dirigirse a lista de precios
 de venta.
