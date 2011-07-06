@@ -19,9 +19,9 @@ Este menú nos muestra la lista de precios de venta de los productos.
 
 Este documento explica:
 
-  * Exportar.
+  # Exportar.
 
-==Exportar==
+==1. Exportar==
 Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el menú, en dos tipos de
 formatos PDF o XLS.
 
