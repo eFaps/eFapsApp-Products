@@ -2,7 +2,7 @@
 
 <!--
 
- Copyright 2003 - 2009 The eFaps Team
+ Copyright 2003 - 2011 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -36,10 +36,12 @@
         <field name="quantity">
             <property name="Attribute">Quantity</property>
             <property name="Label">Products_InventoryValue/Quantity.Label</property>
+            <property name="Align">right</property>
         </field>
         <field name="reserved">
             <property name="Attribute">Reserved</property>
             <property name="Label">Products_InventoryValue/Reserved.Label</property>
+            <property name="Align">right</property>
         </field>
         <field name="uom">
             <property name="Select">linkto[UoM].attribute[Name]</property>
@@ -60,13 +62,15 @@
         <field name="price">
             <property name="Attribute">Price</property>
             <property name="Label">Products_InventoryValue/Price.Label</property>
+            <property name="Align">right</property>
         </field>
         <field name="total">
             <property name="Attribute">Total</property>
             <property name="Label">Products_InventoryValue/Total.Label</property>
+            <property name="Align">right</property>
         </field>
         <field name="currencyLink">
-            <property name="Select">linkto[CurrencyLink].attribute[Name]</property>
+            <property name="Select">linkto[CurrencyLink].attribute[Symbol]</property>
             <property name="Label">Products_InventoryValue/CurrencyLink.Label</property>
         </field>
         <field name="storage">
