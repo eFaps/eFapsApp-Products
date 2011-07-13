@@ -2,7 +2,7 @@
 
 <!--
 
- Copyright 2003 - 2010 The eFaps Team
+ Copyright 2003 - 2011 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -67,6 +67,13 @@
             <type>String</type>
             <sqltable>Products_StorageAbstractSQLTable</sqltable>
             <sqlcolumn>DESCR</sqlcolumn>
+        </attribute>
+        <attribute>
+            <name>Active</name>
+            <type>Boolean</type>
+            <sqltable>Products_StorageAbstractSQLTable</sqltable>
+            <sqlcolumn>ACTIVE</sqlcolumn>
+            <defaultvalue>true</defaultvalue>
         </attribute>
     </definition>
 </datamodel-type>
