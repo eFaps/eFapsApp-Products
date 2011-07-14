@@ -51,6 +51,7 @@
             <property name="ShowTypeIcon">true</property>
         </field>
         <field name="active">
+            <property name="FilterType">PICKER</property>
             <property name="Attribute">Active</property>
             <property name="Label">Products_StorageAbstract/Active.Label</property>
             <property name="ShowTypeIcon">true</property>
