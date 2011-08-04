@@ -15,7 +15,7 @@
 En este Manual de Usuario usted encontrará toda la información necesaria referente a la inicialización y uso del menú
 Lista de precios, de manera que usted esté informado de todas las funcionalidades de este menú para que pueda trabajar
 en toda su potencialidad.
-Este menú nos muestra la lista de precios de venta de los productos.
+Este menú le muestra la lista de precios de venta de los productos.
 
 Este documento explica:
 
@@ -23,8 +23,7 @@ Este documento explica:
 
 ==1. Exportar==
 Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el menú, en dos tipos de
-formatos PDF o XLS.
+formato PDF o XLS.
 
-Importante:
-Para que aparesca un producto con su debido precio de venta, tiene que entrar a este producto y dirigirse a lista de precios
-de venta.
+Importante: para que aparezca un producto con su debido precio de venta, tiene que entrar a este producto y dirigirse a lista de precios
+de venta(véase [./org.efaps.wiki.products.Showproducts.wiki#1._Lista_de_precios_de_venta precio de venta]).

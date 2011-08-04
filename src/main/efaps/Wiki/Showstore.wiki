@@ -12,38 +12,41 @@
 
 ----
 
-Cuando ingresamos a un almacén podemos ver los siguientes puntos:
+Cuando ingresa a un almacén podrá ver los siguientes puntos:
 
   # Exportar
   # Inventario
   # Transacciones
 
 ==1. Exportar==
-Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el menú, en dos tipos de formatos
+Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el menú, en dos tipos de formato
 PDF o XLS.
 
 ==2. Inventario==
-Podemos ver todos los productos que se encuentran dentro de este inventario, contamos con las siguiente opciones dentro
+Podrá ver todos los productos que se encuentren dentro de este inventario, contamos con las siguiente opciones dentro
 de este menú,
 
+  * 2.1 Movimiento interno
+  * 2.2 Exportar
+
 ===2.1 Movimiento interno===
-Cuando ingresamos a movimiento interno por la opción acción le aparece la ventana movimiento interno de productos en donde
-podrá visualizar los campos obligatorios y secundarios en donde deberá ingresar información:
+Cuando ingrese a movimiento interno por la opción acción le aparecerá la ventana *movimiento interno de productos* en donde
+ingresará la información correspondiente en los campos obligatorios y secundarios:
 
 Obligatorio:
-  * Fecha: debemos elegir la fecha ingresándola manualmente igual al formato que se le presenta como modelo o escogiendo de calendario.
+  * Fecha: editar la fecha con el mismo formato mostrado o seleccionarlo del calendario.
   * Almacén: seleccionar el almacén a donde se va derivar el producto.
   * Producto: llamar al producto ingresando su información(código o descripción) o colocando solo {{{*}}}.
-  * Cantidad: colocar el numero de productos que se van a derivar a otro almacén.
+  * Cantidad: colocar el número de productos que se van a derivar a otro almacén.
 
 Secundario:
   * Unidad: es la unidad de medida relacionada con el producto.
   * Descripción: se brinda la información del motivo por el cual se esta haciendo este movimiento interno.
 
-Importante: para que un producto este en el inventario tienen que haber realizado una entrada de mercancías.
+Importante: para que un producto este en el inventario tiene que haber realizado una entrada de mercancías.
 
 ===2.2 Exportar===
-Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el menú, en dos tipos de formatos PDF o XLS.
+Le sirve para poder imprimir una o varias hojas con todos los datos que se encuentran en el menú, en dos tipos de formato PDF o XLS.
 
 ==3. Transacciones==
-Nos mostrara todo el listado de las transacciones realizadas en este almacén.
+Le mostrará el listado de todas las transacciones realizadas hasta este momento en el almacén.
