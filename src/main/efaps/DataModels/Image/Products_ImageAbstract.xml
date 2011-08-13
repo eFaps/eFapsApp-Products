@@ -111,18 +111,6 @@
             <sqlcolumn>COLORTYPE</sqlcolumn>
         </attribute>
         <attribute>
-            <name>FileLength</name>
-            <type>Long</type>
-            <sqltable>Products_ImageSQLTable</sqltable>
-            <sqlcolumn>FILELENGTH</sqlcolumn>
-        </attribute>
-        <attribute>
-            <name>FileName</name>
-            <type>String</type>
-            <sqltable>Products_ImageSQLTable</sqltable>
-            <sqlcolumn>FILENAME</sqlcolumn>
-        </attribute>
-        <attribute>
             <name>Creator</name>
             <type>CreatorLink</type>
             <sqltable>Products_ImageSQLTable</sqltable>
