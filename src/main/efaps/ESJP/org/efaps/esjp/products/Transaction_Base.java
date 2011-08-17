@@ -39,7 +39,9 @@ import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
 import org.efaps.db.Delete;
 import org.efaps.db.Insert;
 import org.efaps.db.Instance;
+import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.PrintQuery;
+import org.efaps.db.QueryBuilder;
 import org.efaps.db.SearchQuery;
 import org.efaps.db.Update;
 import org.efaps.esjp.ci.CIProducts;
@@ -469,5 +471,66 @@ public abstract class Transaction_Base
             }
         }
         return ret;
+    }
+
+    /**
+     * Method to change the inventory for a date.
+     *
+     * @param _parameter as passed from eFaps API.
+     * @return new Return.
+     * @throws EFapsException on error.
+     */
+    public Return restoreInventory(final Parameter _parameter)
+        throws EFapsException
+    {
+        final String dateStr = _parameter.getParameterValue("date");
+        // get a new DateTime from the ISO Date String fomr the Parameters
+        final DateTime date = new DateTime(dateStr);
+        final BigDecimal quantityOld = new BigDecimal(_parameter.getParameterValue("quantity"));
+
+        final Instance storageInst = _parameter.getInstance();
+
+        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.Inventory);
+        queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, storageInst.getId());
+        queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Product, _parameter.getParameterValue("product"));
+        final MultiPrintQuery multi = queryBldr.getPrint();
+        multi.addAttribute(CIProducts.Inventory.Quantity);
+        multi.execute();
+        while (multi.next()) {
+            final BigDecimal quantityCur = multi.<BigDecimal>getAttribute(CIProducts.Inventory.Quantity);
+            BigDecimal quantityAux = quantityCur;
+
+            final QueryBuilder transQueryBldr = new QueryBuilder(CIProducts.TransactionInOutAbstract);
+            transQueryBldr.addWhereAttrEqValue(CIProducts.TransactionInOutAbstract.Storage, storageInst.getId());
+            transQueryBldr.addWhereAttrEqValue(CIProducts.TransactionInOutAbstract.Product,
+                            _parameter.getParameterValue("product"));
+            transQueryBldr.addWhereAttrGreaterValue(CIProducts.TransactionInOutAbstract.Date, date.minusMinutes(1));
+            final MultiPrintQuery transMulti = transQueryBldr.getPrint();
+            transMulti.addAttribute(CIProducts.TransactionInOutAbstract.Quantity,
+                            CIProducts.TransactionInOutAbstract.UoM);
+            transMulti.execute();
+            while (transMulti.next()) {
+                BigDecimal quantity = transMulti.<BigDecimal>getAttribute(CIProducts.TransactionInOutAbstract.Quantity);
+                final Long uoMId = transMulti.<Long>getAttribute(CIProducts.TransactionInOutAbstract.UoM);
+                final UoM uoM = Dimension.getUoM(uoMId);
+                quantity = quantity.multiply(new BigDecimal(uoM.getNumerator())
+                                .divide(new BigDecimal(uoM.getDenominator())));
+                final Instance inst = transMulti.getCurrentInstance();
+                if (inst.getType().isKindOf(CIProducts.TransactionInbound.getType())) {
+                    quantity = quantity.negate();
+                }
+                quantity = quantityAux.add(quantity);
+                quantityAux = quantity;
+            }
+
+            final BigDecimal diff = quantityOld.subtract(quantityAux);
+            final BigDecimal quantityNew = quantityCur.add(diff);
+
+            final Update update = new Update(multi.getCurrentInstance());
+            update.add(CIProducts.Inventory.Quantity, quantityNew);
+            update.execute();
+        }
+
+        return new Return();
     }
 }
