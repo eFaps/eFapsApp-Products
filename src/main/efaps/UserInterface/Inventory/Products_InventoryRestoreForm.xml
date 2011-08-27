@@ -38,7 +38,7 @@
             <property name="Required">true</property>
             <property name="Label">Products_InventoryRestoreForm.product.Label</property>
             <trigger program="org.efaps.esjp.products.Product"
-                    method="autoComplete4ProductsInStorage"
+                    method="autoComplete4Product"
                     name="Products_InventoryMoveForm.product.autocomplete"
                     event="UI_FIELD_AUTOCOMPLETE" />
         </field>

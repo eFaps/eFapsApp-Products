@@ -489,10 +489,10 @@ public abstract class Transaction_Base
         final BigDecimal quantityOld = new BigDecimal(_parameter.getParameterValue("quantity"));
 
         final Instance storageInst = _parameter.getInstance();
-
+        final Instance productInst = Instance.get(_parameter.getParameterValue("product"));
         final QueryBuilder queryBldr = new QueryBuilder(CIProducts.Inventory);
         queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, storageInst.getId());
-        queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Product, _parameter.getParameterValue("product"));
+        queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Product, productInst.getId());
         final MultiPrintQuery multi = queryBldr.getPrint();
         multi.addAttribute(CIProducts.Inventory.Quantity);
         multi.execute();
@@ -502,8 +502,7 @@ public abstract class Transaction_Base
 
             final QueryBuilder transQueryBldr = new QueryBuilder(CIProducts.TransactionInOutAbstract);
             transQueryBldr.addWhereAttrEqValue(CIProducts.TransactionInOutAbstract.Storage, storageInst.getId());
-            transQueryBldr.addWhereAttrEqValue(CIProducts.TransactionInOutAbstract.Product,
-                            _parameter.getParameterValue("product"));
+            transQueryBldr.addWhereAttrEqValue(CIProducts.TransactionInOutAbstract.Product, productInst.getId());
             transQueryBldr.addWhereAttrGreaterValue(CIProducts.TransactionInOutAbstract.Date, date.minusMinutes(1));
             final MultiPrintQuery transMulti = transQueryBldr.getPrint();
             transMulti.addAttribute(CIProducts.TransactionInOutAbstract.Quantity,
