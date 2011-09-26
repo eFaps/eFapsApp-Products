@@ -198,14 +198,14 @@ Se dirige a la opción acción y entra a conectar fabricante, donde le muestra l
 se visualiza los campos en donde debe ingresar información(colocar {{{*}}} al final de la información) o
 colocar {{{*}}} en todos los campos que se encuentren en la ventana(visualiza todo el listado de fabricantes) y entra a la búsqueda de fabricantes por medio del botón buscar.
 Ingresa inmediatamente a otra ventana en donde le aparecerá un listado de fabricantes, ahora usted pondrá seleccionar los
-fabricantes que desea haciendo un check en sus casillas que se encuentran en la columna tipo.
+fabricantes que desea haciendo un check en las casillas que se encuentran en la columna tipo.
 
 ===7.2 Conectar proveedor===
 Se dirige a la opción acción y entra a conectar fabricante, donde le muestra la ventana *buscar contacto*, en ella
 se visualiza los campos en donde debe ingresar información(colocar {{{*}}} al final de la información) o
 colocar {{{*}}} en todos los campos que se encuentren en la ventana(visualiza todo el listado de proveedores) y entra a la búsqueda de proveedores por medio del botón buscar.
 Ingresa inmediatamente a otra ventana en donde le aparecerá un listado de proveedores, ahora usted pondrá seleccionar los
-proveedores que desea haciendo un check en sus casillas que se encuentran en la columna tipo.
+proveedores que desea haciendo un check en las casillas que se encuentran en la columna tipo.
 
 ===7.3 Desconectar===
 Seleccionar uno o varios proveedores / fabricantes, dirigirse a la opción acción y elegir desconectar.
