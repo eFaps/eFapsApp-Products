@@ -70,7 +70,7 @@ elegir el tipo de producto que desea y una vez realizada la elección le mostrar
 secundarios en donde ingresará la información correspondiente:
 
 Obligatorio:
-  * Nombre: es el código con el cual se va identificar a este producto(ingresar solo número).
+  * Nombre: es el código con el cual se va identificar a este producto.
   * Descripción: es la información principal detallada del producto.
   * Unidad de venta: es la cantidad que viene del producto.
 
