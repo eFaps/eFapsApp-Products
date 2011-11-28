@@ -86,61 +86,6 @@ public abstract class Transaction_Base
     }
 
     /**
-     * Method is called from within the form Products_TransactionAbstractForm to
-     * retrieve the value for the Storage on Edit or Create.
-     *
-     * @param _parameter Parameters as passed from eFaps
-     * @return Return
-     * @throws EFapsException on error
-     */
-    public Return getStorageFieldValueUI(final Parameter _parameter)
-        throws EFapsException
-    {
-        final Return retVal = new Return();
-        final FieldValue fieldValue = (FieldValue) _parameter.get(ParameterValues.UIOBJECT);
-        final Instance instance = (Instance) _parameter.get(ParameterValues.CALL_INSTANCE);
-        final TreeMap<String, Long> map = new TreeMap<String, Long>();
-        final boolean isStorage = instance == null ? false
-                        : instance.getType().isKindOf(Type.get("Products_StorageAbstract"));
-        long actual = 0;
-        if (instance != null && !isStorage) {
-            final PrintQuery print = new PrintQuery(instance);
-            print.addAttribute("Storage");
-            if (print.execute()) {
-                actual = print.<Long>getAttribute("Storage");
-            }
-        }
-        final SearchQuery query2 = new SearchQuery();
-        query2.setQueryTypes("Products_StorageAbstract");
-        query2.setExpandChildTypes(true);
-        query2.addSelect("ID");
-        query2.addSelect("Name");
-        query2.execute();
-        while (query2.next()) {
-            final Long storageId = (Long) query2.get("ID");
-            if (!isStorage || !storageId.equals(instance.getId())) {
-                map.put((String) query2.get("Name"), (Long) query2.get("ID"));
-            }
-        }
-        query2.close();
-
-        final StringBuilder ret = new StringBuilder();
-
-        ret.append("<select size=\"1\" name=\"").append(fieldValue.getField().getName()).append("\">");
-        for (final Map.Entry<String, Long> entry : map.entrySet()) {
-            ret.append("<option");
-            if (entry.getValue().equals(actual)) {
-                ret.append(" selected=\"selected\" ");
-            }
-            ret.append(" value=\"").append(entry.getValue()).append("\">").append(entry.getKey())
-                            .append("</option>");
-        }
-        ret.append("</select>");
-        retVal.put(ReturnValues.SNIPLETT, ret.toString());
-        return retVal;
-    }
-
-    /**
      * Method is executed as trigger after the insert of an
      * Products_TransactionInbound.
      *
