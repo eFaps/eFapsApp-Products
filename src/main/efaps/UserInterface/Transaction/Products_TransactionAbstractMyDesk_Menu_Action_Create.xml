@@ -39,6 +39,7 @@
         <target>
             <form>Products_TransactionAbstractForm</form>
             <execute program="org.efaps.esjp.products.Transaction" method="create" />
+            <validate program="org.efaps.esjp.products.Transaction" method="validateQuantity"/>
         </target>
 
         <!-- properties -->

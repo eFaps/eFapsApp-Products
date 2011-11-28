@@ -39,6 +39,7 @@ import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
 import org.efaps.db.Delete;
 import org.efaps.db.Insert;
 import org.efaps.db.Instance;
+import org.efaps.db.InstanceQuery;
 import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.PrintQuery;
 import org.efaps.db.QueryBuilder;
@@ -53,7 +54,8 @@ import org.joda.time.DateTime;
  * TODO comment!
  *
  * @author The eFaps Team
- * @version $Id$
+ * @version $Id: Transaction_Base.java 7003 2011-08-27 02:03:45Z jan@moxter.net
+ *          $
  */
 @EFapsUUID("aa16287e-6148-41d2-a40f-05a65946ecfc")
 @EFapsRevision("$Rev$")
@@ -62,6 +64,7 @@ public abstract class Transaction_Base
 
     /**
      * Method to create a Transaction manually.
+     *
      * @param _parameter Parameter as passed from the eFaps API.
      * @return new Return.
      * @throws EFapsException on error.
@@ -73,50 +76,15 @@ public abstract class Transaction_Base
         final Type type = Type.get(Long.parseLong(typeId));
         final Insert insert = new Insert(type);
         insert.add("Quantity", _parameter.getParameterValue("quantity"));
-        insert.add("UoM",  _parameter.getParameterValue("uoM"));
+        insert.add("UoM", _parameter.getParameterValue("uoM"));
         insert.add("Storage", _parameter.getParameterValue("storage"));
         insert.add("Product", Instance.get(_parameter.getParameterValue("product")).getId());
         insert.add("Description", _parameter.getParameterValue("description"));
-        insert.add("Date",  _parameter.getParameterValue("date"));
+        insert.add("Date", _parameter.getParameterValue("date"));
         insert.execute();
         return new Return();
     }
 
-    /**
-     * Method is called from within the form Products_TransactionAbstractForm to
-     * retrieve the type on  Create.
-     *
-     * @param _parameter Parameters as passed from eFaps
-     * @return Return
-     * @throws EFapsException on error
-     */
-    public Return getTypeFieldValueUI(final Parameter _parameter)
-        throws EFapsException
-    {
-        final Return ret = new Return();
-        final FieldValue fieldValue = (FieldValue) _parameter.get(ParameterValues.UIOBJECT);
-
-        final Type transAbstract = CIProducts.TransactionAbstract.getType();
-        final Map <String, Long> values = new TreeMap<String, Long>();
-        for (final Type child : transAbstract.getChildTypes()) {
-            if (!child.isAbstract()) {
-                values.put(DBProperties.getProperty(child.getName() + ".Label"), child.getId());
-            }
-        }
-
-        final StringBuilder html = new StringBuilder();
-
-        html.append("<select size=\"1\" name=\"").append(fieldValue.getField().getName()).append("\">");
-        for (final Map.Entry<String, Long> entry : values.entrySet()) {
-            html.append("<option");
-
-            html.append(" value=\"").append(entry.getValue()).append("\">").append(entry.getKey())
-                .append("</option>");
-        }
-        html.append("</select>");
-        ret.put(ReturnValues.SNIPLETT, html.toString());
-        return ret;
-    }
     /**
      * Method is called from within the form Products_TransactionAbstractForm to
      * retrieve the value for the Storage on Edit or Create.
@@ -133,13 +101,13 @@ public abstract class Transaction_Base
         final Instance instance = (Instance) _parameter.get(ParameterValues.CALL_INSTANCE);
         final TreeMap<String, Long> map = new TreeMap<String, Long>();
         final boolean isStorage = instance == null ? false
-                                                   : instance.getType().isKindOf(Type.get("Products_StorageAbstract"));
+                        : instance.getType().isKindOf(Type.get("Products_StorageAbstract"));
         long actual = 0;
         if (instance != null && !isStorage) {
             final PrintQuery print = new PrintQuery(instance);
             print.addAttribute("Storage");
             if (print.execute()) {
-                actual =  print.<Long>getAttribute("Storage");
+                actual = print.<Long>getAttribute("Storage");
             }
         }
         final SearchQuery query2 = new SearchQuery();
@@ -165,7 +133,7 @@ public abstract class Transaction_Base
                 ret.append(" selected=\"selected\" ");
             }
             ret.append(" value=\"").append(entry.getValue()).append("\">").append(entry.getKey())
-                .append("</option>");
+                            .append("</option>");
         }
         ret.append("</select>");
         retVal.put(ReturnValues.SNIPLETT, ret.toString());
@@ -173,24 +141,30 @@ public abstract class Transaction_Base
     }
 
     /**
-     * Method is executed as trigger after the insert of an Products_TransactionInbound.
+     * Method is executed as trigger after the insert of an
+     * Products_TransactionInbound.
+     *
      * @param _parameter Parameters as passed from eFaps
      * @return Return
      * @throws EFapsException on error
      */
-    public Return inboundTrigger(final Parameter _parameter) throws EFapsException
+    public Return inboundTrigger(final Parameter _parameter)
+        throws EFapsException
     {
         addRemoveFromInventory(_parameter, true, "Quantity");
         return new Return();
     }
 
     /**
-     * Method is executed as trigger after the insert of an Products_TransactionOutbound.
+     * Method is executed as trigger after the insert of an
+     * Products_TransactionOutbound.
+     *
      * @param _parameter Parameters as passed from eFaps
      * @return Return
      * @throws EFapsException on error
      */
-    public Return outboundTrigger(final Parameter _parameter) throws EFapsException
+    public Return outboundTrigger(final Parameter _parameter)
+        throws EFapsException
     {
         addRemoveFromInventory(_parameter, false, "Quantity");
         return new Return();
@@ -198,15 +172,18 @@ public abstract class Transaction_Base
 
     /**
      * Add or subtract from the Inventory.
+     *
      * @param _parameter Parameters as passed from eFaps
      * @param _add if true the quantity will be added else subtracted
      * @throws EFapsException on error
      */
-    protected void addRemoveFromInventory(final Parameter _parameter, final boolean _add, final String _attribute)
+    protected void addRemoveFromInventory(final Parameter _parameter,
+                                          final boolean _add,
+                                          final String _attribute)
         throws EFapsException
     {
         final Instance instance = _parameter.getInstance();
-        //get the transaction
+        // get the transaction
         final PrintQuery query = new PrintQuery(instance);
         query.addAttribute("Storage", "Product", "UoM", "Quantity");
         BigDecimal value = null;
@@ -221,9 +198,9 @@ public abstract class Transaction_Base
         }
         final UoM uom = Dimension.getUoM(uomId);
         value = value.multiply(new BigDecimal(uom.getNumerator())).divide(new BigDecimal(uom.getDenominator()),
-                                                                                BigDecimal.ROUND_HALF_UP);
+                        BigDecimal.ROUND_HALF_UP);
 
-        //search for the correct inventory
+        // search for the correct inventory
         final SearchQuery query2 = new SearchQuery();
         query2.setQueryTypes("Products_Inventory");
         query2.addWhereExprEqValue("Storage", storage);
@@ -278,7 +255,8 @@ public abstract class Transaction_Base
      * @return Return
      * @throws EFapsException on error
      */
-    public Return moveInventory(final Parameter _parameter) throws EFapsException
+    public Return moveInventory(final Parameter _parameter)
+        throws EFapsException
     {
         final Instance fromStorageInst = _parameter.getInstance();
         final Insert inbound = new Insert("Products_TransactionInbound");
@@ -304,11 +282,11 @@ public abstract class Transaction_Base
 
         final StringBuilder bldr = new StringBuilder();
         bldr.append(_parameter.getParameterValue("description")).append(" - ")
-            .append(DBProperties.getProperty("esjp.Products_Transaction.Move.Text")).append(" ")
-            .append(quantity).append(" ")
-            .append(Dimension.getUoM(Long.parseLong(uomStr)).getName()).append(" ")
-            .append(prodDesc).append(" : ")
-            .append(fromStorage).append(" -> ").append(toStorage);
+                        .append(DBProperties.getProperty("esjp.Products_Transaction.Move.Text")).append(" ")
+                        .append(quantity).append(" ")
+                        .append(Dimension.getUoM(Long.parseLong(uomStr)).getName()).append(" ")
+                        .append(prodDesc).append(" : ")
+                        .append(fromStorage).append(" -> ").append(toStorage);
 
         inbound.add("Quantity", quantity);
         inbound.add("Storage", toStorageId);
@@ -338,7 +316,8 @@ public abstract class Transaction_Base
      * @return Return
      * @throws EFapsException on error
      */
-    public Return validateMove(final Parameter _parameter) throws EFapsException
+    public Return validateMove(final Parameter _parameter)
+        throws EFapsException
     {
         final Return ret = new Return();
         final Instance fromStorageInst = _parameter.getInstance();
@@ -359,13 +338,12 @@ public abstract class Transaction_Base
             } else {
                 final StringBuilder bldr = new StringBuilder();
                 bldr.append(DBProperties.getProperty("esjp.Products_Transaction.validateMove.Text"))
-                    .append(" ").append(existing);
+                                .append(" ").append(existing);
                 ret.put(ReturnValues.SNIPLETT, bldr.toString());
             }
         }
         return ret;
     }
-
 
     /**
      * Method is executed as trigger after the insert of an
@@ -399,6 +377,7 @@ public abstract class Transaction_Base
 
     /**
      * Method for create a new transaction inbound.
+     *
      * @param _parameter Parameter as passed from the efaps API.
      * @return new Return.
      * @throws EFapsException on error.
@@ -419,7 +398,7 @@ public abstract class Transaction_Base
                 final Insert insert = new Insert(CIProducts.TransactionInbound);
                 insert.add(CIProducts.TransactionInbound.Product, instProd.getId());
                 insert.add(CIProducts.TransactionInbound.Description,
-                                                    print.<String>getAttribute(CIProducts.ProductAbstract.Description));
+                                print.<String>getAttribute(CIProducts.ProductAbstract.Description));
                 insert.add(CIProducts.TransactionInbound.UoM, _parameter.getParameterValue("uoM"));
                 insert.add(CIProducts.TransactionInbound.Quantity, _parameter.getParameterValue("quantity"));
                 insert.add(CIProducts.TransactionInbound.Storage, form.getParent().getInstance().getId());
@@ -428,23 +407,22 @@ public abstract class Transaction_Base
 
                 if (insert.getInstance() != null) {
                     final String description = _parameter.getParameterValue("quantity") + " - "
-                                                + print.<String>getAttribute(CIProducts.ProductAbstract.Description);
+                                    + print.<String>getAttribute(CIProducts.ProductAbstract.Description);
                     js.append("document.getElementsByName('description')[0].innerHTML=\"")
-                        .append(description).append("\";")
-                        .append("document.getElementsByName('product')[0].value=\"\";")
-                        .append("document.getElementsByName('productAutoComplete')[0].value=\"\";")
-                        .append("document.getElementsByName('quantity')[0].value=\"\";")
-                        .append("document.getElementsByName('uoM')[0].innerHTML=\"\";");
+                                    .append(description).append("\";")
+                                    .append("document.getElementsByName('product')[0].value=\"\";")
+                                    .append("document.getElementsByName('productAutoComplete')[0].value=\"\";")
+                                    .append("document.getElementsByName('quantity')[0].value=\"\";")
+                                    .append("document.getElementsByName('uoM')[0].innerHTML=\"\";");
                 }
             } else {
                 js.append("document.getElementsByName('description')[0].innerHTML=\"<span style='color:red;' >")
-                    .append(DBProperties.getProperty("org.efaps.esjp.products.enterProduct")).append("</span>\"");
+                                .append(DBProperties.getProperty("org.efaps.esjp.products.enterProduct")).append("</span>\"");
             }
         }
         ret.put(ReturnValues.SNIPLETT, js.toString());
         return ret;
     }
-
 
     /**
      * Check the access for the document link field in the transaction formular.
@@ -532,4 +510,92 @@ public abstract class Transaction_Base
 
         return new Return();
     }
+
+    public Return validateQuantity(Parameter _parameter)
+        throws EFapsException
+    {
+        Return ret = new Return();
+        StringBuilder html = new StringBuilder();
+
+        Long idTypeTrans = Long.parseLong(_parameter.getParameterValue("type"));
+
+        Instance productInst = Instance.get(_parameter.getParameterValue("product"));
+        BigDecimal quantity = new BigDecimal(_parameter.getParameterValue("quantity"));
+        BigDecimal quantityInventory = BigDecimal.ZERO;
+        BigDecimal quantityReserved = BigDecimal.ZERO;
+
+        QueryBuilder quanInvent = new QueryBuilder(CIProducts.Inventory);
+        quanInvent.addWhereAttrEqValue(CIProducts.Inventory.Product, productInst.getId());
+
+        MultiPrintQuery multiQuanti = quanInvent.getPrint();
+        multiQuanti.addAttribute(CIProducts.Inventory.Quantity);
+        multiQuanti.addAttribute(CIProducts.Inventory.Reserved);
+        multiQuanti.execute();
+
+        while (multiQuanti.next()) {
+            quantityInventory = multiQuanti.<BigDecimal>getAttribute(CIProducts.Inventory.Quantity);
+            quantityReserved = multiQuanti.<BigDecimal>getAttribute(CIProducts.Inventory.Reserved);
+        }
+
+        PrintQuery printProduct = new PrintQuery(productInst);
+        printProduct.addAttribute(CIProducts.ProductAbstract.Name);
+        printProduct.execute();
+
+        String name = printProduct.<String>getAttribute(CIProducts.ProductAbstract.Name);
+
+        long idReserOut = CIProducts.TransactionReservationOutbound.getType().getId();
+        long idTransIn = CIProducts.TransactionInbound.getType().getId();
+        long idReserIn = CIProducts.TransactionReservationInbound.getType().getId();
+        long idTransOut = CIProducts.TransactionOutbound.getType().getId();
+
+
+
+            if (idTypeTrans == idReserOut) {
+
+                if (quantityReserved.intValue() < quantity.intValue()) {
+
+                    html.append("<span>").append(quantity).append("<span><br/>")
+                                    .append(DBProperties.getProperty("org.efaps.esjp.products.Transaction.validateReserved"));
+
+                } else {
+                    bodyTransac(html, quantity, name, DBProperties.getProperty("Products_TransactionReservationOutbound.Label"), ret);
+                }
+
+            }else if (idTypeTrans == idTransIn) {
+                bodyTransac(html, quantity, name, DBProperties.getProperty("Products_TransactionInbound.Label"), ret);
+
+            }else if (quantityInventory.intValue() >= quantity.intValue() + quantityReserved.intValue()) {
+
+                if (idTypeTrans == idReserIn) {
+                    bodyTransac(html, quantity, name, DBProperties.getProperty("Products_TransactionReservationInbound.Label"), ret);
+
+                }else if (idTypeTrans == idTransOut) {
+                    bodyTransac(html, quantity, name, DBProperties.getProperty("Products_TransactionOutbound.Label"), ret);
+
+                }
+
+        } else {
+
+            html.append("<span>").append(quantity).append("<span><br/>")
+            .append(DBProperties.getProperty("org.efaps.esjp.products.Transaction.validate"));
+        }
+
+        ret.put(ReturnValues.SNIPLETT, html.toString());
+        return ret;
+
+    }
+
+    private void bodyTransac(StringBuilder _html, BigDecimal _quantity, String _name, String _typeTrans, Return _ret)
+    {
+        _html.append("<table><tr><td colspan='2'>")
+                        .append(_typeTrans)
+                        .append("</td></tr><tr>")
+                        .append("<td>").append(DBProperties.getProperty("Products_ProductAbstract/Name.Label"))
+                        .append("</td><td>").append(_name).append("</td></tr>")
+                        .append("<tr><td>").append(DBProperties.getProperty("Products_TransactionAbstract/Quantity.Label"))
+                        .append("</td><td>").append(_quantity).append("</td>")
+                        .append("</tr></table>");
+        _ret.put(ReturnValues.TRUE, true);
+    }
 }
+
