@@ -166,7 +166,7 @@ El menú almacén contiene lo siguiente:
 Debe dirigirse a la opción acción y elegir crear almacén, inmediatamente le aparecerá la ventana *crear nuevo almacén*, en donde ingresará
 la información correspondiente en los siguientes campos:
 
-  * Nombre: es el identificador del almacén.
+  * Nombre: colocar el nombre del almacén.
   * Descripción: es un concepto mas detallado del almacén.
 
 ===9.2 Crear ubicación para producto===
