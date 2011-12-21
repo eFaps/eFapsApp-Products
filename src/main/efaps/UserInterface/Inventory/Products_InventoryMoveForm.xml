@@ -44,10 +44,14 @@
       <property name="Attribute">Storage</property>
       <property name="ModeCreate">EDITABLE</property>
       <property name="Required">true</property>
-      <trigger program="org.efaps.esjp.products.Transaction"
-               method="getStorageFieldValueUI"
-               name="Products_InventoryMoveForm.targetStorage.UI_FIELD_VALUE"
-               event="UI_FIELD_VALUE"></trigger>
+      <trigger program="org.efaps.esjp.common.uiform.Field"
+                method="dropDownFieldValue"
+                name="Products_TransactionAbstractForm.storage.UI_FIELD_VALUE"
+                event="UI_FIELD_VALUE" >
+                <property name="Type">Products_StorageAbstract</property>
+                <property name="WhereAttrEqValue">Active|true</property>
+                <property name="Phrase">$&lt;attribute[Name]&gt;</property>
+            </trigger>
     </field>
     <field name="product">
       <property name="Attribute">Product</property>
