@@ -62,6 +62,7 @@
         <field name="active">
             <property name="Attribute">Active</property>
             <property name="Label">Products_ProductAbstract/Active.Label</property>
+            <property name="FilterType">PICKER</property>
         </field>
         <field name="buttonOpenInNewWindow">
             <icon>eFapsActionNewWindow</icon>
