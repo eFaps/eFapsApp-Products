@@ -47,8 +47,8 @@
       <!-- foreign keys -->
       <foreign name="T_PRODPRODUCT2CONTACT_FK_FROMID"   key="FROMID"        reference="T_PRODPRODUCT(ID)"/>
       <foreign name="T_PRODPRODUCT2CONTACT_FK_TOID"     key="TOID"          reference="T_COCONTACT(ID)"/>
-      <foreign name="T_PRODPRODUCT2PRODUCT_FK_CRTR"     key="CREATOR"       reference="T_USERPERSON(ID)"/>
-      <foreign name="T_PRODPRODUCT2PRODUCT_FK_MDFR"     key="MODIFIER"      reference="T_USERPERSON(ID)"/>
+      <foreign name="T_PRODPRODUCT2CONTACT_FK_CRTR"     key="CREATOR"       reference="T_USERPERSON(ID)"/>
+      <foreign name="T_PRODPRODUCT2CONTACT_FK_MDFR"     key="MODIFIER"      reference="T_USERPERSON(ID)"/>
      </database>
   </definition>
 

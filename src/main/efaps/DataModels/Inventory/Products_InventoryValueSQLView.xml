@@ -51,8 +51,8 @@
                T_PRODPRODCOST.VALIDUNTIL
         from T_PRODINVENTORY
             left join T_PRODPRODCOST on T_PRODINVENTORY.productid =  T_PRODPRODCOST.prodid
-            where (T_PRODPRODCOST.VALIDFROM &lt; now() and T_PRODPRODCOST.VALIDUNTIL &gt; now())
-                or  T_PRODPRODCOST.PRICE isnull
+            where (T_PRODPRODCOST.VALIDFROM &lt; current_timestamp and T_PRODPRODCOST.VALIDUNTIL &gt; current_timestamp)
+                or  T_PRODPRODCOST.PRICE is null
       </sql>
     </database>
   </definition>
