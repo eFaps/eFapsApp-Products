@@ -43,6 +43,8 @@
       <column name="DESCR"     type="STRING_SHORT"                    length="255"/>
       <column name="DIMID"     type="INTEGER"         not-null="true" />
       <column name="ACTIVE"    type="BOOLEAN"/>
+      <column name="SALESUNIT"    type="DECIMAL"                      length="8" scale="4" />
+      <column name="TAXCATID"     type="INTEGER" />
       <foreign name="T_PRODPRODUCT_FK_COMPANYID" key="COMPANYID" reference="T_USERABSTRACT(ID)"/>
       <foreign name="T_PRODPRODUCT_FK_DIMID"     key="DIMID"     reference="T_DMDIM(ID)"/>
     </database>
