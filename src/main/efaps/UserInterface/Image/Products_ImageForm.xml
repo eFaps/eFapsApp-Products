@@ -119,7 +119,7 @@
       <property name="ModeSearch">EDITABLE</property>
     </field>
 
-    <field name="group2" character="Group">
+    <field name="group3" character="Group">
       <property name="GroupCount">2</property>
     </field>
     <field name="WidthInch">
@@ -136,7 +136,7 @@
       <property name="ModeSearch">EDITABLE</property>
     </field>
 
-    <field name="group2" character="Group">
+    <field name="group4" character="Group">
       <property name="GroupCount">2</property>
     </field>
     <field name="Format">
