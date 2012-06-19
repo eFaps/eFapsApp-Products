@@ -241,7 +241,7 @@ public abstract class TreeViewStructurBrowser_Base
     {
         final UIStructurBrowser strBro = (UIStructurBrowser) _parameter.get(ParameterValues.CLASS);
 
-        Collections.sort(strBro.getChilds(), new Comparator<UIStructurBrowser>() {
+        Collections.sort(strBro.getChildren(), new Comparator<UIStructurBrowser>() {
 
             public int compare(final UIStructurBrowser _structurBrowser1,
                                final UIStructurBrowser _structurBrowser2)
