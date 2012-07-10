@@ -2,7 +2,7 @@
 
 <!--
 
-  Copyright 2003 - 2010 The eFaps Team
+  Copyright 2003 - 2012 The eFaps Team
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -31,6 +31,9 @@
     <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
+        <profiles>
+            <profile name="eFaps"/>
+        </profiles>
         <name>Products_ProductForm</name>
         <!-- fields -->
         <field name="classification" character="Classification">
@@ -79,6 +82,107 @@
             <property name="Attribute">Active</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+        </field>
+        <field name="inventoryHeading" character="Heading">
+            <property name="Level">1</property>
+            <property name="Label">Products_ProductForm/Inventory.Heading</property>
+            <property name="ModeEdit">NONE</property>
+        </field>
+        <field name="inventoryTable" character="Target">
+            <property name="ModeEdit">NONE</property>
+            <table>Products_InventoryTable</table>
+            <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
+                <property name="Types">Products_Inventory</property>
+                <property name="LinkFroms">Product</property>
+            </evaluate>
+        </field>
+    </definition>
+
+
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <profiles>
+            <profile name="POS"/>
+            <profile name="sales"/>
+        </profiles>
+        <name>Products_ProductForm</name>
+        <!-- fields -->
+        <field name="classification" character="Classification">
+            <property name="Classification">Products_Class</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+        </field>
+         <field name="image">
+            <property name="Label">Products_ProductForm.image.Label</property>
+            <property name="RowSpan">5</property>
+            <trigger program="org.efaps.esjp.products.Image"
+                method="getImageFieldValueUI"
+                name="Products_ImageForm.image.UI_FIELD_VALUE"
+                event="UI_FIELD_VALUE">
+                <property name="max-width">200px</property>
+                <property name="max-height">200px</property>
+                <property name="RelationType">Products_Product2ImageThumbnail</property>
+            </trigger>
+            <trigger program="org.efaps.esjp.products.Image"
+                method="access4Image"
+                name="Products_ProductForm.image.UI_ACCESSCHECK"
+                event="UI_ACCESSCHECK"/>
+        </field>
+        <field name="name">
+            <property name="Columns">40</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ModeSearch">EDITABLE</property>
+            <property name="Attribute">Name</property>
+            <property name="Required">true</property>
+        </field>
+        <field name="description">
+            <property name="Columns">40</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ModeSearch">EDITABLE</property>
+            <property name="Attribute">Description</property>
+            <property name="Required">true</property>
+        </field>
+        <field name="dimension">
+            <property name="Attribute">Dimension</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+        </field>
+        <field name="active">
+            <property name="Attribute">Active</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+        </field>
+        <field name="salesUnit">
+            <property name="Attribute">SalesUnit</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ModeView">NONE</property>
+            <property name="ModePrint">NONE</property>
+            <property name="Required">true</property>
+        </field>
+        <field name="salesUnit4Read">
+            <property name="Select">attribute[SalesUnit].format[0.####]</property>
+            <property name="ModeCreate">NONE</property>
+            <property name="ModeEdit">NONE</property>
+        </field>
+        <field name="taxCategory">
+            <property name="Attribute">TaxCategory</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+        </field>
+        <field name="uUID">
+            <property name="Attribute">UUID</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="Required">true</property>
+        </field>
+        <field name="barcode">
+            <property name="Attribute">Barcode</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="Required">true</property>
         </field>
         <field name="inventoryHeading" character="Heading">
             <property name="Level">1</property>
