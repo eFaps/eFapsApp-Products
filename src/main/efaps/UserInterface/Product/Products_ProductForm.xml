@@ -29,13 +29,14 @@
     <uuid>5142d865-8a1d-4409-a56f-b1c5c92d01ef</uuid>
     <file-application>eFapsApp-Products</file-application>
     <file-revision>$Rev$</file-revision>
+    <!--
     <definition>
         <version-expression>(version==latest)</version-expression>
         <profiles>
             <profile name="eFaps"/>
         </profiles>
         <name>Products_ProductForm</name>
-        <!-- fields -->
+
         <field name="classification" character="Classification">
             <property name="Classification">Products_Class</property>
             <property name="ModeCreate">EDITABLE</property>
@@ -97,7 +98,7 @@
             </evaluate>
         </field>
     </definition>
-
+-->
 
     <definition>
         <version-expression>(version==latest)</version-expression>
@@ -172,11 +173,30 @@
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
         </field>
+        <field name="uuidGroup" character="Group">
+            <property name="GroupCount">2</property>
+            <property name="ModeCreate">READONLY</property>
+            <property name="ModeView">NONE</property>
+            <property name="ModeEdit">NONE</property>
+        </field>
         <field name="uUID">
             <property name="Attribute">UUID</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
             <property name="Required">true</property>
+        </field>
+        <field name="createUUID" character="Command">
+            <property name="ModeCreate">READONLY</property>
+            <property name="ModeView">NONE</property>
+            <property name="ModeEdit">NONE</property>
+            <property name="Label">Products_ProductForm.createUUID.Label</property>
+            <property name="CmdIcon">ACCEPT</property>
+            <trigger program="org.efaps.esjp.common.uiform.Field"
+                name="Products_ProductForm.createUUID.UI_FIELD_CMD"
+                event="UI_FIELD_CMD"
+                method="createUUID">
+                <property name="TargetField">uUID</property>
+             </trigger>
         </field>
         <field name="barcode">
             <property name="Attribute">Barcode</property>

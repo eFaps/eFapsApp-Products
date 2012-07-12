@@ -71,7 +71,7 @@
             <column name="ACTIVE"       type="BOOLEAN"/>
             <column name="SALESUNIT"    type="DECIMAL"                      length="8" scale="4" />
             <column name="TAXCATID"     type="INTEGER" />
-            <column name="UUID"         type="STRING_SHORT"     not-null="true"  length="32"/>
+            <column name="UUID"         type="STRING_SHORT"     not-null="true"  length="64"/>
             <column name="CODE"         type="STRING_SHORT"     not-null="true"  length="32"/>
             <foreign name="T_PRODPRODUCT_FK_COMPANYID" key="COMPANYID" reference="T_USERABSTRACT(ID)"/>
             <foreign name="T_PRODPRODUCT_FK_DIMID"     key="DIMID"     reference="T_DMDIM(ID)"/>
