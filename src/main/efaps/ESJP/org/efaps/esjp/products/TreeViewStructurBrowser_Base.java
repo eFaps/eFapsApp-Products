@@ -67,6 +67,7 @@ public abstract class TreeViewStructurBrowser_Base
      * @throws EFapsException on error
      * @return Return
      */
+    @Override
     public Return execute(final Parameter _parameter)
         throws EFapsException
     {
@@ -243,6 +244,7 @@ public abstract class TreeViewStructurBrowser_Base
 
         Collections.sort(strBro.getChildren(), new Comparator<UIStructurBrowser>() {
 
+            @Override
             public int compare(final UIStructurBrowser _structurBrowser1,
                                final UIStructurBrowser _structurBrowser2)
             {
