@@ -27,8 +27,8 @@ import java.util.Map.Entry;
 import org.efaps.admin.datamodel.Attribute;
 import org.efaps.admin.datamodel.ui.FieldValue;
 import org.efaps.admin.event.Parameter;
-import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Parameter.ParameterValues;
+import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
@@ -44,7 +44,7 @@ import org.joda.time.DateTime;
 
 /**
  * TODO comment!
- *
+ * 
  * @author The eFaps Team
  * @version $Id$
  */
@@ -55,12 +55,13 @@ public abstract class Cost_Base
     /**
      * Method to get the value for the date field "Valid until". On create mode
      * a date in ten years future is returned.
-     *
+     * 
      * @param _parameter Paramter as passed from the eFaps esjp API
      * @return Return containing the value
      * @throws EFapsException on error
      */
-    public Return getValidUntilUI(final Parameter _parameter) throws EFapsException
+    public Return getValidUntilUI(final Parameter _parameter)
+        throws EFapsException
     {
         final FieldValue fValue = (FieldValue) _parameter.get(ParameterValues.UIOBJECT);
         final DateTime value;
@@ -75,14 +76,15 @@ public abstract class Cost_Base
     }
 
     /**
-     * Method is executed as a insert trigger on type "Products_ProductCost".
-     * It corrects the valid until date of all other Products_ProductCost.
-     *
+     * Method is executed as a insert trigger on type "Products_ProductCost". It
+     * corrects the valid until date of all other Products_ProductCost.
+     * 
      * @param _parameter Paramter as passed from the eFaps esjp API
      * @return Return containing the value
      * @throws EFapsException on error
      */
-    public Return trigger4Insert(final Parameter _parameter) throws EFapsException
+    public Return trigger4Insert(final Parameter _parameter)
+        throws EFapsException
     {
         final Map<?, ?> values = (Map<?, ?>) _parameter.get(ParameterValues.NEW_VALUES);
         final Instance costInstance = _parameter.getInstance();
@@ -106,7 +108,7 @@ public abstract class Cost_Base
         while (query.next()) {
             if (!query.getCurrentValue().equals(costInstance)) {
                 final Update update = new Update(query.getCurrentValue());
-                update.add(CIProducts.ProductCost.ValidUntil, date);
+                update.add(CIProducts.ProductCost.ValidUntil, date.minusDays(1));
                 update.executeWithoutTrigger();
             }
         }
