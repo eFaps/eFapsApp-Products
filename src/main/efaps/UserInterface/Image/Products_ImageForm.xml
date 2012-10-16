@@ -152,12 +152,14 @@
       <property name="GroupCount">2</property>
    </field>
     <field name="fileName">
-      <property name="Attribute">FileName</property>
+      <property name="Select">file.label</property>
       <property name="ModeSearch">EDITABLE</property>
+      <property name="Label">Products_ImageForm.fileName.Label</property>
     </field>
     <field name="fileLength">
-      <property name="Attribute">FileLength</property>
+      <property name="Select">file.length</property>
       <property name="ModeSearch">EDITABLE</property>
+      <property name="Label">Products_ImageForm.fileLength.Label</property>
     </field>
 
     <field name="createGroup" character="Group">

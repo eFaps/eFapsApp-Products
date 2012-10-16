@@ -27,37 +27,34 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
 
-  <uuid>8309e950-fbef-4595-a3e7-f738e418b392</uuid>
-  <file-application>eFapsApp-Products</file-application>
-  <file-revision>$Rev$</file-revision>
+    <uuid>8309e950-fbef-4595-a3e7-f738e418b392</uuid>
+    <file-application>eFapsApp-Products</file-application>
+    <file-revision>$Rev$</file-revision>
 
-  <definition>
-    <version-expression>(version==latest)</version-expression>
-    <name>Products_Product2ImageTable</name>
-    <!-- fields -->
-    <field name="type">
-      <property name="Attribute">Type</property>
-      <property name="Label">Products_Product2ImageAbstract/Type.Label</property>
-      <property name="ShowTypeIcon">true</property>
-    </field>
-    <field name="caption">
-      <property name="Attribute">Caption</property>
-      <property name="Label">Products_Product2ImageAbstract/Caption.Label</property>
-      <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
-    </field>
-    <field name="description">
-      <property name="SelectAlternateOID">linkto[ImageAbstractLink].oid</property>
-      <property name="Select">linkto[ImageAbstractLink].attribute[Description]</property>
-      <property name="Label">Products_Product2ImageTable.description.Label</property>
-      <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
-    </field>
-    <field name="size">
-      <property name="Phrase">$&lt;linkto[ImageAbstractLink].attribute[WidthPx]&gt;px x $&lt;linkto[ImageAbstractLink].attribute[HeightPx]&gt;px - $&lt;linkto[ImageAbstractLink].attribute[FileLength].format[#,###]&gt;</property>
-      <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
-      <property name="Label">Products_Product2ImageTable.size.Label</property>
-    </field>
-  </definition>
-
-
-
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <name>Products_Product2ImageTable</name>
+        <!-- fields -->
+        <field name="type">
+            <property name="Attribute">Type</property>
+            <property name="Label">Products_Product2ImageAbstract/Type.Label</property>
+            <property name="ShowTypeIcon">true</property>
+        </field>
+        <field name="caption">
+            <property name="Attribute">Caption</property>
+            <property name="Label">Products_Product2ImageAbstract/Caption.Label</property>
+            <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
+        </field>
+        <field name="description">
+            <property name="SelectAlternateOID">linkto[ImageAbstractLink].oid</property>
+            <property name="Select">linkto[ImageAbstractLink].attribute[Description]</property>
+            <property name="Label">Products_Product2ImageTable.description.Label</property>
+            <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
+        </field>
+        <field name="size">
+            <property name="Phrase">$&lt;linkto[ImageAbstractLink].attribute[WidthPx]&gt;px x $&lt;linkto[ImageAbstractLink].attribute[HeightPx]&gt;px - $&lt;linkto[ImageAbstractLink].file.length&gt;</property>
+            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="Label">Products_Product2ImageTable.size.Label</property>
+        </field>
+    </definition>
 </ui-table>
