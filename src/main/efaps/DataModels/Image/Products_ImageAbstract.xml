@@ -134,6 +134,6 @@
             <sqltable>Products_ImageSQLTable</sqltable>
             <sqlcolumn>MODIFIED</sqlcolumn>
         </attribute>
-        <store name="Products_ImageVFSStore" attributeFileLength="FileLength" attributeFileName="FileName" />
+        <store name="Products_ImageVFSStore" />
     </definition>
 </datamodel-type>
