@@ -127,7 +127,7 @@ public abstract class PriceList_Base
 
         for (final String oid : updateOIDs) {
             final Update update = new Update(oid);
-            update.add(CIProducts.ProductPricelistAbstract.ValidUntil, date);
+            update.add(CIProducts.ProductPricelistAbstract.ValidUntil, date.minusDays(1));
             update.executeWithoutTrigger();
         }
         return new Return();
