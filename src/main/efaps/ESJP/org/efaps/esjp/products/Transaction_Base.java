@@ -39,8 +39,8 @@ import org.efaps.db.Instance;
 import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.PrintQuery;
 import org.efaps.db.QueryBuilder;
-import org.efaps.db.SearchQuery;
 import org.efaps.db.Update;
+import org.efaps.esjp.ci.CIFormProducts;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.ui.wicket.models.cell.UIFormCell;
 import org.efaps.util.EFapsException;
@@ -71,12 +71,13 @@ public abstract class Transaction_Base
         final String typeId = _parameter.getParameterValue("type");
         final Type type = Type.get(Long.parseLong(typeId));
         final Insert insert = new Insert(type);
-        insert.add("Quantity", _parameter.getParameterValue("quantity"));
-        insert.add("UoM", _parameter.getParameterValue("uoM"));
-        insert.add("Storage", _parameter.getParameterValue("storage"));
-        insert.add("Product", Instance.get(_parameter.getParameterValue("product")).getId());
-        insert.add("Description", _parameter.getParameterValue("description"));
-        insert.add("Date", _parameter.getParameterValue("date"));
+        insert.add(CIProducts.TransactionAbstract.Quantity, _parameter.getParameterValue("quantity"));
+        insert.add(CIProducts.TransactionAbstract.UoM, _parameter.getParameterValue("uoM"));
+        insert.add(CIProducts.TransactionAbstract.Storage, _parameter.getParameterValue("storage"));
+        insert.add(CIProducts.TransactionAbstract.Product,
+                        Instance.get(_parameter.getParameterValue("product")).getId());
+        insert.add(CIProducts.TransactionAbstract.Description, _parameter.getParameterValue("description"));
+        insert.add(CIProducts.TransactionAbstract.Date, _parameter.getParameterValue("date"));
         insert.execute();
         return new Return();
     }
@@ -126,56 +127,54 @@ public abstract class Transaction_Base
         final Instance instance = _parameter.getInstance();
         // get the transaction
         final PrintQuery query = new PrintQuery(instance);
-        query.addAttribute("Storage", "Product", "UoM", "Quantity");
+        query.addAttribute(CIProducts.Inventory.Storage, CIProducts.Inventory.Product,
+                        CIProducts.Inventory.UoM, CIProducts.Inventory.Quantity);
         BigDecimal value = null;
         Long storage = null;
         Long product = null;
         Long uomId = null;
         if (query.execute()) {
-            value = (BigDecimal) query.getAttribute("Quantity");
-            storage = (Long) query.getAttribute("Storage");
-            product = (Long) query.getAttribute("Product");
-            uomId = (Long) query.getAttribute("UoM");
+            value = (BigDecimal) query.getAttribute(CIProducts.Inventory.Quantity);
+            storage = (Long) query.getAttribute(CIProducts.Inventory.Storage);
+            product = (Long) query.getAttribute( CIProducts.Inventory.Product);
+            uomId = (Long) query.getAttribute(CIProducts.Inventory.UoM);
         }
         final UoM uom = Dimension.getUoM(uomId);
         value = value.multiply(new BigDecimal(uom.getNumerator())).divide(new BigDecimal(uom.getDenominator()),
                         BigDecimal.ROUND_HALF_UP);
 
-        // search for the correct inventory
-        final SearchQuery query2 = new SearchQuery();
-        query2.setQueryTypes("Products_Inventory");
-        query2.addWhereExprEqValue("Storage", storage);
-        query2.addWhereExprEqValue("Product", product);
-        query2.addSelect("Quantity");
-        query2.addSelect("Reserved");
-        query2.addSelect("OID");
-        query2.execute();
+        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.Inventory);
+        queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, storage);
+        queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Product, product);
+        final MultiPrintQuery multi = queryBldr.getPrint();
+        multi.addAttribute(CIProducts.Inventory.Quantity, CIProducts.Inventory.Reserved);
+        multi.execute();
 
         Update update;
         BigDecimal value2 = null;
-        if (query2.next()) {
-            update = new Update((String) query2.get("OID"));
-            final BigDecimal current = (BigDecimal) query2.get(_attribute);
+        if (multi.next()) {
+            update = new Update(multi.getCurrentInstance());
+            final BigDecimal current = multi.<BigDecimal>getAttribute(_attribute);
             if (_add) {
                 value = current.add(value);
             } else {
                 value = current.subtract(value);
                 if ("Quantity".equals(_attribute)) {
-                    value2 = (BigDecimal) query2.get("Reserved");
+                    value2 = multi.<BigDecimal>getAttribute(CIProducts.Inventory.Reserved);
                 } else {
-                    value2 = (BigDecimal) query2.get("Quantity");
+                    value2 = multi.<BigDecimal>getAttribute(CIProducts.Inventory.Quantity);
                 }
                 if (value2 == null) {
                     value2 = BigDecimal.ZERO;
                 }
             }
         } else {
-            update = new Insert("Products_Inventory");
-            update.add("UoM", ((Long) uom.getDimension().getBaseUoM().getId()).toString());
-            update.add("Storage", storage.toString());
-            update.add("Product", product.toString());
+            update = new Insert(CIProducts.Inventory);
+            update.add(CIProducts.Inventory.UoM, uom.getDimension().getBaseUoM().getId());
+            update.add(CIProducts.Inventory.Storage, storage);
+            update.add(CIProducts.Inventory.Product, product);
             if (!"Quantity".equals(_attribute)) {
-                update.add("Quantity", 0);
+                update.add(CIProducts.Inventory.Quantity, 0);
             }
         }
 
@@ -200,7 +199,7 @@ public abstract class Transaction_Base
         throws EFapsException
     {
         final Instance fromStorageInst = _parameter.getInstance();
-        final Insert inbound = new Insert("Products_TransactionInbound");
+
 
         final String quantity = _parameter.getParameterValue("quantity");
         final String prodDesc = _parameter.getParameterValue("productAutoComplete");
@@ -208,42 +207,42 @@ public abstract class Transaction_Base
         final String toStorageId = _parameter.getParameterValue("storage");
 
         final PrintQuery print = new PrintQuery(fromStorageInst);
-        print.addAttribute("Name");
+        print.addAttribute(CIProducts.StorageAbstract.Name);
         print.execute();
-        final String fromStorage = print.<String>getAttribute("Name");
+        final String fromStorage = print.<String>getAttribute(CIProducts.StorageAbstract.Name);
 
-        final SearchQuery query = new SearchQuery();
-        query.setQueryTypes("Products_StorageAbstract");
-        query.setExpandChildTypes(true);
-        query.addSelect("Name");
-        query.addWhereExprEqValue("ID", toStorageId);
-        query.execute();
-        query.next();
-        final String toStorage = (String) query.get("Name");
+        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.StorageAbstract);
+        queryBldr.addWhereAttrEqValue(CIProducts.StorageAbstract.ID, toStorageId);
+        final MultiPrintQuery multi = queryBldr.getPrint();
+        multi.addAttribute(CIProducts.StorageAbstract.Name);
+        multi.execute();
+        multi.next();
+        final String toStorage =  multi.<String>getAttribute(CIProducts.StorageAbstract.Name);
 
         final StringBuilder bldr = new StringBuilder();
         bldr.append(_parameter.getParameterValue("description")).append(" - ")
-                        .append(DBProperties.getProperty("esjp.Products_Transaction.Move.Text")).append(" ")
-                        .append(quantity).append(" ")
-                        .append(Dimension.getUoM(Long.parseLong(uomStr)).getName()).append(" ")
-                        .append(prodDesc).append(" : ")
-                        .append(fromStorage).append(" -> ").append(toStorage);
+                .append(DBProperties.getProperty("esjp.Products_Transaction.Move.Text")).append(" ")
+                .append(quantity).append(" ")
+                .append(Dimension.getUoM(Long.parseLong(uomStr)).getName()).append(" ")
+                .append(prodDesc).append(" : ")
+                .append(fromStorage).append(" -> ").append(toStorage);
 
-        inbound.add("Quantity", quantity);
-        inbound.add("Storage", toStorageId);
-        inbound.add("UoM", uomStr);
-        inbound.add("Date", _parameter.getParameterValue("date"));
-        inbound.add("Product", _parameter.getParameterValue("product"));
-        inbound.add("Description", bldr.toString());
+        final Insert inbound = new Insert(CIProducts.TransactionInbound);
+        inbound.add(CIProducts.TransactionInbound.Quantity, quantity);
+        inbound.add(CIProducts.TransactionInbound.Storage, toStorageId);
+        inbound.add(CIProducts.TransactionInbound.UoM, uomStr);
+        inbound.add(CIProducts.TransactionInbound.Date, _parameter.getParameterValue("date"));
+        inbound.add(CIProducts.TransactionInbound.Product, _parameter.getParameterValue("product"));
+        inbound.add(CIProducts.TransactionInbound.Description, bldr.toString());
         inbound.execute();
 
-        final Insert outbound = new Insert("Products_TransactionOutbound");
-        outbound.add("Quantity", quantity);
-        outbound.add("Storage", ((Long) fromStorageInst.getId()).toString());
-        outbound.add("UoM", uomStr);
-        outbound.add("Date", _parameter.getParameterValue("date"));
-        outbound.add("Product", _parameter.getParameterValue("product"));
-        outbound.add("Description", bldr.toString());
+        final Insert outbound = new Insert(CIProducts.TransactionOutbound);
+        outbound.add(CIProducts.TransactionOutbound.Quantity, quantity);
+        outbound.add(CIProducts.TransactionOutbound.Storage, ((Long) fromStorageInst.getId()).toString());
+        outbound.add(CIProducts.TransactionOutbound.UoM, uomStr);
+        outbound.add(CIProducts.TransactionOutbound.Date, _parameter.getParameterValue("date"));
+        outbound.add(CIProducts.TransactionOutbound.Product, _parameter.getParameterValue("product"));
+        outbound.add(CIProducts.TransactionOutbound.Description, bldr.toString());
         outbound.execute();
 
         return new Return();
@@ -265,14 +264,14 @@ public abstract class Transaction_Base
         final String quantityStr = _parameter.getParameterValue("quantity");
         final String productId = _parameter.getParameterValue("product");
 
-        final SearchQuery query = new SearchQuery();
-        query.setQueryTypes("Products_Inventory");
-        query.addWhereExprEqValue("Storage", fromStorageInst.getId());
-        query.addWhereExprEqValue("Product", productId);
-        query.addSelect("Quantity");
-        query.execute();
-        if (query.next()) {
-            final BigDecimal existing = (BigDecimal) query.get("Quantity");
+        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.Inventory);
+        queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, fromStorageInst.getId());
+        queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Product, productId);
+        final MultiPrintQuery multi = queryBldr.getPrint();
+        multi.addAttribute(CIProducts.Inventory.Quantity);
+        multi.execute();
+        if (multi.next()) {
+            final BigDecimal existing = multi.<BigDecimal>getAttribute(CIProducts.Inventory.Quantity);
             final BigDecimal check = existing.subtract(new BigDecimal(quantityStr));
             if (check.compareTo(BigDecimal.ZERO) > -1) {
                 ret.put(ReturnValues.TRUE, true);
@@ -458,15 +457,23 @@ public abstract class Transaction_Base
         final Return ret = new Return();
         final StringBuilder html = new StringBuilder();
 
-        final Long idTypeTrans = Long.parseLong(_parameter.getParameterValue("type"));
+        final Long idTypeTrans = Long.parseLong(_parameter
+                        .getParameterValue(CIFormProducts.Products_TransactionAbstractForm.type.name));
 
-        final Instance productInst = Instance.get(_parameter.getParameterValue("product"));
-        final BigDecimal quantity = new BigDecimal(_parameter.getParameterValue("quantity"));
+        final Instance productInst = Instance.get(_parameter
+                        .getParameterValue(CIFormProducts.Products_TransactionAbstractForm.product.name));
+        final BigDecimal quantity = new BigDecimal(
+                        _parameter.getParameterValue(CIFormProducts.Products_TransactionAbstractForm.quantity.name));
+        final String storageId = _parameter.getParameterValue(
+                        CIFormProducts.Products_TransactionAbstractForm.storage.name);
+
         BigDecimal quantityInventory = BigDecimal.ZERO;
         BigDecimal quantityReserved = BigDecimal.ZERO;
 
+
         final QueryBuilder quanInvent = new QueryBuilder(CIProducts.Inventory);
         quanInvent.addWhereAttrEqValue(CIProducts.Inventory.Product, productInst.getId());
+        quanInvent.addWhereAttrEqValue(CIProducts.Inventory.Storage,  storageId);
 
         final MultiPrintQuery multiQuanti = quanInvent.getPrint();
         multiQuanti.addAttribute(CIProducts.Inventory.Quantity);
@@ -493,16 +500,21 @@ public abstract class Transaction_Base
 
         if (idTypeTrans == idReserOut) {
             if (quantityReserved.intValue() < quantity.intValue()) {
-                html.append("<span>").append(quantity).append("<span><br/>")
-                    .append(DBProperties.getProperty("org.efaps.esjp.products.Transaction.validateReserved"));
+                html.append("<span>")
+                                .append(quantity)
+                                .append("<span><br/>")
+                                .append(DBProperties
+                                                .getProperty("org.efaps.esjp.products.Transaction.validateReserved"));
             } else {
-                bodyTransac(html, quantity, name, DBProperties.getProperty("Products_TransactionReservationOutbound.Label"), ret);
+                bodyTransac(html, quantity, name,
+                                DBProperties.getProperty("Products_TransactionReservationOutbound.Label"), ret);
             }
         } else if (idTypeTrans == idTransIn) {
             bodyTransac(html, quantity, name, DBProperties.getProperty("Products_TransactionInbound.Label"), ret);
         } else if (quantityInventory.intValue() >= quantity.intValue() + quantityReserved.intValue()) {
             if (idTypeTrans == idReserIn) {
-                bodyTransac(html, quantity, name, DBProperties.getProperty("Products_TransactionReservationInbound.Label"), ret);
+                bodyTransac(html, quantity, name,
+                                DBProperties.getProperty("Products_TransactionReservationInbound.Label"), ret);
             } else if (idTypeTrans == idTransOut) {
                 bodyTransac(html, quantity, name, DBProperties.getProperty("Products_TransactionOutbound.Label"), ret);
             }
@@ -510,22 +522,24 @@ public abstract class Transaction_Base
             html.append("<span>").append(quantity).append("<span><br/>")
                             .append(DBProperties.getProperty("org.efaps.esjp.products.Transaction.validate"));
         }
-
         ret.put(ReturnValues.SNIPLETT, html.toString());
         return ret;
-
     }
 
-    private void bodyTransac(final StringBuilder _html, final BigDecimal _quantity, final String _name, final String _typeTrans, final Return _ret)
+    private void bodyTransac(final StringBuilder _html,
+                             final BigDecimal _quantity,
+                             final String _name,
+                             final String _typeTrans,
+                             final Return _ret)
     {
         _html.append("<table><tr><td colspan='2'>")
-                        .append(_typeTrans)
-                        .append("</td></tr><tr>")
-                        .append("<td>").append(DBProperties.getProperty("Products_ProductAbstract/Name.Label"))
-                        .append("</td><td>").append(_name).append("</td></tr>")
-                        .append("<tr><td>").append(DBProperties.getProperty("Products_TransactionAbstract/Quantity.Label"))
-                        .append("</td><td>").append(_quantity).append("</td>")
-                        .append("</tr></table>");
+            .append(_typeTrans)
+            .append("</td></tr><tr>")
+            .append("<td>").append(DBProperties.getProperty("Products_ProductAbstract/Name.Label"))
+            .append("</td><td>").append(_name).append("</td></tr>")
+            .append("<tr><td>").append(DBProperties.getProperty("Products_TransactionAbstract/Quantity.Label"))
+            .append("</td><td>").append(_quantity).append("</td>")
+            .append("</tr></table>");
         _ret.put(ReturnValues.TRUE, true);
     }
 }
