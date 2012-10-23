@@ -44,6 +44,7 @@
         </field>
          <field name="image">
             <property name="Label">Products_ProductForm.image.Label</property>
+            <property name="ModeEdit">NONE</property>
             <property name="RowSpan">5</property>
             <trigger program="org.efaps.esjp.products.Image"
                 method="getImageFieldValueUI"
