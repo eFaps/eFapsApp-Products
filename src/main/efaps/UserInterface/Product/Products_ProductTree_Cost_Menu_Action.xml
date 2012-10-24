@@ -37,6 +37,7 @@
     <!-- childs -->
     <childs>
       <child>Products_ProductTree_Cost_Menu_Action_Create</child>
+      <child>Products_ProductTree_Cost_Menu_Action_Calculate</child>
       <child>Products_ProductTree_Cost_Menu_Action_Delete</child>
     </childs>
   </definition>

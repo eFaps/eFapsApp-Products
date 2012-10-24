@@ -20,7 +20,13 @@
 
 package org.efaps.esjp.products;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -33,18 +39,21 @@ import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
+import org.efaps.db.Context;
 import org.efaps.db.Instance;
 import org.efaps.db.InstanceQuery;
+import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.PrintQuery;
 import org.efaps.db.QueryBuilder;
 import org.efaps.db.Update;
+import org.efaps.esjp.ci.CIFormProducts;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
 
 /**
  * TODO comment!
- * 
+ *
  * @author The eFaps Team
  * @version $Id$
  */
@@ -55,7 +64,7 @@ public abstract class Cost_Base
     /**
      * Method to get the value for the date field "Valid until". On create mode
      * a date in ten years future is returned.
-     * 
+     *
      * @param _parameter Paramter as passed from the eFaps esjp API
      * @return Return containing the value
      * @throws EFapsException on error
@@ -78,7 +87,7 @@ public abstract class Cost_Base
     /**
      * Method is executed as a insert trigger on type "Products_ProductCost". It
      * corrects the valid until date of all other Products_ProductCost.
-     * 
+     *
      * @param _parameter Paramter as passed from the eFaps esjp API
      * @return Return containing the value
      * @throws EFapsException on error
@@ -114,4 +123,115 @@ public abstract class Cost_Base
         }
         return new Return();
     }
+
+
+    /**
+     * Method for update a field of the contact.
+     *
+     * @param _parameter Parameter as passed from the eFaps API.
+     * @return retVal with values of the contact.
+     * @throws EFapsException on error.
+     */
+    public Return updateFields4CostCalculation(final Parameter _parameter)
+        throws EFapsException
+    {
+        final String quantityStr = _parameter
+                        .getParameterValue(CIFormProducts.Products_ProductCostCalculateForm.quantity.name);
+        final String costStr = _parameter.getParameterValue(CIFormProducts.Products_ProductCostCalculateForm.cost.name);
+
+        final BigDecimal quantity = parse(quantityStr);
+        final BigDecimal cost = parse(costStr);
+        BigDecimal price = BigDecimal.ZERO;
+        if (quantity.signum() > 0 && cost.signum() > 0) {
+
+            final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductCost);
+            queryBldr.addWhereAttrEqValue(CIProducts.ProductCost.ProductLink, _parameter.getInstance().getId());
+            queryBldr.addOrderByAttributeDesc(CIProducts.ProductCost.ValidUntil);
+            final InstanceQuery query = queryBldr.getQuery();
+            query.setLimit(1);
+            final List<Instance> instances = query.execute();
+            if (!instances.isEmpty()) {
+                final PrintQuery print = new PrintQuery(instances.get(0));
+                print.addAttribute(CIProducts.ProductCost.Price);
+                print.execute();
+                final BigDecimal oldPrice = print.<BigDecimal>getAttribute(CIProducts.ProductCost.Price);
+                final QueryBuilder invQueryBldr = new QueryBuilder(CIProducts.Inventory);
+                invQueryBldr.addWhereAttrEqValue(CIProducts.Inventory.Product, _parameter.getInstance().getId());
+                final MultiPrintQuery multi = invQueryBldr.getPrint();
+                multi.addAttribute(CIProducts.Inventory.Quantity, CIProducts.Inventory.Reserved);
+                multi.execute();
+
+                BigDecimal oldQuantity = BigDecimal.ZERO;
+                while (multi.next()) {
+                    final BigDecimal quantTmp = multi.<BigDecimal>getAttribute(CIProducts.Inventory.Quantity);
+                    final BigDecimal resTmp = multi.<BigDecimal>getAttribute(CIProducts.Inventory.Reserved);
+                    if (quantTmp != null) {
+                        oldQuantity = oldQuantity.add(quantTmp);
+                    }
+                    if (resTmp != null) {
+                        oldQuantity = oldQuantity.add(resTmp);
+                    }
+                }
+                price = (oldPrice.multiply(oldQuantity).add(cost.multiply(quantity))).setScale(8)
+                                .divide(oldQuantity.add(quantity), BigDecimal.ROUND_HALF_UP)
+                                .setScale(getFractionDigit(), BigDecimal.ROUND_HALF_UP);
+            } else {
+                price = cost;
+            }
+        }
+
+        final Map<?, ?> properties = (Map<?, ?>) _parameter.get(ParameterValues.PROPERTIES);
+        final List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+        final Map<String, String> map = new HashMap<String, String>();
+
+        final String targetFieldName = (String) properties.get("fieldName");
+        if (targetFieldName != null) {
+            map.put(targetFieldName, price.toString());
+        }
+
+        final String diplayFieldName = (String) properties.get("displayFieldName");
+        if (diplayFieldName != null) {
+            final DecimalFormat formater = (DecimalFormat) NumberFormat.getInstance(Context.getThreadContext()
+                            .getLocale());
+            formater.setMaximumFractionDigits(getFractionDigit());
+            map.put(diplayFieldName, formater.format(price));
+        }
+
+        if (!map.isEmpty()) {
+            list.add(map);
+        }
+        final Return retVal = new Return();
+        retVal.put(ReturnValues.VALUES, list);
+        return retVal;
+    }
+
+
+    protected Integer getFractionDigit()
+    {
+        return 2;
+    }
+
+    /**
+     * @param _value value to be parsed to an BigDecimal
+     * @return BigDecimal
+     * @throws EFapsException on parse exception
+     */
+    public BigDecimal parse(final String _value)
+        throws EFapsException
+    {
+        final DecimalFormat formater = (DecimalFormat) NumberFormat.getInstance(Context.getThreadContext().getLocale());
+        formater.setParseBigDecimal(true);
+        BigDecimal ret;
+        try {
+            if (_value != null && _value.length() > 0) {
+                ret = (BigDecimal) formater.parse(_value);
+            } else {
+                ret = BigDecimal.ZERO;
+            }
+        } catch (final ParseException e) {
+            ret = BigDecimal.ZERO;
+        }
+        return ret;
+    }
+
 }
