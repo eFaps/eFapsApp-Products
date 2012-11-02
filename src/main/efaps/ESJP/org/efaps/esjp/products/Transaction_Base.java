@@ -297,6 +297,7 @@ public abstract class Transaction_Base
         throws EFapsException
     {
         addRemoveFromInventory(_parameter, false, "Reserved");
+        addRemoveFromInventory(_parameter, true, "Quantity");
         return new Return();
     }
 
@@ -312,6 +313,7 @@ public abstract class Transaction_Base
         throws EFapsException
     {
         addRemoveFromInventory(_parameter, true, "Reserved");
+        addRemoveFromInventory(_parameter, false, "Quantity");
         return new Return();
     }
 
@@ -357,7 +359,7 @@ public abstract class Transaction_Base
                 }
             } else {
                 js.append("document.getElementsByName('description')[0].innerHTML=\"<span style='color:red;' >")
-                                .append(DBProperties.getProperty("org.efaps.esjp.products.enterProduct")).append("</span>\"");
+                         .append(DBProperties.getProperty("org.efaps.esjp.products.enterProduct")).append("</span>\"");
             }
         }
         ret.put(ReturnValues.SNIPLETT, js.toString());
