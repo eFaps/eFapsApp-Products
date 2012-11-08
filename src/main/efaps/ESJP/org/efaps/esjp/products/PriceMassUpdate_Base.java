@@ -52,8 +52,7 @@ import org.joda.time.DateTime;
  * TODO description!
  *
  * @author The eFasp Team
- * @version $Id: TreeViewStructurBrowser_Base.java 7782 2012-07-16 14:51:05Z
- *          jorge.cueva@moxter.net $
+ * @version $Id$
  */
 @EFapsUUID("5155df08-55a6-4ad2-ad93-374820d9fc45")
 @EFapsRevision("$Rev$")
