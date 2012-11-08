@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
+
+ Copyright 2003 - 2012 The eFaps Team
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+
+ Author:          The eFaps Team
+ Revision:        $Rev$
+ Last Changed:    $Date$
+ Last Changed By: $Author$
+
+--><ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>726ad47b-03d3-4eac-a9bd-b4c10b144604</uuid>
+    <file-application>eFapsApp-Products</file-application>
+    <file-revision>$Rev$</file-revision>
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <name>Products_PriceMassUpdate</name>
+        <access>
+            <role>Products_Admin</role>
+            <role>Products_Modifier</role>
+        </access>
+
+        <!-- target definitions -->
+        <target>
+            <form>Products_PriceMassUpdateForm</form>
+            <execute program="org.efaps.esjp.products.PriceMassUpdate">
+                <property name="PriceListType">Products_ProductPricelistRetail</property>
+            </execute>
+            <trigger program="org.efaps.esjp.admin.access.AccessOnField"
+                 method="configCheck"
+                 name="Products_PriceMassUpdate.UI_ACCESSCHECK"
+                 event="UI_ACCESSCHECK">
+                <property name="SystemConfig">Products-Configuration</property>
+                <property name="Attribute">Activate_PriceMassUpdate</property>
+            </trigger>
+        </target>
+
+        <!-- properties -->
+        <property name="Target">modal</property>
+        <property name="TargetMode">edit</property>
+        <property name="Submit">true</property>
+        <property name="SubmitSelectedRows">0</property>
+        <property name="TargetDefaultMenu">NONE</property>
+    </definition>
+</ui-command>

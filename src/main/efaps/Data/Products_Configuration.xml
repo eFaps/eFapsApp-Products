@@ -50,5 +50,10 @@ Thumbnail_Enlarge=false
             </value>
             <description>Properties for image</description>
         </attribute>
+        <attribute>
+            <key>Activate_PriceMassUpdate</key>
+            <value>false</value>
+            <description>Boolean(true/false). Activate the menu for updating Product Prices on mass.</description>
+        </attribute>
     </definition>
 </common-systemconfiguration>
