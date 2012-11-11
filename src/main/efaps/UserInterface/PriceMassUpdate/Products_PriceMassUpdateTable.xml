@@ -38,6 +38,10 @@
             <property name="Attribute">Name</property>
             <property name="Label">Products_ProductAbstract/Name.Label</property>
         </field>
+         <field name="description">
+            <property name="Attribute">Description</property>
+            <property name="Label">Products_ProductAbstract/Description.Label</property>
+        </field>
         <field name="currentPrice">
             <property name="Align">right</property>
             <property name="Label">Products_PriceMassUpdateTable.currentPrice.Label</property>

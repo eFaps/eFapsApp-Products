@@ -52,5 +52,7 @@
         <property name="Submit">true</property>
         <property name="SubmitSelectedRows">0</property>
         <property name="TargetDefaultMenu">NONE</property>
+        <property name="WindowHeight">900</property>
+        <property name="WindowWidth">1000</property>
     </definition>
 </ui-command>
