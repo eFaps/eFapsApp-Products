@@ -29,7 +29,7 @@
         <version-expression>(version==latest)</version-expression>
         <name>Products_PriceMassUpdateForm</name>
         <!-- fields -->
-        <field name="" character="Target">
+        <field name="table" character="Target">
             <table>Products_PriceMassUpdateTable</table>
             <evaluate program="org.efaps.esjp.products.PriceMassUpdate" method="getProductInstances"/>
         </field>
