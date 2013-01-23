@@ -40,7 +40,7 @@
       <property name="VFSNumberSubDirectories">16</property>
       <property name="VFSNumberBackups">5</property>
       <property name="VFSBaseName">file:///Users/janmoxter/Documents/workspace/eFaps/webapp/target/images</property>
-      <property name="VFSProvider">org.apache.commons.vfs.provider.local.DefaultLocalFileProvider</property>
+      <property name="VFSProvider">org.apache.commons.vfs2.provider.local.DefaultLocalFileProvider</property>
     </resource>
   </definition>
 
