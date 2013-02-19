@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2010 The eFaps Team
+ * Copyright 2003 - 2013 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,9 +58,9 @@ import org.efaps.db.Instance;
 import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.PrintQuery;
 import org.efaps.db.QueryBuilder;
-import org.efaps.db.SearchQuery;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.util.EFapsException;
+import org.efaps.util.cache.CacheReloadException;
 import org.joda.time.DateTime;
 
 /**
@@ -219,15 +219,15 @@ public abstract class Product_Base
     {
         final Instance instance = _parameter.getInstance();
         final Set<String> products = new HashSet<String>();
-        final SearchQuery expand = new SearchQuery();
-        expand.setExpand(instance, "Products_Inventory\\Storage");
-        expand.addSelect("Product");
-        expand.addSelect("Quantity");
-        expand.execute();
-        while (expand.next()) {
-            final BigDecimal quantity = (BigDecimal) expand.get("Quantity");
+        final QueryBuilder invQueryBldr = new QueryBuilder(CIProducts.Inventory);
+        invQueryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, instance.getId());
+        final MultiPrintQuery invMulti = invQueryBldr.getPrint();
+        invMulti.addAttribute(CIProducts.Inventory.Product, CIProducts.Inventory.Quantity);
+        invMulti.execute();
+        while (invMulti.next()) {
+            final BigDecimal quantity = invMulti.<BigDecimal>getAttribute(CIProducts.Inventory.Quantity);
             if (quantity.compareTo(BigDecimal.ZERO) > 0) {
-                products.add(((Long) expand.get("Product")).toString());
+                products.add(invMulti.<Long>getAttribute(CIProducts.Inventory.Product).toString());
             }
         }
 
@@ -266,6 +266,7 @@ public abstract class Product_Base
      * @return String
      */
     protected String getUoMFieldStr(final long _dimId)
+        throws CacheReloadException
     {
         final Dimension dim = Dimension.get(_dimId);
         final StringBuilder js = new StringBuilder();
@@ -322,18 +323,17 @@ public abstract class Product_Base
         classTypes.addAll(curr.getClassifiedByTypes());
         final Set<String> oids = new HashSet<String>();
         for (final Classification classType : classTypes) {
-            final SearchQuery relQuery = new SearchQuery();
-            relQuery.setExpand(_instance, classType.getClassifyRelationType().getName() + "\\"
-                                                                        + classType.getRelLinkAttributeName());
-            relQuery.addSelect(classType.getRelTypeAttributeName());
-            relQuery.addSelect("OID");
-            relQuery.execute();
+            final QueryBuilder relQueryBldr = new QueryBuilder(classType.getClassifyRelationType());
+            relQueryBldr.addWhereAttrEqValue(classType.getRelLinkAttributeName(), _instance.getId());
+            final MultiPrintQuery relMulti = relQueryBldr.getPrint();
+            relMulti.addAttribute(classType.getRelTypeAttributeName());
+            relMulti.execute();
 
-            while (relQuery.next()) {
-                final String oid = (String) relQuery.get("OID");
+            while (relMulti.next()) {
+                final String oid = relMulti.getCurrentInstance().getOid();
                 if (!oids.contains(oid)) {
                     oids.add(oid);
-                    final Long typeid = (Long) relQuery.get(classType.getRelTypeAttributeName());
+                    final Long typeid = relMulti.<Long>getAttribute(classType.getRelTypeAttributeName());
                     final Classification subClassType = (Classification) Type.get(typeid);
 
                     final Insert relInsert = new Insert(classType.getClassifyRelationType());
@@ -343,7 +343,7 @@ public abstract class Product_Base
 
                     final QueryBuilder queryBldr = new QueryBuilder(subClassType);
                     queryBldr.addWhereAttrEqValue(subClassType.getLinkAttributeName(), _instance.getId());
-                    MultiPrintQuery multi = queryBldr.getPrint();
+                    final MultiPrintQuery multi = queryBldr.getPrint();
                     for (final Attribute attr : subClassType.getAttributes().values()) {
                         multi.addAttribute(attr);
                     }
@@ -354,7 +354,7 @@ public abstract class Product_Base
                         for (final Attribute attr : subClassType.getAttributes().values()) {
                             if (addAttribute(attr, addedAttributes)
                                             && !subClassType.getLinkAttributeName().equals(attr.getName())) {
-                                Object object = multi.getAttribute(attr);
+                                final Object object = multi.getAttribute(attr);
                                 if (object instanceof Object[]) {
                                     subInsert.add(attr, (Object[]) object);
                                 } else {
@@ -367,7 +367,6 @@ public abstract class Product_Base
                     }
                 }
             }
-            relQuery.close();
         }
 
         // make the relation between original and copy
