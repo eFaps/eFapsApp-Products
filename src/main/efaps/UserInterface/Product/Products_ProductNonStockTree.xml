@@ -34,7 +34,7 @@
         <name>Products_ProductNonStockTree</name>
         <!-- targets -->
         <target>
-            <menu>Products_ProductTree_Menu</menu>
+            <menu>Products_ProductNonStockTree_Menu</menu>
             <form>Products_ProductNonStockForm</form>
         </target>
         <!-- type tree for -->
