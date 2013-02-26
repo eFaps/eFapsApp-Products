@@ -39,7 +39,7 @@
 
         <!-- target definitions -->
         <target>
-            <form>Products_ProductForm</form>
+            <form>Products_ProductNonStockForm</form>
            <execute program="org.efaps.esjp.common.uiform.Create" />
         </target>
 
