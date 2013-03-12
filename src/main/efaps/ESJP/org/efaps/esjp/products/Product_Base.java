@@ -55,6 +55,7 @@ import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Insert;
 import org.efaps.db.Instance;
+import org.efaps.db.InstanceQuery;
 import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.PrintQuery;
 import org.efaps.db.QueryBuilder;
@@ -453,5 +454,52 @@ public abstract class Product_Base
         ret.append("</select>");
         retVal.put(ReturnValues.SNIPLETT, ret.toString());
         return retVal;
+    }
+
+    /**
+     * Executed on validate event to check the information for a new product.
+     * 
+     * @param _parameter Parameter as passed from the eFaps API
+     * @return Return containing true if valid
+     * @throws EFapsException on error
+     */
+    public Return validateProductName(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        final String name = _parameter.getParameterValue("name");
+        final StringBuilder warnHtml = validateName4Product(_parameter, name);
+        if (!warnHtml.toString().isEmpty()) {
+            ret.put(ReturnValues.SNIPLETT, warnHtml.toString());
+        } else {
+            ret.put(ReturnValues.TRUE, true);
+        }
+
+        return ret;
+    }
+
+    /**
+     * Method for return the name of a product.
+     * 
+     * @param _parameter Parameter as passed from the eFaps API
+     * @param _html StringBuilder to append to
+     * @param _name String
+     * @return StringBuilder with html.
+     * @throws EFapsException on error
+     */
+    protected StringBuilder validateName4Product(final Parameter _parameter,
+                                                 final String _name)
+        throws EFapsException
+    {
+        final StringBuilder html = new StringBuilder();
+        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductStandart);
+        queryBldr.addWhereAttrEqValue(CIProducts.ProductStandart.Name, _name).setIgnoreCase(true);
+        final InstanceQuery query = queryBldr.getQuery();
+        if (!query.execute().isEmpty()) {
+            html.append("<div style=\"text-align:center;\">")
+                            .append(DBProperties.getProperty("org.efaps.esjp.products.Product.existingProduct"))
+                            .append("</div>");
+        }
+        return html;
     }
 }

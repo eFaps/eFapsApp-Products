@@ -41,6 +41,7 @@
         <target>
             <form>Products_ProductForm</form>
             <execute program="org.efaps.esjp.common.uiform.Create" />
+            <validate program="org.efaps.esjp.products.Product" method="validateProductName"/>
         </target>
 
         <!-- properties -->
