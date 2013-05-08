@@ -205,11 +205,6 @@
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
         </field>
-        <field name="inventoryHeading" character="Heading">
-            <property name="Level">1</property>
-            <property name="Label">Products_ProductForm/Inventory.Heading</property>
-            <property name="ModeEdit">NONE</property>
-        </field>
         <field name="createGroup" character="Group">
             <property name="GroupCount">2</property>
         </field>
@@ -241,6 +236,11 @@
             <property name="Attribute">Modified</property>
             <property name="ModeSearch">EDITABLE</property>
             <property name="Label">Products_ProductAbstract/Modified.Label</property>
+        </field>
+        <field name="inventoryHeading" character="Heading">
+            <property name="Level">1</property>
+            <property name="Label">Products_ProductForm/Inventory.Heading</property>
+            <property name="ModeEdit">NONE</property>
         </field>
         <field name="inventoryTable" character="Target">
             <property name="ModeEdit">NONE</property>
