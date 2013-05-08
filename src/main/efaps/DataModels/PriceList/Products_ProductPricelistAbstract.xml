@@ -2,7 +2,7 @@
 
 <!--
 
- Copyright 2003 - 2010 The eFaps Team
+ Copyright 2003 - 2013 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -69,6 +69,16 @@
             <type>Date</type>
             <sqltable>Products_ProductPricelistSQLTable</sqltable>
             <sqlcolumn>VALIDUNTIL</sqlcolumn>
+        </attribute>
+        <!--
+            This Attribute must be overridden by an actual implementation.
+            It serves to have PriceList that e.g. depend of the place where they are sold
+        -->
+         <attribute>
+            <name>DependendObjectID</name>
+            <type>Long</type>
+            <sqltable>Products_ProductPricelistSQLTable</sqltable>
+            <sqlcolumn>OBJID</sqlcolumn>
         </attribute>
         <trigger program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType"
                  name="Products_ProductPricelist.ACCESSCHECK"
