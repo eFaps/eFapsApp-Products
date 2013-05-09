@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2009 The eFaps Team
+ * Copyright 2003 - 2013 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,6 +115,7 @@ public abstract class PriceList_Base
         final QueryBuilder queryBldr = new QueryBuilder(Type.get(typename));
         queryBldr.addWhereAttrGreaterValue(CIProducts.ProductPricelistAbstract.ValidUntil, date);
         queryBldr.addWhereAttrEqValue(CIProducts.ProductPricelistAbstract.ProductAbstractLink, getProdId(costInstance));
+        add2QueryBuilder4TriggerInsert(_parameter, queryBldr);
         final InstanceQuery query = queryBldr.getQuery();
         query.execute();
         final List<String> updateOIDs = new ArrayList<String>();
@@ -131,6 +132,20 @@ public abstract class PriceList_Base
             update.executeWithoutTrigger();
         }
         return new Return();
+    }
+
+    /**
+     * To be used by implementation.
+     *
+     * @param _parameter Parameter as passed from the eFaps API
+     * @param _queryBldr QueryBuilder to be added to
+     * @throws EFapsException on error
+     */
+    protected void add2QueryBuilder4TriggerInsert(final Parameter _parameter,
+                                                  final QueryBuilder _queryBldr)
+        throws EFapsException
+    {
+
     }
 
     /**
