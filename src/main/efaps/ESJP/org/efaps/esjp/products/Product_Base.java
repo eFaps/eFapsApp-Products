@@ -60,6 +60,7 @@ import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.PrintQuery;
 import org.efaps.db.QueryBuilder;
 import org.efaps.esjp.ci.CIProducts;
+import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
 import org.efaps.util.cache.CacheReloadException;
 import org.joda.time.DateTime;
@@ -147,6 +148,7 @@ public abstract class Product_Base
                                                                                                 .setIgnoreCase(true);
                 queryBldr.addOrderByAttributeAsc(CIProducts.ProductAbstract.Description);
             }
+            queryBldr.addWhereAttrEqValue(CIProducts.ProductAbstract.Active, true);
             final MultiPrintQuery multi = queryBldr.getPrint();
             multi.addAttribute(CIProducts.ProductAbstract.OID, CIProducts.ProductAbstract.Name,
                             CIProducts.ProductAbstract.Description, CIProducts.ProductAbstract.Dimension);
@@ -158,9 +160,9 @@ public abstract class Product_Base
                 final String oid = (String) multi.getAttribute(CIProducts.ProductAbstract.OID);
                 final String choice = nameSearch ? name + " - " + desc : desc + " - " + name;
                 final Map<String, String> map = new HashMap<String, String>();
-                map.put("eFapsAutoCompleteKEY", oid);
-                map.put("eFapsAutoCompleteVALUE", name);
-                map.put("eFapsAutoCompleteCHOICE", choice);
+                map.put(EFapsKey.AUTOCOMPLETE_KEY.getKey(), oid);
+                map.put(EFapsKey.AUTOCOMPLETE_VALUE.getKey(), name);
+                map.put(EFapsKey.AUTOCOMPLETE_CHOICE.getKey(), choice);
                 map.put("uoM", getUoMFieldStr((Long) multi.getAttribute("Dimension")));
                 orderMap.put(choice, map);
             }
@@ -458,7 +460,7 @@ public abstract class Product_Base
 
     /**
      * Executed on validate event to check the information for a new product.
-     * 
+     *
      * @param _parameter Parameter as passed from the eFaps API
      * @return Return containing true if valid
      * @throws EFapsException on error
@@ -480,7 +482,7 @@ public abstract class Product_Base
 
     /**
      * Method for return the name of a product.
-     * 
+     *
      * @param _parameter Parameter as passed from the eFaps API
      * @param _html StringBuilder to append to
      * @param _name String
