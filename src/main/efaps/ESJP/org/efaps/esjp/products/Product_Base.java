@@ -149,6 +149,7 @@ public abstract class Product_Base
                 queryBldr.addOrderByAttributeAsc(CIProducts.ProductAbstract.Description);
             }
             queryBldr.addWhereAttrEqValue(CIProducts.ProductAbstract.Active, true);
+            additionalQueryBuilder(_parameter, queryBldr);
             final MultiPrintQuery multi = queryBldr.getPrint();
             multi.addAttribute(CIProducts.ProductAbstract.OID, CIProducts.ProductAbstract.Name,
                             CIProducts.ProductAbstract.Description, CIProducts.ProductAbstract.Dimension);
@@ -171,6 +172,13 @@ public abstract class Product_Base
         final Return retVal = new Return();
         retVal.put(ReturnValues.VALUES, list);
         return retVal;
+    }
+
+    protected void additionalQueryBuilder(final Parameter _parameter,
+                                          final QueryBuilder queryBldr)
+        throws EFapsException
+    {
+        // to be implemented
     }
 
     /**
