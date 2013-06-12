@@ -46,11 +46,13 @@
             <property name="Attribute">Numerator</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+            <property name="Required">true</property>
         </field>
         <field  name="denominator">
             <property name="Attribute">Denominator</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+            <property name="Required">true</property>
         </field>
         <field name="amountGroup" character="Group">
             <property name="GroupCount">2</property>
@@ -60,11 +62,13 @@
             <property name="Attribute">Amount</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+            <property name="Required">true</property>
         </field>
         <field  name="currencyLink">
             <property name="Attribute">CurrencyLink</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+            <property name="Required">true</property>
         </field>
     </definition>
 </ui-form>
