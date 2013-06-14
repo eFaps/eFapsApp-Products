@@ -242,26 +242,35 @@ public abstract class Product_Base
             }
         }
 
-        final String input = (String) _parameter.get(ParameterValues.OTHERS);
         final List<Map<String, String>> list = new ArrayList<Map<String, String>>();
-
-        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductAbstract);
-        queryBldr.addWhereAttrMatchValue(CIProducts.ProductAbstract.Name, input + "*").setIgnoreCase(true);
-        final MultiPrintQuery multi = queryBldr.getPrint();
-        multi.addAttribute(CIProducts.ProductAbstract.ID, CIProducts.ProductAbstract.Name,
-                           CIProducts.ProductAbstract.Description, CIProducts.ProductAbstract.Dimension);
-        multi.execute();
-        while (multi.next()) {
-            final Long id = multi.<Long>getAttribute(CIProducts.ProductAbstract.ID);
-            if (products.contains(id.toString())) {
-                final String name = multi.<String>getAttribute(CIProducts.ProductAbstract.Name);
-                final String desc = multi.<String>getAttribute(CIProducts.ProductAbstract.Description);
-                final Map<String, String> map = new HashMap<String, String>();
-                map.put("eFapsAutoCompleteKEY", id.toString());
-                map.put("eFapsAutoCompleteVALUE", name);
-                map.put("eFapsAutoCompleteCHOICE", name + " - " + desc);
-                map.put("uoM", getUoMFieldStr(multi.<Long>getAttribute(CIProducts.ProductAbstract.Dimension)));
-                list.add(map);
+        final String input = (String) _parameter.get(ParameterValues.OTHERS);
+        if (input.length() > 0) {
+            final boolean nameSearch = Character.isDigit(input.charAt(0));
+            final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductAbstract);
+            if (nameSearch) {
+                queryBldr.addWhereAttrMatchValue(CIProducts.ProductAbstract.Name, input + "*").setIgnoreCase(true);
+                queryBldr.addOrderByAttributeAsc(CIProducts.ProductAbstract.Name);
+            } else {
+                queryBldr.addWhereAttrMatchValue(CIProducts.ProductAbstract.Description, input + "*").setIgnoreCase(true);
+                queryBldr.addOrderByAttributeAsc(CIProducts.ProductAbstract.Description);
+            }
+            final MultiPrintQuery multi = queryBldr.getPrint();
+            multi.addAttribute(CIProducts.ProductAbstract.ID, CIProducts.ProductAbstract.Name,
+                               CIProducts.ProductAbstract.Description, CIProducts.ProductAbstract.Dimension);
+            multi.execute();
+            while (multi.next()) {
+                final Long id = multi.<Long>getAttribute(CIProducts.ProductAbstract.ID);
+                if (products.contains(id.toString())) {
+                    final String name = multi.<String>getAttribute(CIProducts.ProductAbstract.Name);
+                    final String desc = multi.<String>getAttribute(CIProducts.ProductAbstract.Description);
+                    final String choice = nameSearch ? name + " - " + desc : desc + " - " + name;
+                    final Map<String, String> map = new HashMap<String, String>();
+                    map.put(EFapsKey.AUTOCOMPLETE_KEY.getKey(), id.toString());
+                    map.put(EFapsKey.AUTOCOMPLETE_VALUE.getKey(), name);
+                    map.put(EFapsKey.AUTOCOMPLETE_CHOICE.getKey(), choice);
+                    map.put("uoM", getUoMFieldStr(multi.<Long>getAttribute(CIProducts.ProductAbstract.Dimension)));
+                    list.add(map);
+                }
             }
         }
 
