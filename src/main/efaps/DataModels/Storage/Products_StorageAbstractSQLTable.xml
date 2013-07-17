@@ -40,7 +40,8 @@
             <column name="TYPEID"    type="INTEGER"         not-null="true" />
             <column name="NAME"      type="STRING_SHORT"                    length="128" />
             <column name="DESCR"     type="STRING_SHORT"                    length="255" />
-            <column name="ACTIVE"    type="BOOLEAN" />
+            <column name="STATUS"    type="INTEGER" />
+            <column name="DATE"      type="DATETIME" />
             <foreign name="T_PRODSTORAGE_FK_COMPANYID" key="COMPANYID" reference="T_USERABSTRACT(ID)" />
         </database>
     </definition>

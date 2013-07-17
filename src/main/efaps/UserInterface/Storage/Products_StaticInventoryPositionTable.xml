@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
+
+ Copyright 2003 - 2009 The eFaps Team
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+
+ Author:          The eFaps Team
+ Revision:        $Rev: 5316 $
+ Last Changed:    $Date: 2010-08-16 11:37:54 -0500 (Mon, 16 Aug 2010) $
+ Last Changed By: $Author: miguel.a.aranya $
+
+--><ui-table xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>92834778-51b7-438c-a2ee-1459e1076f34</uuid>
+    <file-application>eFapsApp-Products</file-application>
+    <file-revision>$Rev: 5316 $</file-revision>
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <name>Products_StaticInventoryPositionTable</name>
+        <!-- fields -->
+        <field name="quantity">
+            <property name="Attribute">Quantity</property>
+            <property name="Label">Products_Inventory/Quantity.Label</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="Align">right</property>
+        </field>
+        <field name="product">
+            <property name="SelectAlternateOID">linkto[Product].oid</property>
+            <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
+            <property name="Select">linkto[Product].attribute[Name]</property>
+            <property name="Label">Products_Inventory/Product.Label</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <trigger program="org.efaps.esjp.products.Product"
+                    method="autoComplete4Product"
+                    name="Products_StaticInventoryTable.product.autocomplete"
+                    event="UI_FIELD_AUTOCOMPLETE" />
+            <trigger program="org.efaps.esjp.products.Product"
+                    method="updateFields4Product"
+                    name="Products_StaticInventoryTable.product.update"
+                    event="UI_FIELD_UPDATE"/>
+        </field>
+        <field name="productDesc">
+            <property name="Columns">90</property>
+            <property name="Width">10</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="SelectAlternateOID">linkto[Product].oid</property>
+            <property name="Select">linkto[Product].attribute[Description]</property>
+            <property name="Label">Products_Inventory/Description.Label</property>
+            <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
+        </field>
+        <field name="uoM">
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ModeView">NONE</property>
+            <property name="Attribute">UoM</property>
+            <property name="Label">Sales_DeliveryNotePosition/UoM.Label</property>
+            <trigger program="org.efaps.esjp.products.Storage"
+                method="getUoMFieldValue"
+                name="Sales_QuotationPositionTable.uoM.UI_FIELD_VALUE"
+                event="UI_FIELD_VALUE" />
+        </field>
+        <field name="uom4View">
+            <property name="ModeCreate">NONE</property>
+            <property name="ModeEdit">NONE</property>
+            <property name="Select">linkto[UoM].attribute[Name]</property>
+            <property name="Label">Sales_IncomingInvoicePosition/UoM.Label</property>
+        </field>
+    </definition>
+</ui-table>

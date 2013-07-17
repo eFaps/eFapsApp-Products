@@ -1,8 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
-<!--
-
- Copyright 2003 - 2009 The eFaps Team
+ Copyright 2003 - 2010 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -17,33 +15,32 @@
  limitations under the License.
 
  Author:          The eFaps Team
- Revision:        $Rev$
- Last Changed:    $Date$
- Last Changed By: $Author$
+ Revision:        $Rev: 5870 $
+ Last Changed:    $Date: 2010-11-29 09:12:58 -0500 (Mon, 29 Nov 2010) $
+ Last Changed By: $Author: jan@moxter.net $
 
 -->
-
-<datamodel-type  xmlns="http://www.efaps.org/xsd"
-                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                 xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>757f2c00-5aee-466f-b813-9d60482069d4</uuid>
+<datamodel-type xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>eff52a2f-dfa0-4b99-839c-af3e0a1bf1d3</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
+    <file-revision>$Rev: 5870 $</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_BinLocation</name>
-        <parent>Products_Warehouse</parent>
+        <name>Products_DynamicStorage</name>
+        <parent>Products_StorageAbstract</parent>
+
         <attribute>
-            <name>Status2</name>
+            <name>Status</name>
             <type>Status</type>
             <typelink>Products_StorageAbstractStatus</typelink>
             <sqltable>Products_StorageAbstractSQLTable</sqltable>
             <sqlcolumn>STATUS</sqlcolumn>
             <trigger program="org.efaps.esjp.admin.datamodel.StatusValue"
-                name="Accounting_Transaction.Status.RANGE_VALUE" event="RANGE_VALUE" />
+                name="Products_DynamicStorage.Status.RANGE_VALUE" event="RANGE_VALUE" />
         </attribute>
-        <trigger program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType"
-            name="Products_BinLocation.ACCESSCHECK"
-            event="ACCESSCHECK" />
+
+        <trigger  name="Products_DynamicStorage.ACCESSCHECK"
+                  program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType"
+                  event="ACCESSCHECK"/>
     </definition>
 </datamodel-type>

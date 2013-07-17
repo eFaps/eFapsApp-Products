@@ -55,16 +55,24 @@
         <type>Products_Inventory</type>
         <type>Products_InventoryValue</type>
         <type>Products_StaticStorage</type>
+        <type>Products_StaticInventory</type>
         <type>Products_Warehouse</type>
         <type>Products_BinLocation</type>
         <type>Products_TransactionInbound</type>
         <type>Products_TransactionOutbound</type>
+        <type>Products_TransactionInbound4StaticStorage</type>
         <type>Products_TransactionReservationInbound</type>
         <type>Products_TransactionReservationOutbound</type>
         <type>Products_ProductTextPosition</type>
         <type>Products_ProductPricelistMinRetail</type>
         <type>Products_ProductSalesPartList</type>
         <type>Products_ProductGeneric</type>
+        <type>Products_StorageAbstract</type>
+        
+        <status group="Products_StorageAbstractStatus">
+            <key>Active</key>
+            <key>Inactive</key>
+        </status>
 
         <role>Products_Admin</role>
     </definition>

@@ -32,7 +32,16 @@
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_Warehouse</name>
-        <parent>Products_StorageAbstract</parent>
+        <parent>Products_DynamicStorage</parent>
+        <attribute>
+            <name>Status1</name>
+            <type>Status</type>
+            <typelink>Products_StorageAbstractStatus</typelink>
+            <sqltable>Products_StorageAbstractSQLTable</sqltable>
+            <sqlcolumn>STATUS</sqlcolumn>
+            <trigger program="org.efaps.esjp.admin.datamodel.StatusValue"
+                name="Accounting_Transaction.Status.RANGE_VALUE" event="RANGE_VALUE" />
+        </attribute>
         <trigger program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType"
                  name="Products_Warehouse.ACCESSCHECK"
                  event="ACCESSCHECK" />

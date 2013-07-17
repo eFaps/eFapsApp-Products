@@ -174,6 +174,60 @@ public abstract class Product_Base
         return retVal;
     }
 
+    public Return updateFields4Product(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return retVal = new Return();
+        final List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+        final Map<String, String> map = new HashMap<String, String>();
+
+        final int selected = getSelectedRow(_parameter);
+        final String prodOid = _parameter.getParameterValues("product")[selected];
+        String name;
+        String desc;
+        // validate that a product was selected
+        if (prodOid.length() > 0) {
+            final PrintQuery print = new PrintQuery(prodOid);
+            print.addAttribute("Name", "Description");
+            print.execute();
+            name = print.getAttribute("Name");
+            desc = print.getAttribute("Description");
+        } else {
+            name = "";
+            desc = "";
+        }
+
+        if (name.length() > 0) {
+            map.put("productDesc", desc);
+            list.add(map);
+            retVal.put(ReturnValues.VALUES, list);
+        } else {
+            map.put("productAutoComplete", name);
+            list.add(map);
+            retVal.put(ReturnValues.VALUES, list);
+            final StringBuilder js = new StringBuilder();
+            js.append("document.getElementsByName('productAutoComplete')[").append(selected).append("].focus()");
+            map.put(EFapsKey.FIELDUPDATE_JAVASCRIPT.getKey(), js.toString());
+        }
+        return retVal;
+    }
+
+    /**
+     * Method to evaluate the selected row.
+     * 
+     * @param _parameter paaremter
+     * @return number of selected row.
+     */
+    protected int getSelectedRow(final Parameter _parameter)
+    {
+        int ret = 0;
+        final String value = _parameter.getParameterValue("eFapsRowSelectedRow");
+        if (value != null && value.length() > 0) {
+            ret = Integer.parseInt(value);
+        }
+        return ret;
+    }
+
     protected void additionalQueryBuilder(final Parameter _parameter,
                                           final QueryBuilder queryBldr)
         throws EFapsException

@@ -37,6 +37,7 @@
         <!-- childs -->
         <childs>
             <child>Products_StorageAbstractMyDesk_Menu_Action_CreateWareHouse</child>
+            <child>Products_StorageAbstractMyDesk_Menu_Action_CreateWareHouseFromStaticStorage</child>
             <child>Products_StorageAbstractMyDesk_Menu_Action_CreateBinLocation</child>
             <child>Products_StorageAbstractMyDesk_Menu_Action_CreateStaticStorage</child>
             <child>Products_StorageAbstractMyDesk_Menu_Action_Delete</child>

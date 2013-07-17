@@ -35,13 +35,12 @@
         <!-- targets -->
         <target>
             <menu>Products_StaticStorageTree_Menu</menu>
-            <form>Products_StorageAbstractForm</form>
+            <form>Products_StaticInventoryForm</form>
         </target>
         <!-- type tree for -->
         <type>Products_StaticStorage</type>
         <childs>
-            <child>Products_StorageAbstractTree_Inventory</child>
-            <child>Products_StorageAbstractTree_Transaction</child>
+            <child>Products_StaticStorageTree_Inventory</child>
         </childs>
         <!-- properties -->
         <property name="Target">content</property>

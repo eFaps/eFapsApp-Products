@@ -91,7 +91,7 @@
         <attribute>
             <name>Storage</name>
             <type>Link</type>
-            <typelink>Products_StorageAbstract</typelink>
+            <typelink>Products_DynamicStorage</typelink>
             <sqltable>Products_InventoryValueSQLView</sqltable>
             <sqlcolumn>STORAGEID</sqlcolumn>
         </attribute>

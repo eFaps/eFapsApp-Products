@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
  Copyright 2003 - 2009 The eFaps Team
 
@@ -17,33 +15,29 @@
  limitations under the License.
 
  Author:          The eFaps Team
- Revision:        $Rev$
- Last Changed:    $Date$
- Last Changed By: $Author$
+ Revision:        $Rev: 5316 $
+ Last Changed:    $Date: 2010-08-16 11:37:54 -0500 (Mon, 16 Aug 2010) $
+ Last Changed By: $Author: miguel.a.aranya $
 
--->
-
-<ui-command xmlns="http://www.efaps.org/xsd"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>af28bcf0-f88a-48d6-aa68-d9b334a8fa40</uuid>
+--><ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>18e7d48d-8aef-4e66-ab85-db9c983a79fb</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
+    <file-revision>$Rev: 5316 $</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_StorageAbstractMyDesk_Menu_Action_CreateWareHouse</name>
+        <name>Products_StaticStorageMyDesk_Menu_Action_CreateSnapshot</name>
         <access>
             <role>Products_Admin</role>
         </access>
         <!-- target definitions -->
         <target>
             <form>Products_StorageAbstractForm</form>
-            <execute program="org.efaps.esjp.products.Storage" method="create"/>
+            <execute program="org.efaps.esjp.common.uiform.Create"/>
         </target>
 
         <!-- properties -->
         <property name="Target">modal</property>
-        <property name="TargetCreateType">Products_Warehouse</property>
+        <property name="TargetCreateType">Products_Snapshot</property>
         <property name="TargetMode">create</property>
         <property name="WindowHeight">460</property>
         <property name="WindowWidth">515</property>

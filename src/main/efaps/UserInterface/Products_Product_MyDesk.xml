@@ -37,6 +37,7 @@
             <child>Products_InventoryMyDesk</child>
             <child>Products_InventoryValueMyDesk</child>
             <child>Products_StorageAbstractMyDesk</child>
+            <child>Products_StaticStorageMyDesk</child>
             <child>Products_TransactionAbstractMyDesk</child>
         </childs>
     </definition>
