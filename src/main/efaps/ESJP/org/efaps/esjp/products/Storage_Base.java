@@ -30,14 +30,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.UUID;
 
 import org.efaps.admin.datamodel.Dimension;
 import org.efaps.admin.datamodel.Dimension.UoM;
+import org.efaps.admin.datamodel.Status;
 import org.efaps.admin.datamodel.Type;
 import org.efaps.admin.datamodel.ui.FieldValue;
 import org.efaps.admin.datamodel.ui.UIInterface;
+import org.efaps.admin.dbproperty.DBProperties;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
 import org.efaps.admin.event.Return;
@@ -51,11 +54,15 @@ import org.efaps.db.Insert;
 import org.efaps.db.Instance;
 import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.QueryBuilder;
+import org.efaps.db.SelectBuilder;
 import org.efaps.db.Update;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.uiform.Create;
 import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 
 /**
@@ -125,6 +132,91 @@ public abstract class Storage_Base
         return new Return();
     }
 
+    public Return createSnapshot(final Parameter _parameter)
+        throws EFapsException
+    {
+        final String storageOid = _parameter.getParameterValue("storage");
+        final String dateStr = _parameter.getParameterValue("date");
+        // get a new DateTime from the ISO Date String fomr the Parameters
+        final DateTime date = new DateTime(dateStr);
+        final Instance storageInst = Instance.get(storageOid);
+
+        final Map<String, BigDecimal> actual = new HashMap<String, BigDecimal>();
+
+        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.Inventory);
+        queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, storageInst.getId());
+        final MultiPrintQuery multi = queryBldr.getPrint();
+        multi.addAttribute(CIProducts.Inventory.Quantity);
+        final SelectBuilder sel = new SelectBuilder().linkto(CIProducts.Inventory.Product).oid();
+        multi.addSelect(sel);
+        multi.execute();
+        while (multi.next()) {
+            final String oid = multi.<String>getSelect(sel);
+            final BigDecimal quantity = multi.<BigDecimal>getAttribute(CIProducts.Inventory.Quantity);
+            actual.put(oid, quantity);
+        }
+
+        final QueryBuilder transQueryBldr = new QueryBuilder(CIProducts.TransactionInOutAbstract);
+        transQueryBldr.addWhereAttrEqValue(CIProducts.TransactionInOutAbstract.Storage, storageInst.getId());
+        transQueryBldr.addWhereAttrGreaterValue(CIProducts.TransactionInOutAbstract.Date, date.minusMinutes(1));
+        transQueryBldr.getQuery();
+
+        final MultiPrintQuery transMulti = transQueryBldr.getPrint();
+        transMulti.addAttribute(CIProducts.TransactionInOutAbstract.Quantity,
+                        CIProducts.TransactionInOutAbstract.UoM);
+        final SelectBuilder transSel = new SelectBuilder().linkto(CIProducts.TransactionInOutAbstract.Product).oid();
+        transMulti.addSelect(transSel);
+        transMulti.execute();
+        while (transMulti.next()) {
+            final String oid = transMulti.<String>getSelect(transSel);
+            BigDecimal quantity = transMulti.<BigDecimal>getAttribute(CIProducts.TransactionInbound.Quantity);
+            final Long uoMId = transMulti.<Long>getAttribute(CIProducts.TransactionInbound.UoM);
+            final UoM uoM = Dimension.getUoM(uoMId);
+            quantity = quantity.multiply(new BigDecimal(uoM.getNumerator())
+                            .divide(new BigDecimal(uoM.getDenominator())));
+            final Instance inst = transMulti.getCurrentInstance();
+            if (inst.getType().isKindOf(CIProducts.TransactionInbound.getType())) {
+                quantity = quantity.negate();
+            }
+            if (actual.containsKey(oid)) {
+                quantity = actual.get(oid).add(quantity);
+            }
+            actual.put(oid, quantity);
+        }
+        final List<Instance> instances = new ArrayList<Instance>();
+        for (final Entry<String, BigDecimal> entry : actual.entrySet()) {
+            if (entry.getValue().compareTo(BigDecimal.ZERO) != 0) {
+                instances.add(Instance.get(entry.getKey()));
+            }
+        }
+        final MultiPrintQuery multiRes = new MultiPrintQuery(instances);
+        multiRes.addAttribute(CIProducts.ProductAbstract.Name,
+                        CIProducts.ProductAbstract.Description,
+                        CIProducts.ProductAbstract.Dimension);
+        multiRes.execute();
+
+        final DateTimeFormatter dateFormat = DateTimeFormat.forPattern("dd-MM-yyyy");
+        dateFormat.withLocale(Context.getThreadContext().getLocale());
+        final Insert snapshot = new Insert(CIProducts.Snapshot);
+        snapshot.add("Name", new DateTime().toString(dateFormat));
+        snapshot.add("Description", DBProperties.getProperty("org.efaps.esjp.products.Storage.descriptionSnapshot")
+                        .concat(new DateTime().toString(dateFormat)));
+        snapshot.add("Status", Status.find(CIProducts.StorageAbstractStatus.uuid, "Active").getId());
+        snapshot.execute();
+        while (multiRes.next()) {
+            final Insert snapshotPosition = new Insert(CIProducts.SnapshotPosition);
+            snapshotPosition.add("Quantity", actual.get(multiRes.getCurrentInstance().getOid()));
+            final UoM uom = Dimension.get(multiRes.<Long>getAttribute(CIProducts.ProductAbstract.Dimension))
+                            .getBaseUoM();
+            snapshotPosition.add("UoM", uom.getId());
+            snapshotPosition.add("Product", multiRes.getCurrentInstance().getId());
+            snapshotPosition.add("Snapshot", snapshot.getId());
+            snapshotPosition.execute();
+        }
+
+        return new Return();
+    }
+
     public Return createStaticInventory(final Parameter _parameter)
         throws EFapsException
     {
@@ -135,6 +227,7 @@ public abstract class Storage_Base
             insert.add("Description", _parameter.getParameterValue("description"));
         }
         insert.add("Status", _parameter.getParameterValue("status"));
+        insert.add("Date", _parameter.getParameterValue("date"));
         insert.execute();
 
         final Type typePos = Type.get(UUID.fromString("241f2d28-3626-4ca7-8c38-18404324080e"));
@@ -329,7 +422,7 @@ public abstract class Storage_Base
      * Method to verify if show Static Storage depending of a command.
      * 
      * @param _parameter as passed from eFaps API.
-     * @return Return with the UoM.
+     * @return Return ret.
      * @throws EFapsException on error.
      */
     public Return verifyIfShowStaticStorage(final Parameter _parameter)
@@ -343,6 +436,46 @@ public abstract class Storage_Base
                 ret.put(ReturnValues.TRUE, true);
             }
         }
+        return ret;
+    }
+
+    /**
+     * Method to check if the instance is of the type Static Inventory to show
+     * in other case doesn't show
+     * 
+     * @param _parameter as passed from eFaps API.
+     * @return Return ret.
+     * @throws EFapsException on error.
+     */
+    public Return checkInstanceStaticInventory(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        final Type typeStaticInventory = Type.get(UUID.fromString("c97d3269-944f-4f77-b2fc-3d5db6ca4430"));
+        if (_parameter.getInstance().getType().isKindOf(typeStaticInventory)) {
+            ret.put(ReturnValues.TRUE, true);
+        }
+
+        return ret;
+    }
+
+    /**
+     * Method to check if the instance is of the type Snapshot to show in other
+     * case doesn't show
+     * 
+     * @param _parameter as passed from eFaps API.
+     * @return Return ret.
+     * @throws EFapsException on error.
+     */
+    public Return checkInstanceSnapshot(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        final Type typeSnapshot = Type.get(UUID.fromString("9472ec24-da43-419c-98a3-9ec6b1c32b7a"));
+        if (_parameter.getInstance().getType().isKindOf(typeSnapshot)) {
+            ret.put(ReturnValues.TRUE, true);
+        }
+
         return ret;
     }
 }

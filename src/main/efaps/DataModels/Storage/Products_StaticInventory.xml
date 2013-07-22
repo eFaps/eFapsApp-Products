@@ -28,7 +28,7 @@
         <name>Products_StaticInventory</name>
         <parent>Products_StaticStorage</parent>
         <attribute>
-            <name>Status</name>
+            <name>Status1</name>
             <type>Status</type>
             <typelink>Products_StorageAbstractStatus</typelink>
             <sqltable>Products_StorageAbstractSQLTable</sqltable>

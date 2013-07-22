@@ -41,6 +41,7 @@
         <type>Products_StaticStorage</type>
         <childs>
             <child>Products_StaticStorageTree_Inventory</child>
+            <child>Products_StaticStorageTree_SnapshotPositions</child>
         </childs>
         <!-- properties -->
         <property name="Target">content</property>
