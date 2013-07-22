@@ -40,7 +40,11 @@
         <!-- target definitions -->
         <target>
             <form>Products_ProductCreateUniqueForm</form>
-            <execute program="org.efaps.esjp.products.Product" method="createUnique"/>
+            <execute program="org.efaps.esjp.products.Product" method="createUnique">
+                <property name="ConnectChildAttribute">ToLink</property>
+                <property name="ConnectParentAttribute">FromLink</property>
+                <property name="ConnectType">Products_ProductStandart2Unique</property>
+            </execute>
         </target>
 
         <!-- properties -->

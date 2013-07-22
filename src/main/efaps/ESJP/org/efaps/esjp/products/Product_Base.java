@@ -94,7 +94,7 @@ public abstract class Product_Base
             final Instance instance = Instance.get(prodOid);
             final Map<String, Object> map = new HashMap<String, Object>();
             map.put("Name", name);
-            final Instance uniqueInst = cloneProduct(instance, CIProducts.ProductUnique.getType(), map);
+            final Instance uniqueInst = cloneProduct(_parameter, instance, CIProducts.ProductUnique.getType(), map);
 
             final PrintQuery print = new PrintQuery(uniqueInst);
             print.addAttribute("Dimension");
@@ -363,7 +363,8 @@ public abstract class Product_Base
      * @return instance of the new product
      * @throws EFapsException on error
      */
-    public Instance cloneProduct(final Instance _instance,
+    public Instance cloneProduct(final Parameter _parameter,
+                                 final Instance _instance,
                                  final Type _cloneType,
                                  final Map<String, Object> _attrMap)
         throws EFapsException
@@ -442,16 +443,26 @@ public abstract class Product_Base
                 }
             }
         }
+        createRelation(_parameter, _instance, ret);
+
+        return ret;
+    }
+
+    protected void createRelation(final Parameter _parameter,
+                                  final Instance _parent,
+                                  final Instance _child)
+        throws EFapsException
+    {
+        final Map<?, ?> properties = (Map<?, ?>) _parameter.get(ParameterValues.PROPERTIES);
+        final String childAttr = (String) properties.get("ConnectChildAttribute");
+        final String parentAttr = (String) properties.get("ConnectParentAttribute");
+        final Type type = Type.get((String) properties.get("ConnectType"));
 
         // make the relation between original and copy
-        if (_instance.getType().getUUID().equals(CIProducts.ProductStandart.uuid)
-                        && ret.getType().getUUID().equals(CIProducts.ProductUnique.uuid)) {
-            final Insert relInsert = new Insert(CIProducts.ProductStandart2Unique);
-            relInsert.add("FromLink", _instance.getId());
-            relInsert.add("ToLink", ret.getId());
-            relInsert.execute();
-        }
-        return ret;
+        final Insert relInsert = new Insert(type);
+        relInsert.add(parentAttr, _parent);
+        relInsert.add(childAttr, _child);
+        relInsert.execute();
     }
 
     /**
