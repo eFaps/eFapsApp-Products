@@ -27,17 +27,18 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
 
-  <uuid>eb48d2de-a364-42bc-90b7-15bffa4c03f7</uuid>
-  <file-application>eFapsApp-Products</file-application>
-  <file-revision>$Rev$</file-revision>
+    <uuid>eb48d2de-a364-42bc-90b7-15bffa4c03f7</uuid>
+    <file-application>eFapsApp-Products</file-application>
+    <file-revision>$Rev$</file-revision>
 
-  <definition>
-    <version-expression>(version==latest)</version-expression>
-    <name>Products_StorageAbstractTree_Menu_Action</name>
-    <!-- childs -->
-    <childs>
-      <child>Products_StorageAbstractTree_Menu_Action_Edit</child>
-    </childs>
-  </definition>
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <name>Products_StorageAbstractTree_Menu_Action</name>
+        <!-- childs -->
+        <childs>
+            <child>Products_StorageAbstractTree_Menu_Action_Edit</child>
+            <child>Products_StorageAbstractTree_Menu_Action_Recalculate</child>
+        </childs>
+    </definition>
 
 </ui-menu>

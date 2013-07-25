@@ -21,6 +21,9 @@
 package org.efaps.esjp.products;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.efaps.admin.datamodel.Dimension;
 import org.efaps.admin.datamodel.Dimension.UoM;
@@ -36,9 +39,11 @@ import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
 import org.efaps.db.Delete;
 import org.efaps.db.Insert;
 import org.efaps.db.Instance;
+import org.efaps.db.InstanceQuery;
 import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.PrintQuery;
 import org.efaps.db.QueryBuilder;
+import org.efaps.db.SelectBuilder;
 import org.efaps.db.Update;
 import org.efaps.esjp.ci.CIFormProducts;
 import org.efaps.esjp.ci.CIProducts;
@@ -543,6 +548,57 @@ public abstract class Transaction_Base
             .append("</td><td>").append(_quantity).append("</td>")
             .append("</tr></table>");
         _ret.put(ReturnValues.TRUE, true);
+    }
+
+    public Return reCalculateInventory(final Parameter _parameter)
+        throws EFapsException
+    {
+        final SelectBuilder selProd = new SelectBuilder().linkto(CIProducts.TransactionAbstract.Product).instance();
+
+        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.TransactionAbstract);
+        queryBldr.addWhereAttrEqValue(CIProducts.TransactionAbstract.Storage, _parameter.getInstance().getId());
+        final MultiPrintQuery multi = queryBldr.getPrint();
+        multi.addAttribute(CIProducts.TransactionAbstract.Quantity,
+                        CIProducts.TransactionAbstract.UoM,
+                        CIProducts.TransactionAbstract.Type);
+        multi.addSelect(selProd);
+        multi.execute();
+
+        final Map<Instance, BigDecimal> map4Inventory = new HashMap<Instance, BigDecimal>();
+        while (multi.next()) {
+            final Instance product = multi.<Instance>getSelect(selProd);
+            BigDecimal quantity = multi.<BigDecimal>getAttribute(CIProducts.TransactionAbstract.Quantity);
+            final Long uomId = multi.<Long>getAttribute(CIProducts.TransactionAbstract.UoM);
+            final Type transType = multi.<Type>getAttribute(CIProducts.TransactionAbstract.Type);
+            final UoM uom = Dimension.getUoM(uomId);
+            quantity = quantity.multiply(new BigDecimal(uom.getNumerator()))
+                            .divide(new BigDecimal(uom.getDenominator()), BigDecimal.ROUND_HALF_UP);
+            if (transType.equals(CIProducts.TransactionOutbound.getType())) {
+                quantity = quantity.negate();
+            }
+            if (map4Inventory.containsKey(product)) {
+                map4Inventory.put(product, map4Inventory.get(product).add(quantity));
+            } else {
+                map4Inventory.put(product, quantity);
+            }
+        }
+
+        if (!map4Inventory.isEmpty()) {
+            for (final Entry<Instance, BigDecimal> entry : map4Inventory.entrySet()) {
+                final QueryBuilder queryBldr2 = new QueryBuilder(CIProducts.Inventory);
+                queryBldr2.addWhereAttrEqValue(CIProducts.Inventory.Storage, _parameter.getInstance().getId());
+                queryBldr2.addWhereAttrEqValue(CIProducts.Inventory.Product, entry.getKey().getId());
+                final InstanceQuery inventoryQuery = queryBldr2.getQuery();
+                inventoryQuery.execute();
+                while (inventoryQuery.next()) {
+                    final Update update = new Update(inventoryQuery.getCurrentValue());
+                    update.add(CIProducts.Inventory.Quantity, entry.getValue());
+                    update.executeWithoutTrigger();
+                }
+            }
+        }
+
+        return new Return();
     }
 }
 
