@@ -57,7 +57,6 @@ import org.efaps.db.QueryBuilder;
 import org.efaps.db.SelectBuilder;
 import org.efaps.db.Update;
 import org.efaps.esjp.ci.CIProducts;
-import org.efaps.esjp.common.uiform.Create;
 import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
@@ -75,24 +74,6 @@ import org.joda.time.format.DateTimeFormatter;
 @EFapsRevision("$Rev$")
 public abstract class Storage_Base
 {
-
-    public Return create(final Parameter _parameter)
-        throws EFapsException
-    {
-        final Create create = new Create()
-        {
-
-            @Override
-            protected void add2basicInsert(Parameter _parameter,
-                                           Insert _insert)
-                throws EFapsException
-            {
-                _insert.add("Status", _parameter.getParameterValue("status"));
-            }
-        };
-        create.execute(_parameter);
-        return new Return();
-    }
 
     public Return createFromStaticStorage(final Parameter _parameter)
         throws EFapsException
@@ -259,7 +240,7 @@ public abstract class Storage_Base
 
     /**
      * Method to get a formater.
-     * 
+     *
      * @return a formater
      * @throws EFapsException on error
      */
@@ -379,7 +360,7 @@ public abstract class Storage_Base
 
     /**
      * Method to obtain the UoM in a select.
-     * 
+     *
      * @param _parameter as passed from eFaps API.
      * @return Return with the UoM.
      * @throws EFapsException on error.
@@ -420,7 +401,7 @@ public abstract class Storage_Base
 
     /**
      * Method to verify if show Static Storage depending of a command.
-     * 
+     *
      * @param _parameter as passed from eFaps API.
      * @return Return ret.
      * @throws EFapsException on error.
@@ -442,7 +423,7 @@ public abstract class Storage_Base
     /**
      * Method to check if the instance is of the type Static Inventory to show
      * in other case doesn't show
-     * 
+     *
      * @param _parameter as passed from eFaps API.
      * @return Return ret.
      * @throws EFapsException on error.
@@ -462,7 +443,7 @@ public abstract class Storage_Base
     /**
      * Method to check if the instance is of the type Snapshot to show in other
      * case doesn't show
-     * 
+     *
      * @param _parameter as passed from eFaps API.
      * @return Return ret.
      * @throws EFapsException on error.

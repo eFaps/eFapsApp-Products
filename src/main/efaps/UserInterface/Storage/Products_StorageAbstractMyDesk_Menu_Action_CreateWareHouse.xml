@@ -38,7 +38,7 @@
         <!-- target definitions -->
         <target>
             <form>Products_StorageAbstractForm</form>
-            <execute program="org.efaps.esjp.products.Storage" method="create"/>
+            <execute program="org.efaps.esjp.common.uiform.Create"/>
         </target>
 
         <!-- properties -->
