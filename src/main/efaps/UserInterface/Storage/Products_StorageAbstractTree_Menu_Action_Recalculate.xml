@@ -28,7 +28,7 @@
         <version-expression>(version==latest)</version-expression>
         <name>Products_StorageAbstractTree_Menu_Action_Recalculate</name>
         <access>
-            <role>Products_Admin</role>
+            <role>Administration</role>
         </access>
         <target>
             <execute method="reCalculateInventory" program="org.efaps.esjp.products.Transaction"/>

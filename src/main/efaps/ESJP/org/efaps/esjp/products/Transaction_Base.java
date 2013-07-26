@@ -21,7 +21,9 @@
 package org.efaps.esjp.products;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -36,6 +38,7 @@ import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
+import org.efaps.ci.CIAttribute;
 import org.efaps.db.Delete;
 import org.efaps.db.Insert;
 import org.efaps.db.Instance;
@@ -553,23 +556,24 @@ public abstract class Transaction_Base
     public Return reCalculateInventory(final Parameter _parameter)
         throws EFapsException
     {
-        final SelectBuilder selProd = new SelectBuilder().linkto(CIProducts.TransactionAbstract.Product).instance();
+        final Instance storageInst = _parameter.getInstance();
+        final SelectBuilder selProd = new SelectBuilder().linkto(CIProducts.TransactionInOutAbstract.Product).instance();
 
-        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.TransactionAbstract);
-        queryBldr.addWhereAttrEqValue(CIProducts.TransactionAbstract.Storage, _parameter.getInstance().getId());
+        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.TransactionInOutAbstract);
+        queryBldr.addWhereAttrEqValue(CIProducts.TransactionInOutAbstract.Storage, storageInst.getId());
         final MultiPrintQuery multi = queryBldr.getPrint();
-        multi.addAttribute(CIProducts.TransactionAbstract.Quantity,
-                        CIProducts.TransactionAbstract.UoM,
-                        CIProducts.TransactionAbstract.Type);
+        multi.addAttribute(CIProducts.TransactionInOutAbstract.Quantity,
+                        CIProducts.TransactionInOutAbstract.UoM,
+                        CIProducts.TransactionInOutAbstract.Type);
         multi.addSelect(selProd);
         multi.execute();
 
-        final Map<Instance, BigDecimal> map4Inventory = new HashMap<Instance, BigDecimal>();
+        final Map<Instance, Map<CIAttribute, Object>> map4Inventory = new HashMap<Instance, Map<CIAttribute, Object>>();
         while (multi.next()) {
             final Instance product = multi.<Instance>getSelect(selProd);
-            BigDecimal quantity = multi.<BigDecimal>getAttribute(CIProducts.TransactionAbstract.Quantity);
-            final Long uomId = multi.<Long>getAttribute(CIProducts.TransactionAbstract.UoM);
-            final Type transType = multi.<Type>getAttribute(CIProducts.TransactionAbstract.Type);
+            BigDecimal quantity = multi.<BigDecimal>getAttribute(CIProducts.TransactionInOutAbstract.Quantity);
+            final Long uomId = multi.<Long>getAttribute(CIProducts.TransactionInOutAbstract.UoM);
+            final Type transType = multi.<Type>getAttribute(CIProducts.TransactionInOutAbstract.Type);
             final UoM uom = Dimension.getUoM(uomId);
             quantity = quantity.multiply(new BigDecimal(uom.getNumerator()))
                             .divide(new BigDecimal(uom.getDenominator()), BigDecimal.ROUND_HALF_UP);
@@ -577,28 +581,71 @@ public abstract class Transaction_Base
                 quantity = quantity.negate();
             }
             if (map4Inventory.containsKey(product)) {
-                map4Inventory.put(product, map4Inventory.get(product).add(quantity));
+                final Map<CIAttribute, Object> map4Product = map4Inventory.get(product);
+                final BigDecimal oldQua = (BigDecimal) map4Product.get(CIProducts.TransactionInOutAbstract.Quantity);
+                map4Product.put(CIProducts.TransactionInOutAbstract.Quantity, oldQua.add(quantity));
+                map4Inventory.put(product, map4Product);
             } else {
-                map4Inventory.put(product, quantity);
+                final Map<CIAttribute, Object> map4Product = new HashMap<CIAttribute, Object>();
+                map4Product.put(CIProducts.TransactionInOutAbstract.UoM, uom.getDimension().getBaseUoM().getId());
+                map4Product.put(CIProducts.TransactionInOutAbstract.Quantity, quantity);
+                map4Inventory.put(product, map4Product);
             }
         }
 
+        final List<Long> validate = new ArrayList<Long>();
         if (!map4Inventory.isEmpty()) {
-            for (final Entry<Instance, BigDecimal> entry : map4Inventory.entrySet()) {
+            for (final Entry<Instance, Map<CIAttribute, Object>> entry : map4Inventory.entrySet()) {
                 final QueryBuilder queryBldr2 = new QueryBuilder(CIProducts.Inventory);
-                queryBldr2.addWhereAttrEqValue(CIProducts.Inventory.Storage, _parameter.getInstance().getId());
+                queryBldr2.addWhereAttrEqValue(CIProducts.Inventory.Storage, storageInst.getId());
                 queryBldr2.addWhereAttrEqValue(CIProducts.Inventory.Product, entry.getKey().getId());
-                final InstanceQuery inventoryQuery = queryBldr2.getQuery();
-                inventoryQuery.execute();
-                while (inventoryQuery.next()) {
-                    final Update update = new Update(inventoryQuery.getCurrentValue());
-                    update.add(CIProducts.Inventory.Quantity, entry.getValue());
-                    update.executeWithoutTrigger();
+                final MultiPrintQuery inventoryMulti = queryBldr2.getPrint();
+                inventoryMulti.addAttribute(CIProducts.Inventory.Reserved);
+                inventoryMulti.execute();
+                Update update;
+                BigDecimal value2 = BigDecimal.ZERO;
+                BigDecimal value = (BigDecimal) entry.getValue().get(CIProducts.TransactionInOutAbstract.Quantity);
+                if (inventoryMulti.next()) {
+                    value2 = multi.<BigDecimal>getAttribute(CIProducts.Inventory.Reserved);
+                    update = new Update(inventoryMulti.getCurrentInstance());
+                } else {
+                    update = new Insert(CIProducts.Inventory);
+                    update.add(CIProducts.Inventory.Product, entry.getKey().getId());
+                    update.add(CIProducts.Inventory.UoM, entry.getValue().get(CIProducts.TransactionInOutAbstract.UoM));
+                    update.add(CIProducts.Inventory.Storage, storageInst.getId());
+                }
+
+                if (value2 == null) {
+                    value2 = BigDecimal.ZERO;
+                }
+
+                if (value.compareTo(BigDecimal.ZERO) != 0 || value2.compareTo(BigDecimal.ZERO) != 0) {
+                    update.add(CIProducts.Inventory.Quantity, value);
+                    update.execute();
+                    validate.add(update.getInstance().getId());
                 }
             }
         }
+        DeleteFromInventory(storageInst, validate);
 
         return new Return();
+    }
+
+    protected void DeleteFromInventory(final Instance _storageInst,
+                                       final List<Long> _notDelete)
+        throws EFapsException
+    {
+        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.Inventory);
+        queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, _storageInst.getId());
+        if (!_notDelete.isEmpty()) {
+            queryBldr.addWhereAttrNotEqValue(CIProducts.Inventory.ID, _notDelete.toArray());
+        }
+        final InstanceQuery query = queryBldr.getQuery();
+        query.execute();
+        while (query.next()) {
+            final Delete delete = new Delete(query.getCurrentValue());
+            delete.execute();
+        }
     }
 }
 
