@@ -69,7 +69,6 @@
         <field name="price">
             <property name="Label">Products_PriceListProductTable/Price.Label</property>
             <property name="Align">right</property>
-            <property name="FilterType">PickList</property>
             <trigger program="org.efaps.esjp.products.PriceList"
                     method="getPriceFromProductPricelist"
                     name="Products_PriceListProductTable.UI_FIELD_VALUE"
