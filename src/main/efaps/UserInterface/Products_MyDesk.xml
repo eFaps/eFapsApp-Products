@@ -37,6 +37,7 @@
             <child>Products_PartList_MyDesk</child>
             <child>Products_PriceListMyDesk</child>
             <child>Products_Kardex_Report</child>
+            <child>Products_PriceListProductMyDesk</child>
         </childs>
     </definition>
 </ui-menu>

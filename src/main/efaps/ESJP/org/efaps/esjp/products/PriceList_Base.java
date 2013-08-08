@@ -20,6 +20,7 @@
 
 package org.efaps.esjp.products;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,15 +38,19 @@ import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
 import org.efaps.db.AttributeQuery;
+import org.efaps.db.Context;
 import org.efaps.db.Instance;
 import org.efaps.db.InstanceQuery;
+import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.PrintQuery;
 import org.efaps.db.QueryBuilder;
+import org.efaps.db.SelectBuilder;
 import org.efaps.db.Update;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.uitable.MultiPrint;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 
 /**
  * TODO comment!
@@ -194,4 +199,127 @@ public abstract class PriceList_Base
         ret.put(ReturnValues.VALUES, instances);
         return ret;
     }
+
+    @SuppressWarnings("unchecked")
+    public Return getDateFromProductPricelistRetail(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        final FieldValue fieldValue = (FieldValue) _parameter.get(ParameterValues.UIOBJECT);
+        final String fieldName = fieldValue.getField().getName();
+
+        Map<Instance, String> listProducts;
+        if (Context.getThreadContext().containsRequestAttribute(fieldName)) {
+            listProducts = (Map<Instance, String>) Context.getThreadContext().getRequestAttribute(fieldName);
+        } else {
+            listProducts = new HashMap<Instance, String>();
+            Context.getThreadContext().setRequestAttribute(fieldName, listProducts);
+            
+            final List<Instance> products = (List<Instance>) _parameter.get(ParameterValues.REQUEST_INSTANCES);
+
+            final MultiPrintQuery multi = new MultiPrintQuery(products);
+            multi.execute();
+            while (multi.next()) {
+                final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductPricelistRetail);
+                queryBldr.addWhereAttrLessValue(CIProducts.ProductPricelistRetail.ValidFrom,
+                                new DateTime().plusMinutes(1));
+                queryBldr.addWhereAttrGreaterValue(CIProducts.ProductPricelistRetail.ValidUntil,
+                                new DateTime().minusMinutes(1));
+                queryBldr.addWhereAttrEqValue(CIProducts.ProductPricelistRetail.ProductLink, multi.getCurrentInstance()
+                                .getId());
+                final MultiPrintQuery mult = queryBldr.getPrint();
+                mult.addAttribute("ValidFrom", "ValidUntil");
+                mult.execute();
+                if (mult.next()) {
+                    final DateTime validFrom = mult.<DateTime>getAttribute("ValidFrom");
+                    final DateTime validUntil = mult.<DateTime>getAttribute("ValidUntil");
+                    String dateRange = "";
+                    if (validFrom != null && validUntil != null) {
+                        final String fromDateStr = validFrom.toString(DateTimeFormat.forStyle("S-")
+                                        .withLocale(Context.getThreadContext().getLocale()));
+                        final String untilDateStr = validUntil.toString(DateTimeFormat.forStyle("S-")
+                                        .withLocale(Context.getThreadContext().getLocale()));
+                        dateRange = fromDateStr.concat(" - ").concat(untilDateStr);
+
+                        if (fieldName.equalsIgnoreCase("dateRange")) {
+                            listProducts.put(multi.getCurrentInstance(), dateRange);
+                        } else {
+                            if (fieldName.equalsIgnoreCase("validFrom")) {
+                                listProducts.put(multi.getCurrentInstance(), fromDateStr);
+                            } else {
+                                listProducts.put(multi.getCurrentInstance(), untilDateStr);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        ret.put(ReturnValues.VALUES, listProducts.get(_parameter.getInstance()));
+        return ret;
+    }
+
+    @SuppressWarnings("unchecked")
+    public Return getPriceFromProductPricelist(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        final FieldValue fieldValue = (FieldValue) _parameter.get(ParameterValues.UIOBJECT);
+        final String fieldName = fieldValue.getField().getName();
+
+
+        Map<Instance, String> listProducts2Price;
+        if (Context.getThreadContext().containsRequestAttribute(fieldName)) {
+            listProducts2Price = (Map<Instance, String>) Context.getThreadContext().getRequestAttribute(fieldName);
+        } else {
+            listProducts2Price = new HashMap<Instance, String>();
+            Context.getThreadContext().setRequestAttribute(fieldName, listProducts2Price);
+
+            final Map<?, ?> properties = (Map<?, ?>) _parameter.get(ParameterValues.PROPERTIES);
+            final String typeStr = (String) properties.get("Type");
+            final Type type = Type.get(typeStr);
+
+            final List<Instance> products = (List<Instance>) _parameter.get(ParameterValues.REQUEST_INSTANCES);
+            final MultiPrintQuery multi = new MultiPrintQuery(products);
+            multi.execute();
+            while (multi.next()) {
+                final QueryBuilder queryBldr = new QueryBuilder(type);
+                queryBldr.addWhereAttrLessValue(CIProducts.ProductPricelistAbstract.ValidFrom,
+                                new DateTime().plusMinutes(1));
+                queryBldr.addWhereAttrGreaterValue(CIProducts.ProductPricelistAbstract.ValidUntil,
+                                new DateTime().minusMinutes(1));
+                queryBldr.addWhereAttrEqValue(CIProducts.ProductPricelistAbstract.ProductAbstractLink, multi
+                                .getCurrentInstance()
+                                .getId());
+                final AttributeQuery attrQuery = queryBldr.getAttributeQuery(CIProducts.ProductPricelistAbstract.ID);
+
+                final QueryBuilder queryBldr2 = new QueryBuilder(CIProducts.ProductPricelistPosition);
+                queryBldr2.addWhereAttrInQuery(CIProducts.ProductPricelistPosition.ProductPricelist, attrQuery);
+                final MultiPrintQuery mult = queryBldr2.getPrint();
+                final SelectBuilder selCurrencyId = new SelectBuilder().linkto(
+                                CIProducts.ProductPricelistPosition.CurrencyId)
+                                .attribute("Name");
+                mult.addSelect(selCurrencyId);
+                mult.addAttribute("Price");
+                mult.execute();
+                if (mult.next()) {
+                    final BigDecimal price = mult.<BigDecimal>getAttribute("Price");
+                    final String currencyName = mult.<String>getSelect(selCurrencyId);
+                    final String priceStr = price.toString();
+
+                    if (fieldName.contains("price") && priceStr != null) {
+                        listProducts2Price.put(multi.getCurrentInstance(), priceStr);
+                    }
+
+                    if (fieldName.contains("currencyId") && currencyName != null) {
+                        listProducts2Price.put(multi.getCurrentInstance(), currencyName);
+                    }
+                }
+            }
+        }
+
+        ret.put(ReturnValues.VALUES, listProducts2Price.get(_parameter.getInstance()));
+        return ret;
+    }
+
 }
