@@ -88,6 +88,12 @@ public abstract class Storage_Base
         insert.execute();
 
         final String fromStorageId = _parameter.getParameterValue("storage");
+
+        final Update updateStaticInventory = new Update(CIProducts.StaticInventory.getType(), fromStorageId);
+        updateStaticInventory.add(CIProducts.StaticInventory.Status,
+                        Status.find(CIProducts.StorageAbstractStatus.uuid, "Inactive").getId());
+        updateStaticInventory.execute();
+
         final QueryBuilder position = new QueryBuilder(CIProducts.StaticInventoryPosition);
         position.addWhereAttrEqValue(CIProducts.StaticInventoryPosition.StaticInventory,
                         fromStorageId);
@@ -454,6 +460,39 @@ public abstract class Storage_Base
         final Return ret = new Return();
         final Type typeSnapshot = Type.get(UUID.fromString("9472ec24-da43-419c-98a3-9ec6b1c32b7a"));
         if (_parameter.getInstance().getType().isKindOf(typeSnapshot)) {
+            ret.put(ReturnValues.TRUE, true);
+        }
+
+        return ret;
+    }
+
+    /**
+     * Method to check if the instance is of the type Static_Inventory and if it
+     * is so verify the status. If it is inactive not allow to edit it.
+     * 
+     * @param _parameter as passed from eFaps API.
+     * @return Return ret.
+     * @throws EFapsException on error.
+     */
+    public Return checkPermissionToEditStaticInventory(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        final Type typeStaticInventory = Type.get(UUID.fromString("c97d3269-944f-4f77-b2fc-3d5db6ca4430"));
+        if (_parameter.getInstance().getType().isKindOf(typeStaticInventory)) {
+            final QueryBuilder queryBldr = new QueryBuilder(CIProducts.StaticInventory);
+            queryBldr.addWhereAttrEqValue(CIProducts.StaticInventory.ID, _parameter.getInstance().getId());
+            final MultiPrintQuery multi = queryBldr.getPrint();
+            multi.addAttribute(CIProducts.StaticInventory.Status);
+            multi.execute();
+            if (multi.next()) {
+                final Long status = multi.<Long>getAttribute(CIProducts.StaticInventory.Status);
+                final Long activeId = Status.find(CIProducts.StorageAbstractStatus.uuid, "Active").getId();
+                if (activeId.equals(status)) {
+                    ret.put(ReturnValues.TRUE, true);
+                }
+            }
+        } else {
             ret.put(ReturnValues.TRUE, true);
         }
 
