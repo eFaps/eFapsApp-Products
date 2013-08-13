@@ -36,6 +36,10 @@
         <target>
             <form>Products_StaticInventory4EditPositionsForm</form>
             <execute method="editPositions4StaticInventory" program="org.efaps.esjp.products.Storage"/>
+            <trigger program="org.efaps.esjp.products.Storage"
+                    method="checkPermissionToEditStaticInventory"
+                    name="Products_StaticStorageTree_Menu_Action_Edit.UI_ACCESSCHECK"
+                    event="UI_ACCESSCHECK"/>
         </target>
 
         <!-- properties -->
