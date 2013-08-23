@@ -35,9 +35,9 @@
       <column name="PRODUCTID"  type="INTEGER"  not-null="true"/>
       <column name="UOMID"      type="INTEGER"  not-null="true"/>
       <column name="DOCID"      type="INTEGER"/>
-      <foreign key="COMPANYID" name="T_PRODINVENTORY_FK_COMPANYID" reference="T_USERABSTRACT(ID)"/>
-      <foreign key="PRODUCTID" name="T_PRODINVENTORY_FK_PRODUCTID" reference="T_PRODPRODUCT(ID)"/>
-      <foreign key="UOMID" name="T_PRODINVENTORY_FK_UOMID" reference="T_DMUOM(ID)"/>
+      <foreign key="COMPANYID" name="T_STATICINVENTORYPOS_FK_COMPANYID" reference="T_USERABSTRACT(ID)"/>
+      <foreign key="PRODUCTID" name="T_STATICINVENTORYPOS_FK_PRODUCTID" reference="T_PRODPRODUCT(ID)"/>
+      <foreign key="UOMID" name="T_STATICINVENTORYPOS_FK_UOMID" reference="T_DMUOM(ID)"/>
     </database>
   </definition>
 

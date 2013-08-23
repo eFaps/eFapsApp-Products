@@ -21,7 +21,7 @@
 
 --><datamodel-statusgroup xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>b4a07848-f388-4c5b-ab80-3588b5d81832</uuid>
-    <file-application>eFapsApp-Accounting</file-application>
+    <file-application>eFapsApp-Products</file-application>
     <file-revision>$Rev: 8295 $</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
