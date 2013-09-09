@@ -1,8 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
-<!--
-
- Copyright 2003 - 2009 The eFaps Team
+ Copyright 2003 - 2013 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -22,23 +20,15 @@
  Last Changed By: $Author$
 
 -->
-
-<ui-menu xmlns="http://www.efaps.org/xsd"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>0ff70869-361c-4971-bd09-6cf79a0a7dfb</uuid>
+<datamodel-type xmlns="http://www.efaps.org/xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>97b81907-cd3a-4e44-8e9b-0e9a6eed2c90</uuid>
     <file-application>eFapsApp-Products</file-application>
     <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_MyDesk</name>
-        <childs>
-            <child>Products_Product_MyDesk</child>
-            <child>Products_PartList_MyDesk</child>
-            <child>Products_PriceListMyDesk</child>
-            <child>Products_Kardex_Report</child>
-            <child>Products_PriceListProductMyDesk</child>
-            <child>Products_CatalogMyDesk</child>
-        </childs>
+        <name>Products_CatalogStandart</name>
+        <parent>Products_CatalogAbstract</parent>
     </definition>
-</ui-menu>
+</datamodel-type>
