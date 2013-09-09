@@ -30,6 +30,7 @@
         <name>Products_CatalogMyDesk</name>
         <access>
             <role>Products_Admin</role>
+            <role>Products_Modifier</role>
         </access>
         <target>
             <menu>Products_CatalogMyDesk_Menu</menu>
