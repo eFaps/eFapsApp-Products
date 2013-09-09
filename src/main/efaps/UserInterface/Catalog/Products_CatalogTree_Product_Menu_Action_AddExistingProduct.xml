@@ -36,7 +36,7 @@
             <execute program="org.efaps.esjp.common.uisearch.Connect">
                 <property name="ConnectChildAttribute">ProductLink</property>
                 <property name="ConnectParentAttribute">CatalogLinkAbstract</property>
-                <property name="ConnectType">Products_Catalog2Product</property>
+                <property name="ConnectType">Products_Catalog2Products</property>
             </execute>
         </target>
         <!-- properties -->

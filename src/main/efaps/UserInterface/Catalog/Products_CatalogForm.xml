@@ -28,7 +28,7 @@
 
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>RudolfReimsac_Products_CatalogForm</name>
+        <name>Products_CatalogForm</name>
         <!-- fields -->
         <field name="name">
             <property name="Columns">40</property>

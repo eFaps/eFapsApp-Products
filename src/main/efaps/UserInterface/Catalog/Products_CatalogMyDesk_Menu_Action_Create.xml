@@ -27,7 +27,7 @@
     <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>RudolfReimsac_Products_CatalogMyDesk_Menu_Action_Create</name>
+        <name>Products_CatalogMyDesk_Menu_Action_Create</name>
         <access>
             <role>Products_Admin</role>
         </access>

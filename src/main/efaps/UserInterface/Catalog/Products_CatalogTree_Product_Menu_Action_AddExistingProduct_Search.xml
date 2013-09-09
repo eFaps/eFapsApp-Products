@@ -30,7 +30,7 @@
 
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>RudolfReimsac_Products_CatalogTree_Product_Menu_Action_AddExistingProduct_Search</name>
+        <name>Products_CatalogTree_Product_Menu_Action_AddExistingProduct_Search</name>
         <!-- defaults -->
         <default>
             <command>Products_ProductSearch</command>

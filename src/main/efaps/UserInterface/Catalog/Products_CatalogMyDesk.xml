@@ -35,8 +35,7 @@
             <menu>Products_CatalogMyDesk_Menu</menu>
             <table>Products_CatalogTable</table>
             <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
-                <property name="Types">Products_CatalogAbstract</property>
-                <property name="ExpandChildTypes">true</property>
+                <property name="Type">Products_CatalogAbstract</property>
             </evaluate>
         </target>
 
