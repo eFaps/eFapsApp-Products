@@ -40,6 +40,12 @@
             <property name="Attribute">Name</property>
             <property name="Required">true</property>
         </field>
+         <field name="product">
+            <property name="SelectAlternateOID">linkfrom[Products_StockProductAbstract2Batch#ToLink].linkto[FromLink].oid</property>
+            <property name="Select">linkfrom[Products_StockProductAbstract2Batch#ToLink].linkto[FromLink].attribute[Name]</property>
+            <property name="Label">Products_ProductBatchForm.product.label</property>
+            <property name="HRef">TREE</property>
+        </field>
         <field name="description">
             <property name="Columns">40</property>
             <property name="ModeCreate">EDITABLE</property>
@@ -119,6 +125,12 @@
             <property name="ModeSearch">EDITABLE</property>
             <property name="Attribute">Name</property>
             <property name="Required">true</property>
+        </field>
+         <field name="product">
+            <property name="SelectAlternateOID">linkfrom[Products_StockProductAbstract2Batch#ToLink].linkto[FromLink].oid</property>
+            <property name="Select">linkfrom[Products_StockProductAbstract2Batch#ToLink].linkto[FromLink].attribute[Name]</property>
+            <property name="Label">Products_ProductBatchForm.product.label</property>
+            <property name="HRef">TREE</property>
         </field>
         <field name="description">
             <property name="Columns">40</property>
