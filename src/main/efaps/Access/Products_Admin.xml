@@ -69,6 +69,7 @@
         <type>Products_ProductSalesPartList</type>
         <type>Products_ProductGeneric</type>
         <type>Products_StorageAbstract</type>
+        <type>Products_ProductBatch</type>
         
         <status group="Products_StorageAbstractStatus">
             <key>Active</key>

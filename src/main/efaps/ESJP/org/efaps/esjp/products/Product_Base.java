@@ -31,6 +31,7 @@ import java.util.TreeMap;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.efaps.admin.common.NumberGenerator;
 import org.efaps.admin.common.SystemConfiguration;
 import org.efaps.admin.datamodel.Attribute;
 import org.efaps.admin.datamodel.AttributeType;
@@ -77,6 +78,37 @@ public abstract class Product_Base
 {
 
     /**
+     * @param _parameter    Parameter as passed by the eFaps API
+     * @param _prodInstance instance of a product the batch is wanted for
+     * @return Instance of the Batch Product
+     * @throws EFapsException on error
+     */
+    public Instance createBatch(final Parameter _parameter,
+                                final Instance _prodInstance)
+        throws EFapsException
+    {
+        final Map<String, Object> map = new HashMap<String, Object>();
+        map.put("Name", getName4Batch(_parameter));
+        final Instance batchInst = cloneProduct(_parameter, _prodInstance,
+                        CIProducts.ProductBatch.getType(), map, false);
+        final Insert relInsert = new Insert(CIProducts.StockProductAbstract2Batch);
+        relInsert.add(CIProducts.StockProductAbstract2Batch.FromLink, _prodInstance);
+        relInsert.add(CIProducts.StockProductAbstract2Batch.ToLink, batchInst);
+        relInsert.execute();
+        return batchInst;
+    }
+
+
+    protected String getName4Batch(final Parameter _parameter)
+        throws EFapsException
+    {
+        // Products_ProductBatchSequence
+        final NumberGenerator numGen = NumberGenerator.get(UUID.fromString("a1cc9de2-1f69-456c-83aa-a7c5b8f8c802"));
+        final String ret = numGen.getNextVal(new DateTime().toDate());
+        return ret;
+    }
+
+    /**
      * Method for create unique product.
      *
      * @param _parameter Parameter as passed from the eFaps API
@@ -94,7 +126,8 @@ public abstract class Product_Base
             final Instance instance = Instance.get(prodOid);
             final Map<String, Object> map = new HashMap<String, Object>();
             map.put("Name", name);
-            final Instance uniqueInst = cloneProduct(_parameter, instance, CIProducts.ProductUnique.getType(), map);
+            final Instance uniqueInst = cloneProduct(_parameter, instance,
+                            CIProducts.ProductUnique.getType(), map, true);
 
             final PrintQuery print = new PrintQuery(uniqueInst);
             print.addAttribute("Dimension");
@@ -214,7 +247,7 @@ public abstract class Product_Base
 
     /**
      * Method to evaluate the selected row.
-     * 
+     *
      * @param _parameter paaremter
      * @return number of selected row.
      */
@@ -366,7 +399,8 @@ public abstract class Product_Base
     public Instance cloneProduct(final Parameter _parameter,
                                  final Instance _instance,
                                  final Type _cloneType,
-                                 final Map<String, Object> _attrMap)
+                                 final Map<String, Object> _attrMap,
+                                 final boolean _addClassifications)
         throws EFapsException
     {
         final PrintQuery print = new PrintQuery(_instance);
@@ -388,57 +422,57 @@ public abstract class Product_Base
         }
         insert.execute();
         final Instance ret = insert.getInstance();
-
-        final Set<Classification> classTypes = new HashSet<Classification>();
-        Type curr = _instance.getType();
-        while (curr.getParentType() != null) {
+        if (_addClassifications) {
+            final Set<Classification> classTypes = new HashSet<Classification>();
+            Type curr = _instance.getType();
+            while (curr.getParentType() != null) {
+                classTypes.addAll(curr.getClassifiedByTypes());
+                curr = curr.getParentType();
+            }
             classTypes.addAll(curr.getClassifiedByTypes());
-            curr = curr.getParentType();
-        }
-        classTypes.addAll(curr.getClassifiedByTypes());
-        final Set<String> oids = new HashSet<String>();
-        for (final Classification classType : classTypes) {
-            final QueryBuilder relQueryBldr = new QueryBuilder(classType.getClassifyRelationType());
-            relQueryBldr.addWhereAttrEqValue(classType.getRelLinkAttributeName(), _instance.getId());
-            final MultiPrintQuery relMulti = relQueryBldr.getPrint();
-            relMulti.addAttribute(classType.getRelTypeAttributeName());
-            relMulti.execute();
+            final Set<String> oids = new HashSet<String>();
+            for (final Classification classType : classTypes) {
+                final QueryBuilder relQueryBldr = new QueryBuilder(classType.getClassifyRelationType());
+                relQueryBldr.addWhereAttrEqValue(classType.getRelLinkAttributeName(), _instance.getId());
+                final MultiPrintQuery relMulti = relQueryBldr.getPrint();
+                relMulti.addAttribute(classType.getRelTypeAttributeName());
+                relMulti.execute();
 
-            while (relMulti.next()) {
-                final String oid = relMulti.getCurrentInstance().getOid();
-                if (!oids.contains(oid)) {
-                    oids.add(oid);
-                    final Long typeid = relMulti.<Long>getAttribute(classType.getRelTypeAttributeName());
-                    final Classification subClassType = (Classification) Type.get(typeid);
+                while (relMulti.next()) {
+                    final String oid = relMulti.getCurrentInstance().getOid();
+                    if (!oids.contains(oid)) {
+                        oids.add(oid);
+                        final Long typeid = relMulti.<Long>getAttribute(classType.getRelTypeAttributeName());
+                        final Classification subClassType = (Classification) Type.get(typeid);
 
-                    final Insert relInsert = new Insert(classType.getClassifyRelationType());
-                    relInsert.add(classType.getRelLinkAttributeName(), ret.getId());
-                    relInsert.add(classType.getRelTypeAttributeName(), typeid);
-                    relInsert.execute();
+                        final Insert relInsert = new Insert(classType.getClassifyRelationType());
+                        relInsert.add(classType.getRelLinkAttributeName(), ret.getId());
+                        relInsert.add(classType.getRelTypeAttributeName(), typeid);
+                        relInsert.execute();
 
-                    final QueryBuilder queryBldr = new QueryBuilder(subClassType);
-                    queryBldr.addWhereAttrEqValue(subClassType.getLinkAttributeName(), _instance.getId());
-                    final MultiPrintQuery multi = queryBldr.getPrint();
-                    for (final Attribute attr : subClassType.getAttributes().values()) {
-                        multi.addAttribute(attr);
-                    }
-                    multi.execute();
-                    while (multi.next()) {
-                        final Insert subInsert = new Insert(subClassType);
-                        subInsert.add(subClassType.getLinkAttributeName(), ret.getId());
+                        final QueryBuilder queryBldr = new QueryBuilder(subClassType);
+                        queryBldr.addWhereAttrEqValue(subClassType.getLinkAttributeName(), _instance.getId());
+                        final MultiPrintQuery multi = queryBldr.getPrint();
                         for (final Attribute attr : subClassType.getAttributes().values()) {
-                            if (addAttribute(attr, addedAttributes)
-                                            && !subClassType.getLinkAttributeName().equals(attr.getName())) {
-                                final Object object = multi.getAttribute(attr);
-                                if (object instanceof Object[]) {
-                                    subInsert.add(attr, (Object[]) object);
-                                } else {
-                                    subInsert.add(attr, object);
-                                }
-
-                            }
+                            multi.addAttribute(attr);
                         }
-                        subInsert.execute();
+                        multi.execute();
+                        while (multi.next()) {
+                            final Insert subInsert = new Insert(subClassType);
+                            subInsert.add(subClassType.getLinkAttributeName(), ret.getId());
+                            for (final Attribute attr : subClassType.getAttributes().values()) {
+                                if (addAttribute(attr, addedAttributes)
+                                                && !subClassType.getLinkAttributeName().equals(attr.getName())) {
+                                    final Object object = multi.getAttribute(attr);
+                                    if (object instanceof Object[]) {
+                                        subInsert.add(attr, (Object[]) object);
+                                    } else {
+                                        subInsert.add(attr, object);
+                                    }
+                                }
+                            }
+                            subInsert.execute();
+                        }
                     }
                 }
             }
@@ -454,15 +488,17 @@ public abstract class Product_Base
         throws EFapsException
     {
         final Map<?, ?> properties = (Map<?, ?>) _parameter.get(ParameterValues.PROPERTIES);
-        final String childAttr = (String) properties.get("ConnectChildAttribute");
-        final String parentAttr = (String) properties.get("ConnectParentAttribute");
-        final Type type = Type.get((String) properties.get("ConnectType"));
+        if (properties.containsKey("ConnectType")) {
+            final String childAttr = (String) properties.get("ConnectChildAttribute");
+            final String parentAttr = (String) properties.get("ConnectParentAttribute");
+            final Type type = Type.get((String) properties.get("ConnectType"));
 
-        // make the relation between original and copy
-        final Insert relInsert = new Insert(type);
-        relInsert.add(parentAttr, _parent);
-        relInsert.add(childAttr, _child);
-        relInsert.execute();
+            // make the relation between original and copy
+            final Insert relInsert = new Insert(type);
+            relInsert.add(parentAttr, _parent);
+            relInsert.add(childAttr, _child);
+            relInsert.execute();
+        }
     }
 
     /**

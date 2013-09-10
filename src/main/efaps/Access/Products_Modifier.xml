@@ -60,6 +60,7 @@
         <type>Products_ProductPricelistMinRetail</type>
         <type>Products_ProductSalesPartList</type>
         <type>Products_ProductGeneric</type>
+        <type>Products_ProductBatch</type>
 
         <role>Products_Modifier</role>
     </definition>
