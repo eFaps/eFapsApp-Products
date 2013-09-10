@@ -64,6 +64,13 @@
             <property name="Select">linkto[Product].linkfrom[Products_StockProductAbstract2Batch#ToLink].linkto[FromLink].attribute[Name].attribute[Name]</property>
             <property name="Label">Products_Inventory/Product.Label</property>
             <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
+            <trigger program="org.efaps.esjp.admin.access.AccessOnField" 
+                method="configCheck" 
+                name="Products_InventoryTable.productOrig.UI_ACCESSCHECK" 
+                event="UI_ACCESSCHECK">
+                <property name="SystemConfig">Products-Configuration</property>
+                <property name="Attribute">org.efaps.products.ActivateBatch</property>
+             </trigger>
         </field>
         <field name="storage">
             <property name="SelectAlternateOID">linkto[Storage].oid</property>

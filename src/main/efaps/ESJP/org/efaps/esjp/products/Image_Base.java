@@ -62,6 +62,8 @@ import org.efaps.db.Update;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.file.FileUtil;
 import org.efaps.esjp.common.file.ImageField;
+import org.efaps.esjp.products.util.Products;
+import org.efaps.esjp.products.util.ProductsSettings;
 import org.efaps.util.EFapsException;
 
 import com.mortennobel.imagescaling.DimensionConstrain;
@@ -89,11 +91,9 @@ public abstract class Image_Base
         throws EFapsException
     {
         final Return ret = new Return();
-        // Products-Configuration
-        final SystemConfiguration config = SystemConfiguration.get(
-                        UUID.fromString("e53cd705-e463-47dc-a400-4ace4ed72071"));
+        final SystemConfiguration config = Products.getSysConfig();
         if (config != null) {
-            if (config.getAttributeValueAsBoolean("ImagesActivated")) {
+            if (config.getAttributeValueAsBoolean(ProductsSettings.ACTIVATEIMAGE)) {
                 ret.put(ReturnValues.TRUE, true);
             }
         }

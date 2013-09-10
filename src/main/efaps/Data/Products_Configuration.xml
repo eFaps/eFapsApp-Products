@@ -33,12 +33,12 @@
         <version-expression>(version==latest)</version-expression>
         <name>Products-Configuration</name>
         <attribute>
-            <key>ImagesActivated</key>
+            <key>org.efaps.products.ActivateImages</key>
             <value>false</value>
             <description>Boolean(true/false). Activate the image menu.</description>
         </attribute>
         <attribute>
-            <key>ImagesProperties</key>
+            <key>org.efaps.products.ImagesProperties</key>
             <value>Image4Doc_Create=true
 Image4Doc_Width=250
 Image4Doc_Height=250
@@ -51,9 +51,14 @@ Thumbnail_Enlarge=false
             <description>Properties for image</description>
         </attribute>
         <attribute>
-            <key>Activate_PriceMassUpdate</key>
+            <key>org.efaps.products.ActivatePriceMassUpdate</key>
             <value>false</value>
             <description>Boolean(true/false). Activate the menu for updating Product Prices on mass.</description>
+        </attribute>
+        <attribute>
+            <key>org.efaps.products.ActivateBatch</key>
+            <value>false</value>
+            <description>Boolean(true/false). Activate Batch Product</description>
         </attribute>
     </definition>
 </common-systemconfiguration>
