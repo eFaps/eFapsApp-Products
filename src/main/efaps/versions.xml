@@ -80,7 +80,7 @@
 
         <!-- Products_MyDesk, MainToolBar -->
         UIUpdate update = new UIUpdate();
-        update.add2Menu("0ff70869-361c-4971-bd09-6cf79a0a7dfb", "87001cc3-c45c-44de-b8f1-776df507f268", 1);
+        update.add2Menu("0ff70869-361c-4971-bd09-6cf79a0a7dfb", "87001cc3-c45c-44de-b8f1-776df507f268", 2);
 
         <!-- connect the Products_Contacts_ContactTree_Product Menu to the Contacts_ContactTree menu from contacts -->
         update.add2Menu("0ecba961-c0bf-48b8-93a5-4d098bc0c022", "e1944ac8-4007-476c-a5c8-2bfbdb2b79f9",-1);
