@@ -33,7 +33,7 @@
   <definition>
     <version-expression>(version==latest)</version-expression>
     <name>Length</name>
-    <description>just an example</description>
+    <description>Length</description>
 
     <uom>
       <base>true</base>
