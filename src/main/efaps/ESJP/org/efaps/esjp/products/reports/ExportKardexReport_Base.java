@@ -33,7 +33,6 @@ import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import net.sf.dynamicreports.report.datasource.DRDataSource;
 import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JRParameter;
 
 import org.efaps.admin.datamodel.Dimension;
 import org.efaps.admin.datamodel.Dimension.UoM;
@@ -44,7 +43,6 @@ import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
-import org.efaps.db.Context;
 import org.efaps.db.Instance;
 import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.QueryBuilder;
@@ -106,10 +104,12 @@ public abstract class ExportKardexReport_Base
                 if (storage.isValid()) {
                     queryBldr.addWhereAttrEqValue(CIProducts.TransactionInOutAbstract.Storage, storage.getId());
                 }
+                queryBldr.addOrderByAttributeAsc(CIProducts.TransactionInOutAbstract.Date);
                 final MultiPrintQuery multi = queryBldr.getPrint();
                 multi.addAttribute(CIProducts.TransactionInOutAbstract.Date,
                                 CIProducts.TransactionInOutAbstract.Quantity,
                                 CIProducts.TransactionInOutAbstract.UoM);
+                multi.setEnforceSorted(true);
                 multi.execute();
                 addingRow2Map(lst, product, storage, dateFrom);
                 while (multi.next()) {
