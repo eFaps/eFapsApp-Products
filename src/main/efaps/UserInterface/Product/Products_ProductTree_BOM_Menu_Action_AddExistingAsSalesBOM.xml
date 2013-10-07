@@ -32,6 +32,10 @@
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductTree_BOM_Menu_Action_AddExistingAsSalesBOM</name>
+        <access>
+            <role>Products_Modifier</role>
+            <role>Products_Admin</role>
+        </access>
         <!-- target definition -->
         <target>
             <search>Products_ProductTree_BOM_Menu_Action_AddExisting_Search</search>
