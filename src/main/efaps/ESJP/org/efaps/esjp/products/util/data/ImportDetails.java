@@ -39,6 +39,7 @@ import org.efaps.db.InstanceQuery;
 import org.efaps.db.QueryBuilder;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.util.EFapsException;
+import org.efaps.util.cache.CacheReloadException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +59,9 @@ public class ImportDetails
         final String filename = _parameter.getParameterValue("valueField");
         final File file = new File(filename);
         try {
-            insertNewProducts(file, CIProducts.ProductMaterial.getType());
+            if (checkData(file)) {
+                insertNewProducts(file, CIProducts.ProductMaterial.getType());
+            }
         } catch (final IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -113,17 +116,49 @@ public class ImportDetails
                             insertClassification(classification, insert.getInstance());
                         }
                     } else {
-                        ImportDetails.LOG.error("The description '{}' with classification '{}' already exist",
+                        ImportDetails.LOG.warn("The description '{}' with classification '{}' already exist",
                                         row[0], classification);
                     }
-                } else {
-                    ImportDetails.LOG.error("The dimension '{}' is incorrect or not exist", row[2]);
                 }
-            } else {
-                ImportDetails.LOG.error("The classification '{}' is incorrect or not exist", row[1]);
             }
             cont++;
         }
+    }
+
+    private boolean checkData(final File _file)
+    {
+        boolean ret = false;
+        try {
+            final CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(_file), "UTF-8"));
+            final List<String[]> entries = reader.readAll();
+            reader.close();
+            entries.remove(0);
+            int i = 2;
+            boolean test = true;
+            for (final String[] row : entries) {
+                final String classificationName = row[1].trim();
+                final Classification clazz = Classification.get(classificationName);
+                if (clazz == null) {
+                    ImportDetails.LOG.error("Row: {}, Could not find Classification: '{}'", i, classificationName);
+                    test = false;
+                }
+                final String dimensionName = row[2].trim();
+                final Dimension dimension = Dimension.get(dimensionName);
+                if (dimension == null) {
+                    ImportDetails.LOG.error("Row: {}, Could not find Dimension: '{}'", i, dimensionName);
+                    test = false;
+                }
+                i++;
+            }
+            ret = test;
+        } catch (final IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (final CacheReloadException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return ret;
     }
 
     protected String buildName4Product(final Classification _classification)
@@ -146,10 +181,10 @@ public class ImportDetails
         classInsert.executeWithoutAccessCheck();
 
         if (!_classification.isRoot()) {
-            ImportDetails.LOG.info("Child Classification: '{}'", _classification);
+            ImportDetails.LOG.debug("Child Classification: '{}'", _classification);
             insertClassification(_classification.getParentClassification(), _prodInstance);
         } else {
-            ImportDetails.LOG.info("Root Classification: '{}'", _classification);
+            ImportDetails.LOG.debug("Root Classification: '{}'", _classification);
         }
     }
 
