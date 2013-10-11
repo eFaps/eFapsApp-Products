@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.util.Formatter;
 import java.util.List;
 
@@ -109,7 +110,8 @@ public class ImportDetails
                         insert.add(CIProducts.ProductAbstract.Description, prodDesc);
                         insert.add(CIProducts.ProductAbstract.Active, true);
                         insert.add(CIProducts.ProductAbstract.Dimension, dim.getId());
-                        insert.add(CIProducts.ProductAbstract.TaxCategory, true);
+                        insert.add(CIProducts.ProductAbstract.TaxCategory, 1);
+                        insert.add(CIProducts.ProductAbstract.SalesUnit, BigDecimal.ONE);
                         insert.executeWithoutAccessCheck();
 
                         if (classification != null) {
@@ -117,7 +119,7 @@ public class ImportDetails
                         }
                     } else {
                         ImportDetails.LOG.warn("The description '{}' with classification '{}' already exist",
-                                        row[0], classification);
+                                        row[0], row[1]);
                     }
                 }
             }
