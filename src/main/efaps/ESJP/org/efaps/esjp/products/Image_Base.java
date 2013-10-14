@@ -111,7 +111,7 @@ public abstract class Image_Base
     {
         final Return ret = new Return();
         final Instance instance = _parameter.getInstance();
-        if (instance != null) {
+        if (instance != null && instance.isValid()) {
             if (instance.getType().getAttribute("Original") != null) {
                 ret.put(ReturnValues.TRUE, true);
             }
