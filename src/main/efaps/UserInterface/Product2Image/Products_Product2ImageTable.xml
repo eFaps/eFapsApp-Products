@@ -36,7 +36,8 @@
         <name>Products_Product2ImageTable</name>
         <!-- fields -->
         <field name="type">
-            <property name="Attribute">Type</property>
+            <property name="SelectAlternateOID">linkto[ImageAbstractLink].oid</property>
+            <property name="Select">linkto[ImageAbstractLink].attribute[Type]</property>
             <property name="Label">Products_Product2ImageAbstract/Type.Label</property>
             <property name="ShowTypeIcon">true</property>
         </field>
