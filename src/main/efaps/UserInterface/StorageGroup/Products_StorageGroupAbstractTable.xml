@@ -1,8 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
-<!--
-
- Copyright 2003 - 2011 The eFaps Team
+ Copyright 2003 - 2013 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -21,43 +19,29 @@
  Last Changed:    $Date$
  Last Changed By: $Author$
 
--->
+--><ui-table xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
 
-<ui-table xmlns="http://www.efaps.org/xsd"
-          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-
-  <uuid>d1b21efc-3202-484d-b1da-f592e39a7768</uuid>
+    <uuid>a8b380a2-b547-45e7-b340-6077caa4818a</uuid>
     <file-application>eFapsApp-Products</file-application>
     <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_StorageAbstractTable</name>
+        <name>Products_StorageGroupAbstractTable</name>
         <!-- fields -->
         <field name="type">
             <property name="Attribute">Type</property>
-            <property name="Label">Products_StorageAbstract/Type.Label</property>
-            <property name="ModeSearch">READONLY</property>
+            <property name="Label">Products_StorageGroupAbstract/Type.Label</property>
             <property name="ShowTypeIcon">true</property>
         </field>
         <field name="name">
             <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
             <property name="Attribute">Name</property>
-            <property name="Label">Products_StorageAbstract/Name.Label</property>
-            <property name="ModeSearch">READONLY</property>
+            <property name="Label">Products_StorageGroupAbstract/Name.Label</property>
             <property name="ShowTypeIcon">true</property>
         </field>
         <field name="description">
             <property name="Attribute">Description</property>
-            <property name="Label">Products_StorageAbstract/Description.Label</property>
-            <property name="ModeSearch">READONLY</property>
-            <property name="ShowTypeIcon">true</property>
-        </field>
-        <field name="status">
-            <property name="FilterType">PICKLIST</property>
-            <property name="Attribute">StatusAbstract</property>
-            <property name="Label">Products_StorageAbstract/Status.Label</property>
-            <property name="ModeSearch">READONLY</property>
+            <property name="Label">Products_StorageGroupAbstract/Description.Label</property>
             <property name="ShowTypeIcon">true</property>
         </field>
     </definition>
