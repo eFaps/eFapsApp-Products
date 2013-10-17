@@ -27,6 +27,11 @@
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_StorageGroupAbstractMyDesk</name>
+        <access>
+            <role>Products_Admin</role>
+            <role>Products_Modifier</role>
+            <role>Products_Reader</role>
+        </access>
         <target>
             <menu>Products_StorageGroupAbstractMyDesk_Menu</menu>
             <table>Products_StorageGroupAbstractTable</table>
