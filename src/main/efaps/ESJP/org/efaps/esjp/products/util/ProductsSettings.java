@@ -60,5 +60,8 @@ public interface ProductsSettings
      */
     String ACTIVATEBATCH = "org.efaps.products.ActivateBatch";
 
-
+    /**
+     * Link to a default warehouse instance
+     */
+    String DEFAULTWAREHOUSE = "org.efaps.products.DefaultWareHouse";
 }
