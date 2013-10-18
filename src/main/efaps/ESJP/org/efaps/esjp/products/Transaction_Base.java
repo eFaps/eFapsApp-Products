@@ -40,6 +40,7 @@ import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
 import org.efaps.ci.CIAttribute;
+import org.efaps.ci.CIType;
 import org.efaps.db.Delete;
 import org.efaps.db.Insert;
 import org.efaps.db.Instance;
@@ -97,6 +98,7 @@ public abstract class Transaction_Base
                 if (docTransactionCreate.getInstance().isValid()
                                 && (CIProducts.TransactionInbound.getType().equals(_createDoc.getInstance().getType())
                                 || CIProducts.TransactionOutbound.getType().equals(_createDoc.getInstance().getType()))) {
+                    // Sales_Document2DocumentType
                     final Insert insert = new Insert(UUID.fromString("24fe1e8e-ff25-4b1d-aed5-032278a57ded"));
                     insert.add("DocumentLink", docTransactionCreate.getInstance().getId());
                     insert.add("DocumentTypeLink", prodDocInst.getId());
@@ -309,11 +311,14 @@ public abstract class Transaction_Base
     {
         final Instance fromStorageInst = _parameter.getInstance();
 
-
-        final String quantity = _parameter.getParameterValue("quantity");
+        final String quantity = _parameter.getParameterValue(CIFormProducts.Products_InventoryMoveForm.quantity.name);
         final String prodDesc = _parameter.getParameterValue("productAutoComplete");
-        final String uomStr = _parameter.getParameterValue("uoM");
-        final String toStorageId = _parameter.getParameterValue("storage");
+        final String uomStr = _parameter.getParameterValue(CIFormProducts.Products_InventoryMoveForm.uoM.name);
+        final String toStorageId = _parameter.getParameterValue(CIFormProducts.Products_InventoryMoveForm.storage.name);
+        final String description = _parameter
+                        .getParameterValue(CIFormProducts.Products_InventoryMoveForm.description.name);
+        final String date = _parameter.getParameterValue(CIFormProducts.Products_InventoryMoveForm.date.name);
+        final String product = _parameter.getParameterValue(CIFormProducts.Products_InventoryMoveForm.product.name);
 
         final PrintQuery print = new PrintQuery(fromStorageInst);
         print.addAttribute(CIProducts.StorageAbstract.Name);
@@ -326,35 +331,87 @@ public abstract class Transaction_Base
         multi.addAttribute(CIProducts.StorageAbstract.Name);
         multi.execute();
         multi.next();
-        final String toStorage =  multi.<String>getAttribute(CIProducts.StorageAbstract.Name);
+        final String toStorage = multi.<String>getAttribute(CIProducts.StorageAbstract.Name);
 
         final StringBuilder bldr = new StringBuilder();
-        bldr.append(_parameter.getParameterValue("description")).append(" - ")
-                .append(DBProperties.getProperty("esjp.Products_Transaction.Move.Text")).append(" ")
-                .append(quantity).append(" ")
-                .append(Dimension.getUoM(Long.parseLong(uomStr)).getName()).append(" ")
-                .append(prodDesc).append(" : ")
-                .append(fromStorage).append(" -> ").append(toStorage);
+        bldr.append(description).append(" - ")
+                        .append(DBProperties.getProperty("esjp.Products_Transaction.Move.Text")).append(" ")
+                        .append(quantity).append(" ")
+                        .append(Dimension.getUoM(Long.parseLong(uomStr)).getName()).append(" ")
+                        .append(prodDesc).append(" : ")
+                        .append(fromStorage).append(" -> ").append(toStorage);
 
-        final Insert inbound = new Insert(CIProducts.TransactionInbound);
-        inbound.add(CIProducts.TransactionInbound.Quantity, quantity);
-        inbound.add(CIProducts.TransactionInbound.Storage, toStorageId);
-        inbound.add(CIProducts.TransactionInbound.UoM, uomStr);
-        inbound.add(CIProducts.TransactionInbound.Date, _parameter.getParameterValue("date"));
-        inbound.add(CIProducts.TransactionInbound.Product, _parameter.getParameterValue("product"));
-        inbound.add(CIProducts.TransactionInbound.Description, bldr.toString());
-        inbound.execute();
+        final CreatedDoc inbound = addTransactionProduct(CIProducts.TransactionInbound,
+                                        quantity, toStorageId, uomStr, date, product, bldr.toString());
 
-        final Insert outbound = new Insert(CIProducts.TransactionOutbound);
-        outbound.add(CIProducts.TransactionOutbound.Quantity, quantity);
-        outbound.add(CIProducts.TransactionOutbound.Storage, ((Long) fromStorageInst.getId()).toString());
-        outbound.add(CIProducts.TransactionOutbound.UoM, uomStr);
-        outbound.add(CIProducts.TransactionOutbound.Date, _parameter.getParameterValue("date"));
-        outbound.add(CIProducts.TransactionOutbound.Product, _parameter.getParameterValue("product"));
-        outbound.add(CIProducts.TransactionOutbound.Description, bldr.toString());
-        outbound.execute();
+        final CreatedDoc outbound = addTransactionProduct(CIProducts.TransactionOutbound,
+                                        quantity, fromStorageInst.getId(), uomStr, date, product, bldr.toString());
+
+        if (inbound.getInstance().isValid() && outbound.getInstance().isValid()) {
+            addTransactionDocument2ConnectTransaction(_parameter, inbound, outbound);
+        }
 
         return new Return();
+    }
+
+    protected CreatedDoc addTransactionProduct(final CIType _ciType,
+                                               final Object... values)
+        throws EFapsException
+    {
+        final CreatedDoc createDoc = new CreatedDoc();
+
+        final Insert insert = new Insert(_ciType);
+        insert.add(CIProducts.TransactionAbstract.Quantity, values[0]);
+        createDoc.getValues().put(CIProducts.TransactionAbstract.Quantity.name, values[0]);
+
+        insert.add(CIProducts.TransactionInOutAbstract.Storage, values[1]);
+        createDoc.getValues().put(CIProducts.TransactionAbstract.Storage.name, values[1]);
+
+        insert.add(CIProducts.TransactionInOutAbstract.UoM, values[2]);
+        createDoc.getValues().put(CIProducts.TransactionAbstract.UoM.name, values[2]);
+
+        insert.add(CIProducts.TransactionAbstract.Date, values[3]);
+        createDoc.getValues().put(CIProducts.TransactionAbstract.Date.name, values[3]);
+
+        insert.add(CIProducts.TransactionAbstract.Product, values[4]);
+        createDoc.getValues().put(CIProducts.TransactionAbstract.Product.name, values[4]);
+
+        insert.add(CIProducts.TransactionAbstract.Description, values[5]);
+        createDoc.getValues().put(CIProducts.TransactionAbstract.Description.name, values[5]);
+
+        insert.execute();
+        createDoc.setInstance(insert.getInstance());
+
+        return createDoc;
+    }
+
+    protected void addTransactionDocument2ConnectTransaction(final Parameter _parameter,
+                                                             final CreatedDoc _inbound,
+                                                             final CreatedDoc _outbound)
+        throws EFapsException
+    {
+        final String productDocumentType = _parameter.getParameterValue("productDocumentType");
+        if (productDocumentType != null) {
+            final Instance prodDocInst = Instance.get(productDocumentType);
+            if (prodDocInst.isValid()) {
+                final CreatedDoc docTransactionCreate = new TransactionDocument().createDoc(_parameter, _inbound);
+                if (docTransactionCreate.getInstance().isValid()) {
+                    // Sales_Document2DocumentType
+                    final Insert insert = new Insert(UUID.fromString("24fe1e8e-ff25-4b1d-aed5-032278a57ded"));
+                    insert.add("DocumentLink", docTransactionCreate.getInstance().getId());
+                    insert.add("DocumentTypeLink", prodDocInst.getId());
+                    insert.execute();
+
+                    final Update update1 = new Update(_inbound.getInstance());
+                    update1.add(CIProducts.TransactionAbstract.Document, docTransactionCreate.getInstance().getId());
+                    update1.executeWithoutTrigger();
+
+                    final Update update2 = new Update(_outbound.getInstance());
+                    update2.add(CIProducts.TransactionAbstract.Document, docTransactionCreate.getInstance().getId());
+                    update2.executeWithoutTrigger();
+                }
+            }
+        }
     }
 
     /**
@@ -705,7 +762,7 @@ public abstract class Transaction_Base
                 inventoryMulti.execute();
                 Update update;
                 BigDecimal value2 = BigDecimal.ZERO;
-                BigDecimal value = (BigDecimal) entry.getValue().get(CIProducts.TransactionInOutAbstract.Quantity);
+                final BigDecimal value = (BigDecimal) entry.getValue().get(CIProducts.TransactionInOutAbstract.Quantity);
                 if (inventoryMulti.next()) {
                     value2 = multi.<BigDecimal>getAttribute(CIProducts.Inventory.Reserved);
                     update = new Update(inventoryMulti.getCurrentInstance());
@@ -766,7 +823,7 @@ public abstract class Transaction_Base
             final String name = getDocName4Create(_parameter);
             if (name != null) {
                 insert.add(CIERP.DocumentAbstract.Name, name);
-                createdDoc.getValues().put(CIProducts.TransactionAbstract.Quantity.name, name);
+                createdDoc.getValues().put(CIERP.DocumentAbstract.Name.name, name);
             }
 
             final String date = (String) _createDoc.getValues().get(CIProducts.TransactionAbstract.Date.name);

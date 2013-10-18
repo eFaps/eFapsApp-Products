@@ -39,10 +39,15 @@
         <!-- target definitions -->
         <target>
             <form>Products_InventoryMoveForm</form>
-            <execute program="org.efaps.esjp.products.Transaction" method="moveInventory" />
+            <execute program="org.efaps.esjp.products.Transaction" method="moveInventory">
+                <!-- property implemented module sales -->
+                <property name="TransactionDocument">53a57515-60cc-46d1-923e-e4a879054093</property>
+                <property name="UseNumberGenerator4Name">true</property>
+                <property name="StatusGroup">Sales_TransactionDocumentStatus</property>
+                <property name="Status">Open</property>
+            </execute>
             <validate program="org.efaps.esjp.products.Transaction" method="validateMove" />
         </target>
-
         <!-- properties -->
         <property name="Target">modal</property>
         <property name="TargetCreateType">Products_TransactionInbound</property>
