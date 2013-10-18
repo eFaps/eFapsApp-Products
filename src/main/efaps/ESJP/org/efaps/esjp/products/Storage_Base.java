@@ -335,6 +335,8 @@ public abstract class Storage_Base
         final List<Map<String, String>> list = new ArrayList<Map<String, String>>();
         final Map<String, Map<String, String>> orderMap = new TreeMap<String, Map<String, String>>();
 
+        final String key = properties.containsKey("Key") ? (String) properties.get("Key") : "OID";
+
         final QueryBuilder queryBldr = new QueryBuilder(CIProducts.StorageAbstract);
 
         if (excludeTypes != null) {
@@ -349,11 +351,12 @@ public abstract class Storage_Base
         queryBldr.addWhereAttrMatchValue(CIProducts.StorageAbstract.Name, input + "*").setIgnoreCase(true);
         final MultiPrintQuery multi = queryBldr.getPrint();
         multi.addAttribute(CIProducts.StorageAbstract.Name);
+        multi.addAttribute(key);
         multi.execute();
         while (multi.next()) {
             final String name = multi.<String>getAttribute(CIProducts.StorageAbstract.Name);
             final Map<String, String> map = new HashMap<String, String>();
-            map.put(EFapsKey.AUTOCOMPLETE_KEY.getKey(), multi.getCurrentInstance().getOid());
+            map.put(EFapsKey.AUTOCOMPLETE_KEY.getKey(), multi.getAttribute(key).toString());
             map.put(EFapsKey.AUTOCOMPLETE_VALUE.getKey(), name);
             map.put(EFapsKey.AUTOCOMPLETE_CHOICE.getKey(), name);
             orderMap.put(name, map);
@@ -469,7 +472,7 @@ public abstract class Storage_Base
     /**
      * Method to check if the instance is of the type Static_Inventory and if it
      * is so verify the status. If it is inactive not allow to edit it.
-     * 
+     *
      * @param _parameter as passed from eFaps API.
      * @return Return ret.
      * @throws EFapsException on error.
