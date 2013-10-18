@@ -20,6 +20,7 @@
 
 package org.efaps.esjp.products;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,6 +42,7 @@ import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
 import org.efaps.ci.CIAttribute;
 import org.efaps.ci.CIType;
+import org.efaps.db.Context;
 import org.efaps.db.Delete;
 import org.efaps.db.Insert;
 import org.efaps.db.Instance;
@@ -70,6 +72,11 @@ import org.joda.time.DateTime;
 public abstract class Transaction_Base
     extends CommonDocument
 {
+
+    /**
+     * Key used to store info during request.
+     */
+    public static final String REQUESTKEY4TRANSDATEPR = Transaction_Base.class + ".RequestKey4TransactionDate";
 
     /**
      * Method to create a Transaction manually.
@@ -185,15 +192,6 @@ public abstract class Transaction_Base
     }
 
     /**
-     * method to obtains name with exists sequence to transaction document.
-     *
-     * @param _parameter Parameter from eFaps API.
-     * @return String name
-     * @throws EFapsException on error.
-     */
-
-
-    /**
      * Method is executed as trigger after the insert of an
      * Products_TransactionInbound.
      *
@@ -205,6 +203,43 @@ public abstract class Transaction_Base
         throws EFapsException
     {
         addRemoveFromInventory(_parameter, true, "Quantity");
+        setPositionNumber(_parameter);
+        return new Return();
+    }
+
+    /**
+     * Method is executed as trigger after the update of an
+     * Products_TransactionOutbound.
+     *
+     * @param _parameter Parameters as passed from eFaps
+     * @return Return
+     * @throws EFapsException on error
+     */
+    public Return inboundUpdatePreTrigger(final Parameter _parameter)
+        throws EFapsException
+    {
+        storeDateProduct4Trigger(_parameter);
+        return new Return();
+    }
+
+    public Return inboundUpdatePostTrigger(final Parameter _parameter)
+        throws EFapsException
+    {
+        updatePositionNumbers(_parameter, true);
+        return new Return();
+    }
+
+    public Return inboundDeletePreTrigger(final Parameter _parameter)
+        throws EFapsException
+    {
+        storeDateProduct4Trigger(_parameter);
+        return new Return();
+    }
+
+    public Return inboundDeletePostTrigger(final Parameter _parameter)
+        throws EFapsException
+    {
+        updatePositionNumbers(_parameter, false);
         return new Return();
     }
 
@@ -219,8 +254,160 @@ public abstract class Transaction_Base
     public Return outboundTrigger(final Parameter _parameter)
         throws EFapsException
     {
-        addRemoveFromInventory(_parameter, false, "Quantity");
+        setPositionNumber(_parameter);
         return new Return();
+    }
+
+    /**
+     * Method is executed as trigger after the update of an
+     * Products_TransactionOutbound.
+     *
+     * @param _parameter Parameters as passed from eFaps
+     * @return Return
+     * @throws EFapsException on error
+     */
+    public Return outboundUpdatePreTrigger(final Parameter _parameter)
+        throws EFapsException
+    {
+        storeDateProduct4Trigger(_parameter);
+        return new Return();
+    }
+
+    public Return outboundUpdatePostTrigger(final Parameter _parameter)
+        throws EFapsException
+    {
+        updatePositionNumbers(_parameter, true);
+        return new Return();
+    }
+
+    public Return outboundDeletePreTrigger(final Parameter _parameter)
+        throws EFapsException
+    {
+        storeDateProduct4Trigger(_parameter);
+        return new Return();
+    }
+
+    public Return outboundDeletePostTrigger(final Parameter _parameter)
+        throws EFapsException
+    {
+        updatePositionNumbers(_parameter, false);
+        return new Return();
+    }
+
+    protected void storeDateProduct4Trigger(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Instance instance = _parameter.getInstance();
+        final PrintQuery print = new PrintQuery(instance);
+        print.addAttribute(CIProducts.TransactionAbstract.Product,
+                        CIProducts.TransactionAbstract.Date);
+        print.executeWithoutAccessCheck();
+
+        Context.getThreadContext().setRequestAttribute(
+                        Transaction_Base.REQUESTKEY4TRANSDATEPR,
+                        new TransDateProd(print.<DateTime>getAttribute(CIProducts.TransactionAbstract.Date),
+                                        print.<Long>getAttribute(CIProducts.TransactionAbstract.Product)));
+    }
+
+    /**
+     *@param _parameter    Parameter as passed by the eFaps API
+     */
+    protected void setPositionNumber(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Instance instance = _parameter.getInstance();
+        final PrintQuery print = new PrintQuery(instance);
+        print.addAttribute(CIProducts.TransactionAbstract.Product,
+                        CIProducts.TransactionAbstract.Date);
+        print.executeWithoutAccessCheck();
+
+        final DateTime date = print.<DateTime>getAttribute(CIProducts.TransactionAbstract.Date);
+        final Long prodId = print.<Long>getAttribute(CIProducts.TransactionAbstract.Product);
+        updatePositionNumbers(_parameter, date, prodId, instance);
+    }
+
+    /**
+     * @param _parameter    Parameter as passed by the eFaps API
+     * @param _current      update current instance also
+     */
+    protected void updatePositionNumbers(final Parameter _parameter,
+                                         final boolean _current)
+        throws EFapsException
+    {
+        final TransDateProd transDateProd = (TransDateProd) Context.getThreadContext().getRequestAttribute(
+                        Transaction_Base.REQUESTKEY4TRANSDATEPR);
+        if (transDateProd != null) {
+            updatePositionNumbers(_parameter, transDateProd.getDate(), transDateProd.getProdId(), null);
+        }
+        if (_current) {
+            final Instance instance = _parameter.getInstance();
+            final PrintQuery print = new PrintQuery(instance);
+            print.addAttribute(CIProducts.TransactionAbstract.Product,
+                            CIProducts.TransactionAbstract.Date);
+            print.executeWithoutAccessCheck();
+
+            final DateTime date = print.<DateTime>getAttribute(CIProducts.TransactionAbstract.Date);
+            final Long prodId = print.<Long>getAttribute(CIProducts.TransactionAbstract.Product);
+            if (transDateProd == null || !transDateProd.getDate().isEqual(date)) {
+                updatePositionNumbers(_parameter, date, prodId, null);
+            }
+        }
+    }
+
+    /**
+     * @param _parameter    Parameter as passed by the eFaps API
+     * @param _date         date of the transaction to be updated
+     * @param _prodId       id of the product the transactions belong to
+     * @param _instance     instance
+     * @throws EFapsException on error
+     */
+    protected void updatePositionNumbers(final Parameter _parameter,
+                                         final DateTime _date,
+                                         final Long _prodId,
+                                         final Instance _instance)
+        throws EFapsException
+    {
+        final DateTime startDate = _date.withTimeAtStartOfDay().minusSeconds(1);
+        final DateTime endDate = _date.withTimeAtStartOfDay().plusDays(1);
+
+        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.TransactionInOutAbstract);
+        queryBldr.addWhereAttrEqValue(CIProducts.TransactionInOutAbstract.Product, _prodId);
+        queryBldr.addWhereAttrGreaterValue(CIProducts.TransactionAbstract.Date, startDate);
+        queryBldr.addWhereAttrLessValue(CIProducts.TransactionAbstract.Date, endDate);
+
+        if (_instance == null) {
+            int i = 1;
+            queryBldr.addOrderByAttributeAsc(CIProducts.TransactionAbstract.Position);
+            final InstanceQuery query = queryBldr.getQuery();
+            query.executeWithoutAccessCheck();
+            while (query.next()) {
+                final Update update = new Update(query.getCurrentValue());
+                update.add(CIProducts.TransactionAbstract.Position, i);
+                update.executeWithoutTrigger();
+                i++;
+            }
+        } else {
+            queryBldr.addOrderByAttributeDesc(CIProducts.TransactionAbstract.Position);
+
+            final InstanceQuery query = queryBldr.getQuery();
+            query.setLimit(1);
+            final MultiPrintQuery multi = new MultiPrintQuery(query.executeWithoutAccessCheck());
+            multi.addAttribute(CIProducts.TransactionAbstract.Position);
+            multi.setEnforceSorted(true);
+            multi.executeWithoutAccessCheck();
+
+            Integer pos = 0;
+            if (multi.next()) {
+                final Integer posTmp = multi.<Integer>getAttribute(CIProducts.TransactionAbstract.Position);
+                if (posTmp != null) {
+                    pos = posTmp;
+                }
+            }
+            pos = pos + 1;
+            final Update update = new Update(_instance);
+            update.add(CIProducts.TransactionAbstract.Position, pos);
+            update.executeWithoutTrigger();
+        }
     }
 
     /**
@@ -238,17 +425,17 @@ public abstract class Transaction_Base
         final Instance instance = _parameter.getInstance();
         // get the transaction
         final PrintQuery query = new PrintQuery(instance);
-        query.addAttribute(CIProducts.Inventory.Storage, CIProducts.Inventory.Product,
-                        CIProducts.Inventory.UoM, CIProducts.Inventory.Quantity);
+        query.addAttribute(CIProducts.TransactionAbstract.Storage, CIProducts.TransactionAbstract.Product,
+                        CIProducts.TransactionAbstract.UoM, CIProducts.TransactionAbstract.Quantity);
         BigDecimal value = null;
         Long storage = null;
         Long product = null;
         Long uomId = null;
         if (query.execute()) {
-            value = (BigDecimal) query.getAttribute(CIProducts.Inventory.Quantity);
-            storage = (Long) query.getAttribute(CIProducts.Inventory.Storage);
-            product = (Long) query.getAttribute( CIProducts.Inventory.Product);
-            uomId = (Long) query.getAttribute(CIProducts.Inventory.UoM);
+            value = (BigDecimal) query.getAttribute(CIProducts.TransactionAbstract.Quantity);
+            storage = (Long) query.getAttribute(CIProducts.TransactionAbstract.Storage);
+            product = (Long) query.getAttribute( CIProducts.TransactionAbstract.Product);
+            uomId = (Long) query.getAttribute(CIProducts.TransactionAbstract.UoM);
         }
         final UoM uom = Dimension.getUoM(uomId);
         value = value.multiply(new BigDecimal(uom.getNumerator())).divide(new BigDecimal(uom.getDenominator()),
@@ -805,6 +992,48 @@ public abstract class Transaction_Base
             delete.execute();
         }
     }
+
+    public static class TransDateProd
+        implements Serializable
+    {
+        /**
+         * Serializable.
+         */
+        private static final long serialVersionUID = 1L;
+
+        private final DateTime date;
+
+        private final Long prodId;
+
+        public TransDateProd(final DateTime _date,
+                             final Long _prodId)
+        {
+            this.date = _date;
+            this.prodId = _prodId;
+        }
+
+        /**
+         * Getter method for the instance variable {@link #date}.
+         *
+         * @return value of instance variable {@link #date}
+         */
+        public DateTime getDate()
+        {
+            return this.date;
+        }
+
+        /**
+         * Getter method for the instance variable {@link #prodId}.
+         *
+         * @return value of instance variable {@link #prodId}
+         */
+        public Long getProdId()
+        {
+            return this.prodId;
+        }
+    }
+
+
 
     public class TransactionDocument
         extends CommonDocument

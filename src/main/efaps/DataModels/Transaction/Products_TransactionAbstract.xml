@@ -104,6 +104,13 @@
             <sqlcolumn>DOCID</sqlcolumn>
         </attribute>
         <attribute>
+            <name>Position</name>
+            <type>Integer</type>
+            <sqltable>Products_TransactionAbstractSQLTable</sqltable>
+            <sqlcolumn>POS</sqlcolumn>
+            <defaultvalue>0</defaultvalue>
+        </attribute>
+        <attribute>
             <name>Creator</name>
             <type>CreatorLink</type>
             <sqltable>Products_TransactionAbstractSQLTable</sqltable>

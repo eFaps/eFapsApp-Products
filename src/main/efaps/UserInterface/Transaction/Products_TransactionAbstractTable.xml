@@ -2,7 +2,7 @@
 
 <!--
 
- Copyright 2003 - 2009 The eFaps Team
+ Copyright 2003 - 2013 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -27,52 +27,56 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
 
-  <uuid>5f4fea1d-d715-48b2-aeaa-400f2688f9b0</uuid>
-  <file-application>eFapsApp-Products</file-application>
-  <file-revision>$Rev$</file-revision>
+    <uuid>5f4fea1d-d715-48b2-aeaa-400f2688f9b0</uuid>
+    <file-application>eFapsApp-Products</file-application>
+    <file-revision>$Rev$</file-revision>
 
-  <definition>
-    <version-expression>(version==latest)</version-expression>
-    <name>Products_TransactionAbstractTable</name>
-    <!-- fields -->
-    <field name="type">
-      <property name="Attribute">Type</property>
-      <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
-      <property name="Label">Products_TransactionAbstract/Type.Label</property>
-      <property name="ShowTypeIcon">true</property>
-      <property name="FilterType">PICKLIST</property>
-    </field>
-    <field name="description">
-      <property name="Attribute">Description</property>
-      <property name="Label">Products_TransactionAbstract/Description.Label</property>
-    </field>
-    <field name="date">
-      <property name="FilterType">FREETEXT</property>
-      <property name="FilterRequired">TRUE</property>
-      <property name="FilterBase">DATABASE</property>
-      <property name="FilterDefault">TODAY</property>
-      <property name="Attribute">Date</property>
-      <property name="Label">Products_TransactionAbstract/Date.Label</property>
-    </field>
-    <field name="quantity">
-      <property name="Attribute">Quantity</property>
-      <property name="Label">Products_TransactionAbstract/Quantity.Label</property>
-    </field>
-    <field name="uom">
-      <property name="Select">linkto[UoM].attribute[Name]</property>
-      <property name="Label">Products_TransactionAbstract/UoM.Label</property>
-    </field>
-    <field name="product">
-      <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
-      <property name="SelectAlternateOID">linkto[Product].oid</property>
-      <property name="Select">linkto[Product].attribute[Name]</property>
-      <property name="Label">Products_TransactionAbstract/Product.Label</property>
-    </field>
-    <field name="storage">
-       <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
-      <property name="SelectAlternateOID">linkto[Storage].oid</property>
-      <property name="Select">linkto[Storage].attribute[Name]</property>
-      <property name="Label">Products_TransactionAbstract/Storage.Label</property>
-    </field>
-  </definition>
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <name>Products_TransactionAbstractTable</name>
+        <!-- fields -->
+        <field name="type">
+            <property name="Attribute">Type</property>
+            <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
+            <property name="Label">Products_TransactionAbstract/Type.Label</property>
+            <property name="ShowTypeIcon">true</property>
+            <property name="FilterType">PICKLIST</property>
+        </field>
+        <field name="description">
+            <property name="Attribute">Description</property>
+            <property name="Label">Products_TransactionAbstract/Description.Label</property>
+        </field>
+        <field name="date">
+            <property name="FilterType">FREETEXT</property>
+            <property name="FilterRequired">TRUE</property>
+            <property name="FilterBase">DATABASE</property>
+            <property name="FilterDefault">TODAY</property>
+            <property name="Attribute">Date</property>
+            <property name="Label">Products_TransactionAbstract/Date.Label</property>
+        </field>
+        <field name="quantity">
+            <property name="Attribute">Quantity</property>
+            <property name="Label">Products_TransactionAbstract/Quantity.Label</property>
+        </field>
+        <field name="uom">
+            <property name="Select">linkto[UoM].attribute[Name]</property>
+            <property name="Label">Products_TransactionAbstract/UoM.Label</property>
+        </field>
+        <field name="product">
+            <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
+            <property name="SelectAlternateOID">linkto[Product].oid</property>
+            <property name="Select">linkto[Product].attribute[Name]</property>
+            <property name="Label">Products_TransactionAbstract/Product.Label</property>
+        </field>
+        <field name="storage">
+            <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
+            <property name="SelectAlternateOID">linkto[Storage].oid</property>
+            <property name="Select">linkto[Storage].attribute[Name]</property>
+            <property name="Label">Products_TransactionAbstract/Storage.Label</property>
+        </field>
+        <field name="transNumber">
+            <property name="Phrase">$&lt;attribute[Date].format[YYD]&gt;$&lt;attribute[Position].format[00]&gt;</property>
+            <property name="Label">Products_TransactionAbstractTable.transNumber.Label</property>
+        </field>
+    </definition>
 </ui-table>
