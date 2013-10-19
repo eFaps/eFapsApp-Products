@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import org.efaps.admin.access.AccessTypeEnums;
 import org.efaps.admin.datamodel.Dimension;
 import org.efaps.admin.datamodel.Dimension.UoM;
 import org.efaps.admin.datamodel.Type;
@@ -190,6 +191,50 @@ public abstract class Transaction_Base
         }
         return type;
     }
+
+    public Return movePositionNumber(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Map<?, ?> properties = (HashMap<?, ?>) _parameter.get(ParameterValues.PROPERTIES);
+        final boolean up = "true".equalsIgnoreCase((String) properties.get("moveUp"));
+        final String[] oids = (String[]) _parameter.get(ParameterValues.OTHERS);
+
+        if (oids != null) {
+            final Instance transInst = Instance.get(oids[0]);
+            // manuall access check because operation is executed withou triggers!
+            if (transInst.isValid() && transInst.getType().hasAccess(transInst, AccessTypeEnums.MODIFY.getAccessType())) {
+                final PrintQuery print = new PrintQuery(transInst);
+                print.addAttribute(CIProducts.TransactionAbstract.Product, CIProducts.TransactionAbstract.Date,
+                                CIProducts.TransactionAbstract.Position);
+                print.executeWithoutAccessCheck();
+                final DateTime date = print.<DateTime>getAttribute(CIProducts.TransactionAbstract.Date);
+                final Long prodId = print.<Long>getAttribute(CIProducts.TransactionAbstract.Product);
+                final Integer pos = print.<Integer>getAttribute(CIProducts.TransactionAbstract.Position);
+
+                final DateTime startDate = date.withTimeAtStartOfDay().minusSeconds(1);
+                final DateTime endDate = date.withTimeAtStartOfDay().plusDays(1);
+
+                final QueryBuilder queryBldr = new QueryBuilder(CIProducts.TransactionInOutAbstract);
+                queryBldr.addWhereAttrEqValue(CIProducts.TransactionInOutAbstract.Product, prodId);
+                queryBldr.addWhereAttrGreaterValue(CIProducts.TransactionAbstract.Date, startDate);
+                queryBldr.addWhereAttrLessValue(CIProducts.TransactionAbstract.Date, endDate);
+                queryBldr.addWhereAttrEqValue(CIProducts.TransactionAbstract.Position, up ? pos - 1 : pos + 1);
+                final InstanceQuery query = queryBldr.getQuery();
+                query.executeWithoutAccessCheck();
+                if (query.next()) {
+                    final Update update = new Update(query.getCurrentValue());
+                    update.add(CIProducts.TransactionAbstract.Position, pos);
+                    update.executeWithoutTrigger();
+
+                    final Update update2 = new Update(transInst);
+                    update2.add(CIProducts.TransactionAbstract.Position, up ? pos - 1 : pos + 1);
+                    update2.executeWithoutTrigger();
+                }
+            }
+        }
+        return new Return();
+    }
+
 
     /**
      * Method is executed as trigger after the insert of an
@@ -502,10 +547,9 @@ public abstract class Transaction_Base
         final String prodDesc = _parameter.getParameterValue("productAutoComplete");
         final String uomStr = _parameter.getParameterValue(CIFormProducts.Products_InventoryMoveForm.uoM.name);
         final String toStorageId = _parameter.getParameterValue(CIFormProducts.Products_InventoryMoveForm.storage.name);
-        final String description = _parameter
-                        .getParameterValue(CIFormProducts.Products_InventoryMoveForm.description.name);
         final String date = _parameter.getParameterValue(CIFormProducts.Products_InventoryMoveForm.date.name);
         final String product = _parameter.getParameterValue(CIFormProducts.Products_InventoryMoveForm.product.name);
+        final String descr = _parameter.getParameterValue(CIFormProducts.Products_InventoryMoveForm.description.name);
 
         final PrintQuery print = new PrintQuery(fromStorageInst);
         print.addAttribute(CIProducts.StorageAbstract.Name);
@@ -520,19 +564,14 @@ public abstract class Transaction_Base
         multi.next();
         final String toStorage = multi.<String>getAttribute(CIProducts.StorageAbstract.Name);
 
-        final StringBuilder bldr = new StringBuilder();
-        bldr.append(description).append(" - ")
-                        .append(DBProperties.getProperty("esjp.Products_Transaction.Move.Text")).append(" ")
-                        .append(quantity).append(" ")
-                        .append(Dimension.getUoM(Long.parseLong(uomStr)).getName()).append(" ")
-                        .append(prodDesc).append(" : ")
-                        .append(fromStorage).append(" -> ").append(toStorage);
-
+        final String desc = DBProperties.getFormatedDBProperty(Transaction.class.getName()
+                        + ".moveInventory.Description", descr,
+                        quantity, Dimension.getUoM(Long.parseLong(uomStr)).getName(), prodDesc, fromStorage, toStorage);
         final CreatedDoc inbound = addTransactionProduct(CIProducts.TransactionInbound,
-                                        quantity, toStorageId, uomStr, date, product, bldr.toString());
+                        quantity, toStorageId, uomStr, date, product, desc);
 
         final CreatedDoc outbound = addTransactionProduct(CIProducts.TransactionOutbound,
-                                        quantity, fromStorageInst.getId(), uomStr, date, product, bldr.toString());
+                        quantity, fromStorageInst.getId(), uomStr, date, product, desc);
 
         if (inbound.getInstance().isValid() && outbound.getInstance().isValid()) {
             addTransactionDocument2ConnectTransaction(_parameter, inbound, outbound);
