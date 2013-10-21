@@ -299,6 +299,7 @@ public abstract class Transaction_Base
     public Return outboundTrigger(final Parameter _parameter)
         throws EFapsException
     {
+        addRemoveFromInventory(_parameter, false, "Quantity");
         setPositionNumber(_parameter);
         return new Return();
     }
@@ -565,8 +566,8 @@ public abstract class Transaction_Base
         final String toStorage = multi.<String>getAttribute(CIProducts.StorageAbstract.Name);
 
         final String desc = DBProperties.getFormatedDBProperty(Transaction.class.getName()
-                        + ".moveInventory.Description", descr,
-                        quantity, Dimension.getUoM(Long.parseLong(uomStr)).getName(), prodDesc, fromStorage, toStorage);
+                        + ".moveInventory.Description", new Object[] { descr, quantity,
+            Dimension.getUoM(Long.parseLong(uomStr)).getName(), prodDesc, fromStorage, toStorage});
         final CreatedDoc inbound = addTransactionProduct(CIProducts.TransactionInbound,
                         quantity, toStorageId, uomStr, date, product, desc);
 
