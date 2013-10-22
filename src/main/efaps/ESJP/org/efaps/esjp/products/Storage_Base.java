@@ -349,6 +349,8 @@ public abstract class Storage_Base
             }
         }
         queryBldr.addWhereAttrMatchValue(CIProducts.StorageAbstract.Name, input + "*").setIgnoreCase(true);
+        queryBldr.addWhereAttrEqValue(CIProducts.StorageAbstract.StatusAbstract,
+                                            Status.find(CIProducts.StorageAbstractStatus.uuid, "Active").getId());
         final MultiPrintQuery multi = queryBldr.getPrint();
         multi.addAttribute(CIProducts.StorageAbstract.Name);
         multi.addAttribute(key);
