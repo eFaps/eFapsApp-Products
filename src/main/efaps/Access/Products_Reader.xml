@@ -35,6 +35,7 @@
         <access-type>show</access-type>
         <access-type>read</access-type>
 
+        <type>Products_ProductSupply</type>
         <type>Products_ProductMaterial</type>
         <type>Products_ProductStandart</type>
         <type>Products_ProductUnique</type>
