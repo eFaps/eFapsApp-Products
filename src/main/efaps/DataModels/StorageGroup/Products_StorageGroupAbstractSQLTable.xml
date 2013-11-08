@@ -40,8 +40,8 @@
             <column name="MODIFIED"     type="DATETIME"     not-null="true" />
             <!-- foreign keys -->
             <foreign key="COMPANYID" name="T_PRODSTORAGEGROUP_FK_COMPANYID" reference="T_USERABSTRACT(ID)" />
-            <foreign key="CREATOR"  name="T_PRODSTORAGEGROUP2STORAGE_FK_CRTR"     reference="T_USERPERSON(ID)" />
-            <foreign key="MODIFIER" name="T_PRODSTORAGEGROUP2STORAGE_FK_MDFR"     reference="T_USERPERSON(ID)" />
+            <foreign key="CREATOR"  name="T_PRODSTORAGEGROUP_FK_CRTR"     reference="T_USERPERSON(ID)" />
+            <foreign key="MODIFIER" name="T_PRODSTORAGEGROUP_FK_MDFR"     reference="T_USERPERSON(ID)" />
         </database>
     </definition>
 
