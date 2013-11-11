@@ -41,8 +41,11 @@
             <child>Products_ProductInStockMyDesk_Menu_Action_CreateMaterial</child>
             <child>Products_ProductInStockMyDesk_Menu_Action_CreateUnique</child>
             <child>Products_ProductInStockMyDesk_Menu_Action_CreateSupply</child>
+            <child>Products_ProductInStockMyDesk_Menu_Action_CreateOfficeSupplies</child>
+            <child>Products_ProductInStockMyDesk_Menu_Action_CreateTools</child>
             <child>Products_PriceMassUpdate</child>
             <child>Products_ProductInStockMyDesk_Menu_Action_Delete</child>
         </childs>
     </definition>
+    
 </ui-menu>

@@ -39,6 +39,8 @@
         <access-type>checkin</access-type>
         <access-type>create</access-type>
 
+        <type>Products_ProductTools</type>
+        <type>Products_ProductOfficeSupplies</type>
         <type>Products_ProductSupply</type>
         <type>Products_ProductMaterial</type>
         <type>Products_ProductStandart</type>
