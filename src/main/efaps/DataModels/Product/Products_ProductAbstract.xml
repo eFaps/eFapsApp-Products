@@ -88,7 +88,7 @@
             <trigger program="org.efaps.esjp.admin.datamodel.RangesValue"
                 name="Products_ProductAbstract.Dimension.RANGE_VALUE"
                 event="RANGE_VALUE">
-                <property name="Value">Name</property>
+                <property name="Value">$&lt;attribute[Name]&gt; - $&lt;linkto[BaseUoM].attribute[Name]&gt;</property>
                 <property name="Type">Admin_DataModel_Dimension</property>
             </trigger>
         </attribute>
@@ -177,7 +177,7 @@
             <trigger program="org.efaps.esjp.admin.datamodel.RangesValue"
                 name="Products_ProductAbstract.Dimension.RANGE_VALUE"
                 event="RANGE_VALUE">
-                <property name="Value">Name</property>
+                <property name="Value">$&lt;attribute[Name]&gt; - $&lt;linkto[BaseUoM].attribute[Name]&gt;</property>
                 <property name="Type">Admin_DataModel_Dimension</property>
             </trigger>
         </attribute>
@@ -278,7 +278,7 @@
             <trigger program="org.efaps.esjp.admin.datamodel.RangesValue"
                 name="Products_ProductAbstract.Dimension.RANGE_VALUE"
                 event="RANGE_VALUE">
-                <property name="Value">Name</property>
+                <property name="Value">$&lt;attribute[Name]&gt; - $&lt;linkto[BaseUoM].attribute[Name]&gt;</property>
                 <property name="Type">Admin_DataModel_Dimension</property>
             </trigger>
         </attribute>
