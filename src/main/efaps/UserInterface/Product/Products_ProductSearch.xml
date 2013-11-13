@@ -41,6 +41,7 @@
       <evaluate program="org.efaps.esjp.common.uisearch.Search">
         <property name="Types">Products_ProductAbstract</property>
         <property name="ExpandChildTypes">true</property>
+        <property name="IgnoreCase4Fields">name;description</property>
       </evaluate>
     </target>
     <!-- properties -->
