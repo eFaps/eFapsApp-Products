@@ -64,6 +64,7 @@
         <type>Products_ProductSalesPartList</type>
         <type>Products_ProductGeneric</type>
         <type>Products_ProductBatch</type>
+        <type>Products_ProductCostTextPosition</type>
 
         <role>Products_Modifier</role>
     </definition>

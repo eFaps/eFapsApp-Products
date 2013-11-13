@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
   Copyright 2003 - 2013 The eFaps Team
 
@@ -22,33 +21,22 @@
 
 
 -->
-
 <datamodel-dimension xmlns="http://www.efaps.org/xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>0aa00110-fdf1-4c85-ab72-22cb4e53422a</uuid>
+    <uuid>c8a4933f-4d7c-42f5-9269-ad04d6e50b6f</uuid>
     <file-application>eFapsApp-Products</file-application>
     <file-revision>$Rev$</file-revision>
 
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Length</name>
-        <description>Length</description>
+        <name>Item</name>
+        <description>Unit, item etc.</description>
         <uom>
             <base>true</base>
-            <name>m</name>
+            <name>item</name>
             <numerator>1</numerator>
             <denominator>1</denominator>
-        </uom>
-        <uom>
-            <name>mm</name>
-            <numerator>1</numerator>
-            <denominator>1000</denominator>
-        </uom>
-        <uom>
-            <name>cm</name>
-            <numerator>1</numerator>
-            <denominator>100</denominator>
         </uom>
     </definition>
 </datamodel-dimension>
