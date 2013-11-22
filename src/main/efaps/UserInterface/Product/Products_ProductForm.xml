@@ -93,12 +93,12 @@
             <property name="Attribute">Creator</property>
             <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
             <property name="Label">Products_ProductAbstract/Creator.Label</property>
-            <property name="ModeSearch">EDITABLE</property>
+            <property name="ModeSearch">NONE</property>
             <property name="ShowTypeIcon">true</property>
         </field>
         <field name="created">
             <property name="Attribute">Created</property>
-            <property name="ModeSearch">EDITABLE</property>
+            <property name="ModeSearch">NONE</property>
             <property name="Label">Products_ProductAbstract/Created.Label</property>
         </field>
         <field name="modifyGroup" character="Group">
@@ -109,12 +109,12 @@
             <property name="Attribute">Modifier</property>
             <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
             <property name="Label">Products_ProductAbstract/Modifier.Label</property>
-            <property name="ModeSearch">EDITABLE</property>
+            <property name="ModeSearch">NONE</property>
             <property name="ShowTypeIcon">true</property>
         </field>
         <field name="modified">
             <property name="Attribute">Modified</property>
-            <property name="ModeSearch">EDITABLE</property>
+            <property name="ModeSearch">NONE</property>
             <property name="Label">Products_ProductAbstract/Modified.Label</property>
         </field>
         <field name="inventoryHeading" character="Heading">
@@ -213,12 +213,12 @@
             <property name="Attribute">Creator</property>
             <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
             <property name="Label">Products_ProductAbstract/Creator.Label</property>
-            <property name="ModeSearch">EDITABLE</property>
+            <property name="ModeSearch">NONE</property>
             <property name="ShowTypeIcon">true</property>
         </field>
         <field name="created">
             <property name="Attribute">Created</property>
-            <property name="ModeSearch">EDITABLE</property>
+            <property name="ModeSearch">NONE</property>
             <property name="Label">Products_ProductAbstract/Created.Label</property>
         </field>
         <field name="modifyGroup" character="Group">
@@ -229,12 +229,12 @@
             <property name="Attribute">Modifier</property>
             <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
             <property name="Label">Products_ProductAbstract/Modifier.Label</property>
-            <property name="ModeSearch">EDITABLE</property>
+            <property name="ModeSearch">NONE</property>
             <property name="ShowTypeIcon">true</property>
         </field>
         <field name="modified">
             <property name="Attribute">Modified</property>
-            <property name="ModeSearch">EDITABLE</property>
+            <property name="ModeSearch">NONE</property>
             <property name="Label">Products_ProductAbstract/Modified.Label</property>
         </field>
         <field name="inventoryHeading" character="Heading">
@@ -363,12 +363,12 @@
             <property name="Attribute">Creator</property>
             <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
             <property name="Label">Products_ProductAbstract/Creator.Label</property>
-            <property name="ModeSearch">EDITABLE</property>
+            <property name="ModeSearch">NONE</property>
             <property name="ShowTypeIcon">true</property>
         </field>
         <field name="created">
             <property name="Attribute">Created</property>
-            <property name="ModeSearch">EDITABLE</property>
+            <property name="ModeSearch">NONE</property>
             <property name="Label">Products_ProductAbstract/Created.Label</property>
         </field>
         <field name="modifyGroup" character="Group">
@@ -379,12 +379,12 @@
             <property name="Attribute">Modifier</property>
             <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
             <property name="Label">Products_ProductAbstract/Modifier.Label</property>
-            <property name="ModeSearch">EDITABLE</property>
+            <property name="ModeSearch">NONE</property>
             <property name="ShowTypeIcon">true</property>
         </field>
         <field name="modified">
             <property name="Attribute">Modified</property>
-            <property name="ModeSearch">EDITABLE</property>
+            <property name="ModeSearch">NONE</property>
             <property name="Label">Products_ProductAbstract/Modified.Label</property>
         </field>
         <field name="inventoryHeading" character="Heading">
