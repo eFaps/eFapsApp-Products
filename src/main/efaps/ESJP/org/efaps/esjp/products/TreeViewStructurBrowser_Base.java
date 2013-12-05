@@ -74,17 +74,19 @@ public abstract class TreeViewStructurBrowser_Base
         Return ret = null;
 
         final UIStructurBrowser strBro = (UIStructurBrowser) _parameter.get(ParameterValues.CLASS);
-        final ExecutionStatus status = strBro.getExecutionStatus();
-        if (status.equals(ExecutionStatus.EXECUTE)) {
-            ret = internalExecute(_parameter);
-        } else if (status.equals(ExecutionStatus.ALLOWSCHILDREN)) {
-            ret = allowChildren(_parameter);
-        } else if (status.equals(ExecutionStatus.CHECKFORCHILDREN)) {
-            ret = checkForChildren(_parameter);
-        } else if (status.equals(ExecutionStatus.ADDCHILDREN)) {
-            ret = addChildren(_parameter);
-        } else if (status.equals(ExecutionStatus.SORT)) {
-            ret = sort(_parameter);
+        if (strBro != null) {
+            final ExecutionStatus status = strBro.getExecutionStatus();
+            if (status.equals(ExecutionStatus.EXECUTE)) {
+                ret = internalExecute(_parameter);
+            } else if (status.equals(ExecutionStatus.ALLOWSCHILDREN)) {
+                ret = allowChildren(_parameter);
+            } else if (status.equals(ExecutionStatus.CHECKFORCHILDREN)) {
+                ret = checkForChildren(_parameter);
+            } else if (status.equals(ExecutionStatus.ADDCHILDREN)) {
+                ret = addChildren(_parameter);
+            } else if (status.equals(ExecutionStatus.SORT)) {
+                ret = sort(_parameter);
+            }
         }
         return ret;
     }
