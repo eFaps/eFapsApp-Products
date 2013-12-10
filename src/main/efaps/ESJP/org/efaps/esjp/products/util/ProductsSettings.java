@@ -64,4 +64,9 @@ public interface ProductsSettings
      * Link to a default warehouse instance
      */
     String DEFAULTWAREHOUSE = "org.efaps.products.DefaultWareHouse";
+
+    /**
+     * Link to a default warehouse instance
+     */
+    String CURRENCYID = "org.efaps.products.DefaultCurrencyId";
 }
