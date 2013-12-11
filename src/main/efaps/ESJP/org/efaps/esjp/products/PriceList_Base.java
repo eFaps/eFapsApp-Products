@@ -26,12 +26,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import org.efaps.admin.datamodel.Attribute;
 import org.efaps.admin.datamodel.Type;
 import org.efaps.admin.datamodel.ui.FieldValue;
-import org.efaps.admin.datamodel.ui.UIInterface;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
 import org.efaps.admin.event.Return;
@@ -48,11 +46,8 @@ import org.efaps.db.PrintQuery;
 import org.efaps.db.QueryBuilder;
 import org.efaps.db.SelectBuilder;
 import org.efaps.db.Update;
-import org.efaps.esjp.ci.CIERP;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.uitable.MultiPrint;
-import org.efaps.esjp.products.util.Products;
-import org.efaps.esjp.products.util.ProductsSettings;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -219,7 +214,7 @@ public abstract class PriceList_Base
         } else {
             listProducts = new HashMap<Instance, String>();
             Context.getThreadContext().setRequestAttribute(fieldName, listProducts);
-            
+
             final List<Instance> products = (List<Instance>) _parameter.get(ParameterValues.REQUEST_INSTANCES);
 
             final MultiPrintQuery multi = new MultiPrintQuery(products);
@@ -325,44 +320,5 @@ public abstract class PriceList_Base
 
         ret.put(ReturnValues.VALUES, listProducts2Price.get(_parameter.getInstance()));
         return ret;
-    }
-
-    /**
-     * Called from the field with the rate currency for a document. Returning a
-     * dropdown with all currencies. The default is set inside the
-     * SystemConfiguration for sales.
-     * 
-     * @param _parameter Parameter as passed by the eFaps API for esjp
-     * @return a dropdown with all currency
-     * @throws EFapsException on error
-     */
-    public Return currencyIdFieldValueUI(final Parameter _parameter)
-        throws EFapsException
-    {
-        final FieldValue fieldValue = (FieldValue) _parameter.get(ParameterValues.UIOBJECT);
-        final QueryBuilder queryBldr = new QueryBuilder(CIERP.Currency);
-        final MultiPrintQuery multi = queryBldr.getPrint();
-        multi.addAttribute(CIERP.Currency.Name);
-        multi.execute();
-        final Map<String, Long> values = new TreeMap<String, Long>();
-        while (multi.next()) {
-            values.put(multi.<String>getAttribute(CIERP.Currency.Name), multi.getCurrentInstance().getId());
-        }
-        final Instance baseInst = Products.getSysConfig().getLink(ProductsSettings.CURRENCYID);
-
-        final StringBuilder html = new StringBuilder();
-        html.append("<select ").append(UIInterface.EFAPSTMPTAG)
-                        .append(" name=\"").append(fieldValue.getField().getName()).append("\" size=\"1\">");
-        for (final Entry<String, Long> entry : values.entrySet()) {
-            html.append("<option value=\"").append(entry.getValue()).append("\"");
-            if (entry.getValue().equals(baseInst.getId())) {
-                html.append(" selected=\"selected\" ");
-            }
-            html.append(">").append(entry.getKey()).append("</option>");
-        }
-        html.append("</select>");
-        final Return retVal = new Return();
-        retVal.put(ReturnValues.SNIPLETT, html.toString());
-        return retVal;
     }
 }

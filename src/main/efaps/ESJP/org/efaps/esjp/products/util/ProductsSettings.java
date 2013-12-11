@@ -35,7 +35,6 @@ import org.efaps.admin.program.esjp.EFapsUUID;
 @EFapsRevision("$Rev$")
 public interface ProductsSettings
 {
-
     /**
      * Boolean(true/false).<br/>
      * Activate the image menu.
@@ -64,9 +63,4 @@ public interface ProductsSettings
      * Link to a default warehouse instance
      */
     String DEFAULTWAREHOUSE = "org.efaps.products.DefaultWareHouse";
-
-    /**
-     * Link to a default warehouse instance
-     */
-    String CURRENCYID = "org.efaps.products.DefaultCurrencyId";
 }
