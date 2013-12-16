@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.UUID;
 
 import javax.imageio.ImageIO;
 
@@ -206,7 +205,8 @@ public abstract class Image_Base
         connectImage(_parameter, CIProducts.Product2ImageOriginal.getType(), parentInst, imageInst);
         final FileParameter fileItem = getFileParameter(_parameter);
         uploadImage(_parameter, imageInst, fileItem);
-        final Properties props = getProperties(_parameter);
+        final Properties props = Products.getSysConfig()
+                        .getAttributeValueAsProperties(ProductsSettings.IMAGEPROPERTIES);
         if (props.containsKey("Image4Doc_Create") && "true".equalsIgnoreCase(props.getProperty("Image4Doc_Create"))) {
             final int width = Integer.parseInt(props.getProperty("Image4Doc_Width", "250"));
             final int height = Integer.parseInt(props.getProperty("Image4Doc_Height", "250"));
@@ -370,24 +370,6 @@ public abstract class Image_Base
         update.add(CIProducts.ImageAbstract.Format, _info.getFormatName());
         update.add(CIProducts.ImageAbstract.ColorType, _info.getColorTypeDescription());
         update.execute();
-    }
-
-    /**
-     * @param _parameter Parameter as passed by the eFaps API
-     * @return properties for Images
-     * @throws EFapsException on error
-     */
-    protected Properties getProperties(final Parameter _parameter)
-        throws EFapsException
-    {
-        Properties props = null;
-        // Products-Configuration
-        final SystemConfiguration config = SystemConfiguration.get(
-                        UUID.fromString("e53cd705-e463-47dc-a400-4ace4ed72071"));
-        if (config != null) {
-            props = config.getAttributeValueAsProperties("ImagesProperties");
-        }
-        return props;
     }
 
     /**
