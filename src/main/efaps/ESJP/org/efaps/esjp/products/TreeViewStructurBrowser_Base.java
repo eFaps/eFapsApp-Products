@@ -26,6 +26,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.efaps.admin.datamodel.Type;
 import org.efaps.admin.event.EventExecution;
@@ -40,6 +41,7 @@ import org.efaps.db.Instance;
 import org.efaps.db.InstanceQuery;
 import org.efaps.db.QueryBuilder;
 import org.efaps.esjp.ci.CIProducts;
+import org.efaps.esjp.common.AbstractCommon;
 import org.efaps.ui.wicket.models.objects.UIStructurBrowser;
 import org.efaps.ui.wicket.models.objects.UIStructurBrowser.ExecutionStatus;
 import org.efaps.util.EFapsException;
@@ -54,7 +56,7 @@ import org.slf4j.LoggerFactory;
  */
 @EFapsUUID("c7f05800-d551-487c-9ed6-c34f31e4f7c8")
 @EFapsRevision("$Rev$")
-public abstract class TreeViewStructurBrowser_Base
+public abstract class TreeViewStructurBrowser_Base extends AbstractCommon
     implements EventExecution
 {
     /**
@@ -103,11 +105,9 @@ public abstract class TreeViewStructurBrowser_Base
     {
         final Return ret = new Return();
         final Map<Instance, Boolean> tree = new LinkedHashMap<Instance, Boolean>();
-        final Map<?, ?> properties = (Map<?, ?>) _parameter.get(ParameterValues.PROPERTIES);
-        final String typesStr = (String) properties.get("Types");
-        final String[] types = typesStr.split(";");
-        for (final String type : types) {
-            final QueryBuilder queryBldr = new QueryBuilder(Type.get(type));
+        final Map<Integer, String> types = analyseProperty(_parameter, "Type");
+        for (final Entry<Integer, String> entry : types.entrySet()) {
+            final QueryBuilder queryBldr = new QueryBuilder(Type.get(entry.getValue()));
             final InstanceQuery query = queryBldr.getQuery();
             query.execute();
             while (query.next()) {

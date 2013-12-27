@@ -41,7 +41,7 @@
             <menu>Products_TreeViewMyDesk_Menu</menu>
             <table>Products_TreeViewTable</table>
             <evaluate program="org.efaps.esjp.products.TreeViewStructurBrowser">
-                <property name="Types">Products_TreeViewRoot</property>
+                <property name="Type">Products_TreeViewRoot</property>
             </evaluate>
         </target>
 
