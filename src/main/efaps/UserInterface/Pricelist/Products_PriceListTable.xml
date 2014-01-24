@@ -51,16 +51,6 @@
             <property name="Select">linkto[ProductPricelist].linkto[ProductAbstractLink].linkto[Dimension].attribute[Name]</property>
             <property name="Label">Products_PriceListTable.dimension.Label</property>
         </field>
-        <field name="dateRange">
-            <property name="FilterType">FREETEXT</property>
-            <property name="FilterRequired">TRUE</property>
-            <property name="FilterBase">DATABASE</property>
-            <property name="FilterDefault">TODAY</property>
-            <property name="FilterAttributes">Products_ProductPricelistAbstract/ValidFrom,Products_ProductPricelistAbstract/ValidUntil</property>
-            <property name="Phrase">$&lt;linkto[ProductPricelist].attribute[ValidFrom]&gt; - $&lt;linkto[ProductPricelist].attribute[ValidUntil]&gt;</property>
-            <property name="Label">Products_PriceListTable.dateRange.Label</property>
-            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
-        </field>
         <field name="validFrom">
             <property name="Select">linkto[ProductPricelist].attribute[ValidFrom]</property>
             <property name="Label">Products_PriceListTable.validFrom.Label</property>
@@ -77,14 +67,6 @@
         <field name="currencyId">
             <property name="Select">linkto[CurrencyId].attribute[Name]</property>
             <property name="Label">Products_ProductPricelistPosition/CurrencyId.Label</property>
-        </field>
-        <field name="fromUoM">
-            <property name="Attribute">FromUoM</property>
-            <property name="Label">Products_ProductPricelistPosition/FromUoM.Label</property>
-        </field>
-        <field name="toUoM">
-            <property name="Attribute">ToUoM</property>
-            <property name="Label">Products_ProductPricelistPosition/ToUoM.Label</property>
         </field>
     </definition>
 </ui-table>
