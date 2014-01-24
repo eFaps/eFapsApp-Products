@@ -35,7 +35,6 @@
         <access>
             <role>Products_Admin</role>
             <role>Products_Modifier</role>
-            <role>Products_Reader</role>
         </access>
         <!-- target definitions -->
         <target>
