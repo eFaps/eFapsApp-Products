@@ -42,6 +42,10 @@
             <table>Products_TreeViewTable</table>
             <evaluate program="org.efaps.esjp.products.TreeViewStructurBrowser">
                 <property name="Type">Products_TreeViewRoot</property>
+                <property name="Child_Type">Products_TreeViewNode</property>
+                <property name="Child_LinkFrom">ParentLink</property>
+                <property name="Child_Type01">Products_TreeViewProduct</property>
+                <property name="Child_LinkFrom01">ParentLink</property>
             </evaluate>
         </target>
 

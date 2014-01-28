@@ -37,7 +37,11 @@
             <menu>Products_TreeViewRootTree_Menu</menu>
             <form>Products_TreeViewRootForm</form>
             <evaluate program="org.efaps.esjp.products.TreeViewStructurBrowser">
-                <property name="Types">Products_TreeViewRoot</property>
+                <property name="Type">Products_TreeViewRoot</property>
+                <property name="ExpandChildType">true</property>
+                <property name="Child_Type">Products_TreeViewNode</property>
+                <property name="Child_LinkFrom">ParentLink</property>
+                <property name="Child_ExpandChildType">true</property>
             </evaluate>
         </target>
         <!-- type tree for -->
