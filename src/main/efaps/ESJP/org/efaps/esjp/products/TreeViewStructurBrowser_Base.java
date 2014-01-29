@@ -20,14 +20,23 @@
 
 package org.efaps.esjp.products;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.efaps.admin.datamodel.Type;
 import org.efaps.admin.event.Parameter;
+import org.efaps.admin.event.Parameter.ParameterValues;
 import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
+import org.efaps.db.AttributeQuery;
 import org.efaps.db.Instance;
+import org.efaps.db.QueryBuilder;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.ui.structurbrowser.StandartStructurBrowser;
+import org.efaps.util.EFapsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +54,7 @@ public abstract class TreeViewStructurBrowser_Base
     /**
      * Logger for this class.
      */
-    private final Logger LOG = LoggerFactory.getLogger(TreeViewStructurBrowser_Base.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TreeViewStructurBrowser_Base.class);
 
     /**
      * Method to check if an instance allows children. It is used in the tree to
@@ -66,5 +75,29 @@ public abstract class TreeViewStructurBrowser_Base
             }
         }
         return ret;
+    }
+
+    @Override
+    protected void addCriteria4Children(final Parameter _parameter,
+                                        final QueryBuilder _queryBldr)
+        throws EFapsException
+    {
+        final Map<?, ?> properties = (Map<?, ?>) _parameter.get(ParameterValues.PROPERTIES);
+        final String productTypesStr = (String) properties.get("ProductTypes");
+
+        final Type type = Type.get(_queryBldr.getTypeUUID());
+        if (type.isKindOf(CIProducts.TreeViewProduct.getType())
+                        && productTypesStr != null && !productTypesStr.isEmpty()) {
+            final String[] productTypes = productTypesStr.split(";");
+            final List<Long> typeIds = new ArrayList<Long>();
+            for (final String prodTypeStr : productTypes) {
+                typeIds.add(Type.get(prodTypeStr).getId());
+            }
+            final QueryBuilder attrQueryBldr = new QueryBuilder(CIProducts.ProductAbstract);
+            attrQueryBldr.addWhereAttrEqValue(CIProducts.ProductAbstract.Type, typeIds.toArray());
+            final AttributeQuery attrQuery = attrQueryBldr.getAttributeQuery(CIProducts.ProductAbstract.ID);
+
+            _queryBldr.addWhereAttrInQuery(CIProducts.TreeViewProduct.ProductLink, attrQuery);
+        }
     }
 }
