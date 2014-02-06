@@ -43,7 +43,6 @@
             <child>Products_ProductInStockMyDesk_Menu_Action_CreateSupply</child>
             <child>Products_ProductInStockMyDesk_Menu_Action_CreateOfficeSupplies</child>
             <child>Products_ProductInStockMyDesk_Menu_Action_CreateTools</child>
-            <child>Products_ProductNonStockMyDesk_Menu_Action_CreateProductCostTextPosition</child>
             <child>Products_PriceMassUpdate</child>
             <child>Products_ProductInStockMyDesk_Menu_Action_Delete</child>
         </childs>

@@ -40,6 +40,7 @@
             <child>Products_ProductNonStockMyDesk_Menu_Action_CreateService</child>
             <child>Products_ProductNonStockMyDesk_Menu_Action_CreateTextPosition</child>
             <child>Products_ProductNonStockMyDesk_Menu_Action_CreateGeneric</child>
+            <child>Products_ProductNonStockMyDesk_Menu_Action_CreateProductCostTextPosition</child>
             <child>Products_PriceMassUpdate</child>
             <child>Products_ProductInStockMyDesk_Menu_Action_Delete</child>
         </childs>
