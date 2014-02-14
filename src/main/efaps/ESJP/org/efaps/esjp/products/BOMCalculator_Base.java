@@ -22,15 +22,12 @@
 package org.efaps.esjp.products;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.ParseException;
 
 import org.efaps.admin.event.Parameter;
 import org.efaps.db.Instance;
 import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.QueryBuilder;
 import org.efaps.esjp.ci.CIProducts;
-import org.efaps.esjp.erp.NumberFormatter;
 import org.efaps.util.EFapsException;
 
 public abstract class BOMCalculator_Base
@@ -42,7 +39,7 @@ public abstract class BOMCalculator_Base
 
     private String oid;
 
-    private final String typeName;
+    private String typeName;
 
     private int factory = 0;
 
@@ -51,10 +48,10 @@ public abstract class BOMCalculator_Base
                               final BigDecimal _quantityRequired)
         throws EFapsException
     {
-        this.quantityStock = getStcok2Product(_parameter, _prodInst);
-        this.quantityRequired = _quantityRequired;
-        this.oid = _prodInst.getOid();
-        this.typeName = _prodInst.getType().getName();
+        setQuantityStock(getStcok2Product(_parameter, _prodInst));
+        setQuantityRequired(_quantityRequired);
+        setOid(_prodInst.getOid());
+        setTypeName(_prodInst.getType().getName());
 
         setFactory(_quantityRequired, this.quantityStock);
     }
@@ -82,29 +79,11 @@ public abstract class BOMCalculator_Base
         // to implement
     }
 
-    public BigDecimal parse(final String _value)
-        throws EFapsException
-    {
-        final BigDecimal ret;
-        try {
-            ret = (BigDecimal) getFormatter().parse(_value);
-        } catch (final ParseException e) {
-            throw new EFapsException(BOMCalculator.class, "ParseException", e);
-        }
-        return ret;
-    }
-
-    protected DecimalFormat getFormatter()
-        throws EFapsException
-    {
-        return NumberFormatter.get().getFormatter();
-    }
-
     public void setFactory(final BigDecimal _quantityRequired,
                            final BigDecimal _quantityStock)
     {
         if (_quantityStock.compareTo(BigDecimal.ZERO) != 0) {
-            this.factory = ((_quantityStock).divide(_quantityRequired, BigDecimal.ROUND_HALF_UP)).intValue();
+            this.factory = ((_quantityStock).divide(_quantityRequired,BigDecimal.ROUND_HALF_DOWN)).intValue();
         }
 
     }
@@ -129,10 +108,10 @@ public abstract class BOMCalculator_Base
         return quantityStock;
     }
 
-    public void setQuantityStock(final String _quantity)
+    public void setQuantityStock(final BigDecimal _quantity)
         throws EFapsException
     {
-        this.quantityStock = _quantity != null && _quantity.length() > 0 ? parse(_quantity) : BigDecimal.ZERO;
+        this.quantityStock = _quantity != null && _quantity.compareTo(BigDecimal.ZERO)==1 ? _quantity : BigDecimal.ZERO;
     }
 
     public Instance getProductBOMInstance()
@@ -145,15 +124,20 @@ public abstract class BOMCalculator_Base
         return quantityRequired;
     }
 
-    public void setQuantityRequired(final String _quantity)
+    public void setQuantityRequired(final BigDecimal _quantity)
         throws EFapsException
     {
-        this.quantityRequired = _quantity != null && _quantity.length() > 0 ? parse(_quantity) : BigDecimal.ZERO;
+        this.quantityRequired = _quantity != null && _quantity.compareTo(BigDecimal.ZERO)==1 ? _quantity : BigDecimal.ZERO;
     }
 
     public String getTypeName()
     {
         return typeName;
+    }
+
+    public void setTypeName(final String _typeName)
+    {
+        this.typeName = _typeName;
     }
 
 }

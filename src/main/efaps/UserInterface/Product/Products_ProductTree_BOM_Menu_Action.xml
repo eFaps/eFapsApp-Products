@@ -35,6 +35,7 @@
         <childs>
             <child>Products_ProductTree_BOM_Menu_Action_AddExistingAsSalesBOM</child>
             <child>Products_ProductTree_BOM_Menu_Action_AddExistingAlternativeBOM</child>
+            <child>Products_ProductTree_BOM_Menu_Action_EditBOMQuantity</child>
             <child>Products_ProductTree_BOM_Menu_Action_Disconnect</child>
         </childs>
     </definition>

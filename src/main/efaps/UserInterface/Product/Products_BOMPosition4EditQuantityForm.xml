@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
+
+  Copyright 2009 - 2013 moxter.net S.A.C.
+
+  All Rights Reserved.
+  This program contains proprietary and trade secret information of
+  moxter.net S.A.C. Copyright notice is precautionary only and does not
+  evidence any actual or intended publication of such program.
+
+  Author:          moxter.net S.A.C.
+  Revision:        $Rev$
+  Last Changed:    $Date$
+  Last Changed By: $Author$
+
+--><ui-form xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+
+    <uuid>86b3d9b1-ef0b-421e-87c0-eea6655b9c8d</uuid>
+    <file-application>eFapsApp-Products</file-application>
+    <file-revision>$Rev$</file-revision>
+
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <name>Products_BOMPosition4EditQuantityForm</name>
+        <!-- fields -->
+        <field name="getSetFieldValueScript">
+            <property name="ModeCreate">HIDDEN</property>
+            <property name="ModeView">NONE</property>
+            <property name="ModeEdit">NONE</property>
+            <property name="ModePrint">NONE</property>
+            <trigger event="UI_FIELD_VALUE" method="getJSLinkField" name="Products_BOMPosition4EditQuantityForm.getSetFieldValueScript.UI_FIELD_VALUE" program="org.efaps.esjp.common.uiform.Field">
+                <property name="link">/servlet/static/org.efaps.ui.wicket.behaviors.FieldUpdate.js</property>
+            </trigger>
+        </field>
+        <field name="inventoryTable" character="Target" >
+            <property name="ModeEdit">EDITABLE</property>
+            <table>Products_BOMPosition4EditTable</table>
+            <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
+                <property name="Type01">Products_BOMAbstract</property>
+                <property name="LinkFrom01">FromAbstract</property>
+                <property name="ExpandChildTypes">true</property>
+            </evaluate>
+        </field>
+        <field name="javaScript">
+            <property name="ModeEdit">HIDDEN</property>
+            <trigger event="UI_FIELD_VALUE" method="getJavaScript4EditMassiveTable" name="Products_BOMPosition4EditQuantityForm.javaScript.UI_FIELD_VALUE" program="org.efaps.esjp.erp.CommonDocument"/>
+        </field>
+    </definition>
+</ui-form>

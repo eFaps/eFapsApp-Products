@@ -31,10 +31,12 @@ import org.efaps.admin.event.Parameter.ParameterValues;
 import org.efaps.admin.event.Return;
 import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
+import org.efaps.db.Instance;
 import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.QueryBuilder;
 import org.efaps.db.Update;
 import org.efaps.esjp.ci.CIProducts;
+import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
 
 /**
@@ -72,6 +74,24 @@ public abstract class BOM_Base
             update.add(CIProducts.BOMAbstract.UoM, dimension.getBaseUoM().getId());
             update.execute();
         }
+        return new Return();
+    }
+
+    public Return editBOMQuantity(final Parameter _parameter)
+        throws EFapsException
+    {
+        @SuppressWarnings("unchecked") final Map<String, String> oidMap = (Map<String, String>) _parameter
+                        .get(ParameterValues.OIDMAP4UI);
+        final String[] rowKeys = _parameter.getParameterValues(EFapsKey.TABLEROW_NAME.getKey());
+        final String[] quantity = _parameter.getParameterValues("quantity");
+        for (int i = 0; i < rowKeys.length; i++) {
+            final Instance inst = Instance.get(oidMap.get(rowKeys[i]));
+
+            final Update update = new Update(inst);
+            update.add(CIProducts.BOMAbstract.Quantity, quantity[i]);
+            update.execute();
+        }
+
         return new Return();
     }
 }
