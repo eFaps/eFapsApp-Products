@@ -60,6 +60,7 @@ import org.efaps.db.InstanceQuery;
 import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.PrintQuery;
 import org.efaps.db.QueryBuilder;
+import org.efaps.db.SelectBuilder;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
@@ -621,5 +622,56 @@ public abstract class Product_Base
                             .append("</div>");
         }
         return html;
+    }
+
+
+    protected List<BOMCalculator> getCalulators4Product(final Parameter _parameter,
+                                                        final Instance _prodInst)
+        throws EFapsException
+    {
+        final List<BOMCalculator> ret = new ArrayList<BOMCalculator>();
+        QueryBuilder qlb = new QueryBuilder(CIProducts.BOMAbstract);
+        qlb.addWhereAttrEqValue(CIProducts.BOMAbstract.FromAbstract, _prodInst);
+        final MultiPrintQuery multi = qlb.getPrint();
+        multi.addAttribute(CIProducts.BOMAbstract.Quantity);
+        SelectBuilder select = new SelectBuilder().linkto(CIProducts.BOMAbstract.ToAbstract).instance();
+        multi.addSelect(select);
+        multi.execute();
+        while(multi.next()){
+            final Instance instBOMproduct = multi.<Instance>getSelect(select);
+            BigDecimal quantityRequired = multi.getAttribute(CIProducts.BOMAbstract.Quantity);
+            BOMCalculator calBOM= new BOMCalculator(_parameter, instBOMproduct, quantityRequired);
+            ret.add(calBOM);
+        }
+
+        return ret;
+
+    }
+
+    public int getQuantity2ProductBOM(final Parameter _parameter,
+                                   final Instance _prodInst)
+        throws EFapsException
+    {
+        int productQuantity = 0;
+        List<BOMCalculator> boms = getCalulators4Product(_parameter, _prodInst);
+        int i=0;
+        boolean band=true;
+        boolean first =true;
+        while (i < boms.size() && band) {
+            BOMCalculator bom = boms.get(i);
+            int bomquantity = bom.getFactory();
+            if (bomquantity == 0) {
+                productQuantity = 0;
+                band = false;
+            } else if (first) {
+                first = false;
+                productQuantity = bomquantity;
+            } else if (bomquantity < productQuantity) {
+                productQuantity = bomquantity;
+            }
+            i++;
+        }
+        return productQuantity;
+
     }
 }

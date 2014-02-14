@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
+
+  Copyright 2010 - 2014 moxter.net S.A.C.
+
+  All Rights Reserved.
+? This program contains proprietary and trade secret information of
+? moxter.net S.A.C. Copyright notice is precautionary only and does not
+? evidence any actual or intended publication of such program.
+
+  Author:          moxter.net S.A.C.
+  Revision:        $Rev$
+  Last Changed:    $Date$
+  Last Changed By: $Author$
+
+--><ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>2cf1ffa4-58f4-4ab8-8d04-05fca0004d26</uuid>
+    <file-application>eFapsApp-Products</file-application>
+    <file-revision>$Rev$</file-revision>
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <name>Products_ProductTree_ProductBOMReport_Menu</name>
+        <childs>
+            <child>Products_ProductTree_ProductBOMReport_Menu_DownloadExcel</child>
+            <child>Products_ProductTree_ProductBOMReport_Menu_DownloadPDF</child>
+        </childs>
+    </definition>
+</ui-menu>
