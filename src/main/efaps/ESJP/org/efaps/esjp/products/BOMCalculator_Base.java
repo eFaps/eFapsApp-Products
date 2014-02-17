@@ -22,16 +22,22 @@
 package org.efaps.esjp.products;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
+import org.efaps.admin.common.SystemConfiguration;
 import org.efaps.admin.event.Parameter;
+import org.efaps.db.AttributeQuery;
 import org.efaps.db.Instance;
 import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.QueryBuilder;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.util.EFapsException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class BOMCalculator_Base
 {
+    protected static final Logger LOG = LoggerFactory.getLogger(BOMCalculator.class);
 
     private BigDecimal quantityStock;
 
@@ -48,7 +54,7 @@ public abstract class BOMCalculator_Base
                               final BigDecimal _quantityRequired)
         throws EFapsException
     {
-        setQuantityStock(getStcok2Product(_parameter, _prodInst));
+        setQuantityStock(getStock2Product(_parameter, _prodInst));
         setQuantityRequired(_quantityRequired);
         setOid(_prodInst.getOid());
         setTypeName(_prodInst.getType().getName());
@@ -56,19 +62,35 @@ public abstract class BOMCalculator_Base
         setFactory(_quantityRequired, this.quantityStock);
     }
 
-    protected BigDecimal getStcok2Product(final Parameter _parameter,
+    protected BigDecimal getStock2Product(final Parameter _parameter,
                                           final Instance _prodInst)
         throws EFapsException
     {
         BigDecimal stock = BigDecimal.ZERO;
         QueryBuilder queryBuild = new QueryBuilder(CIProducts.Inventory);
         queryBuild.addWhereAttrEqValue(CIProducts.Inventory.Product, _prodInst);
-        add2QueryBuilder2Storage(_parameter, queryBuild);
-        final MultiPrintQuery multi = queryBuild.getPrint();
-        multi.addAttribute(CIProducts.Inventory.Quantity);
-        multi.execute();
-        if (multi.next()) {
-            stock = multi.<BigDecimal>getAttribute(CIProducts.Inventory.Quantity);
+
+        final SystemConfiguration config = SystemConfiguration.get(
+                        UUID.fromString("c9a1cbc3-fd35-4463-80d2-412422a3802f"));
+        final Instance storGrpInstance = config.getLink("StorageGroup4ProductBOM");
+        if (storGrpInstance != null && storGrpInstance.isValid()) {
+            final QueryBuilder attrQueryBldr = new QueryBuilder(CIProducts.StorageGroupAbstract2StorageAbstract);
+            attrQueryBldr.addWhereAttrEqValue(CIProducts.StorageGroupAbstract2StorageAbstract.FromAbstractLink,
+                            storGrpInstance);
+            final AttributeQuery attrQuery = attrQueryBldr
+                            .getAttributeQuery(CIProducts.StorageGroupAbstract2StorageAbstract.ToAbstractLink);
+
+            queryBuild.addWhereAttrInQuery(CIProducts.Inventory.Storage, attrQuery);
+
+            add2QueryBuilder2Storage(_parameter, queryBuild);
+            final MultiPrintQuery multi = queryBuild.getPrint();
+            multi.addAttribute(CIProducts.Inventory.Quantity);
+            multi.execute();
+            if (multi.next()) {
+                stock = multi.<BigDecimal>getAttribute(CIProducts.Inventory.Quantity);
+            }
+        } else {
+            BOMCalculator_Base.LOG.warn("It's required a system configuration for Storage Group");
         }
         return stock;
     }
