@@ -22,21 +22,22 @@
 package org.efaps.esjp.products;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
-import org.efaps.admin.common.SystemConfiguration;
 import org.efaps.admin.event.Parameter;
 import org.efaps.db.AttributeQuery;
 import org.efaps.db.Instance;
 import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.QueryBuilder;
 import org.efaps.esjp.ci.CIProducts;
+import org.efaps.esjp.products.util.Products;
+import org.efaps.esjp.products.util.ProductsSettings;
 import org.efaps.util.EFapsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class BOMCalculator_Base
 {
+
     protected static final Logger LOG = LoggerFactory.getLogger(BOMCalculator.class);
 
     private BigDecimal quantityStock;
@@ -69,10 +70,7 @@ public abstract class BOMCalculator_Base
         BigDecimal stock = BigDecimal.ZERO;
         QueryBuilder queryBuild = new QueryBuilder(CIProducts.Inventory);
         queryBuild.addWhereAttrEqValue(CIProducts.Inventory.Product, _prodInst);
-
-        final SystemConfiguration config = SystemConfiguration.get(
-                        UUID.fromString("c9a1cbc3-fd35-4463-80d2-412422a3802f"));
-        final Instance storGrpInstance = config.getLink("org.efaps.sales.StorageGroup4ProductBOM");
+        final Instance storGrpInstance = Products.getSysConfig().getLink(ProductsSettings.DEFAULTSTORAGEGROUP);
         if (storGrpInstance != null && storGrpInstance.isValid()) {
             final QueryBuilder attrQueryBldr = new QueryBuilder(CIProducts.StorageGroupAbstract2StorageAbstract);
             attrQueryBldr.addWhereAttrEqValue(CIProducts.StorageGroupAbstract2StorageAbstract.FromAbstractLink,
@@ -105,7 +103,7 @@ public abstract class BOMCalculator_Base
                            final BigDecimal _quantityStock)
     {
         if (_quantityStock.compareTo(BigDecimal.ZERO) != 0) {
-            this.factory = ((_quantityStock).divide(_quantityRequired,BigDecimal.ROUND_HALF_DOWN)).intValue();
+            this.factory = ((_quantityStock).divide(_quantityRequired, BigDecimal.ROUND_HALF_DOWN)).intValue();
         }
 
     }
@@ -133,7 +131,8 @@ public abstract class BOMCalculator_Base
     public void setQuantityStock(final BigDecimal _quantity)
         throws EFapsException
     {
-        this.quantityStock = _quantity != null && _quantity.compareTo(BigDecimal.ZERO)==1 ? _quantity : BigDecimal.ZERO;
+        this.quantityStock = _quantity != null && _quantity.compareTo(BigDecimal.ZERO) == 1 ? _quantity
+                        : BigDecimal.ZERO;
     }
 
     public Instance getProductBOMInstance()
@@ -149,7 +148,8 @@ public abstract class BOMCalculator_Base
     public void setQuantityRequired(final BigDecimal _quantity)
         throws EFapsException
     {
-        this.quantityRequired = _quantity != null && _quantity.compareTo(BigDecimal.ZERO)==1 ? _quantity : BigDecimal.ZERO;
+        this.quantityRequired = _quantity != null && _quantity.compareTo(BigDecimal.ZERO) == 1 ? _quantity
+                        : BigDecimal.ZERO;
     }
 
     public String getTypeName()
