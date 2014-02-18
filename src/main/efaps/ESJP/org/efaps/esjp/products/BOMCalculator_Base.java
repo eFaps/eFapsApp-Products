@@ -72,7 +72,7 @@ public abstract class BOMCalculator_Base
 
         final SystemConfiguration config = SystemConfiguration.get(
                         UUID.fromString("c9a1cbc3-fd35-4463-80d2-412422a3802f"));
-        final Instance storGrpInstance = config.getLink("StorageGroup4ProductBOM");
+        final Instance storGrpInstance = config.getLink("org.efaps.sales.StorageGroup4ProductBOM");
         if (storGrpInstance != null && storGrpInstance.isValid()) {
             final QueryBuilder attrQueryBldr = new QueryBuilder(CIProducts.StorageGroupAbstract2StorageAbstract);
             attrQueryBldr.addWhereAttrEqValue(CIProducts.StorageGroupAbstract2StorageAbstract.FromAbstractLink,
