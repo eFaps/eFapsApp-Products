@@ -340,6 +340,31 @@ public abstract class Transaction_Base
         return new Return();
     }
 
+    /**
+     * Post update of a transaction, the related costing will be marked
+     * as not "UpToDate".
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return new empty Return
+     * @throws EFapsException on errro
+     */
+    public Return updatePostTrigger4Costing(final Parameter _parameter)
+        throws EFapsException
+    {
+        // search the related costing instance (only if it is still "UpToDate")
+        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.CostingAbstract);
+        queryBldr.addWhereAttrEqValue(CIProducts.CostingAbstract.UpToDate, true);
+        queryBldr.addWhereAttrEqValue(CIProducts.CostingAbstract.TransactionAbstractLink, _parameter.getInstance());
+        final InstanceQuery query = queryBldr.getQuery();
+        query.executeWithoutAccessCheck();
+        if (query.next()) {
+            final Update update = new Update(query.getCurrentValue());
+            update.add(CIProducts.CostingAbstract.UpToDate, false);
+            update.executeWithoutTrigger();
+        }
+        return new Return();
+    }
+
+
     protected void storeDateProduct4Trigger(final Parameter _parameter)
         throws EFapsException
     {
