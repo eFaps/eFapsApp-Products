@@ -19,7 +19,10 @@
  Last Changed:    $Date$
  Last Changed By: $Author$
 
---><datamodel-sqltable xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+-->
+<datamodel-sqltable xmlns="http://www.efaps.org/xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>3f35f2bf-3d7d-40db-8a8e-110039a0a0f6</uuid>
     <file-application>eFapsApp-Products</file-application>
     <file-revision>$Rev$</file-revision>
@@ -36,10 +39,12 @@
             <column name="TRANSID"      type="INTEGER"  not-null="true" />
             <column name="COST"         type="DECIMAL"  not-null="true"     length="15"     scale="4" />
             <column name="RESULT"       type="DECIMAL"  not-null="true"     length="15"     scale="4" />
+            <column name="UPTODATE"     type="BOOLEAN"  not-null="true" />
             <column name="CREATOR"      type="INTEGER"  not-null="true" />
             <column name="CREATED"      type="DATETIME" not-null="true" />
             <column name="MODIFIER"     type="INTEGER"  not-null="true" />
             <column name="MODIFIED"     type="DATETIME" not-null="true" />
+            <unique name="T_PRODCOSTING_UK_TRANSID" columns="TRANSID"/>
             <foreign name="T_PRODCOSTING_FK_TRANSID"    key="TRANSID"   reference="T_PRODTRANSACTION(ID)" />
             <foreign name="T_PRODCOSTING_FK_CRTR"       key="CREATOR"   reference="T_USERPERSON(ID)" />
             <foreign name="T_PRODCOSTING_FK_MDFR"       key="MODIFIER"  reference="T_USERPERSON(ID)" />

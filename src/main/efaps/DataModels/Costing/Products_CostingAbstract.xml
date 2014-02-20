@@ -71,6 +71,12 @@
             <sqlcolumn>RESULT</sqlcolumn>
         </attribute>
         <attribute>
+            <name>UpToDate</name>
+            <type>Boolean</type>
+            <sqltable>Products_CostingSQLTable</sqltable>
+            <sqlcolumn>UPTODATE</sqlcolumn>
+        </attribute>
+        <attribute>
             <name>Creator</name>
             <type>CreatorLink</type>
             <sqltable>Products_CostingSQLTable</sqltable>
