@@ -35,6 +35,7 @@
             <property name="Select">linkto[TransactionAbstractLink].attribute[Quantity]</property>
             <property name="Label">Products_CostingTable.transactionQuantity.Label</property>
             <property name="Align">right</property>
+            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.DecimalUI</property>
             <trigger program="org.efaps.esjp.products.Transaction"
                 method="getQuantityFieldValue"
                 name="Products_CostingTable.transactionQuantity.UI_FIELD_VALUE"
@@ -67,6 +68,7 @@
         <field name="transNumber">
             <property name="Phrase">$&lt;linkto[TransactionAbstractLink].attribute[Date].format[YYD]&gt;$&lt;linkto[TransactionAbstractLink].attribute[Position].format[00]&gt;</property>
             <property name="Label">Products_TransactionAbstractTable.transNumber.Label</property>
+            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
         </field>
     </definition>
 </ui-table>

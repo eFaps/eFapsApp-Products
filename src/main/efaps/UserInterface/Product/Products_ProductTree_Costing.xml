@@ -43,5 +43,6 @@
         </target>
         <property name="Target">content</property>
         <property name="TargetMode">view</property>
+        <property name="TargetTableSortKey">transNumber</property>
     </definition>
 </ui-menu>
