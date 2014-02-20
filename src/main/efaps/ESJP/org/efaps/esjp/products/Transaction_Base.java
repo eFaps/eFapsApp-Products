@@ -33,6 +33,7 @@ import org.efaps.admin.access.AccessTypeEnums;
 import org.efaps.admin.datamodel.Dimension;
 import org.efaps.admin.datamodel.Dimension.UoM;
 import org.efaps.admin.datamodel.Type;
+import org.efaps.admin.datamodel.ui.FieldValue;
 import org.efaps.admin.dbproperty.DBProperties;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
@@ -41,6 +42,7 @@ import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
+import org.efaps.admin.ui.field.Field.Display;
 import org.efaps.ci.CIAttribute;
 import org.efaps.ci.CIType;
 import org.efaps.db.Context;
@@ -78,6 +80,29 @@ public abstract class Transaction_Base
      * Key used to store info during request.
      */
     public static final String REQUESTKEY4TRANSDATEPR = Transaction_Base.class + ".RequestKey4TransactionDate";
+
+    /**
+     * Method to assign the signum for the quantity value.
+     *
+     * @param _parameter Parameter as passed from the eFaps API.
+     * @return new Return.
+     * @throws EFapsException on error.
+     */
+    public Return getQuantityFieldValue(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        final FieldValue fieldvalue = (FieldValue) _parameter.get(ParameterValues.UIOBJECT);
+        final BigDecimal value = (BigDecimal) fieldvalue.getValue();
+        if (value != null && !Display.NONE.equals(fieldvalue.getDisplay())) {
+            if (fieldvalue.getInstance().getType().isKindOf(CIProducts.TransactionOutbound.getType())) {
+                final BigDecimal retValue = value.negate();
+                fieldvalue.setValue(null);
+                ret.put(ReturnValues.VALUES, retValue);
+            }
+        }
+        return ret;
+    }
 
     /**
      * Method to create a Transaction manually.

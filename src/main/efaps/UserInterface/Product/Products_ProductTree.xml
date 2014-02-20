@@ -50,6 +50,7 @@
             <child>Products_ProductTree_Image</child>
             <child>Products_ProductTree_Contacts</child>
             <child>Products_ProductTree_Transaction</child>
+            <child>Products_ProductTree_Costing</child>
         </childs>
         <!-- properties -->
         <property name="Target">content</property>

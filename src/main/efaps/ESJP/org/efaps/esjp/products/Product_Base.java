@@ -54,6 +54,7 @@ import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
+import org.efaps.db.AttributeQuery;
 import org.efaps.db.Insert;
 import org.efaps.db.Instance;
 import org.efaps.db.InstanceQuery;
@@ -62,6 +63,7 @@ import org.efaps.db.PrintQuery;
 import org.efaps.db.QueryBuilder;
 import org.efaps.db.SelectBuilder;
 import org.efaps.esjp.ci.CIProducts;
+import org.efaps.esjp.common.uitable.MultiPrint;
 import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
 import org.efaps.util.cache.CacheReloadException;
@@ -630,17 +632,17 @@ public abstract class Product_Base
         throws EFapsException
     {
         final List<BOMCalculator> ret = new ArrayList<BOMCalculator>();
-        QueryBuilder qlb = new QueryBuilder(CIProducts.BOMAbstract);
+        final QueryBuilder qlb = new QueryBuilder(CIProducts.BOMAbstract);
         qlb.addWhereAttrEqValue(CIProducts.BOMAbstract.FromAbstract, _prodInst);
         final MultiPrintQuery multi = qlb.getPrint();
         multi.addAttribute(CIProducts.BOMAbstract.Quantity);
-        SelectBuilder select = new SelectBuilder().linkto(CIProducts.BOMAbstract.ToAbstract).instance();
+        final SelectBuilder select = new SelectBuilder().linkto(CIProducts.BOMAbstract.ToAbstract).instance();
         multi.addSelect(select);
         multi.execute();
         while(multi.next()){
             final Instance instBOMproduct = multi.<Instance>getSelect(select);
-            BigDecimal quantityRequired = multi.getAttribute(CIProducts.BOMAbstract.Quantity);
-            BOMCalculator calBOM= new BOMCalculator(_parameter, instBOMproduct, quantityRequired);
+            final BigDecimal quantityRequired = multi.getAttribute(CIProducts.BOMAbstract.Quantity);
+            final BOMCalculator calBOM= new BOMCalculator(_parameter, instBOMproduct, quantityRequired);
             ret.add(calBOM);
         }
 
@@ -653,13 +655,13 @@ public abstract class Product_Base
         throws EFapsException
     {
         int productQuantity = 0;
-        List<BOMCalculator> boms = getCalulators4Product(_parameter, _prodInst);
+        final List<BOMCalculator> boms = getCalulators4Product(_parameter, _prodInst);
         int i=0;
         boolean band=true;
         boolean first =true;
         while (i < boms.size() && band) {
-            BOMCalculator bom = boms.get(i);
-            int bomquantity = bom.getFactory();
+            final BOMCalculator bom = boms.get(i);
+            final int bomquantity = bom.getFactory();
             if (bomquantity == 0) {
                 productQuantity = 0;
                 band = false;
@@ -672,6 +674,28 @@ public abstract class Product_Base
             i++;
         }
         return productQuantity;
-
     }
+
+    public Return getCosting4Product(final Parameter _parameter)
+        throws EFapsException
+    {
+        final MultiPrint multi = new MultiPrint()
+        {
+            @Override
+            protected void add2QueryBldr(final Parameter _parameter,
+                                         final QueryBuilder _queryBldr)
+                throws EFapsException
+            {
+                final QueryBuilder attrQueryBldr = new QueryBuilder(CIProducts.TransactionInOutAbstract);
+                attrQueryBldr.addWhereAttrEqValue(CIProducts.TransactionInOutAbstract.Product,
+                                _parameter.getInstance());
+                final AttributeQuery attrQuery = attrQueryBldr
+                                .getAttributeQuery(CIProducts.TransactionInOutAbstract.ID);
+                _queryBldr.addWhereAttrInQuery(CIProducts.Costing.TransactionAbstractLink, attrQuery);
+                super.add2QueryBldr(_parameter, _queryBldr);
+            }
+        };
+        return multi.execute(_parameter);
+    }
+
 }
