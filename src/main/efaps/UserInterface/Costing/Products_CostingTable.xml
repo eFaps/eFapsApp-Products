@@ -66,7 +66,7 @@
             <property name="Align">right</property>
         </field>
         <field name="transNumber">
-            <property name="Phrase">$&lt;linkto[TransactionAbstractLink].attribute[Date].format[YYD]&gt;$&lt;linkto[TransactionAbstractLink].attribute[Position].format[00]&gt;</property>
+            <property name="Phrase">$&lt;linkto[TransactionAbstractLink].attribute[Date].format[YYDDD]&gt;$&lt;linkto[TransactionAbstractLink].attribute[Position].format[00]&gt;</property>
             <property name="Label">Products_TransactionAbstractTable.transNumber.Label</property>
             <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
         </field>
