@@ -32,17 +32,25 @@
         <access>
             <role>Products_Admin</role>
             <role>Products_Modifier</role>
-            <role>Products_Reader</role>
         </access>
         <target>
+            <menu>Products_ProductTree_Costing_Menu</menu>
             <table>Products_CostingTable</table>
             <evaluate program="org.efaps.esjp.products.Product"
                 method="getCosting4Product">
                 <property name="Type">Products_Costing</property>
             </evaluate>
+            <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                method="configCheck"
+                name="Products_ProductTree_Costing.UI_ACCESSCHECK"
+                event="UI_ACCESSCHECK">
+                <property name="SystemConfig">Sales-Configuration</property>
+                <property name="Attribute">org.efaps.sales.ActivateCosting</property>
+            </trigger>
         </target>
         <property name="Target">content</property>
         <property name="TargetMode">view</property>
         <property name="TargetTableSortKey">transNumber</property>
+        <property name="TargetShowCheckBoxes">true</property>
     </definition>
 </ui-menu>
