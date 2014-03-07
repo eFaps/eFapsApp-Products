@@ -42,6 +42,12 @@
             <property name="ShowTypeIcon">true</property>
             <property name="FilterType">PICKLIST</property>
         </field>
+        <field name="document">
+            <property name="SelectAlternateOID">linkto[Document].oid</property>
+            <property name="HRef">TREE</property>
+            <property name="Phrase">$&lt;linkto[Document].type.label&gt; - $&lt;linkto[Document].attribute[Name]&gt;</property>
+            <property name="Label">Products_TransactionAbstract/Document.Label</property>
+        </field>
         <field name="description">
             <property name="Attribute">Description</property>
             <property name="Label">Products_TransactionAbstract/Description.Label</property>
