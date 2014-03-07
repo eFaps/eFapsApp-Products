@@ -90,6 +90,13 @@
             <sqlcolumn>TOID</sqlcolumn>
         </attribute>
         <attribute>
+            <name>Position</name>
+            <type>Integer</type>
+            <sqltable>Products_BOMSQLTable</sqltable>
+            <sqlcolumn>POS</sqlcolumn>
+            <defaultvalue>1</defaultvalue>
+        </attribute>
+        <attribute>
             <name>Quantity</name>
             <type>Decimal</type>
             <sqltable>Products_BOMSQLTable</sqltable>

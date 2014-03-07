@@ -39,6 +39,7 @@
             <column name="TYPEID"         type="INTEGER"                      not-null="true"/>
             <column name="FROMID"         type="INTEGER"                      not-null="true"/>
             <column name="TOID"           type="INTEGER"                      not-null="true"/>
+            <column name="POS"            type="INTEGER"/>
             <column name="QUANTITY"       type="DECIMAL"    not-null="true"   length="15" scale="4"/>
             <column name="UOMID"          type="INTEGER"/>
             <column name="CREATOR"        type="INTEGER"                      not-null="true"/>

@@ -35,20 +35,11 @@
         <!-- targets -->
         <target>
             <menu>Products_ProductTree_Menu</menu>
-            <form>Products_ProductForm</form>
+            <form>Products_ProductGenericForm</form>
         </target>
-        <!-- type tree for -->
         <type>Products_ProductGeneric</type>
         <childs>
-            <child>Products_ProductTree_PricelistRetail</child>
-            <child>Products_ProductTree_PricelistMinRetail</child>
-            <child>Products_ProductTree_PricelistPurchase</child>
-            <child>Products_ProductTree_Cost</child>
             <child>Products_ProductGenericTree_Product</child>
-            <child>Products_ProductTree_BOM</child>
-            <child>Products_ProductTree_Image</child>
-            <child>Products_ProductTree_Contacts</child>
-            <child>Products_ProductTree_Transaction</child>
         </childs>
         <!-- properties -->
         <property name="Target">content</property>
