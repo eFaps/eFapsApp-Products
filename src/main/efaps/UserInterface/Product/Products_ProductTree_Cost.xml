@@ -23,7 +23,7 @@
 
 -->
 
-<ui-menu xmlns="http://www.efaps.org/xsd"
+<ui-command xmlns="http://www.efaps.org/xsd"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
 
@@ -53,4 +53,4 @@
         <property name="TargetMode">view</property>
         <property name="TargetShowCheckBoxes">true</property>
     </definition>
-</ui-menu>
+</ui-command>

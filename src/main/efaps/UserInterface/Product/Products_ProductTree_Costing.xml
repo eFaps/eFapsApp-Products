@@ -20,7 +20,7 @@
   Last Changed By: $Author$
 
 -->
-<ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
 
     <uuid>4b81691a-1a1d-466c-babf-7167a44b2893</uuid>
@@ -53,4 +53,4 @@
         <property name="TargetTableSortKey">transNumber</property>
         <property name="TargetShowCheckBoxes">true</property>
     </definition>
-</ui-menu>
+</ui-command>
