@@ -82,6 +82,12 @@ public abstract class Transaction_Base
     public static final String REQUESTKEY4TRANSDATEPR = Transaction_Base.class + ".RequestKey4TransactionDate";
 
     /**
+     * Key used to store info during request.
+     */
+    public static final String REQUESTKEY = Transaction_Base.class + ".RequestKey";
+
+
+    /**
      * Method to assign the signum for the quantity value.
      *
      * @param _parameter Parameter as passed from the eFaps API.
@@ -101,6 +107,49 @@ public abstract class Transaction_Base
                 ret.put(ReturnValues.VALUES, retValue);
             }
         }
+        return ret;
+    }
+
+    /**
+     * Method to calculate the StockTotal for Costing.
+     *
+     * @param _parameter Parameter as passed from the eFaps API.
+     * @return new Return.
+     * @throws EFapsException on error.
+     */
+    @SuppressWarnings("unchecked")
+    public Return getStockTotalFieldValue(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        Map<Instance, BigDecimal> values;
+        if (Context.getThreadContext().containsRequestAttribute(Transaction_Base.REQUESTKEY)) {
+            values = (Map<Instance, BigDecimal>) Context.getThreadContext().getRequestAttribute(
+                            Transaction_Base.REQUESTKEY);
+        } else {
+            values = new HashMap<Instance, BigDecimal>();
+            Context.getThreadContext().setRequestAttribute(Transaction_Base.REQUESTKEY, values);
+            final List<Instance> costingInsts = (List<Instance>) _parameter.get(ParameterValues.REQUEST_INSTANCES);
+
+            final MultiPrintQuery multi = new MultiPrintQuery(costingInsts);
+            final SelectBuilder selQty = SelectBuilder.get().linkto(CIProducts.Costing.TransactionAbstractLink)
+                            .attribute(CIProducts.TransactionAbstract.Quantity);
+            final SelectBuilder selInst = SelectBuilder.get().linkto(CIProducts.Costing.TransactionAbstractLink)
+                            .instance();
+            multi.addSelect(selInst, selQty);
+            multi.addAttribute(CIProducts.Costing.Quantity);
+            multi.executeWithoutAccessCheck();
+            while (multi.next()) {
+                final BigDecimal costQty = multi.<BigDecimal>getAttribute(CIProducts.Costing.Quantity);
+                final Instance inst = multi.<Instance>getSelect(selInst);
+                BigDecimal transQty = multi.<BigDecimal>getSelect(selQty);
+                if (inst.getType().isKindOf(CIProducts.TransactionOutbound.getType())) {
+                    transQty = transQty.negate();
+                }
+                values.put(multi.getCurrentInstance(), costQty.add(transQty));
+            }
+        }
+        ret.put(ReturnValues.VALUES, values.get(_parameter.getInstance()));
         return ret;
     }
 
