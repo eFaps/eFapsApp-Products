@@ -74,6 +74,10 @@
             <property name="Select">linkto[Product].attribute[Name]</property>
             <property name="Label">Products_TransactionAbstract/Product.Label</property>
         </field>
+        <field name="productDesc">
+            <property name="Select">linkto[Product].attribute[Description]</property>
+            <property name="Label">Products_TransactionAbstract/Description.Label</property>
+        </field>
         <field name="storage">
             <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
             <property name="SelectAlternateOID">linkto[Storage].oid</property>
