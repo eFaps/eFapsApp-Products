@@ -180,8 +180,8 @@ public abstract class Transaction_Base
                 if (docTransactionCreate.getInstance().isValid()
                                 && (CIProducts.TransactionInbound.getType().equals(_createDoc.getInstance().getType())
                                 || CIProducts.TransactionOutbound.getType().equals(_createDoc.getInstance().getType()))) {
-                    // Sales_Document2DocumentType
-                    final Insert insert = new Insert(UUID.fromString("24fe1e8e-ff25-4b1d-aed5-032278a57ded"));
+                    // Sales_Document2ProductDocumentType
+                    final Insert insert = new Insert(UUID.fromString("29438fb0-8b1f-4e4e-a409-812b2f9efdc0"));
                     insert.add("DocumentLink", docTransactionCreate.getInstance().getId());
                     insert.add("DocumentTypeLink", prodDocInst.getId());
                     insert.execute();
