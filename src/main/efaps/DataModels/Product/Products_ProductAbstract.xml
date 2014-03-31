@@ -29,7 +29,7 @@
     <uuid>29c61210-5e44-453b-a171-95993c95da36</uuid>
     <file-application>eFapsApp-Products</file-application>
     <file-revision>$Rev$</file-revision>
-<!--     <definition>
+     <definition>
         <version-expression>(version==latest)</version-expression>
         <profiles>
             <profile name="eFaps"/>
@@ -125,13 +125,12 @@
             <sqlcolumn>MODIFIED</sqlcolumn>
         </attribute>
     </definition>
- -->
+
     <definition>
         <version-expression>(version==latest)</version-expression>
- <!--       <profiles>
+        <profiles>
             <profile name="sales"/>
         </profiles>
-         -->
         <name>Products_ProductAbstract</name>
         <purpose abstract="true" />
         <attribute>
@@ -235,7 +234,6 @@
             <sqlcolumn>MODIFIED</sqlcolumn>
         </attribute>
     </definition>
-<!--
     <definition>
         <version-expression>(version==latest)</version-expression>
         <profiles>
@@ -356,5 +354,4 @@
             <sqlcolumn>MODIFIED</sqlcolumn>
         </attribute>
     </definition>
-     -->
 </datamodel-type>
