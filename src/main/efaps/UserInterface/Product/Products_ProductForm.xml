@@ -79,6 +79,27 @@
             <property name="Attribute">Dimension</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+            <trigger program="org.efaps.esjp.products.Product"
+                method="updateFields4Dimension"
+                name="Products_ProductForm.defaultUoM4Create.UI_FIELD_UPDATE"
+                event="UI_FIELD_UPDATE" />
+        </field>
+        <field name="defaultUoM">
+            <property name="Attribute">DefaultUoM</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ModeView">NONE</property>
+            <property name="Required">true</property>
+            <trigger program="org.efaps.esjp.products.Product"
+                method="defaultUoMFieldValue"
+                name="Products_ProductForm.defaultUoM4Create.UI_FIELD_VALUE"
+                event="UI_FIELD_VALUE" />
+        </field>
+        <field name="defaultUoM4View">
+            <property name="Select">linkto[DefaultUoM].attribute[Name]</property>
+            <property name="ModeEdit">NONE</property>
+            <property name="ModeView">READONLY</property>
+            <property name="Required">true</property>
         </field>
         <field name="active">
             <property name="Attribute">Active</property>

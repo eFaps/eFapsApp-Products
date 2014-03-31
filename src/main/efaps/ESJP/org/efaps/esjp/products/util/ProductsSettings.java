@@ -68,4 +68,9 @@ public interface ProductsSettings
      * Link to a default warehouse instance
      */
     String DEFAULTSTORAGEGROUP = "org.efaps.products.StorageGroup4ProductBOM";
+
+    /**
+     * Link to a default warehouse instance
+     */
+    String DEFAULTDIMENSION = "org.efaps.products.DefaultDimension";
 }

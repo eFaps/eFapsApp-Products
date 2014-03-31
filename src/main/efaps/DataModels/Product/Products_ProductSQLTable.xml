@@ -39,12 +39,12 @@
         <typeid-column>TYPEID</typeid-column>
         <database>
             <table-name>T_PRODPRODUCT</table-name>
-            <!-- columns -->
             <column name="TYPEID"       type="INTEGER"         not-null="true"/>
             <column name="COMPANYID"    type="INTEGER"         not-null="true"/>
             <column name="NAME"         type="STRING_SHORT"    not-null="true"  length="255"/>
             <column name="DESCR"        type="STRING_SHORT"                     length="255"/>
             <column name="DIMID"        type="INTEGER"         not-null="true" />
+            <column name="UOMID"        type="INTEGER"/>
             <column name="ACTIVE"       type="BOOLEAN"/>
             <column name="CREATOR"      type="INTEGER"         not-null="true"/>
             <column name="CREATED"      type="DATETIME"        not-null="true"/>
@@ -54,6 +54,7 @@
             <foreign name="T_PRODPRODUCT_FK_MDFR"       key="MODIFIER"  reference="T_USERPERSON(ID)"/>
             <foreign name="T_PRODPRODUCT_FK_COMPANYID"  key="COMPANYID" reference="T_USERABSTRACT(ID)"/>
             <foreign name="T_PRODPRODUCT_FK_DIMID"      key="DIMID"     reference="T_DMDIM(ID)"/>
+            <foreign name="T_PRODPRODUCT_FK_UOMID"      key="UOMID"     reference="T_DMUOM(ID)"/>
         </database>
     </definition>
 
@@ -66,12 +67,12 @@
         <typeid-column>TYPEID</typeid-column>
         <database>
             <table-name>T_PRODPRODUCT</table-name>
-            <!-- columns -->
             <column name="TYPEID"       type="INTEGER"          not-null="true"/>
             <column name="COMPANYID"    type="INTEGER"          not-null="true"/>
             <column name="NAME"         type="STRING_SHORT"     not-null="true"     length="255"/>
             <column name="DESCR"        type="STRING_SHORT"                         length="255"/>
             <column name="DIMID"        type="INTEGER"          not-null="true" />
+            <column name="UOMID"        type="INTEGER"/>
             <column name="ACTIVE"       type="BOOLEAN"/>
             <column name="SALESUNIT"    type="DECIMAL"                              length="8" scale="4" />
             <column name="TAXCATID"     type="INTEGER" />
@@ -83,6 +84,7 @@
             <foreign name="T_PRODPRODUCT_FK_MDFR"       key="MODIFIER"  reference="T_USERPERSON(ID)"/>
             <foreign name="T_PRODPRODUCT_FK_COMPANYID"  key="COMPANYID" reference="T_USERABSTRACT(ID)"/>
             <foreign name="T_PRODPRODUCT_FK_DIMID"      key="DIMID"     reference="T_DMDIM(ID)"/>
+            <foreign name="T_PRODPRODUCT_FK_UOMID"      key="UOMID"     reference="T_DMUOM(ID)"/>
         </database>
     </definition>
 
@@ -95,12 +97,12 @@
         <typeid-column>TYPEID</typeid-column>
         <database>
             <table-name>T_PRODPRODUCT</table-name>
-            <!-- columns -->
             <column name="TYPEID"       type="INTEGER"          not-null="true"/>
             <column name="COMPANYID"    type="INTEGER"          not-null="true"/>
             <column name="NAME"         type="STRING_SHORT"     not-null="true"     length="255"/>
             <column name="DESCR"        type="STRING_SHORT"                         length="255"/>
             <column name="DIMID"        type="INTEGER"          not-null="true" />
+            <column name="UOMID"        type="INTEGER"/>
             <column name="ACTIVE"       type="BOOLEAN"/>
             <column name="SALESUNIT"    type="DECIMAL"                              length="8" scale="4" />
             <column name="TAXCATID"     type="INTEGER" />
@@ -114,6 +116,7 @@
             <foreign name="T_PRODPRODUCT_FK_MDFR"       key="MODIFIER"  reference="T_USERPERSON(ID)"/>
             <foreign name="T_PRODPRODUCT_FK_COMPANYID"  key="COMPANYID" reference="T_USERABSTRACT(ID)"/>
             <foreign name="T_PRODPRODUCT_FK_DIMID"      key="DIMID"     reference="T_DMDIM(ID)"/>
+            <foreign name="T_PRODPRODUCT_FK_UOMID"      key="UOMID"     reference="T_DMUOM(ID)"/>
         </database>
     </definition>
 

@@ -22,10 +22,12 @@ package org.efaps.esjp.products;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -54,6 +56,7 @@ import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
+import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
 import org.efaps.db.AttributeQuery;
 import org.efaps.db.Insert;
 import org.efaps.db.Instance;
@@ -62,8 +65,13 @@ import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.PrintQuery;
 import org.efaps.db.QueryBuilder;
 import org.efaps.db.SelectBuilder;
+import org.efaps.esjp.admin.datamodel.RangesValue;
+import org.efaps.esjp.ci.CIFormProducts;
 import org.efaps.esjp.ci.CIProducts;
+import org.efaps.esjp.common.uiform.Field;
 import org.efaps.esjp.common.uitable.MultiPrint;
+import org.efaps.esjp.products.util.Products;
+import org.efaps.esjp.products.util.ProductsSettings;
 import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
 import org.efaps.util.cache.CacheReloadException;
@@ -79,6 +87,88 @@ import org.joda.time.DateTime;
 @EFapsRevision("$Rev$")
 public abstract class Product_Base
 {
+
+    /**
+     * @param _parameter _parameter
+     * @return rangevalue
+     * @throws EFapsException on error
+     */
+    public Return dimensionRangeValue(final Parameter _parameter)
+        throws EFapsException
+    {
+        final RangesValue rval = new RangesValue()
+        {
+            @Override
+            protected void setSelectedValue(final Parameter _parameter,
+                                            final Map<?, ?> _valueMap)
+                throws EFapsException
+            {
+                final FieldValue fieldValue = (FieldValue) _parameter.get(ParameterValues.UIOBJECT);
+                final Instance dimInst = Products.getSysConfig().getLink(ProductsSettings.DEFAULTDIMENSION);
+                if (_parameter.get(ParameterValues.ACCESSMODE).equals(TargetMode.CREATE)
+                                && dimInst != null && dimInst.isValid()) {
+                    for (final Entry<?, ?> entry : _valueMap.entrySet()) {
+                        if (entry.getValue().equals(Long.valueOf(dimInst.getId()).toString())) {
+                            fieldValue.setValue(entry.getKey());
+                            break;
+                        }
+                    }
+                }
+            }
+        };
+        return rval.execute(_parameter);
+    }
+
+    /**
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return dafuelt value
+     * @throws EFapsException
+     */
+    public Return defaultUoMFieldValue(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Field field = new Field();
+        final Instance dimInst = Products.getSysConfig().getLink(ProductsSettings.DEFAULTDIMENSION);
+        final Return ret;
+        if (_parameter.get(ParameterValues.ACCESSMODE).equals(TargetMode.CREATE) && dimInst != null
+                        && dimInst.isValid()) {
+            final FieldValue fieldValue = (FieldValue) _parameter.get(ParameterValues.UIOBJECT);
+            fieldValue.setValue(Dimension.get(dimInst.getId()).getBaseUoM().getId());
+            ret = field.getUoMDropDownFieldValue(_parameter);
+        } else if (_parameter.get(ParameterValues.ACCESSMODE).equals(TargetMode.EDIT)) {
+            ret = field.getUoMDropDownFieldValue(_parameter);
+        } else {
+            ret = field.emptyDropDownFieldValue(_parameter);
+        }
+        return ret;
+    }
+
+    /**
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return set values script in list
+     * @throws EFapsException on error
+     */
+    public Return updateFields4Dimension(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+
+        final Collection<Map<String, String>> values = new ArrayList<Map<String, String>>();
+        ret.put(ReturnValues.VALUES, values);
+        final Map<String, String> map = new HashMap<String, String>();
+        values.add(map);
+        final Long dimId = Long.valueOf(_parameter
+                        .getParameterValue(CIFormProducts.Products_ProductForm.dimension.name));
+        final Dimension dim = Dimension.get(dimId);
+        final StringBuilder js = new StringBuilder()
+                        .append("new Array('").append(dim.getBaseUoM().getId()).append("'");
+        for (final UoM uom : dim.getUoMs()) {
+            js.append(",'").append(uom.getId()).append("','").append(uom.getName()).append("'");
+        }
+        js.append(")");
+        map.put(CIFormProducts.Products_ProductForm.defaultUoM.name, js.toString());
+        return ret;
+    }
 
     /**
      * @param _parameter    Parameter as passed by the eFaps API
