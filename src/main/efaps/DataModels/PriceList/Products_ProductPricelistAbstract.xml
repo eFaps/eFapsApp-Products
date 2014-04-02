@@ -70,6 +70,30 @@
             <sqltable>Products_ProductPricelistSQLTable</sqltable>
             <sqlcolumn>VALIDUNTIL</sqlcolumn>
         </attribute>
+        <attribute>
+            <name>Creator</name>
+            <type>CreatorLink</type>
+            <sqltable>Products_ProductPricelistSQLTable</sqltable>
+            <sqlcolumn>CREATOR</sqlcolumn>
+        </attribute>
+        <attribute>
+            <name>Created</name>
+            <type>Created</type>
+            <sqltable>Products_ProductPricelistSQLTable</sqltable>
+            <sqlcolumn>CREATED</sqlcolumn>
+        </attribute>
+        <attribute>
+            <name>Modifier</name>
+            <type>ModifierLink</type>
+            <sqltable>Products_ProductPricelistSQLTable</sqltable>
+            <sqlcolumn>MODIFIER</sqlcolumn>
+        </attribute>
+        <attribute>
+            <name>Modified</name>
+            <type>Modified</type>
+            <sqltable>Products_ProductPricelistSQLTable</sqltable>
+            <sqlcolumn>MODIFIED</sqlcolumn>
+        </attribute>
         <!--
             This Attribute must be overridden by an actual implementation.
             It serves to have PriceList that e.g. depend of the place where they are sold

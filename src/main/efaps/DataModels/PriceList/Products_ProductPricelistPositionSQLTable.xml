@@ -26,22 +26,28 @@
 <datamodel-sqltable  xmlns="http://www.efaps.org/xsd"
                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                      xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-  <uuid>330eb22f-56a4-4130-866c-a68e93504a80</uuid>
-  <file-application>eFapsApp-Products</file-application>
-  <file-revision>$Rev$</file-revision>
+    <uuid>330eb22f-56a4-4130-866c-a68e93504a80</uuid>
+    <file-application>eFapsApp-Products</file-application>
+    <file-revision>$Rev$</file-revision>
 
-  <definition>
-    <version-expression>(version==latest)</version-expression>
-    <name>Products_ProductPricelistPositionSQLTable</name>
-    <database>
-      <table-name>T_PRODPRODPRICEPOS</table-name>
-      <!-- columns -->
-      <column name="PRODPRICEID"  type="INTEGER"        not-null="true"/>
-      <column name="FROMUOM"      type="DECIMAL"                         length="14" scale="4"/>
-      <column name="TOUOM"        type="DECIMAL"                         length="14" scale="4"/>
-      <column name="PRICE"        type="DECIMAL"        not-null="true"  length="14" scale="4"/>
-      <column name="CURRENCYID"   type="INTEGER"        not-null="true"/>
-     </database>
-  </definition>
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <name>Products_ProductPricelistPositionSQLTable</name>
+        <database>
+            <table-name>T_PRODPRODPRICEPOS</table-name>
+            <!-- columns -->
+            <column name="PRODPRICEID"  type="INTEGER"  not-null="true" />
+            <column name="FROMUOM"      type="DECIMAL"                  length="14" scale="4" />
+            <column name="TOUOM"        type="DECIMAL"                  length="14" scale="4" />
+            <column name="PRICE"        type="DECIMAL"  not-null="true" length="14" scale="4" />
+            <column name="CURRENCYID"   type="INTEGER"  not-null="true" />
+            <column name="CREATOR"      type="INTEGER"  not-null="true" />
+            <column name="CREATED"      type="DATETIME" not-null="true" />
+            <column name="MODIFIER"     type="INTEGER"  not-null="true" />
+            <column name="MODIFIED"     type="DATETIME" not-null="true" />
+            <foreign name="T_PRODPRODPRICEPOS_FK_CRTR"  key="CREATOR"   reference="T_USERPERSON(ID)" />
+            <foreign name="T_PRODPRODPRICEPOS_FK_MDFR"  key="MODIFIER"  reference="T_USERPERSON(ID)" />
+        </database>
+    </definition>
 
 </datamodel-sqltable>

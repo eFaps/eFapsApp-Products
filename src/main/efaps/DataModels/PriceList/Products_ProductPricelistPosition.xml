@@ -82,6 +82,30 @@
                 <property name="Type">ERP_Currency</property>
             </trigger>
         </attribute>
+        <attribute>
+            <name>Creator</name>
+            <type>CreatorLink</type>
+            <sqltable>Products_ProductPricelistPositionSQLTable</sqltable>
+            <sqlcolumn>CREATOR</sqlcolumn>
+        </attribute>
+        <attribute>
+            <name>Created</name>
+            <type>Created</type>
+            <sqltable>Products_ProductPricelistPositionSQLTable</sqltable>
+            <sqlcolumn>CREATED</sqlcolumn>
+        </attribute>
+        <attribute>
+            <name>Modifier</name>
+            <type>ModifierLink</type>
+            <sqltable>Products_ProductPricelistPositionSQLTable</sqltable>
+            <sqlcolumn>MODIFIER</sqlcolumn>
+        </attribute>
+        <attribute>
+            <name>Modified</name>
+            <type>Modified</type>
+            <sqltable>Products_ProductPricelistPositionSQLTable</sqltable>
+            <sqlcolumn>MODIFIED</sqlcolumn>
+        </attribute>
         <trigger program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType"
                  name="Products_ProductPricelistPosition.ACCESSCHECK"
                  event="ACCESSCHECK" />
