@@ -58,6 +58,7 @@ import org.efaps.db.Update;
 import org.efaps.esjp.ci.CIERP;
 import org.efaps.esjp.ci.CIFormProducts;
 import org.efaps.esjp.ci.CIProducts;
+import org.efaps.esjp.ci.CITableProducts;
 import org.efaps.esjp.erp.CommonDocument;
 import org.efaps.ui.wicket.models.cell.UIFormCell;
 import org.efaps.util.EFapsException;
@@ -680,6 +681,79 @@ public abstract class Transaction_Base
         return new Return();
     }
 
+    /**
+     * Method is used as the execute event on moving products from one Storage
+     * to another.
+     *
+     * @param _parameter Parameters as passed from eFaps
+     * @return Return
+     * @throws EFapsException on error
+     */
+    public Return moveMassiveInventory(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Instance storageFromInst = _parameter.getInstance();
+        final String date = _parameter.getParameterValue(
+                        CIFormProducts.Products_InventoryMoveMassiveForm.date.name);
+        final String desc = _parameter.getParameterValue(
+                        CIFormProducts.Products_InventoryMoveMassiveForm.description.name);
+        final String storageToId = _parameter.getParameterValue(
+                        CIFormProducts.Products_InventoryMoveMassiveForm.storage.name);
+
+        final String[] product = _parameter.getParameterValues(
+                        CITableProducts.Products_InventoryMoveMassiveTable.product.name);
+
+        final String[] productDesc = _parameter.getParameterValues(
+                        CITableProducts.Products_InventoryMoveMassiveTable.product.name + "AutoComplete");
+
+        final String[] quantity = _parameter.getParameterValues(
+                        CITableProducts.Products_InventoryMoveMassiveTable.quantity.name);
+
+        final String[] uoM = _parameter.getParameterValues(
+                        CITableProducts.Products_InventoryMoveMassiveTable.uoM.name);
+
+        final PrintQuery print = new PrintQuery(storageFromInst);
+        print.addAttribute(CIProducts.StorageAbstract.Name);
+        print.execute();
+
+        final String storageFrom = print.<String>getAttribute(CIProducts.StorageAbstract.Name);
+
+        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.StorageAbstract);
+        queryBldr.addWhereAttrEqValue(CIProducts.StorageAbstract.ID, storageToId);
+        final MultiPrintQuery multi = queryBldr.getPrint();
+        multi.addAttribute(CIProducts.StorageAbstract.Name);
+        multi.execute();
+        multi.next();
+
+        final String storateTo = multi.<String>getAttribute(CIProducts.StorageAbstract.Name);
+
+        final List<CreatedDoc> transLists = new ArrayList<CreatedDoc>();
+        if (product != null && product.length > 0) {
+            for (int x = 0; x < product.length; x++) {
+                final String newDesc = DBProperties.getFormatedDBProperty(Transaction.class.getName()
+                        + ".moveMassiveInventory.Description", new Object[] { desc, quantity,
+                        Dimension.getUoM(Long.parseLong(uoM[x])).getName(), productDesc[x], storageFrom, storateTo });
+
+                final CreatedDoc inbound = addTransactionProduct(CIProducts.TransactionInbound,
+                                quantity, storageToId, uoM[x], date, product, newDesc);
+
+                final CreatedDoc outbound = addTransactionProduct(CIProducts.TransactionOutbound,
+                                quantity, storageFromInst.getId(), uoM[x], date, product, newDesc);
+
+                if (inbound.getInstance().isValid() && outbound.getInstance().isValid()) {
+                    transLists.add(inbound);
+                    transLists.add(outbound);
+                }
+            }
+        }
+
+        if (transLists.isEmpty()) {
+            addTransactionDocument2ConnectTransaction(_parameter, (CreatedDoc[]) transLists.toArray());
+        }
+
+        return new Return();
+    }
+
     protected CreatedDoc addTransactionProduct(final CIType _ciType,
                                                final Object... values)
         throws EFapsException
@@ -712,29 +786,29 @@ public abstract class Transaction_Base
     }
 
     protected void addTransactionDocument2ConnectTransaction(final Parameter _parameter,
-                                                             final CreatedDoc _inbound,
-                                                             final CreatedDoc _outbound)
+                                                             final CreatedDoc... _transactions)
         throws EFapsException
     {
         final String productDocumentType = _parameter.getParameterValue("productDocumentType");
         if (productDocumentType != null) {
             final Instance prodDocInst = Instance.get(productDocumentType);
             if (prodDocInst.isValid()) {
-                final CreatedDoc docTransactionCreate = new TransactionDocument().createDoc(_parameter, _inbound);
+                final CreatedDoc docTransactionCreate = new TransactionDocument()
+                                .createDoc(_parameter, _transactions[0]);
                 if (docTransactionCreate.getInstance().isValid()) {
                     // Sales_Document2DocumentType
                     final Insert insert = new Insert(UUID.fromString("24fe1e8e-ff25-4b1d-aed5-032278a57ded"));
-                    insert.add("DocumentLink", docTransactionCreate.getInstance().getId());
-                    insert.add("DocumentTypeLink", prodDocInst.getId());
+                    insert.add("DocumentLink", docTransactionCreate.getInstance());
+                    insert.add("DocumentTypeLink", prodDocInst);
                     insert.execute();
 
-                    final Update update1 = new Update(_inbound.getInstance());
-                    update1.add(CIProducts.TransactionAbstract.Document, docTransactionCreate.getInstance().getId());
-                    update1.executeWithoutTrigger();
-
-                    final Update update2 = new Update(_outbound.getInstance());
-                    update2.add(CIProducts.TransactionAbstract.Document, docTransactionCreate.getInstance().getId());
-                    update2.executeWithoutTrigger();
+                    if (_transactions != null && _transactions.length > 0) {
+                        for (final CreatedDoc trans : _transactions) {
+                            final Update update1 = new Update(trans.getInstance());
+                            update1.add(CIProducts.TransactionAbstract.Document, docTransactionCreate.getInstance());
+                            update1.executeWithoutTrigger();
+                        }
+                    }
                 }
             }
         }
@@ -752,28 +826,40 @@ public abstract class Transaction_Base
         throws EFapsException
     {
         final Return ret = new Return();
-        final Instance fromStorageInst = _parameter.getInstance();
-        final String quantityStr = _parameter.getParameterValue("quantity");
-        final String productId = _parameter.getParameterValue("product");
 
-        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.Inventory);
-        queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, fromStorageInst.getId());
-        queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Product, productId);
-        final MultiPrintQuery multi = queryBldr.getPrint();
-        multi.addAttribute(CIProducts.Inventory.Quantity);
-        multi.execute();
-        if (multi.next()) {
-            final BigDecimal existing = multi.<BigDecimal>getAttribute(CIProducts.Inventory.Quantity);
-            final BigDecimal check = existing.subtract(new BigDecimal(quantityStr));
-            if (check.compareTo(BigDecimal.ZERO) > -1) {
-                ret.put(ReturnValues.TRUE, true);
-            } else {
-                final StringBuilder bldr = new StringBuilder();
-                bldr.append(DBProperties.getProperty("esjp.Products_Transaction.validateMove.Text"))
-                                .append(" ").append(existing);
-                ret.put(ReturnValues.SNIPLETT, bldr.toString());
+        final StringBuilder html = new StringBuilder();
+        final Instance storageInst = _parameter.getInstance();
+        final String[] quantities = _parameter.getParameterValues("quantity");
+        final String[] products = _parameter.getParameterValues("product");
+        final String[] productAutos = _parameter.getParameterValues("productAutoComplete");
+
+        boolean check = true;
+        if (products != null && products.length > 0) {
+            for (int y = 0; y < products.length; y++) {
+                final QueryBuilder queryBldr = new QueryBuilder(CIProducts.Inventory);
+                queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, storageInst.getId());
+                queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Product, products[y]);
+                final MultiPrintQuery multi = queryBldr.getPrint();
+                multi.addAttribute(CIProducts.Inventory.Quantity);
+                multi.execute();
+                if (multi.next()) {
+                    final BigDecimal stock = multi.<BigDecimal>getAttribute(CIProducts.Inventory.Quantity);
+                    final BigDecimal newStock = stock.subtract(new BigDecimal(quantities[y]));
+                    if (newStock.compareTo(BigDecimal.ZERO) == -1) {
+                        html.append(DBProperties.getProperty("esjp.Products_Transaction.validateMove.Text"))
+                            .append(" ").append(productAutos[y]).append(": ").append(newStock).append("<br>");
+                        check = false;
+                    }
+                }
             }
         }
+
+        if (!check) {
+            ret.put(ReturnValues.SNIPLETT, html.toString());
+        } else {
+            ret.put(ReturnValues.TRUE, true);
+        }
+
         return ret;
     }
 

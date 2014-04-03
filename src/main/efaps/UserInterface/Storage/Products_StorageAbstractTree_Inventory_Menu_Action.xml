@@ -37,6 +37,7 @@
         <!-- childs -->
         <childs>
             <child>Products_StorageAbstractTree_Inventory_Menu_Action_MoveProduct</child>
+            <child>Products_StorageAbstractTree_Inventory_Menu_Action_MoveMassiveProduct</child>
             <child>Products_StorageAbstractTree_Inventory_Menu_Action_RestoreProduct</child>
         </childs>
     </definition>
