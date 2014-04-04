@@ -87,6 +87,10 @@ public abstract class Transaction_Base
      */
     public static final String REQUESTKEY = Transaction_Base.class + ".RequestKey";
 
+    /**
+     * Key used to store info during request.
+     */
+    public static final String STORAGEINSTKEY = Transaction_Base.class + ".StorageInstKey";
 
     /**
      * Method to assign the signum for the quantity value.
@@ -642,56 +646,6 @@ public abstract class Transaction_Base
     public Return moveInventory(final Parameter _parameter)
         throws EFapsException
     {
-        final Instance fromStorageInst = _parameter.getInstance();
-
-        final String quantity = _parameter.getParameterValue(CIFormProducts.Products_InventoryMoveForm.quantity.name);
-        final String prodDesc = _parameter.getParameterValue("productAutoComplete");
-        final String uomStr = _parameter.getParameterValue(CIFormProducts.Products_InventoryMoveForm.uoM.name);
-        final String toStorageId = _parameter.getParameterValue(CIFormProducts.Products_InventoryMoveForm.storage.name);
-        final String date = _parameter.getParameterValue(CIFormProducts.Products_InventoryMoveForm.date.name);
-        final String product = _parameter.getParameterValue(CIFormProducts.Products_InventoryMoveForm.product.name);
-        final String descr = _parameter.getParameterValue(CIFormProducts.Products_InventoryMoveForm.description.name);
-
-        final PrintQuery print = new PrintQuery(fromStorageInst);
-        print.addAttribute(CIProducts.StorageAbstract.Name);
-        print.execute();
-        final String fromStorage = print.<String>getAttribute(CIProducts.StorageAbstract.Name);
-
-        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.StorageAbstract);
-        queryBldr.addWhereAttrEqValue(CIProducts.StorageAbstract.ID, toStorageId);
-        final MultiPrintQuery multi = queryBldr.getPrint();
-        multi.addAttribute(CIProducts.StorageAbstract.Name);
-        multi.execute();
-        multi.next();
-        final String toStorage = multi.<String>getAttribute(CIProducts.StorageAbstract.Name);
-
-        final String desc = DBProperties.getFormatedDBProperty(Transaction.class.getName()
-                        + ".moveInventory.Description", new Object[] { descr, quantity,
-            Dimension.getUoM(Long.parseLong(uomStr)).getName(), prodDesc, fromStorage, toStorage});
-        final CreatedDoc inbound = addTransactionProduct(CIProducts.TransactionInbound,
-                        quantity, toStorageId, uomStr, date, product, desc);
-
-        final CreatedDoc outbound = addTransactionProduct(CIProducts.TransactionOutbound,
-                        quantity, fromStorageInst.getId(), uomStr, date, product, desc);
-
-        if (inbound.getInstance().isValid() && outbound.getInstance().isValid()) {
-            addTransactionDocument2ConnectTransaction(_parameter, inbound, outbound);
-        }
-
-        return new Return();
-    }
-
-    /**
-     * Method is used as the execute event on moving products from one Storage
-     * to another.
-     *
-     * @param _parameter Parameters as passed from eFaps
-     * @return Return
-     * @throws EFapsException on error
-     */
-    public Return moveMassiveInventory(final Parameter _parameter)
-        throws EFapsException
-    {
         final Instance storageFromInst = _parameter.getInstance();
         final String date = _parameter.getParameterValue(
                         CIFormProducts.Products_InventoryMoveMassiveForm.date.name);
@@ -731,14 +685,14 @@ public abstract class Transaction_Base
         if (product != null && product.length > 0) {
             for (int x = 0; x < product.length; x++) {
                 final String newDesc = DBProperties.getFormatedDBProperty(Transaction.class.getName()
-                        + ".moveMassiveInventory.Description", new Object[] { desc, quantity,
+                        + ".moveInventory.Description", new Object[] { desc, quantity[x],
                         Dimension.getUoM(Long.parseLong(uoM[x])).getName(), productDesc[x], storageFrom, storateTo });
 
                 final CreatedDoc inbound = addTransactionProduct(CIProducts.TransactionInbound,
-                                quantity, storageToId, uoM[x], date, product, newDesc);
+                                quantity[x], storageToId, uoM[x], date, product[x], newDesc);
 
                 final CreatedDoc outbound = addTransactionProduct(CIProducts.TransactionOutbound,
-                                quantity, storageFromInst.getId(), uoM[x], date, product, newDesc);
+                                quantity[x], storageFromInst.getId(), uoM[x], date, product[x], newDesc);
 
                 if (inbound.getInstance().isValid() && outbound.getInstance().isValid()) {
                     transLists.add(inbound);
@@ -747,8 +701,8 @@ public abstract class Transaction_Base
             }
         }
 
-        if (transLists.isEmpty()) {
-            addTransactionDocument2ConnectTransaction(_parameter, (CreatedDoc[]) transLists.toArray());
+        if (!transLists.isEmpty()) {
+            addTransactionDocument2ConnectTransaction(_parameter, transLists.toArray(new CreatedDoc[transLists.size()]));
         }
 
         return new Return();
@@ -796,17 +750,17 @@ public abstract class Transaction_Base
                 final CreatedDoc docTransactionCreate = new TransactionDocument()
                                 .createDoc(_parameter, _transactions[0]);
                 if (docTransactionCreate.getInstance().isValid()) {
-                    // Sales_Document2DocumentType
-                    final Insert insert = new Insert(UUID.fromString("24fe1e8e-ff25-4b1d-aed5-032278a57ded"));
+                    // Sales_Document2ProductDocumentType
+                    final Insert insert = new Insert(UUID.fromString("29438fb0-8b1f-4e4e-a409-812b2f9efdc0"));
                     insert.add("DocumentLink", docTransactionCreate.getInstance());
                     insert.add("DocumentTypeLink", prodDocInst);
                     insert.execute();
 
                     if (_transactions != null && _transactions.length > 0) {
                         for (final CreatedDoc trans : _transactions) {
-                            final Update update1 = new Update(trans.getInstance());
-                            update1.add(CIProducts.TransactionAbstract.Document, docTransactionCreate.getInstance());
-                            update1.executeWithoutTrigger();
+                            final Update update = new Update(trans.getInstance());
+                            update.add(CIProducts.TransactionAbstract.Document, docTransactionCreate.getInstance());
+                            update.executeWithoutTrigger();
                         }
                     }
                 }
@@ -834,6 +788,7 @@ public abstract class Transaction_Base
         final String[] productAutos = _parameter.getParameterValues("productAutoComplete");
 
         boolean check = true;
+        boolean heading = false;
         if (products != null && products.length > 0) {
             for (int y = 0; y < products.length; y++) {
                 final QueryBuilder queryBldr = new QueryBuilder(CIProducts.Inventory);
@@ -842,12 +797,20 @@ public abstract class Transaction_Base
                 final MultiPrintQuery multi = queryBldr.getPrint();
                 multi.addAttribute(CIProducts.Inventory.Quantity);
                 multi.execute();
+
                 if (multi.next()) {
                     final BigDecimal stock = multi.<BigDecimal>getAttribute(CIProducts.Inventory.Quantity);
                     final BigDecimal newStock = stock.subtract(new BigDecimal(quantities[y]));
                     if (newStock.compareTo(BigDecimal.ZERO) == -1) {
-                        html.append(DBProperties.getProperty("esjp.Products_Transaction.validateMove.Text"))
-                            .append(" ").append(productAutos[y]).append(": ").append(newStock).append("<br>");
+                        if (!heading) {
+                            html.append(DBProperties.getProperty("esjp.Products_Transaction.validateMove.Text"))
+                                .append("<br>");
+                            heading = true;
+                        }
+                        html.append(DBProperties.getProperty("esjp.Products_Transaction.validateMove.Prod"))
+                            .append(" ").append(productAutos[y]).append(" - ")
+                            .append(DBProperties.getProperty("esjp.Products_Transaction.validateMove.Stock"))
+                            .append(stock).append("<br>");
                         check = false;
                     }
                 }
@@ -1216,6 +1179,16 @@ public abstract class Transaction_Base
             final Delete delete = new Delete(query.getCurrentValue());
             delete.execute();
         }
+    }
+
+    public Return setDefaultStorageInst(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Instance instance = _parameter.getCallInstance();
+        if (instance != null && instance.isValid()) {
+            Context.getThreadContext().setSessionAttribute(Transaction_Base.STORAGEINSTKEY, instance);
+        }
+        return new Return();
     }
 
     public static class TransDateProd

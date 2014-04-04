@@ -58,6 +58,7 @@ import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
 import org.efaps.db.AttributeQuery;
+import org.efaps.db.Context;
 import org.efaps.db.Insert;
 import org.efaps.db.Instance;
 import org.efaps.db.InstanceQuery;
@@ -396,6 +397,18 @@ public abstract class Product_Base
         }
         ret.put(ReturnValues.SNIPLETT, js.toString());
         return ret;
+    }
+
+    public Return autoComplete4MassiveProductsInStorage(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Instance storage = (Instance) Context.getThreadContext()
+                        .getSessionAttribute(Transaction_Base.STORAGEINSTKEY);
+        final Instance instance = _parameter.getInstance();
+        if ((storage != null && storage.isValid()) && instance == null) {
+            _parameter.put(ParameterValues.INSTANCE, storage);
+        }
+        return autoComplete4ProductsInStorage(_parameter);
     }
 
     /**

@@ -36,12 +36,17 @@
         <field name="product">
             <property name="ModeCreate">EDITABLE</property>
             <property name="Label">Products_TransactionAbstract/Product.Label</property>
-            <trigger program="org.efaps.esjp.products.Product" method="autoComplete4Product"
+            <trigger program="org.efaps.esjp.products.Product" method="autoComplete4MassiveProductsInStorage"
                 name="Products_InventoryMoveMassiveTable.product.UI_FIELD_AUTOCOMPLETE" event="UI_FIELD_AUTOCOMPLETE" />
         </field>
         <field name="uoM">
             <property name="ModeCreate">EDITABLE</property>
             <property name="Label">Products_TransactionAbstract/UoM.Label</property>
+        </field>
+        <field name="storage">
+            <property name="ModeCreate">HIDDEN</property>
+            <trigger program="org.efaps.esjp.products.Transaction" method="setDefaultStorageInst"
+                name="Products_InventoryMoveMassiveTable.storage.UI_FIELD_VALUE" event="UI_FIELD_VALUE" />
         </field>
     </definition>
 </ui-table>
