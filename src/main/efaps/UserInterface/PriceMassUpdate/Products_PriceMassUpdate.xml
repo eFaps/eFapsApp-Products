@@ -42,7 +42,7 @@
                  name="Products_PriceMassUpdate.UI_ACCESSCHECK"
                  event="UI_ACCESSCHECK">
                 <property name="SystemConfig">Products-Configuration</property>
-                <property name="Attribute">Activate_PriceMassUpdate</property>
+                <property name="Attribute">org.efaps.products.ActivatePriceMassUpdate</property>
             </trigger>
         </target>
 
