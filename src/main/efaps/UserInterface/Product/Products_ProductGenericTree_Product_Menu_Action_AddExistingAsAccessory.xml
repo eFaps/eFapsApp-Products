@@ -41,6 +41,7 @@
                 <property name="ConnectChildAttribute">ToLink</property>
                 <property name="ConnectParentAttribute">FromLink</property>
                 <property name="ConnectType">Products_ProductGeneric2Product</property>
+                <property name="AllowMultiple">false</property>
             </execute>
         </target>
         <!-- properties -->
