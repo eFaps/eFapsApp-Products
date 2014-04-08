@@ -43,7 +43,7 @@
             <property name="ModeEdit">EDITABLE</property>
         </field>
          <field name="image">
-            <property name="Label">Products_ProductForm.image.Label</property>
+            <property name="Label">Products_ProductNonStockForm.image.Label</property>
             <property name="ModeEdit">NONE</property>
             <property name="RowSpan">5</property>
             <trigger program="org.efaps.esjp.products.Image"
@@ -56,7 +56,7 @@
             </trigger>
             <trigger program="org.efaps.esjp.products.Image"
                 method="access4Image"
-                name="Products_ProductForm.image.UI_ACCESSCHECK"
+                name="Products_ProductNonStockForm.image.UI_ACCESSCHECK"
                 event="UI_ACCESSCHECK"/>
         </field>
         <field name="name">
@@ -75,15 +75,37 @@
             <property name="Attribute">Description</property>
             <property name="Required">true</property>
         </field>
-        <field name="dimension">
+         <field name="dimension">
             <property name="Attribute">Dimension</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+            <trigger program="org.efaps.esjp.products.Product"
+                method="updateFields4Dimension"
+                name="Products_ProductNonStockForm.defaultUoM4Create.UI_FIELD_UPDATE"
+                event="UI_FIELD_UPDATE" />
+        </field>
+        <field name="defaultUoM">
+            <property name="Attribute">DefaultUoM</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ModeView">NONE</property>
+            <property name="Required">true</property>
+            <trigger program="org.efaps.esjp.products.Product"
+                method="defaultUoMFieldValue"
+                name="Products_ProductNonStockForm.defaultUoM4Create.UI_FIELD_VALUE"
+                event="UI_FIELD_VALUE" />
+        </field>
+        <field name="defaultUoM4View">
+            <property name="Select">linkto[DefaultUoM].attribute[Name]</property>
+            <property name="ModeEdit">NONE</property>
+            <property name="ModeView">READONLY</property>
+            <property name="Required">true</property>
         </field>
         <field name="active">
             <property name="Attribute">Active</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+            <property name="Required">true</property>
         </field>
         <field name="createGroup" character="Group">
             <property name="GroupCount">2</property>
@@ -133,7 +155,7 @@
             <property name="ModeEdit">EDITABLE</property>
         </field>
          <field name="image">
-            <property name="Label">Products_ProductForm.image.Label</property>
+            <property name="Label">Products_ProductNonStockForm.image.Label</property>
             <property name="RowSpan">5</property>
             <trigger program="org.efaps.esjp.products.Image"
                 method="getImageFieldValueUI"
@@ -145,7 +167,7 @@
             </trigger>
             <trigger program="org.efaps.esjp.products.Image"
                 method="access4Image"
-                name="Products_ProductForm.image.UI_ACCESSCHECK"
+                name="Products_ProductNonStockForm.image.UI_ACCESSCHECK"
                 event="UI_ACCESSCHECK"/>
         </field>
         <field name="name">
@@ -164,15 +186,37 @@
             <property name="Attribute">Description</property>
             <property name="Required">true</property>
         </field>
-        <field name="dimension">
+         <field name="dimension">
             <property name="Attribute">Dimension</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+            <trigger program="org.efaps.esjp.products.Product"
+                method="updateFields4Dimension"
+                name="Products_ProductNonStockForm.defaultUoM4Create.UI_FIELD_UPDATE"
+                event="UI_FIELD_UPDATE" />
+        </field>
+        <field name="defaultUoM">
+            <property name="Attribute">DefaultUoM</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ModeView">NONE</property>
+            <property name="Required">true</property>
+            <trigger program="org.efaps.esjp.products.Product"
+                method="defaultUoMFieldValue"
+                name="Products_ProductNonStockForm.defaultUoM4Create.UI_FIELD_VALUE"
+                event="UI_FIELD_VALUE" />
+        </field>
+        <field name="defaultUoM4View">
+            <property name="Select">linkto[DefaultUoM].attribute[Name]</property>
+            <property name="ModeEdit">NONE</property>
+            <property name="ModeView">READONLY</property>
+            <property name="Required">true</property>
         </field>
         <field name="active">
             <property name="Attribute">Active</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+            <property name="Required">true</property>
         </field>
         <field name="salesUnit">
             <property name="Attribute">SalesUnit</property>
@@ -239,7 +283,7 @@
             <property name="ModeEdit">EDITABLE</property>
         </field>
          <field name="image">
-            <property name="Label">Products_ProductForm.image.Label</property>
+            <property name="Label">Products_ProductNonStockForm.image.Label</property>
             <property name="RowSpan">5</property>
             <trigger program="org.efaps.esjp.products.Image"
                 method="getImageFieldValueUI"
@@ -251,7 +295,7 @@
             </trigger>
             <trigger program="org.efaps.esjp.products.Image"
                 method="access4Image"
-                name="Products_ProductForm.image.UI_ACCESSCHECK"
+                name="Products_ProductNonStockForm.image.UI_ACCESSCHECK"
                 event="UI_ACCESSCHECK"/>
         </field>
         <field name="name">
@@ -270,15 +314,37 @@
             <property name="Attribute">Description</property>
             <property name="Required">true</property>
         </field>
-        <field name="dimension">
+         <field name="dimension">
             <property name="Attribute">Dimension</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+            <trigger program="org.efaps.esjp.products.Product"
+                method="updateFields4Dimension"
+                name="Products_ProductNonStockForm.defaultUoM4Create.UI_FIELD_UPDATE"
+                event="UI_FIELD_UPDATE" />
+        </field>
+        <field name="defaultUoM">
+            <property name="Attribute">DefaultUoM</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ModeView">NONE</property>
+            <property name="Required">true</property>
+            <trigger program="org.efaps.esjp.products.Product"
+                method="defaultUoMFieldValue"
+                name="Products_ProductNonStockForm.defaultUoM4Create.UI_FIELD_VALUE"
+                event="UI_FIELD_VALUE" />
+        </field>
+        <field name="defaultUoM4View">
+            <property name="Select">linkto[DefaultUoM].attribute[Name]</property>
+            <property name="ModeEdit">NONE</property>
+            <property name="ModeView">READONLY</property>
+            <property name="Required">true</property>
         </field>
         <field name="active">
             <property name="Attribute">Active</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+            <property name="Required">true</property>
         </field>
         <field name="salesUnit">
             <property name="Attribute">SalesUnit</property>
@@ -314,10 +380,10 @@
             <property name="ModeCreate">READONLY</property>
             <property name="ModeView">NONE</property>
             <property name="ModeEdit">NONE</property>
-            <property name="Label">Products_ProductForm.createUUID.Label</property>
+            <property name="Label">Products_ProductNonStockForm.createUUID.Label</property>
             <property name="CmdIcon">ACCEPT</property>
             <trigger program="org.efaps.esjp.common.uiform.Field"
-                name="Products_ProductForm.createUUID.UI_FIELD_CMD"
+                name="Products_ProductNonStockForm.createUUID.UI_FIELD_CMD"
                 event="UI_FIELD_CMD"
                 method="createUUID">
                 <property name="TargetField">uUID</property>
