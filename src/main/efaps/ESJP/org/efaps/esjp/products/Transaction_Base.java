@@ -326,7 +326,7 @@ public abstract class Transaction_Base
     public Return inboundTrigger(final Parameter _parameter)
         throws EFapsException
     {
-        addRemoveFromInventory(_parameter, true, "Quantity");
+        addRemoveFromInventory(_parameter);
         setPositionNumber(_parameter);
         return new Return();
     }
@@ -378,7 +378,7 @@ public abstract class Transaction_Base
     public Return outboundTrigger(final Parameter _parameter)
         throws EFapsException
     {
-        addRemoveFromInventory(_parameter, false, "Quantity");
+        addRemoveFromInventory(_parameter);
         setPositionNumber(_parameter);
         return new Return();
     }
@@ -567,71 +567,87 @@ public abstract class Transaction_Base
      * @param _add if true the quantity will be added else subtracted
      * @throws EFapsException on error
      */
-    protected void addRemoveFromInventory(final Parameter _parameter,
-                                          final boolean _add,
-                                          final String _attribute)
+    protected void addRemoveFromInventory(final Parameter _parameter)
         throws EFapsException
     {
         final Instance instance = _parameter.getInstance();
         // get the transaction
-        final PrintQuery query = new PrintQuery(instance);
-        query.addAttribute(CIProducts.TransactionAbstract.Storage, CIProducts.TransactionAbstract.Product,
+        final PrintQuery print = new PrintQuery(instance);
+        print.addAttribute(CIProducts.TransactionAbstract.Storage, CIProducts.TransactionAbstract.Product,
                         CIProducts.TransactionAbstract.UoM, CIProducts.TransactionAbstract.Quantity);
-        BigDecimal value = null;
-        Long storage = null;
-        Long product = null;
-        Long uomId = null;
-        if (query.execute()) {
-            value = (BigDecimal) query.getAttribute(CIProducts.TransactionAbstract.Quantity);
-            storage = (Long) query.getAttribute(CIProducts.TransactionAbstract.Storage);
-            product = (Long) query.getAttribute( CIProducts.TransactionAbstract.Product);
-            uomId = (Long) query.getAttribute(CIProducts.TransactionAbstract.UoM);
-        }
-        final UoM uom = Dimension.getUoM(uomId);
-        value = value.multiply(new BigDecimal(uom.getNumerator())).divide(new BigDecimal(uom.getDenominator()),
-                        BigDecimal.ROUND_HALF_UP);
 
-        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.Inventory);
-        queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, storage);
-        queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Product, product);
-        final MultiPrintQuery multi = queryBldr.getPrint();
-        multi.addAttribute(CIProducts.Inventory.Quantity, CIProducts.Inventory.Reserved);
-        multi.execute();
+        if (print.execute()) {
+            BigDecimal transQuantity = print.<BigDecimal>getAttribute(CIProducts.TransactionAbstract.Quantity);
+            final Long storage = print.<Long>getAttribute(CIProducts.TransactionAbstract.Storage);
+            final Long product = print.<Long>getAttribute( CIProducts.TransactionAbstract.Product);
+            final Long uomId = print.<Long>getAttribute(CIProducts.TransactionAbstract.UoM);
 
-        Update update;
-        BigDecimal value2 = null;
-        if (multi.next()) {
-            update = new Update(multi.getCurrentInstance());
-            final BigDecimal current = multi.<BigDecimal>getAttribute(_attribute);
-            if (_add) {
-                value = current.add(value);
+            final UoM uom = Dimension.getUoM(uomId);
+            transQuantity = transQuantity.multiply(new BigDecimal(uom.getNumerator())).divide(
+                            new BigDecimal(uom.getDenominator()), BigDecimal.ROUND_HALF_UP);
+
+
+            CIType inventory;
+            if (instance.getType().isKindOf(CIProducts.TransactionIndividualInbound.getType())
+                             || instance.getType().isKindOf(CIProducts.TransactionIndividualOutbound.getType())) {
+                inventory = CIProducts.InventoryIndividual;
             } else {
-                value = current.subtract(value);
-                if ("Quantity".equals(_attribute)) {
-                    value2 = multi.<BigDecimal>getAttribute(CIProducts.Inventory.Reserved);
-                } else {
-                    value2 = multi.<BigDecimal>getAttribute(CIProducts.Inventory.Quantity);
-                }
-                if (value2 == null) {
-                    value2 = BigDecimal.ZERO;
-                }
+                inventory = CIProducts.Inventory;
             }
-        } else {
-            update = new Insert(CIProducts.Inventory);
-            update.add(CIProducts.Inventory.UoM, uom.getDimension().getBaseUoM().getId());
-            update.add(CIProducts.Inventory.Storage, storage);
-            update.add(CIProducts.Inventory.Product, product);
-            if (!"Quantity".equals(_attribute)) {
-                update.add(CIProducts.Inventory.Quantity, 0);
-            }
-        }
 
-        if (!_add && value.compareTo(BigDecimal.ZERO) < 1 && value2.compareTo(BigDecimal.ZERO) < 1) {
-            final Delete del = new Delete(update.getInstance());
-            del.execute();
-        } else {
-            update.add(_attribute, value);
-            update.execute();
+            final QueryBuilder queryBldr = new QueryBuilder(inventory);
+            queryBldr.addWhereAttrEqValue(CIProducts.InventoryAbstract.Storage, storage);
+            queryBldr.addWhereAttrEqValue(CIProducts.InventoryAbstract.Product, product);
+            final MultiPrintQuery multi = queryBldr.getPrint();
+            multi.addAttribute(CIProducts.InventoryAbstract.Quantity,
+                               CIProducts.InventoryAbstract.Reserved);
+            multi.executeWithoutAccessCheck();
+
+            BigDecimal reserved = BigDecimal.ZERO;
+            BigDecimal quantity = BigDecimal.ZERO;
+            BigDecimal currentReserved = BigDecimal.ZERO;
+            BigDecimal currentQuantity = BigDecimal.ZERO;
+            Update update;
+            if (multi.next()) {
+                update = new Update(multi.getCurrentInstance());
+                currentReserved = multi.<BigDecimal>getAttribute(CIProducts.InventoryAbstract.Reserved);
+                currentQuantity = multi.<BigDecimal>getAttribute(CIProducts.InventoryAbstract.Quantity);
+            } else {
+                update = new Insert(inventory);
+                update.add(CIProducts.InventoryAbstract.UoM, uom.getDimension().getBaseUoM().getId());
+                update.add(CIProducts.InventoryAbstract.Storage, storage);
+                update.add(CIProducts.InventoryAbstract.Product, product);
+            }
+            if (instance.getType().isKindOf(CIProducts.TransactionInbound.getType())) {
+                quantity = currentQuantity.add(transQuantity);
+                reserved = currentReserved;
+            } else if (instance.getType().isKindOf(CIProducts.TransactionOutbound.getType())) {
+                quantity = currentQuantity.subtract(transQuantity);
+                reserved = currentReserved;
+            } else if (instance.getType().isKindOf(CIProducts.TransactionReservationInbound.getType())) {
+                quantity = currentQuantity.subtract(transQuantity);
+                reserved = currentReserved.add(transQuantity);
+            } else if (instance.getType().isKindOf(CIProducts.TransactionReservationOutbound.getType())) {
+                quantity = currentQuantity.add(transQuantity);
+                reserved = currentReserved.subtract(transQuantity);
+            } else if (instance.getType().isKindOf(CIProducts.TransactionIndividualInbound.getType())) {
+                quantity = currentQuantity.add(transQuantity);
+                reserved = currentReserved;
+            } else if (instance.getType().isKindOf(CIProducts.TransactionIndividualOutbound.getType())) {
+                quantity = currentQuantity.subtract(transQuantity);
+                reserved = currentReserved;
+            }
+
+            update.add(CIProducts.InventoryAbstract.Quantity, quantity);
+            update.add(CIProducts.InventoryAbstract.Reserved, reserved);
+
+            if (update.getInstance() != null && update.getInstance().isValid()
+                            && quantity.compareTo(BigDecimal.ZERO) < 1 && reserved.compareTo(BigDecimal.ZERO) < 1) {
+                final Delete del = new Delete(update.getInstance());
+                del.executeWithoutAccessCheck();
+            } else {
+                update.executeWithoutAccessCheck();;
+            }
         }
     }
 
@@ -837,8 +853,7 @@ public abstract class Transaction_Base
     public Return reservationOutboundTrigger(final Parameter _parameter)
         throws EFapsException
     {
-        addRemoveFromInventory(_parameter, false, "Reserved");
-        addRemoveFromInventory(_parameter, true, "Quantity");
+        addRemoveFromInventory(_parameter);
         return new Return();
     }
 
@@ -853,8 +868,37 @@ public abstract class Transaction_Base
     public Return reservationInboundTrigger(final Parameter _parameter)
         throws EFapsException
     {
-        addRemoveFromInventory(_parameter, true, "Reserved");
-        addRemoveFromInventory(_parameter, false, "Quantity");
+        addRemoveFromInventory(_parameter);
+        return new Return();
+    }
+
+    /**
+     * Method is executed as trigger after the insert of an
+     * Products_TransactionReservactionOutbound.
+     *
+     * @param _parameter Parameters as passed from eFaps
+     * @return Return
+     * @throws EFapsException on error
+     */
+    public Return individualOutboundTrigger(final Parameter _parameter)
+        throws EFapsException
+    {
+        addRemoveFromInventory(_parameter);
+        return new Return();
+    }
+
+    /**
+     * Method is executed as trigger after the insert of an
+     * Products_TransactionReservactionInbound.
+     *
+     * @param _parameter Parameters as passed from eFaps
+     * @return Return
+     * @throws EFapsException on error
+     */
+    public Return individualInboundTrigger(final Parameter _parameter)
+        throws EFapsException
+    {
+        addRemoveFromInventory(_parameter);
         return new Return();
     }
 

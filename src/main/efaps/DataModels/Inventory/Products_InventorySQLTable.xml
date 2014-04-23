@@ -23,30 +23,28 @@
 
 -->
 
-<datamodel-sqltable  xmlns="http://www.efaps.org/xsd"
-                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-  <uuid>64b9af39-706d-429e-bbd4-703920f9f133</uuid>
-  <file-application>eFapsApp-Products</file-application>
-  <file-revision>$Rev$</file-revision>
-
-  <definition>
-    <version-expression>(version==latest)</version-expression>
-    <name>Products_InventorySQLTable</name>
-    <database>
-      <table-name>T_PRODINVENTORY</table-name>
-      <!-- columns -->
-      <column name="COMPANYID"    type="INTEGER"    not-null="true"/>
-      <column name="QUANTITY"     type="DECIMAL"    not-null="true"   length="15" scale="4"/>
-      <column name="RESERVED"     type="DECIMAL"                      length="15" scale="4"/>
-      <column name="PRODUCTID"    type="INTEGER"    not-null="true"/>
-      <column name="STORAGEID"    type="INTEGER"    not-null="true"/>
-      <column name="UOMID"        type="INTEGER"    not-null="true"/>
-      <foreign name="T_PRODINVENTORY_FK_COMPANYID" key="COMPANYID" reference="T_USERABSTRACT(ID)"/>
-      <foreign name="T_PRODINVENTORY_FK_PRODUCTID" key="PRODUCTID" reference="T_PRODPRODUCT(ID)"/>
-      <foreign name="T_PRODINVENTORY_FK_STORAGEID" key="STORAGEID" reference="T_PRODSTORAGE(ID)"/>
-      <foreign name="T_PRODINVENTORY_FK_UOMID"     key="UOMID"     reference="T_DMUOM(ID)"/>
-    </database>
-  </definition>
-
+<datamodel-sqltable xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>64b9af39-706d-429e-bbd4-703920f9f133</uuid>
+    <file-application>eFapsApp-Products</file-application>
+    <file-revision>$Rev$</file-revision>
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <name>Products_InventorySQLTable</name>
+        <typeid-column>TYPEID</typeid-column>
+        <database>
+            <table-name>T_PRODINVENTORY</table-name>
+            <column name="TYPEID"       type="INTEGER"    not-null="true" />
+            <column name="COMPANYID"    type="INTEGER"    not-null="true"/>
+            <column name="QUANTITY"     type="DECIMAL"    not-null="true"   length="15" scale="4"/>
+            <column name="RESERVED"     type="DECIMAL"                      length="15" scale="4"/>
+            <column name="PRODUCTID"    type="INTEGER"    not-null="true"/>
+            <column name="STORAGEID"    type="INTEGER"    not-null="true"/>
+            <column name="UOMID"        type="INTEGER"    not-null="true"/>
+            <foreign name="T_PRODINVENTORY_FK_COMPANYID" key="COMPANYID" reference="T_USERABSTRACT(ID)"/>
+            <foreign name="T_PRODINVENTORY_FK_PRODUCTID" key="PRODUCTID" reference="T_PRODPRODUCT(ID)"/>
+            <foreign name="T_PRODINVENTORY_FK_STORAGEID" key="STORAGEID" reference="T_PRODSTORAGE(ID)"/>
+            <foreign name="T_PRODINVENTORY_FK_UOMID"     key="UOMID"     reference="T_DMUOM(ID)"/>
+        </database>
+    </definition>
 </datamodel-sqltable>

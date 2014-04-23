@@ -23,6 +23,7 @@ package org.efaps.esjp.products.util;
 import java.util.UUID;
 
 import org.efaps.admin.common.SystemConfiguration;
+import org.efaps.admin.datamodel.IEnum;
 import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.util.cache.CacheReloadException;
@@ -42,6 +43,18 @@ public final class Products
      */
     private Products()
     {
+    }
+
+    public enum ProductIndividual
+        implements IEnum
+    {
+        NONE, INDIVIDUAL, BATCH;
+
+        @Override
+        public int getInt()
+        {
+            return ordinal();
+        }
     }
 
     /**

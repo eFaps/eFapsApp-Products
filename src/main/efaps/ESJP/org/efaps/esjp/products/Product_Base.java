@@ -221,7 +221,7 @@ public abstract class Product_Base
             final Map<String, Object> map = new HashMap<String, Object>();
             map.put("Name", name);
             final Instance uniqueInst = cloneProduct(_parameter, instance,
-                            CIProducts.ProductUnique.getType(), map, true);
+                            CIProducts.ProductIndividual.getType(), map, true);
 
             final PrintQuery print = new PrintQuery(uniqueInst);
             print.addAttribute("Dimension");

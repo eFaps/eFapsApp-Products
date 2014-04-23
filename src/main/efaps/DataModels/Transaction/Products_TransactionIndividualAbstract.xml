@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
  Copyright 2003 - 2010 The eFaps Team
 
@@ -22,16 +20,15 @@
  Last Changed By: $Author$
 
 -->
-
-<datamodel-type  xmlns="http://www.efaps.org/xsd"
-                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                 xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>de159d46-cafd-48b9-9113-bb40ce7ef1ee</uuid>
+<datamodel-type xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>3759a41b-7d3b-44d2-ac0f-ede688e7c4aa</uuid>
     <file-application>eFapsApp-Products</file-application>
     <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_Inventory</name>
-        <parent>Products_InventoryAbstract</parent>
+        <name>Products_TransactionIndividualAbstract</name>
+        <parent>Products_TransactionAbstract</parent>
+        <purpose abstract="true" />
     </definition>
 </datamodel-type>

@@ -1,8 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
-<!--
-
- Copyright 2003 - 2010 The eFaps Team
+ Copyright 2003 - 2009 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -22,16 +20,20 @@
  Last Changed By: $Author$
 
 -->
-
-<datamodel-type  xmlns="http://www.efaps.org/xsd"
-                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                 xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>de159d46-cafd-48b9-9113-bb40ce7ef1ee</uuid>
+<datamodel-type xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>5bdbe9ec-3cd8-436c-978b-afb8aed4056d</uuid>
     <file-application>eFapsApp-Products</file-application>
     <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_Inventory</name>
-        <parent>Products_InventoryAbstract</parent>
+        <name>Products_TransactionIndividualOutbound</name>
+        <parent>Products_TransactionIndividualAbstract</parent>
+        <trigger event="INSERT_POST" method="individualOutboundTrigger"
+            name="Products_TransactionIndividualOutbound.INSERT_POST"
+            program="org.efaps.esjp.products.Transaction" />
+        <trigger event="ACCESSCHECK"
+            name="Products_TransactionIndividualOutbound.ACCESSCHECK"
+            program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType" />
     </definition>
 </datamodel-type>

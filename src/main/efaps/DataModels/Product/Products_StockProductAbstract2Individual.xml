@@ -20,17 +20,28 @@
  Last Changed By: $Author$
 
 -->
-<datamodel-type xmlns="http://www.efaps.org/xsd"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<datamodel-type xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>d9c497fb-8d44-4cfe-8444-d8902a858262</uuid>
+    <uuid>2c27ee9f-2b8f-41df-ac0a-931d433404bc</uuid>
     <file-application>eFapsApp-Products</file-application>
     <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductBatch</name>
-        <parent>Products_ProductIndividualAbstract</parent>
-        <trigger event="ACCESSCHECK" name="Products_ProductUnique.ACCESSCHECK"
-            program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType" />
+        <name>Products_StockProductAbstract2Individual</name>
+        <parent>Products_Product2ProductAbstract</parent>
+        <attribute>
+            <name>FromLink</name>
+            <type>Link</type>
+            <typelink>Products_StockProductAbstract</typelink>
+            <sqltable>Products_Product2ProductAbstractSQLTable</sqltable>
+            <sqlcolumn>FROMID</sqlcolumn>
+        </attribute>
+        <attribute>
+            <name>ToLink</name>
+            <type>Link</type>
+            <typelink>Products_ProductIndividual</typelink>
+            <sqltable>Products_Product2ProductAbstractSQLTable</sqltable>
+            <sqlcolumn>TOID</sqlcolumn>
+        </attribute>
     </definition>
 </datamodel-type>
