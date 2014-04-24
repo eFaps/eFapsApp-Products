@@ -47,21 +47,9 @@
             <property name="Label">Products_Inventory/Product.Label</property>
             <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
         </field>
-        <field name="productdesc">
-            <property name="SelectAlternateOID">linkto[Product].oid</property>
+       <field name="productdesc">
             <property name="Select">linkto[Product].attribute[Description]</property>
             <property name="Label">Products_Inventory/Description.Label</property>
-            <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
-        </field>
-        <field name="productOrig">
-            <property name="SelectAlternateOID">linkto[Product].linkfrom[Products_StockProductAbstract2Batch#ToLink].linkto[FromLink].oid</property>
-            <property name="Select">linkto[Product].linkfrom[Products_StockProductAbstract2Batch#ToLink].linkto[FromLink].attribute[Name].attribute[Name]</property>
-            <property name="Label">Products_Inventory/Product.Label</property>
-            <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
-            <trigger event="UI_ACCESSCHECK" method="configCheck" name="Products_InventoryTable.productOrig.UI_ACCESSCHECK" program="org.efaps.esjp.admin.access.AccessOnField">
-                <property name="SystemConfig">Products-Configuration</property>
-                <property name="Attribute">org.efaps.products.ActivateBatch</property>
-             </trigger>
         </field>
         <field name="storage">
             <property name="SelectAlternateOID">linkto[Storage].oid</property>

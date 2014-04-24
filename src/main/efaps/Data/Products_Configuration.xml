@@ -55,10 +55,5 @@ Thumbnail_Enlarge=false
             <value>false</value>
             <description>Boolean(true/false). Activate the menu for updating Product Prices on mass.</description>
         </attribute>
-        <attribute>
-            <key>org.efaps.products.ActivateBatch</key>
-            <value>false</value>
-            <description>Boolean(true/false). Activate Batch Product</description>
-        </attribute>
     </definition>
 </common-systemconfiguration>

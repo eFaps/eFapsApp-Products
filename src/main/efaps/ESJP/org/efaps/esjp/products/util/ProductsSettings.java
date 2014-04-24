@@ -54,12 +54,6 @@ public interface ProductsSettings
     String ACTIVATEPRICEMASSUPDATE = "org.efaps.products.ActivatePriceMassUpdate";
 
     /**
-     * Boolean(true/false).<br/>
-     * Activate the menu for updating Product Prices on mass.
-     */
-    String ACTIVATEBATCH = "org.efaps.products.ActivateBatch";
-
-    /**
      * Link to a default warehouse instance
      */
     String DEFAULTWAREHOUSE = "org.efaps.products.DefaultWareHouse";
@@ -73,4 +67,11 @@ public interface ProductsSettings
      * Link to a default warehouse instance
      */
     String DEFAULTDIMENSION = "org.efaps.products.DefaultDimension";
+
+    /**
+     * Boolean(true/false).<br/>
+     * Activate the individual management menu.
+     */
+    String ACTIVATEINDIVIDUAL = "org.efaps.products.ActivateIndividual";
+
 }

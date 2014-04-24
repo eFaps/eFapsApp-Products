@@ -28,7 +28,7 @@
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_StockProductAbstract2Individual</name>
-        <parent>Products_Product2ProductAbstract</parent>
+        <parent>Products_StockProductAbstract2IndividualAbstract</parent>
         <attribute>
             <name>FromLink</name>
             <type>Link</type>

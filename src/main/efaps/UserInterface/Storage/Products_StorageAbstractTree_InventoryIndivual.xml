@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
   Copyright 2003 - 2014 The eFaps Team
 
@@ -22,23 +20,28 @@
   Last Changed By: $Author$
 
 -->
-
-<ui-menu xmlns="http://www.efaps.org/xsd"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>9fe47016-49ef-4ebc-a59a-b8b4be67edb4</uuid>
+<ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>e68eba18-0235-4a06-82cc-8acd787d6ea9</uuid>
     <file-application>eFapsApp-Products</file-application>
     <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_StorageAbstractTree_Inventory</name>
+        <name>Products_StorageAbstractTree_InventoryIndivual</name>
         <target>
-            <menu>Products_StorageAbstractTree_Inventory_Menu</menu>
-            <table>Products_InventoryTable</table>
+            <table>Products_InventoryIndividualTable</table>
             <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
-                <property name="Type">Products_Inventory</property>
-                <property name="LinkFrom">Storage</property>
+                <property name="Type">Products_InventoryIndividual</property>
+                <property name="LinkFroms">Storage</property>
             </evaluate>
+            <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                method="configCheck"
+                name="Products_StorageAbstractTree_InventoryIndivual.UI_ACCESSCHECK"
+                event="UI_ACCESSCHECK">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.ActivateIndividual</property>
+            </trigger>
         </target>
         <property name="Target">content</property>
         <property name="TargetMode">view</property>

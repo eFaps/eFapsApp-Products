@@ -30,7 +30,7 @@
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_StockProductAbstract2Batch</name>
-        <parent>Products_Product2ProductAbstract</parent>
+        <parent>Products_StockProductAbstract2IndividualAbstract</parent>
 
         <!-- attributes -->
         <attribute>

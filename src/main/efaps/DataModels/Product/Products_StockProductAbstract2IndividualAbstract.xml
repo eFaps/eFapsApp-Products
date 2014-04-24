@@ -1,8 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
-<!--
-
- Copyright 2003 - 2009 The eFaps Team
+ Copyright 2003 - 2013 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -22,24 +20,15 @@
  Last Changed By: $Author$
 
 -->
-
-<ui-menu xmlns="http://www.efaps.org/xsd"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>246542fc-173b-48ec-8cc4-9b635920dc9a</uuid>
+<datamodel-type xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>879ea528-7dd4-4a4d-9e2b-91551dcdfe17</uuid>
     <file-application>eFapsApp-Products</file-application>
     <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_Product_MyDesk</name>
-        <childs>
-            <child>Products_ProductInStockMyDesk</child>
-            <child>Products_InventoryMyDesk</child>
-            <child>Products_InventoryValueMyDesk</child>
-            <child>Products_InventoryIndividualMyDesk</child>
-            <child>Products_StorageAbstractMyDesk</child>
-            <child>Products_StaticStorageMyDesk</child>
-            <child>Products_TransactionAbstractMyDesk</child>
-        </childs>
+        <name>Products_StockProductAbstract2IndividualAbstract</name>
+        <parent>Products_Product2ProductAbstract</parent>
+        <purpose abstract="true"/>
     </definition>
-</ui-menu>
+</datamodel-type>
