@@ -29,7 +29,7 @@
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductIndividualTree</name>
         <target>
-            <menu>Products_ProductTree_Menu</menu>
+            <menu>Products_ProductIndividualTree_Menu</menu>
             <form>Products_ProductIndividualForm</form>
             <help>org.efaps.wiki.products.Showproducts.wiki</help>
         </target>
