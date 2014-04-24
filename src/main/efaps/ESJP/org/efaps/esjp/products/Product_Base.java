@@ -88,6 +88,11 @@ import org.joda.time.DateTime;
 @EFapsRevision("$Rev$")
 public abstract class Product_Base
 {
+    /**
+     * CacheKey for ExchangeRates.
+     */
+    public static String CACHEKEY4PRODUCT = Product.class.getName()+ ".CacheKey4Product";
+
 
     /**
      * @param _parameter _parameter
@@ -277,7 +282,7 @@ public abstract class Product_Base
             }
             queryBldr.addWhereAttrEqValue(CIProducts.ProductAbstract.Active, true);
             additionalQueryBuilder(_parameter, queryBldr);
-            final MultiPrintQuery multi = queryBldr.getPrint();
+            final MultiPrintQuery multi = queryBldr.getCachedPrint(Product_Base.CACHEKEY4PRODUCT);
             multi.addAttribute(CIProducts.ProductAbstract.OID, CIProducts.ProductAbstract.Name,
                             CIProducts.ProductAbstract.Description, CIProducts.ProductAbstract.Dimension);
             multi.execute();
@@ -291,7 +296,6 @@ public abstract class Product_Base
                 map.put(EFapsKey.AUTOCOMPLETE_KEY.getKey(), oid);
                 map.put(EFapsKey.AUTOCOMPLETE_VALUE.getKey(), name);
                 map.put(EFapsKey.AUTOCOMPLETE_CHOICE.getKey(), choice);
-                map.put("uoM", getUoMFieldStr((Long) multi.getAttribute("Dimension")));
                 orderMap.put(choice, map);
             }
             list.addAll(orderMap.values());
@@ -315,10 +319,10 @@ public abstract class Product_Base
         // validate that a product was selected
         if (prodOid.length() > 0) {
             final PrintQuery print = new PrintQuery(prodOid);
-            print.addAttribute("Name", "Description");
+            print.addAttribute(CIProducts.ProductAbstract.Name, CIProducts.ProductAbstract.Description);
             print.execute();
-            name = print.getAttribute("Name");
-            desc = print.getAttribute("Description");
+            name = print.getAttribute(CIProducts.ProductAbstract.Name);
+            desc = print.getAttribute(CIProducts.ProductAbstract.Description);
         } else {
             name = "";
             desc = "";

@@ -19,7 +19,9 @@
  Last Changed:    $Date$
  Last Changed By: $Author$
 
---><datamodel-type xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+-->
+<datamodel-type xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>04cd6828-064f-4b48-adf1-4ec6281976b6</uuid>
     <file-application>eFapsApp-Products</file-application>
     <file-revision>$Rev$</file-revision>
@@ -27,6 +29,23 @@
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductTools</name>
         <parent>Products_StockProductAbstract</parent>
-        <trigger event="ACCESSCHECK" name="Products_ProductTools.ACCESSCHECK" program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType" />
+        <trigger event="ACCESSCHECK" name="Products_ProductTools.ACCESSCHECK"
+            program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType" />
+
+        <trigger program="org.efaps.esjp.common.cache.CacheUtils"
+            method="cleanQueryCacheTrigger" name="Products_ProductTools.INSERT_POST"
+            event="INSERT_POST">
+            <property name="CacheName">org.efaps.esjp.products.Product.CacheKey4Product</property>
+        </trigger>
+        <trigger program="org.efaps.esjp.common.cache.CacheUtils"
+            method="cleanQueryCacheTrigger" name="Products_ProductTools.UPDATE_POST"
+            event="UPDATE_POST">
+            <property name="CacheName">org.efaps.esjp.products.Product.CacheKey4Product</property>
+        </trigger>
+        <trigger program="org.efaps.esjp.common.cache.CacheUtils"
+            method="cleanQueryCacheTrigger" name="Products_ProductTools.DELETE_POST"
+            event="DELETE_POST">
+            <property name="CacheName">org.efaps.esjp.products.Product.CacheKey4Product</property>
+        </trigger>
     </definition>
 </datamodel-type>
