@@ -71,6 +71,8 @@ import org.efaps.esjp.ci.CIFormProducts;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.uiform.Field;
 import org.efaps.esjp.common.uitable.MultiPrint;
+import org.efaps.esjp.common.util.InterfaceUtils;
+import org.efaps.esjp.erp.CommonDocument;
 import org.efaps.esjp.products.util.Products;
 import org.efaps.esjp.products.util.ProductsSettings;
 import org.efaps.ui.wicket.util.EFapsKey;
@@ -87,6 +89,7 @@ import org.joda.time.DateTime;
 @EFapsUUID("5c2c078f-852d-49d9-af34-4ff5022b6f82")
 @EFapsRevision("$Rev$")
 public abstract class Product_Base
+    extends CommonDocument
 {
     /**
      * CacheKey for ExchangeRates.
@@ -281,6 +284,9 @@ public abstract class Product_Base
                 queryBldr.addOrderByAttributeAsc(CIProducts.ProductAbstract.Description);
             }
             queryBldr.addWhereAttrEqValue(CIProducts.ProductAbstract.Active, true);
+
+            InterfaceUtils.addMaxResult2QueryBuilder4AutoComplete(_parameter, queryBldr);
+
             additionalQueryBuilder(_parameter, queryBldr);
             final MultiPrintQuery multi = queryBldr.getCachedPrint(Product_Base.CACHEKEY4PRODUCT);
             multi.addAttribute(CIProducts.ProductAbstract.OID, CIProducts.ProductAbstract.Name,
@@ -309,31 +315,36 @@ public abstract class Product_Base
         throws EFapsException
     {
         final Return retVal = new Return();
-        final List<Map<String, String>> list = new ArrayList<Map<String, String>>();
-        final Map<String, String> map = new HashMap<String, String>();
+        final List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        final Map<String, Object> map = new HashMap<String, Object>();
 
         final int selected = getSelectedRow(_parameter);
         final String prodOid = _parameter.getParameterValues("product")[selected];
-        String name;
-        String desc;
         // validate that a product was selected
         if (prodOid.length() > 0) {
             final PrintQuery print = new PrintQuery(prodOid);
-            print.addAttribute(CIProducts.ProductAbstract.Name, CIProducts.ProductAbstract.Description);
+            print.addAttribute(CIProducts.ProductAbstract.Name, CIProducts.ProductAbstract.Description,
+                            CIProducts.ProductAbstract.Dimension, CIProducts.ProductAbstract.DefaultUoM);
             print.execute();
-            name = print.getAttribute(CIProducts.ProductAbstract.Name);
-            desc = print.getAttribute(CIProducts.ProductAbstract.Description);
-        } else {
-            name = "";
-            desc = "";
-        }
-
-        if (name.length() > 0) {
-            map.put("productDesc", desc);
+            map.put("productAutoComplete", print.getAttribute(CIProducts.ProductAbstract.Name));
+            map.put("productDesc", print.getAttribute(CIProducts.ProductAbstract.Description));
+            final Long dimId = print.<Long>getAttribute(CIProducts.ProductAbstract.Dimension);
+            final Long dUoMId = print.<Long>getAttribute(CIProducts.ProductAbstract.DefaultUoM);
+            long selectedUoM;
+            if (dUoMId == null) {
+                selectedUoM = Dimension.get(dimId).getBaseUoM().getId();
+            } else {
+                if (Dimension.getUoM(dUoMId).getDimension().equals(Dimension.get(dimId))) {
+                    selectedUoM = dUoMId;
+                } else {
+                    selectedUoM = Dimension.get(dimId).getBaseUoM().getId();
+                }
+            }
+            map.put("uoM", getUoMFieldStr(selectedUoM, dimId));
             list.add(map);
             retVal.put(ReturnValues.VALUES, list);
         } else {
-            map.put("productAutoComplete", name);
+            map.put("productAutoComplete", "");
             list.add(map);
             retVal.put(ReturnValues.VALUES, list);
             final StringBuilder js = new StringBuilder();
@@ -482,6 +493,7 @@ public abstract class Product_Base
      * @param _dimId id of the dimension the UoM is wanted for
      * @return String
      */
+    @Override
     protected String getUoMFieldStr(final long _dimId)
         throws CacheReloadException
     {
