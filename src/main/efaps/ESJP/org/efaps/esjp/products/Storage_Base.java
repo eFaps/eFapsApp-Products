@@ -22,9 +22,6 @@
 package org.efaps.esjp.products;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,7 +53,10 @@ import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.QueryBuilder;
 import org.efaps.db.SelectBuilder;
 import org.efaps.db.Update;
+import org.efaps.esjp.ci.CIFormProducts;
 import org.efaps.esjp.ci.CIProducts;
+import org.efaps.esjp.ci.CITableProducts;
+import org.efaps.esjp.erp.NumberFormatter;
 import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
@@ -204,78 +204,55 @@ public abstract class Storage_Base
         return new Return();
     }
 
+    /**
+     * Create a ststic Inventroy from the UserInterface.
+     * @param _parameter Parameter as passed by the efasp API
+     * @return new empty Return
+     * @throws EFapsException on error
+     */
     public Return createStaticInventory(final Parameter _parameter)
         throws EFapsException
     {
-        final Type typeInsert = Type.get(UUID.fromString("c97d3269-944f-4f77-b2fc-3d5db6ca4430"));
-        final Insert insert = new Insert(typeInsert);
-        insert.add("Name", _parameter.getParameterValue("name"));
-        if (!_parameter.getParameterValue("description").isEmpty()) {
-            insert.add("Description", _parameter.getParameterValue("description"));
+        final Insert insert = new Insert(CIProducts.StaticInventory);
+        insert.add(CIProducts.StaticInventory.Name,
+                        _parameter.getParameterValue(CIFormProducts.Products_StaticInventoryForm.name.name));
+        if (!_parameter.getParameterValue(CIFormProducts.Products_StaticInventoryForm.description.name).isEmpty()) {
+            insert.add(CIProducts.StaticInventory.Description,
+                            _parameter.getParameterValue(CIFormProducts.Products_StaticInventoryForm.description.name));
         }
-        insert.add("Status", _parameter.getParameterValue("status"));
-        insert.add("Date", _parameter.getParameterValue("date"));
+        insert.add(CIProducts.StaticInventory.Status,
+                        _parameter.getParameterValue(CIFormProducts.Products_StaticInventoryForm.status.name));
+        insert.add(CIProducts.StaticInventory.Date,
+                        _parameter.getParameterValue(CIFormProducts.Products_StaticInventoryForm.date.name));
         insert.execute();
 
-        final Type typePos = Type.get(UUID.fromString("241f2d28-3626-4ca7-8c38-18404324080e"));
-        final String[] quantities = _parameter.getParameterValues("quantity");
+        final String[] quantities = _parameter
+                        .getParameterValues(CITableProducts.Products_StaticInventoryPositionTable.quantity.name);
         if (quantities != null) {
             for (int i = 0; i < quantities.length; i++) {
-                final Insert posIns = new Insert(typePos);
                 final String quanStr = quantities[i];
                 BigDecimal quantity = BigDecimal.ZERO;
                 try {
                     quantity = (BigDecimal) (quanStr.isEmpty()
-                                    ? BigDecimal.ZERO : getTwoDigitsformater().parse(quanStr));
+                                    ? BigDecimal.ZERO : NumberFormatter.get().getFormatter().parse(quanStr));
                 } catch (final ParseException e) {
                     e.printStackTrace();
                 }
-
-                final Instance productdId = Instance.get(_parameter.getParameterValues("product")[i]);
-                final UoM uom = Dimension.getUoM(Long.parseLong(_parameter.getParameterValues("uoM")[i]));
-                posIns.add("StaticInventory", insert.getId());
-                posIns.add("Product", productdId.getId());
-                posIns.add("Quantity", quantity);
-                posIns.add("UoM", uom.getId());
-                posIns.execute();
+                if (quantity.compareTo(BigDecimal.ZERO) > 0) {
+                    final Insert posIns = new Insert(CIProducts.StaticInventoryPosition);
+                    final Instance productdId = Instance.get(_parameter.getParameterValues(
+                                    CITableProducts.Products_StaticInventoryPositionTable.product.name)[i]);
+                    final UoM uom = Dimension.getUoM(Long.parseLong(_parameter.getParameterValues(
+                                    CITableProducts.Products_StaticInventoryPositionTable.uoM.name)[i]));
+                    posIns.add(CIProducts.StaticInventoryPosition.StaticInventory, insert.getInstance());
+                    posIns.add(CIProducts.StaticInventoryPosition.Product, productdId.getId());
+                    posIns.add(CIProducts.StaticInventoryPosition.Quantity, quantity);
+                    posIns.add(CIProducts.StaticInventoryPosition.UoM, uom.getId());
+                    posIns.execute();
+                }
             }
         }
-
         return new Return();
-    }
-
-    /**
-     * Method to get a formater.
-     *
-     * @return a formater
-     * @throws EFapsException on error
-     */
-    protected DecimalFormat getTwoDigitsformater()
-        throws EFapsException
-    {
-        return getFormater(2, 2);
-    }
-
-    /**
-     * @return a formater used to format bigdecimal for the user interface
-     * @param _maxFrac maximum Faction, null to deactivate
-     * @param _minFrac minimum Faction, null to activate
-     * @throws EFapsException on error
-     */
-    public DecimalFormat getFormater(final Integer _minFrac,
-                                     final Integer _maxFrac)
-        throws EFapsException
-    {
-        final DecimalFormat formater = (DecimalFormat) NumberFormat.getInstance(Context.getThreadContext().getLocale());
-        if (_maxFrac != null) {
-            formater.setMaximumFractionDigits(_maxFrac);
-        }
-        if (_minFrac != null) {
-            formater.setMinimumFractionDigits(_minFrac);
-        }
-        formater.setRoundingMode(RoundingMode.HALF_UP);
-        formater.setParseBigDecimal(true);
-        return formater;
     }
 
     public Return editPositions4StaticInventory(final Parameter _parameter)
@@ -302,7 +279,7 @@ public abstract class Storage_Base
                 BigDecimal quantity = BigDecimal.ZERO;
                 try {
                     quantity = (BigDecimal) (quanStr.isEmpty()
-                                    ? BigDecimal.ZERO : getTwoDigitsformater().parse(quanStr));
+                                    ? BigDecimal.ZERO : NumberFormatter.get().getFormatter().parse(quanStr));
                 } catch (final ParseException e) {
                     e.printStackTrace();
                 }
