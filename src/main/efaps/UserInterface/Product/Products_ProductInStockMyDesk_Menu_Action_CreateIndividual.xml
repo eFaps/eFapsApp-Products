@@ -31,7 +31,7 @@
     <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductInStockMyDesk_Menu_Action_CreateUnique</name>
+        <name>Products_ProductInStockMyDesk_Menu_Action_CreateIndividual</name>
         <access>
             <role>Products_Admin</role>
             <role>Products_Modifier</role>
@@ -39,17 +39,17 @@
 
         <!-- target definitions -->
         <target>
-            <form>Products_ProductCreateUniqueForm</form>
+            <form>Products_ProductCreateIndividualForm</form>
             <execute program="org.efaps.esjp.products.Product" method="createUnique">
                 <property name="ConnectChildAttribute">ToLink</property>
                 <property name="ConnectParentAttribute">FromLink</property>
-                <property name="ConnectType">Products_ProductStandart2Unique</property>
+                <property name="ConnectType">Products_ProductStandart2Individual</property>
             </execute>
         </target>
 
         <!-- properties -->
         <property name="Target">modal</property>
-        <property name="TargetCreateType">Products_ProductUnique</property>
+        <property name="TargetCreateType">Products_ProductIndividual</property>
         <property name="TargetMode">create</property>
         <property name="WindowHeight">460</property>
         <property name="WindowWidth">515</property>

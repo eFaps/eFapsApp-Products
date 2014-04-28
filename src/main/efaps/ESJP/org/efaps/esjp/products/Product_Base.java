@@ -217,7 +217,7 @@ public abstract class Product_Base
      * @return new Return.
      * @throws EFapsException on error.
      */
-    public Return createUnique(final Parameter _parameter)
+    public Return createIndividual(final Parameter _parameter)
         throws EFapsException
     {
         final String prodOid = _parameter.getParameterValue("product");

@@ -34,7 +34,7 @@
         <name>Products_ProductIndividual</name>
         <parent>Products_ProductIndividualAbstract</parent>
         <trigger program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType"
-                 name="Products_ProductUnique.ACCESSCHECK" event="ACCESSCHECK" />
+                 name="Products_ProductIndividual.ACCESSCHECK" event="ACCESSCHECK" />
 
          <trigger program="org.efaps.esjp.common.cache.CacheUtils"
             method="cleanQueryCacheTrigger" name="Products_ProductIndividual.INSERT_POST"

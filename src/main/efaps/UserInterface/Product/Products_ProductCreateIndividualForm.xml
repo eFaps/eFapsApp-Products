@@ -31,7 +31,7 @@
     <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductCreateUniqueForm</name>
+        <name>Products_ProductCreateIndividualForm</name>
         <!-- fields -->
         <field name="product">
             <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
@@ -40,33 +40,33 @@
             <property name="Required">true</property>
             <trigger program="org.efaps.esjp.products.Product"
                 method="autoComplete4Product"
-                name="Products_ProductCreateUniqueForm.product.UI_FIELD_AUTOCOMPLETE"
+                name="Products_ProductCreateIndividualForm.product.UI_FIELD_AUTOCOMPLETE"
                 event="UI_FIELD_AUTOCOMPLETE">
                 <property name="Types">Products_ProductStandart</property>
             </trigger>
         </field>
         <field name="name">
             <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
-            <property name="Label">Products_ProductCreateUniqueForm.name.Label</property>
+            <property name="Label">Products_ProductCreateIndividualForm.name.Label</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="Required">true</property>
         </field>
         <field name="storage">
             <property name="ModeCreate">EDITABLE</property>
             <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
-            <property name="Label">Products_ProductCreateUniqueForm.storage.Label</property>
+            <property name="Label">Products_ProductCreateIndividualForm.storage.Label</property>
             <property name="Required">true</property>
             <trigger program="org.efaps.esjp.products.Product"
                 method="storageFieldValue"
-                name="Products_ProductCreateUniqueForm.storage.UI_FIELD_VALUE"
+                name="Products_ProductCreateIndividualForm.storage.UI_FIELD_VALUE"
                 event="UI_FIELD_VALUE"/>
         </field>
 
         <field name="javascript">
             <property name="ModeCreate">hidden</property>
             <trigger program="org.efaps.esjp.products.Product"
-                method="javascript4CreateUniqueFieldValue"
-                name="Products_ProductCreateUniqueForm.product.UI_FIELD_AUTOCOMPLETE"
+                method="javascript4CreateIndividualFieldValue"
+                name="Products_ProductCreateIndividualForm.product.UI_FIELD_AUTOCOMPLETE"
                 event="UI_FIELD_VALUE"/>
 
         </field>
