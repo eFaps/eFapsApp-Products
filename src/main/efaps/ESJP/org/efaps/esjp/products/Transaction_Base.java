@@ -636,6 +636,9 @@ public abstract class Transaction_Base
             } else if (instance.getType().isKindOf(CIProducts.TransactionIndividualOutbound.getType())) {
                 quantity = currentQuantity.subtract(transQuantity);
                 reserved = currentReserved;
+            } else if (instance.getType().isKindOf(CIProducts.TransactionInbound4StaticStorage.getType())) {
+                quantity = currentQuantity.add(transQuantity);
+                reserved = currentReserved;
             }
 
             update.add(CIProducts.InventoryAbstract.Quantity, quantity);

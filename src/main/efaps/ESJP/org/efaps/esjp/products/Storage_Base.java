@@ -79,26 +79,32 @@ public abstract class Storage_Base
         throws EFapsException
     {
         final Insert insert = new Insert(CIProducts.Warehouse);
-        insert.add("Name", _parameter.getParameterValue("name"));
-        if (!_parameter.getParameterValue("description").isEmpty()) {
-            insert.add("Description", _parameter.getParameterValue("description"));
+        insert.add(CIProducts.Warehouse.Name,
+                        _parameter.getParameterValue(CIFormProducts.Products_StorageAbstractForm.name.name));
+        if (!_parameter.getParameterValue(CIFormProducts.Products_StorageAbstractForm.description.name).isEmpty()) {
+            insert.add(CIProducts.Warehouse.Description,
+                            _parameter.getParameterValue(CIFormProducts.Products_StorageAbstractForm.description.name));
         }
-        insert.add("Status", _parameter.getParameterValue("status"));
-        insert.add("Date", _parameter.getParameterValue("Date"));
+        insert.add(CIProducts.Warehouse.Status,
+                        _parameter.getParameterValue(CIFormProducts.Products_StorageAbstractForm.status.name));
+        insert.add(CIProducts.Warehouse.Date,
+                        _parameter.getParameterValue(CIFormProducts.Products_StorageAbstractForm.date.name));
         insert.execute();
 
-        final String fromStorageId = _parameter.getParameterValue("storage");
+        final String fromStorageId = _parameter
+                        .getParameterValue(CIFormProducts.Products_StorageAbstractForm.storage.name);
 
         final Update updateStaticInventory = new Update(CIProducts.StaticInventory.getType(), fromStorageId);
         updateStaticInventory.add(CIProducts.StaticInventory.Status,
-                        Status.find(CIProducts.StorageAbstractStatus.uuid, "Inactive").getId());
+                        Status.find(CIProducts.StorageAbstractStatus.Inactive));
         updateStaticInventory.execute();
 
         final QueryBuilder position = new QueryBuilder(CIProducts.StaticInventoryPosition);
         position.addWhereAttrEqValue(CIProducts.StaticInventoryPosition.StaticInventory,
                         fromStorageId);
         final MultiPrintQuery multiPosition = position.getPrint();
-        multiPosition.addAttribute("Quantity", "UoM", "Product");
+        multiPosition.addAttribute(CIProducts.StaticInventoryPosition.Quantity,
+                        CIProducts.StaticInventoryPosition.UoM, CIProducts.StaticInventoryPosition.Product);
         multiPosition.execute();
 
         while (multiPosition.next()) {
@@ -110,9 +116,11 @@ public abstract class Storage_Base
             inbound.add(CIProducts.TransactionInbound4StaticStorage.Quantity, quantity);
             inbound.add(CIProducts.TransactionInbound4StaticStorage.Storage, insert.getId());
             inbound.add(CIProducts.TransactionInbound4StaticStorage.UoM, uoMId);
-            inbound.add(CIProducts.TransactionInbound4StaticStorage.Date, _parameter.getParameterValue("date"));
+            inbound.add(CIProducts.TransactionInbound4StaticStorage.Date,
+                            _parameter.getParameterValue(CIFormProducts.Products_StorageAbstractForm.date.name));
             inbound.add(CIProducts.TransactionInbound4StaticStorage.Product, productId);
-            //inbound.add(CIProducts.TransactionInbound4StaticStorage.Description, bldr.toString());
+            // inbound.add(CIProducts.TransactionInbound4StaticStorage.Description,
+            // bldr.toString());
             inbound.execute();
         }
 
