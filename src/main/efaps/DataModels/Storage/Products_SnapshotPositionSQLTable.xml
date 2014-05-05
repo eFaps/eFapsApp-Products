@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
- Copyright 2003 - 2009 The eFaps Team
+ Copyright 2003 - 2014 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -19,26 +19,25 @@
  Last Changed:    $Date: 2010-11-29 09:12:58 -0500 (Mon, 29 Nov 2010) $
  Last Changed By: $Author: jan@moxter.net $
 
---><datamodel-sqltable xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-  <uuid>563eaabf-f939-4f4a-b041-06cf7b9b6d09</uuid>
-  <file-application>eFapsApp-Products</file-application>
-  <file-revision>$Rev: 5870 $</file-revision>
-
-  <definition>
-    <version-expression>(version==latest)</version-expression>
-    <name>Products_SnapshotPositionSQLTable</name>
-    <database>
-      <table-name>T_SNAPSHOTPOS</table-name>
-      <!-- columns -->
-      <column name="COMPANYID"      not-null="true"     type="INTEGER"/>
-      <column name="QUANTITY"       not-null="true"     type="DECIMAL"  length="15"  scale="4" />
-      <column name="PRODUCTID"      not-null="true"     type="INTEGER"/>
-      <column name="UOMID"          not-null="true"     type="INTEGER"/>
-      <column name="DOCID"          type="INTEGER"/>
-      <foreign key="COMPANYID" name="T_SNAPSHOTPOS_FK_COMPANYID" reference="T_USERABSTRACT(ID)"/>
-      <foreign key="PRODUCTID" name="T_SNAPSHOTPOS_FK_PRODUCTID" reference="T_PRODPRODUCT(ID)"/>
-      <foreign key="UOMID" name="T_SNAPSHOTPOS_FK_UOMID" reference="T_DMUOM(ID)"/>
-    </database>
-  </definition>
-
+-->
+<datamodel-sqltable xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>563eaabf-f939-4f4a-b041-06cf7b9b6d09</uuid>
+    <file-application>eFapsApp-Products</file-application>
+    <file-revision>$Rev: 5870 $</file-revision>
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <name>Products_SnapshotPositionSQLTable</name>
+        <database>
+            <table-name>T_PRODSNAPSHOTPOS</table-name>
+            <column name="COMPANYID"    type="INTEGER" not-null="true" />
+            <column name="QUANTITY"     type="DECIMAL" not-null="true" length="15" scale="4" />
+            <column name="PRODUCTID"    type="INTEGER" not-null="true" />
+            <column name="UOMID"        type="INTEGER" not-null="true" />
+            <column name="DOCID"        type="INTEGER" />
+            <foreign key="COMPANYID"    name="T_PRODSNAPSHOTPOS_FK_COMPANYID"   reference="T_USERABSTRACT(ID)" />
+            <foreign key="PRODUCTID"    name="T_PRODSNAPSHOTPOS_FK_PRODUCTID"   reference="T_PRODPRODUCT(ID)" />
+            <foreign key="UOMID"        name="T_PRODSNAPSHOTPOS_FK_UOMID"       reference="T_DMUOM(ID)" />
+        </database>
+    </definition>
 </datamodel-sqltable>

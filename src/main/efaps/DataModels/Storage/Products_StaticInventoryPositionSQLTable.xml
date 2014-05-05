@@ -19,26 +19,25 @@
  Last Changed:    $Date: 2010-11-29 09:12:58 -0500 (Mon, 29 Nov 2010) $
  Last Changed By: $Author: jan@moxter.net $
 
---><datamodel-sqltable xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-  <uuid>1e193ef5-dc3c-4a9a-af58-56d15914ae5c</uuid>
-  <file-application>eFapsApp-Products</file-application>
-  <file-revision>$Rev: 5870 $</file-revision>
-
-  <definition>
-    <version-expression>(version==latest)</version-expression>
-    <name>Products_StaticInventoryPositionSQLTable</name>
-    <database>
-      <table-name>T_STATICINVENTORYPOS</table-name>
-      <!-- columns -->
-      <column name="COMPANYID"  type="INTEGER"  not-null="true"/>
-      <column name="QUANTITY"   type="DECIMAL"  not-null="true"     length="15"   scale="4"/>
-      <column name="PRODUCTID"  type="INTEGER"  not-null="true"/>
-      <column name="UOMID"      type="INTEGER"  not-null="true"/>
-      <column name="DOCID"      type="INTEGER"/>
-      <foreign key="COMPANYID" name="T_STATICINVENTORYPOS_FK_COMPANYID" reference="T_USERABSTRACT(ID)"/>
-      <foreign key="PRODUCTID" name="T_STATICINVENTORYPOS_FK_PRODUCTID" reference="T_PRODPRODUCT(ID)"/>
-      <foreign key="UOMID" name="T_STATICINVENTORYPOS_FK_UOMID" reference="T_DMUOM(ID)"/>
-    </database>
-  </definition>
-
+-->
+<datamodel-sqltable xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>1e193ef5-dc3c-4a9a-af58-56d15914ae5c</uuid>
+    <file-application>eFapsApp-Products</file-application>
+    <file-revision>$Rev: 5870 $</file-revision>
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <name>Products_StaticInventoryPositionSQLTable</name>
+        <database>
+            <table-name>T_PRODSTATICINVENTORYPOS</table-name>
+            <column name="COMPANYID"    type="INTEGER" not-null="true" />
+            <column name="QUANTITY"     type="DECIMAL" not-null="true" length="15" scale="4" />
+            <column name="PRODUCTID"    type="INTEGER" not-null="true" />
+            <column name="UOMID"        type="INTEGER" not-null="true" />
+            <column name="DOCID"        type="INTEGER" />
+            <foreign key="COMPANYID"    name="T_PRODSTATICINVENTORYPOS_FK_COMPANYID"    reference="T_USERABSTRACT(ID)" />
+            <foreign key="PRODUCTID"    name="T_PRODSTATICINVENTORYPOS_FK_PRODUCTID"    reference="T_PRODPRODUCT(ID)" />
+            <foreign key="UOMID"        name="T_STATICINVENTORYPOS_FK_UOMID"            reference="T_DMUOM(ID)" />
+        </database>
+    </definition>
 </datamodel-sqltable>
