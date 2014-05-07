@@ -56,6 +56,7 @@ import org.efaps.db.Update;
 import org.efaps.esjp.ci.CIFormProducts;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.ci.CITableProducts;
+import org.efaps.esjp.erp.CommonDocument;
 import org.efaps.esjp.erp.NumberFormatter;
 import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
@@ -73,6 +74,7 @@ import org.joda.time.format.DateTimeFormatter;
 @EFapsUUID("a117dd2e-05d3-4fc0-84c6-53b47cda5eeb")
 @EFapsRevision("$Rev$")
 public abstract class Storage_Base
+    extends CommonDocument
 {
 
     public Return createFromStaticStorage(final Parameter _parameter)
@@ -314,28 +316,28 @@ public abstract class Storage_Base
     public Return autoComplete4Storage(final Parameter _parameter)
         throws EFapsException
     {
-        final Map<?, ?> properties = (Map<?, ?>) _parameter.get(ParameterValues.PROPERTIES);
-        final String excludeTypes = (String) properties.get("ExcludeTypes");
         final String input = (String) _parameter.get(ParameterValues.OTHERS);
         final List<Map<String, String>> list = new ArrayList<Map<String, String>>();
         final Map<String, Map<String, String>> orderMap = new TreeMap<String, Map<String, String>>();
 
-        final String key = properties.containsKey("Key") ? (String) properties.get("Key") : "OID";
+        final String key = containsProperty(_parameter, "Key") ? getProperty(_parameter, "Key") : "OID";
 
         final QueryBuilder queryBldr = new QueryBuilder(CIProducts.StorageAbstract);
 
-        if (excludeTypes != null) {
-            final String[] excludes = excludeTypes.split(";");
-            for (final String exclude :excludes) {
-                final Type type = Type.get(exclude);
-                if (type != null) {
-                    queryBldr.addWhereAttrNotEqValue(CIProducts.StorageAbstract.Type, type.getId());
+        if (containsProperty(_parameter, "ExcludeTypes")) {
+            final Map<Integer, String> excludeTypes = analyseProperty(_parameter, "ExcludeType");
+            if (!excludeTypes.isEmpty()) {
+                for (final Entry<Integer, String> excludeType : excludeTypes.entrySet()) {
+                    final Type type = Type.get(excludeType.getValue());
+                    if (type != null) {
+                        queryBldr.addWhereAttrNotEqValue(CIProducts.StorageAbstract.Type, type.getId());
+                    }
                 }
             }
         }
         queryBldr.addWhereAttrMatchValue(CIProducts.StorageAbstract.Name, input + "*").setIgnoreCase(true);
         queryBldr.addWhereAttrEqValue(CIProducts.StorageAbstract.StatusAbstract,
-                                            Status.find(CIProducts.StorageAbstractStatus.uuid, "Active").getId());
+                        Status.find(CIProducts.StorageAbstractStatus.Active));
         final MultiPrintQuery multi = queryBldr.getPrint();
         multi.addAttribute(CIProducts.StorageAbstract.Name);
         multi.addAttribute(key);
