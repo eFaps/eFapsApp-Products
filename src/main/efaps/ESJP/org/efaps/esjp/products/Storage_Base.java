@@ -324,7 +324,7 @@ public abstract class Storage_Base
 
         final QueryBuilder queryBldr = new QueryBuilder(CIProducts.StorageAbstract);
 
-        if (containsProperty(_parameter, "ExcludeTypes")) {
+        if (containsProperty(_parameter, "ExcludeType")) {
             final Map<Integer, String> excludeTypes = analyseProperty(_parameter, "ExcludeType");
             if (!excludeTypes.isEmpty()) {
                 for (final Entry<Integer, String> excludeType : excludeTypes.entrySet()) {
