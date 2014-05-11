@@ -311,6 +311,30 @@ public abstract class Product_Base
         return retVal;
     }
 
+    public Return productMultiPrint(final Parameter _parameter)
+        throws EFapsException
+    {
+        final MultiPrint multi = new MultiPrint() {
+
+            @Override
+            protected void add2QueryBldr(final Parameter _parameter,
+                                         final QueryBuilder _queryBldr)
+                throws EFapsException
+            {
+                super.add2QueryBldr(_parameter, _queryBldr);
+                // if products with serialnumber or batches is activated validate if they must be shown or not
+                if (Products.getSysConfig().getAttributeValueAsBoolean(ProductsSettings.ACTIVATEINDIVIDUAL)) {
+                    if (!"true".equalsIgnoreCase(getProperty(_parameter, "IncludeIndividual"))) {
+                        _queryBldr.addWhereAttrNotEqValue(CIProducts.ProductAbstract.Type,
+                                        CIProducts.ProductIndividual.getType().getId(),
+                                        CIProducts.ProductBatch.getType().getId());
+                    }
+                }
+            }
+        };
+        return multi.execute(_parameter);
+    }
+
     public Return updateFields4Product(final Parameter _parameter)
         throws EFapsException
     {
