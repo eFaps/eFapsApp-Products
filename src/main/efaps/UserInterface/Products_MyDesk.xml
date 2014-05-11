@@ -35,7 +35,6 @@
         <childs>
             <child>Products_Product_MyDesk</child>
             <child>Products_PartList_MyDesk</child>
-            <child>Products_PriceListMyDesk</child>
             <child>Products_PriceListReport</child>
             <child>Products_KardexMyDesk</child>
             <child>Products_PriceListProductMyDesk</child>
