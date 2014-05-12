@@ -298,7 +298,29 @@ public abstract class Product_Base
                 queryBldr.addWhereClassification(classTypes.toArray(new Classification[classTypes.size()]));
             }
 
-            if (containsProperty(_parameter, "InStock")) {
+            // Possibility to exclude types from the search
+            if (containsProperty(_parameter, "ExcludeType")) {
+                final Map<Integer, String> excludes = analyseProperty(_parameter, "ExcludeType");
+                final boolean first = true;
+                QueryBuilder attrQueryBldr = null;
+                for (final String element : excludes.values()) {
+                    Type type;
+                    if (isUUID(element)) {
+                        type = Type.get(UUID.fromString(element));
+                    } else {
+                        type = Type.get(element);
+                    }
+                    if (first) {
+                        attrQueryBldr = new QueryBuilder(type);
+                    } else {
+                        attrQueryBldr.addType(type);
+                    }
+                }
+                queryBldr.addWhereAttrNotInQuery(CIProducts.ProductAbstract.ID,
+                                attrQueryBldr.getAttributeQuery(CIProducts.ProductAbstract.ID));
+            }
+
+            if ("true".equalsIgnoreCase(getProperty(_parameter, "InStock"))) {
                 final QueryBuilder attrQueryBldr = new QueryBuilder(CIProducts.InventoryAbstract);
                 final String[] storageArr = _parameter.getParameterValues("storage");
                 if (storageArr != null && storageArr.length > 0) {
@@ -308,21 +330,14 @@ public abstract class Product_Base
                         attrQueryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, storInst);
                     }
                 }
-                final AttributeQuery attrQuery = attrQueryBldr.getAttributeQuery(CIProducts.Inventory.Product);
-                queryBldr.addWhereAttrInQuery(CIProducts.ProductAbstract.ID, attrQuery);
+                queryBldr.addWhereAttrInQuery(CIProducts.ProductAbstract.ID,
+                                attrQueryBldr.getAttributeQuery(CIProducts.Inventory.Product));
                 cache = false;
-            }
-
-            final Map<Integer, String> excludes = analyseProperty(_parameter, "ExcludeType");
-            for (final String element : excludes.values()) {
-                final QueryBuilder queryBldr2 = new QueryBuilder(Type.get(element));
-                final AttributeQuery attrQuery = queryBldr2.getAttributeQuery(CIProducts.ProductAbstract.ID);
-                queryBldr.addWhereAttrNotInQuery(CIProducts.ProductAbstract.ID, attrQuery);
             }
 
             InterfaceUtils.addMaxResult2QueryBuilder4AutoComplete(_parameter, queryBldr);
 
-            cache = cache && add2QueryBldr4autoComplete4Product(_parameter, queryBldr);
+            cache = add2QueryBldr4AutoComplete4Product(_parameter, queryBldr) && cache;
 
             final MultiPrintQuery multi = cache ? queryBldr.getCachedPrint(Product_Base.CACHEKEY4PRODUCT)
                             : queryBldr.getPrint();
@@ -354,7 +369,7 @@ public abstract class Product_Base
      * @return true if allow cache, else false
      * @throws EFapsException on error
      */
-    protected boolean add2QueryBldr4autoComplete4Product(final Parameter _parameter,
+    protected boolean add2QueryBldr4AutoComplete4Product(final Parameter _parameter,
                                                          final QueryBuilder _queryBldr)
         throws EFapsException
     {
@@ -428,22 +443,6 @@ public abstract class Product_Base
             map.put(EFapsKey.FIELDUPDATE_JAVASCRIPT.getKey(), js.toString());
         }
         return retVal;
-    }
-
-    /**
-     * Method to evaluate the selected row.
-     *
-     * @param _parameter paaremter
-     * @return number of selected row.
-     */
-    protected int getSelectedRow(final Parameter _parameter)
-    {
-        int ret = 0;
-        final String value = _parameter.getParameterValue("eFapsRowSelectedRow");
-        if (value != null && value.length() > 0) {
-            ret = Integer.parseInt(value);
-        }
-        return ret;
     }
 
     /**
