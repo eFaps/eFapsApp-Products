@@ -74,6 +74,7 @@ import org.efaps.esjp.common.uitable.MultiPrint;
 import org.efaps.esjp.common.util.InterfaceUtils;
 import org.efaps.esjp.erp.CommonDocument;
 import org.efaps.esjp.products.util.Products;
+import org.efaps.esjp.products.util.Products.ProductIndividual;
 import org.efaps.esjp.products.util.ProductsSettings;
 import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
@@ -227,31 +228,25 @@ public abstract class Product_Base
         if (prodOid != null && prodOid.length() > 0) {
             final Instance instance = Instance.get(prodOid);
             final Map<String, Object> map = new HashMap<String, Object>();
-            map.put("Name", name);
+            map.put(CIProducts.ProductIndividual.Individual.name, ProductIndividual.NONE.getInt());
+            map.put(CIProducts.ProductIndividual.Name.name, name);
             final Instance uniqueInst = cloneProduct(_parameter, instance,
                             CIProducts.ProductIndividual.getType(), map, true);
 
             final PrintQuery print = new PrintQuery(uniqueInst);
-            print.addAttribute("Dimension");
+            print.addAttribute(CIProducts.ProductIndividual.Dimension);
             print.execute();
 
-            final Insert insert = new Insert(CIProducts.TransactionInbound);
-            insert.add("Quantity", 1);
-            insert.add("UoM", Dimension.get(print.<Long>getAttribute("Dimension")).getBaseUoM().getId());
-            insert.add("Storage", warehouse);
-            insert.add("Product", uniqueInst.getId());
-            insert.add("Description", DBProperties.getProperty("org.efaps.esjp.products.Product.createUnique"));
-            insert.add("Date", new DateTime());
+            final Insert insert = new Insert(CIProducts.TransactionIndividualInbound);
+            insert.add(CIProducts.TransactionIndividualInbound.Quantity, 1);
+            insert.add(CIProducts.TransactionIndividualInbound.UoM,
+                            Dimension.get(print.<Long>getAttribute(CIProducts.ProductIndividual.Dimension)).getBaseUoM());
+            insert.add(CIProducts.TransactionIndividualInbound.Storage, warehouse);
+            insert.add(CIProducts.TransactionIndividualInbound.Product, uniqueInst.getId());
+            insert.add(CIProducts.TransactionIndividualInbound.Description,
+                            DBProperties.getProperty(Product.class.getName() + ".createUnique"));
+            insert.add(CIProducts.TransactionIndividualInbound.Date, new DateTime());
             insert.execute();
-
-            final Insert insert2 = new Insert(CIProducts.TransactionOutbound);
-            insert2.add("Quantity", 1);
-            insert2.add("UoM", Dimension.get(print.<Long>getAttribute("Dimension")).getBaseUoM().getId());
-            insert2.add("Storage", warehouse);
-            insert2.add("Product", instance.getId());
-            insert2.add("Description", DBProperties.getProperty("org.efaps.esjp.products.Product.createUnique"));
-            insert2.add("Date", new DateTime());
-            insert2.execute();
         }
         return new Return();
     }

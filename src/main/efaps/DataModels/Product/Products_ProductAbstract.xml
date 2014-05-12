@@ -106,6 +106,7 @@
             <className>org.efaps.esjp.products.util.Products$ProductIndividual</className>
             <sqltable>Products_ProductSQLTable</sqltable>
             <sqlcolumn>INDIVIDUAL</sqlcolumn>
+            <defaultvalue>0</defaultvalue>
         </attribute>
         <attribute>
             <name>Creator</name>
@@ -210,6 +211,7 @@
             <className>org.efaps.esjp.products.util.Products$ProductIndividual</className>
             <sqltable>Products_ProductSQLTable</sqltable>
             <sqlcolumn>INDIVIDUAL</sqlcolumn>
+            <defaultvalue>0</defaultvalue>
         </attribute>
         <attribute>
             <name>SalesUnit</name>
