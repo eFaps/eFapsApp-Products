@@ -33,6 +33,7 @@ import org.efaps.admin.program.esjp.EFapsUUID;
  */
 @EFapsUUID("6eb50415-c2ca-4ddd-9a49-df2da7e96df1")
 @EFapsRevision("$Rev$")
-public class Product extends Product_Base
+public class Product
+    extends Product_Base
 {
 }

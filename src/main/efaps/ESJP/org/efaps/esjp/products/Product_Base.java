@@ -269,7 +269,7 @@ public abstract class Product_Base
         final String input = (String) _parameter.get(ParameterValues.OTHERS);
         final List<Map<String, String>> list = new ArrayList<Map<String, String>>();
         final Map<String, Map<String, String>> orderMap = new TreeMap<String, Map<String, String>>();
-        if (input.isEmpty()) {
+        if (!input.isEmpty()) {
             boolean cache = true;
             final boolean nameSearch = Character.isDigit(input.charAt(0));
             QueryBuilder queryBldr = getQueryBldrFromProperties(_parameter);
@@ -299,7 +299,7 @@ public abstract class Product_Base
             }
 
             if (containsProperty(_parameter, "InStock")) {
-                final QueryBuilder attrQueryBldr = new QueryBuilder(CIProducts.Inventory);
+                final QueryBuilder attrQueryBldr = new QueryBuilder(CIProducts.InventoryAbstract);
                 final String[] storageArr = _parameter.getParameterValues("storage");
                 if (storageArr != null && storageArr.length > 0) {
                     final int selected = getSelectedRow(_parameter);
@@ -355,7 +355,7 @@ public abstract class Product_Base
      * @throws EFapsException on error
      */
     protected boolean add2QueryBldr4autoComplete4Product(final Parameter _parameter,
-                                                      final QueryBuilder _queryBldr)
+                                                         final QueryBuilder _queryBldr)
         throws EFapsException
     {
         // to be used from implementation
