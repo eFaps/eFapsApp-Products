@@ -31,6 +31,24 @@
         <name>Products_ProductCostTextPosition</name>
         <parent>Products_NonStockProductAbstract</parent>
         <trigger event="ACCESSCHECK"
-            name="Products_ProductTextPosition.ACCESSCHECK" program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType" />
+            name="Products_ProductTextPosition.ACCESSCHECK"
+            program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType" />
+
+        <trigger program="org.efaps.esjp.common.cache.CacheUtils"
+            method="cleanQueryCacheTrigger" name="Products_ProductCostTextPosition.INSERT_POST"
+            event="INSERT_POST">
+            <property name="CacheName">org.efaps.esjp.products.Product.CacheKey4Product</property>
+        </trigger>
+        <trigger program="org.efaps.esjp.common.cache.CacheUtils"
+            method="cleanQueryCacheTrigger" name="Products_ProductCostTextPosition.UPDATE_POST"
+            event="UPDATE_POST">
+            <property name="CacheName">org.efaps.esjp.products.Product.CacheKey4Product</property>
+        </trigger>
+        <trigger program="org.efaps.esjp.common.cache.CacheUtils"
+            method="cleanQueryCacheTrigger" name="Products_ProductCostTextPosition.DELETE_POST"
+            event="DELETE_POST">
+            <property name="CacheName">org.efaps.esjp.products.Product.CacheKey4Product</property>
+        </trigger>
+
     </definition>
 </datamodel-type>
