@@ -345,7 +345,7 @@ public abstract class PriceListReport_Base
                             DynamicReports.type.stringType()).setWidth(350);
             final TextColumnBuilder<String> productClass = DynamicReports.col.column(DBProperties
                             .getProperty(PriceListReport.class.getName() + ".productClass"), "productClass",
-                            DynamicReports.type.stringType()).setWidth(250);
+                            DynamicReports.type.stringType()).setWidth(200);
             final TextColumnBuilder<String> productDim = DynamicReports.col.column(DBProperties
                             .getProperty(PriceListReport.class.getName() + ".productDim"), "productDim",
                             DynamicReports.type.stringType());

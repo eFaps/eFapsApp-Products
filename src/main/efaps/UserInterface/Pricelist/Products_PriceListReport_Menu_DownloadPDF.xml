@@ -37,6 +37,8 @@
             <execute method="exportReport" program="org.efaps.esjp.products.reports.PriceListReport">
                 <property name="Mime">pdf</property>
                 <property name="PageOrientation">LANDSCAPE</property>
+                <property name="IncludeHeader">true</property>
+                <property name="IncludeFooter">true</property>
                 <!-- Products_ProductPricelistRetail -->
                 <property name="Type">0eefc758-0be6-4c40-8cf9-a4f88986f76e</property>
                 <property name="FilterKey">org.efaps.esjp.products.reports.PriceListReport.FilterKey</property>
