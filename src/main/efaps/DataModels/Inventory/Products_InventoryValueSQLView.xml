@@ -50,9 +50,10 @@
                T_PRODPRODCOST.VALIDFROM,
                T_PRODPRODCOST.VALIDUNTIL
         from T_PRODINVENTORY
-            left join T_PRODPRODCOST on T_PRODINVENTORY.productid =  T_PRODPRODCOST.prodid
-            where (T_PRODPRODCOST.VALIDFROM &lt; current_timestamp and T_PRODPRODCOST.VALIDUNTIL &gt; current_timestamp)
-                or  T_PRODPRODCOST.PRICE is null
+            left join T_PRODPRODCOST on T_PRODINVENTORY.PRODUCTID =  T_PRODPRODCOST.PRODID
+            where ((T_PRODPRODCOST.VALIDFROM &lt; current_timestamp and T_PRODPRODCOST.VALIDUNTIL &gt; current_timestamp)
+                or  T_PRODPRODCOST.PRICE is null)
+                and T_PRODINVENTORY.TYPEID in (select T_CMABSTRACT.ID from T_CMABSTRACT where T_CMABSTRACT.UUID='de159d46-cafd-48b9-9113-bb40ce7ef1ee');
       </sql>
     </database>
   </definition>
