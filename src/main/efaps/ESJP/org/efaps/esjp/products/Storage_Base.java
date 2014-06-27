@@ -50,6 +50,7 @@ import org.efaps.db.Delete;
 import org.efaps.db.Insert;
 import org.efaps.db.Instance;
 import org.efaps.db.MultiPrintQuery;
+import org.efaps.db.PrintQuery;
 import org.efaps.db.QueryBuilder;
 import org.efaps.db.SelectBuilder;
 import org.efaps.db.Update;
@@ -141,7 +142,7 @@ public abstract class Storage_Base
         final Map<String, BigDecimal> actual = new HashMap<String, BigDecimal>();
 
         final QueryBuilder queryBldr = new QueryBuilder(CIProducts.Inventory);
-        queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, storageInst.getId());
+        queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, storageInst);
         final MultiPrintQuery multi = queryBldr.getPrint();
         multi.addAttribute(CIProducts.Inventory.Quantity);
         final SelectBuilder sel = new SelectBuilder().linkto(CIProducts.Inventory.Product).oid();
@@ -154,7 +155,7 @@ public abstract class Storage_Base
         }
 
         final QueryBuilder transQueryBldr = new QueryBuilder(CIProducts.TransactionInOutAbstract);
-        transQueryBldr.addWhereAttrEqValue(CIProducts.TransactionInOutAbstract.Storage, storageInst.getId());
+        transQueryBldr.addWhereAttrEqValue(CIProducts.TransactionInOutAbstract.Storage, storageInst);
         transQueryBldr.addWhereAttrGreaterValue(CIProducts.TransactionInOutAbstract.Date, date.minusMinutes(1));
         transQueryBldr.getQuery();
 
@@ -192,12 +193,17 @@ public abstract class Storage_Base
                         CIProducts.ProductAbstract.Dimension);
         multiRes.execute();
 
+        final PrintQuery print = new PrintQuery(storageInst);
+        print.addAttribute(CIProducts.StorageAbstract.Name);
+        print.executeWithoutAccessCheck();
+
         final DateTimeFormatter dateFormat = DateTimeFormat.forPattern("dd-MM-yyyy");
         dateFormat.withLocale(Context.getThreadContext().getLocale());
         final Insert snapshot = new Insert(CIProducts.Snapshot);
-        snapshot.add("Name", new DateTime().toString(dateFormat));
+        snapshot.add("Name", new DateTime().toString(dateFormat)
+                        + " " + print.getAttribute(CIProducts.StorageAbstract.Name));
         snapshot.add("Description", DBProperties.getProperty("org.efaps.esjp.products.Storage.descriptionSnapshot")
-                        .concat(new DateTime().toString(dateFormat)));
+                        .concat(" ").concat(new DateTime().toString(dateFormat)));
         snapshot.add("Status", Status.find(CIProducts.StorageAbstractStatus.uuid, "Active").getId());
         snapshot.execute();
         while (multiRes.next()) {
