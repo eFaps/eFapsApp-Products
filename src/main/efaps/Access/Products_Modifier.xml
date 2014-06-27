@@ -67,8 +67,11 @@
         <type>Products_ProductBatch</type>
         <type>Products_ProductCostTextPosition</type>
 
+         <status group="Products_StorageAbstractStatus">
+            <key>Active</key>
+        </status>
+
         <role>Products_Modifier</role>
     </definition>
 </access-set>
-
 
