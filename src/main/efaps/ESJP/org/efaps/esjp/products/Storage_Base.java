@@ -328,22 +328,9 @@ public abstract class Storage_Base
 
         final String key = containsProperty(_parameter, "Key") ? getProperty(_parameter, "Key") : "OID";
 
-        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.StorageAbstract);
-
-        if (containsProperty(_parameter, "ExcludeType")) {
-            final Map<Integer, String> excludeTypes = analyseProperty(_parameter, "ExcludeType");
-            if (!excludeTypes.isEmpty()) {
-                for (final Entry<Integer, String> excludeType : excludeTypes.entrySet()) {
-                    final Type type = Type.get(excludeType.getValue());
-                    if (type != null) {
-                        queryBldr.addWhereAttrNotEqValue(CIProducts.StorageAbstract.Type, type.getId());
-                    }
-                }
-            }
-        }
+        final QueryBuilder queryBldr = getQueryBldrFromProperties(_parameter);
         queryBldr.addWhereAttrMatchValue(CIProducts.StorageAbstract.Name, input + "*").setIgnoreCase(true);
-        queryBldr.addWhereAttrEqValue(CIProducts.StorageAbstract.StatusAbstract,
-                        Status.find(CIProducts.StorageAbstractStatus.Active));
+
         final MultiPrintQuery multi = queryBldr.getPrint();
         multi.addAttribute(CIProducts.StorageAbstract.Name);
         multi.addAttribute(key);

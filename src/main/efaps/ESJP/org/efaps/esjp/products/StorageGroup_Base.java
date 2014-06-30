@@ -36,6 +36,7 @@ import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.QueryBuilder;
 import org.efaps.esjp.ci.CIProducts;
+import org.efaps.esjp.erp.CommonDocument;
 import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
 
@@ -48,6 +49,7 @@ import org.efaps.util.EFapsException;
 @EFapsUUID("005cbb83-b622-4d75-ba45-fb7bd8d93de3")
 @EFapsRevision("$Rev$")
 public abstract class StorageGroup_Base
+    extends CommonDocument
 {
 
     /**
@@ -65,12 +67,13 @@ public abstract class StorageGroup_Base
         final List<Map<String, String>> list = new ArrayList<Map<String, String>>();
         final Map<String, Map<String, String>> tmpMap = new TreeMap<String, Map<String, String>>();
         if (input.length() > 0) {
-            final QueryBuilder queryBldr = new QueryBuilder(CIProducts.StorageGroupAbstract);
+            final QueryBuilder queryBldr = getQueryBldrFromProperties(_parameter);
             final boolean nameSearch = Character.isDigit(input.charAt(0));
             if (nameSearch) {
                 queryBldr.addWhereAttrMatchValue(CIProducts.StorageGroupAbstract.Name, input + "*").setIgnoreCase(true);
             } else {
-                queryBldr.addWhereAttrMatchValue(CIProducts.StorageGroupAbstract.Description, input + "*").setIgnoreCase(true);
+                queryBldr.addWhereAttrMatchValue(CIProducts.StorageGroupAbstract.Description, input + "*")
+                                .setIgnoreCase(true);
             }
             final MultiPrintQuery multi = queryBldr.getPrint();
             multi.addAttribute(CIProducts.StorageGroupAbstract.Name, CIProducts.StorageGroupAbstract.Description);
