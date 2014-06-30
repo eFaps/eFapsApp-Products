@@ -106,14 +106,14 @@ public abstract class Cost_Base
         final DateTime date = new DateTime(from);
         final PrintQuery print = new PrintQuery(costInstance);
         print.addAttribute(CIProducts.ProductCost.ProductLink);
-        print.execute();
+        print.executeWithoutAccessCheck();
 
         final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductCost);
         queryBldr.addWhereAttrGreaterValue(CIProducts.ProductCost.ValidUntil, date);
         queryBldr.addWhereAttrEqValue(CIProducts.ProductCost.ProductLink,
                         print.getAttribute(CIProducts.ProductCost.ProductLink));
         final InstanceQuery query = queryBldr.getQuery();
-        query.execute();
+        query.executeWithoutAccessCheck();
         while (query.next()) {
             if (!query.getCurrentValue().equals(costInstance)) {
                 final Update update = new Update(query.getCurrentValue());
