@@ -30,6 +30,8 @@
         <name>Products_PriceListReport</name>
         <access>
             <role>Products_Admin</role>
+            <role>Products_Modfier</role>
+            <role>Products_Reader</role>
             <role>Sales_Admin</role>
         </access>
         <target>
