@@ -252,7 +252,7 @@ public abstract class Product_Base
     }
 
     /**
-     * Method is used for an autocomplete field in the form for transactions.
+     * Method is used as the standard autocomplete field.
      *
      * @param _parameter parameter from eFaps
      * @return Return
@@ -324,9 +324,15 @@ public abstract class Product_Base
                     if (storInst.isValid()) {
                         attrQueryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, storInst);
                     }
+                } else if ("true".equalsIgnoreCase(getProperty(_parameter, "UseDefaultWareHouse"))) {
+                    final Instance defaultStorageInst = Products.getSysConfig().getLink(
+                            ProductsSettings.DEFAULTWAREHOUSE);
+                    if (defaultStorageInst != null && defaultStorageInst.isValid()) {
+                         attrQueryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, defaultStorageInst);
+                    }
                 }
                 if ("true".equalsIgnoreCase(getProperty(_parameter, "ExcludeReservation"))) {
-                    queryBldr.addWhereAttrGreaterValue(CIProducts.Inventory.Quantity, 0);
+                    attrQueryBldr.addWhereAttrGreaterValue(CIProducts.Inventory.Quantity, 0);
                 }
                 queryBldr.addWhereAttrInQuery(CIProducts.ProductAbstract.ID,
                                 attrQueryBldr.getAttributeQuery(CIProducts.Inventory.Product));
