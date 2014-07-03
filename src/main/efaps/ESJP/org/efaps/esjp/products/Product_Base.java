@@ -325,6 +325,9 @@ public abstract class Product_Base
                         attrQueryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, storInst);
                     }
                 }
+                if ("true".equalsIgnoreCase(getProperty(_parameter, "ExcludeReservation"))) {
+                    queryBldr.addWhereAttrGreaterValue(CIProducts.Inventory.Quantity, 0);
+                }
                 queryBldr.addWhereAttrInQuery(CIProducts.ProductAbstract.ID,
                                 attrQueryBldr.getAttributeQuery(CIProducts.Inventory.Product));
                 cache = false;
