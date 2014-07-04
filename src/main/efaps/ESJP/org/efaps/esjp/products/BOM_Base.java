@@ -57,10 +57,10 @@ public abstract class BOM_Base
     public Return insertTrigger(final Parameter _parameter)
         throws EFapsException
     {
-        final Map<?,?> values = (HashMap<?, ?>) _parameter.get(ParameterValues.NEW_VALUES);
+        final Map<?, ?> values = (HashMap<?, ?>) _parameter.get(ParameterValues.NEW_VALUES);
         final Attribute attr = _parameter.getInstance().getType().getAttribute("To");
 
-        final QueryBuilder queryBldr =new QueryBuilder(CIProducts.ProductAbstract);
+        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductAbstract);
         queryBldr.addWhereAttrEqValue(CIProducts.ProductAbstract.ID, (Object[]) values.get(attr));
         final MultiPrintQuery multi = queryBldr.getPrint();
         multi.addAttribute(CIProducts.ProductAbstract.Dimension);
