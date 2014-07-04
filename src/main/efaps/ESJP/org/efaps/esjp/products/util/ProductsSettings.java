@@ -60,17 +60,17 @@ public interface ProductsSettings
     String IMAGEPROPERTIES = "org.efaps.products.ImagesProperties";
 
     /**
-     * Link to a default warehouse instance
+     * Link to a default warehouse instance.
      */
     String DEFAULTWAREHOUSE = "org.efaps.products.DefaultWareHouse";
 
     /**
-     * Link to a default warehouse instance
+     * Link to a default warehouse instance.
      */
     String DEFAULTSTORAGEGROUP = "org.efaps.products.StorageGroup4ProductBOM";
 
     /**
-     * Link to a default warehouse instance
+     * Link to a default warehouse instance.
      */
     String DEFAULTDIMENSION = "org.efaps.products.DefaultDimension";
 

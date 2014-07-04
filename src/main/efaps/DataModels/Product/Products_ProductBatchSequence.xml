@@ -29,7 +29,7 @@
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductBatchSequence</name>
-        <format>%2$td%2$tm%2$ty-%1$05d</format>
+        <format>%3$s-%2$ty%2$tm%2$td-%1$05d</format>
         <startvalue>1</startvalue>
     </definition>
 </numbergenerator>
