@@ -105,8 +105,8 @@
             <property name="ModeEdit">NONE</property>
             <table>Products_InventoryTable</table>
             <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
-                <property name="Types">Products_Inventory</property>
-                <property name="LinkFroms">Product</property>
+                <property name="Type">Products_InventoryIndividual</property>
+                <property name="LinkFrom">Product</property>
             </evaluate>
         </field>
     </definition>
@@ -209,8 +209,8 @@
             <property name="ModeEdit">NONE</property>
             <table>Products_InventoryTable</table>
             <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
-                <property name="Types">Products_Inventory</property>
-                <property name="LinkFroms">Product</property>
+                <property name="Type">Products_InventoryIndividual</property>
+                <property name="LinkFrom">Product</property>
             </evaluate>
         </field>
     </definition>

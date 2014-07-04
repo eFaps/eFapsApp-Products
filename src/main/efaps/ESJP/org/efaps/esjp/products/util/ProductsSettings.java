@@ -42,16 +42,22 @@ public interface ProductsSettings
     String ACTIVATEIMAGE = "org.efaps.products.ActivateImages";
 
     /**
-     * Properties.<br/>
-     * Properties for image
+     * Boolean(true/false).<br/>
+     * Activate the individual management menu.
      */
-    String IMAGEPROPERTIES = "org.efaps.products.ImagesProperties";
+    String ACTIVATEINDIVIDUAL = "org.efaps.products.ActivateIndividual";
 
     /**
      * Boolean(true/false).<br/>
      * Activate the menu for updating Product Prices on mass.
      */
     String ACTIVATEPRICEMASSUPDATE = "org.efaps.products.ActivatePriceMassUpdate";
+
+    /**
+     * Properties.<br/>
+     * Properties for image
+     */
+    String IMAGEPROPERTIES = "org.efaps.products.ImagesProperties";
 
     /**
      * Link to a default warehouse instance
@@ -67,11 +73,5 @@ public interface ProductsSettings
      * Link to a default warehouse instance
      */
     String DEFAULTDIMENSION = "org.efaps.products.DefaultDimension";
-
-    /**
-     * Boolean(true/false).<br/>
-     * Activate the individual management menu.
-     */
-    String ACTIVATEINDIVIDUAL = "org.efaps.products.ActivateIndividual";
 
 }
