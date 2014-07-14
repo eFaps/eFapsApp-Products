@@ -33,7 +33,7 @@
             <table>Products_InventoryIndividualTable</table>
             <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
                 <property name="Type">Products_InventoryIndividual</property>
-                <property name="LinkFroms">Storage</property>
+                <property name="LinkFrom">Storage</property>
             </evaluate>
             <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
                 method="configCheck"
