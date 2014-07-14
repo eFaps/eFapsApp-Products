@@ -29,6 +29,7 @@
         <version-expression>(version==latest)</version-expression>
         <name>Products_StorageAbstractTree_InventoryIndivual</name>
         <target>
+            <menu>Products_StorageAbstractTree_InventoryIndividual_Menu</menu>
             <table>Products_InventoryIndividualTable</table>
             <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
                 <property name="Type">Products_InventoryIndividual</property>

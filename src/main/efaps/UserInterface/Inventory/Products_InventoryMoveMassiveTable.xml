@@ -19,16 +19,15 @@
  Last Changed:    $Date$
  Last Changed By: $Author$
 
---><ui-table xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-
+-->
+<ui-table xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>709361e3-52f8-443d-b6d1-f07b23abf52a</uuid>
     <file-application>eFapsApp-Products</file-application>
     <file-revision>$Rev$</file-revision>
-
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_InventoryMoveMassiveTable</name>
-        <!-- fields -->
         <field name="quantity">
             <property name="ModeCreate">EDITABLE</property>
             <property name="Label">Products_TransactionAbstract/Quantity.Label</property>
@@ -36,17 +35,28 @@
         <field name="product">
             <property name="ModeCreate">EDITABLE</property>
             <property name="Label">Products_TransactionAbstract/Product.Label</property>
-            <trigger program="org.efaps.esjp.products.Product" method="autoComplete4MassiveProductsInStorage"
-                name="Products_InventoryMoveMassiveTable.product.UI_FIELD_AUTOCOMPLETE" event="UI_FIELD_AUTOCOMPLETE" />
+            <trigger program="org.efaps.esjp.products.Product"
+                method="autoComplete4MassiveProductsInStorage"
+                name="Products_InventoryMoveMassiveTable.product.UI_FIELD_AUTOCOMPLETE"
+                event="UI_FIELD_AUTOCOMPLETE" />
+            <trigger program="org.efaps.esjp.products.Product"
+                method="updateFields4Product"
+                name="Products_InventoryMoveMassiveTable.product.UI_FIELD_UPDATE"
+                event="UI_FIELD_UPDATE" />
         </field>
         <field name="uoM">
             <property name="ModeCreate">EDITABLE</property>
             <property name="Label">Products_TransactionAbstract/UoM.Label</property>
+            <trigger event="UI_FIELD_VALUE" method="getUoMDropDownFieldValue"
+                name="Products_InventoryMoveForm.uoM.UI_FIELD_VALUE"
+                program="org.efaps.esjp.common.uiform.Field" />
         </field>
         <field name="storage">
             <property name="ModeCreate">HIDDEN</property>
-            <trigger program="org.efaps.esjp.products.Transaction" method="setDefaultStorageInst"
-                name="Products_InventoryMoveMassiveTable.storage.UI_FIELD_VALUE" event="UI_FIELD_VALUE" />
+            <trigger program="org.efaps.esjp.products.Transaction"
+                method="setDefaultStorageInst"
+                name="Products_InventoryMoveMassiveTable.storage.UI_FIELD_VALUE"
+                event="UI_FIELD_VALUE" />
         </field>
     </definition>
 </ui-table>

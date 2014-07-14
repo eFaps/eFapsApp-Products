@@ -508,20 +508,7 @@ public abstract class Product_Base
     public Return autoComplete4ProductsInStorage(final Parameter _parameter)
         throws EFapsException
     {
-        final Instance instance = _parameter.getInstance();
-        final Set<String> products = new HashSet<String>();
-        final QueryBuilder invQueryBldr = new QueryBuilder(CIProducts.Inventory);
-        invQueryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, instance.getId());
-        final MultiPrintQuery invMulti = invQueryBldr.getPrint();
-        invMulti.addAttribute(CIProducts.Inventory.Product, CIProducts.Inventory.Quantity);
-        invMulti.execute();
-        while (invMulti.next()) {
-            final BigDecimal quantity = invMulti.<BigDecimal>getAttribute(CIProducts.Inventory.Quantity);
-            if (quantity.compareTo(BigDecimal.ZERO) > 0) {
-                products.add(invMulti.<Long>getAttribute(CIProducts.Inventory.Product).toString());
-            }
-        }
-
+        final Instance storInst = _parameter.getInstance();
         final List<Map<String, String>> list = new ArrayList<Map<String, String>>();
         final String input = (String) _parameter.get(ParameterValues.OTHERS);
         if (input.length() > 0) {
@@ -531,29 +518,61 @@ public abstract class Product_Base
                 queryBldr.addWhereAttrMatchValue(CIProducts.ProductAbstract.Name, input + "*").setIgnoreCase(true);
                 queryBldr.addOrderByAttributeAsc(CIProducts.ProductAbstract.Name);
             } else {
-                queryBldr.addWhereAttrMatchValue(CIProducts.ProductAbstract.Description, input + "*").setIgnoreCase(true);
+                queryBldr.addWhereAttrMatchValue(CIProducts.ProductAbstract.Description, input + "*")
+                    .setIgnoreCase(true);
                 queryBldr.addOrderByAttributeAsc(CIProducts.ProductAbstract.Description);
             }
+            if (Products.getSysConfig().getAttributeValueAsBoolean(ProductsSettings.ACTIVATEINDIVIDUAL)) {
+                final QueryBuilder inQueryBldr = new QueryBuilder(CIProducts.ProductAbstract);
+
+                final QueryBuilder attrQueryBldr = new QueryBuilder(CIProducts.InventoryIndividual);
+                attrQueryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, storInst);
+
+                final QueryBuilder prodAttrQueryBldr = new QueryBuilder(CIProducts.ProductAbstract);
+                prodAttrQueryBldr.addWhereAttrNotEqValue(CIProducts.ProductAbstract.Type,
+                                CIProducts.ProductIndividual.getType().getId(),
+                                CIProducts.ProductBatch.getType().getId());
+                prodAttrQueryBldr.addWhereAttrNotEqValue(CIProducts.ProductAbstract.Individual,
+                                ProductIndividual.BATCH, ProductIndividual.INDIVIDUAL);
+
+                final QueryBuilder attrQueryBldr2 = new QueryBuilder(CIProducts.Inventory);
+                attrQueryBldr2.addWhereAttrEqValue(CIProducts.Inventory.Storage, storInst);
+                attrQueryBldr2.addWhereAttrInQuery(CIProducts.Inventory.Product,
+                                prodAttrQueryBldr.getAttributeQuery(CIProducts.ProductAbstract.ID));
+
+                inQueryBldr.setOr(true);
+                inQueryBldr.addWhereAttrInQuery(CIProducts.ProductAbstract.ID,
+                                attrQueryBldr.getAttributeQuery(CIProducts.Inventory.Product));
+                inQueryBldr.addWhereAttrInQuery(CIProducts.ProductAbstract.ID,
+                                attrQueryBldr2.getAttributeQuery(CIProducts.Inventory.Product));
+
+                queryBldr.addWhereAttrInQuery(CIProducts.ProductAbstract.ID,
+                                inQueryBldr.getAttributeQuery(CIProducts.ProductAbstract.ID));
+
+            } else {
+                final QueryBuilder attrQueryBldr = new QueryBuilder(CIProducts.Inventory);
+                attrQueryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, storInst);
+                queryBldr.addWhereAttrInQuery(CIProducts.ProductAbstract.ID,
+                        attrQueryBldr.getAttributeQuery(CIProducts.Inventory.Product));
+            }
+            InterfaceUtils.addMaxResult2QueryBuilder4AutoComplete(_parameter, queryBldr);
+
             final MultiPrintQuery multi = queryBldr.getPrint();
             multi.addAttribute(CIProducts.ProductAbstract.ID, CIProducts.ProductAbstract.Name,
-                               CIProducts.ProductAbstract.Description, CIProducts.ProductAbstract.Dimension);
+                            CIProducts.ProductAbstract.Description, CIProducts.ProductAbstract.Dimension);
             multi.execute();
             while (multi.next()) {
-                final Long id = multi.<Long>getAttribute(CIProducts.ProductAbstract.ID);
-                if (products.contains(id.toString())) {
-                    final String name = multi.<String>getAttribute(CIProducts.ProductAbstract.Name);
-                    final String desc = multi.<String>getAttribute(CIProducts.ProductAbstract.Description);
-                    final String choice = nameSearch ? name + " - " + desc : desc + " - " + name;
-                    final Map<String, String> map = new HashMap<String, String>();
-                    map.put(EFapsKey.AUTOCOMPLETE_KEY.getKey(), id.toString());
-                    map.put(EFapsKey.AUTOCOMPLETE_VALUE.getKey(), name);
-                    map.put(EFapsKey.AUTOCOMPLETE_CHOICE.getKey(), choice);
-                    map.put("uoM", getUoMFieldStr(multi.<Long>getAttribute(CIProducts.ProductAbstract.Dimension)));
-                    list.add(map);
-                }
+                final String name = multi.<String>getAttribute(CIProducts.ProductAbstract.Name);
+                final String desc = multi.<String>getAttribute(CIProducts.ProductAbstract.Description);
+                final String choice = nameSearch ? name + " - " + desc : desc + " - " + name;
+                final Map<String, String> map = new HashMap<String, String>();
+                map.put(EFapsKey.AUTOCOMPLETE_KEY.getKey(), multi.getCurrentInstance().getOid());
+                map.put(EFapsKey.AUTOCOMPLETE_VALUE.getKey(), name);
+                map.put(EFapsKey.AUTOCOMPLETE_CHOICE.getKey(), choice);
+                map.put("uoM", getUoMFieldStr(multi.<Long>getAttribute(CIProducts.ProductAbstract.Dimension)));
+                list.add(map);
             }
         }
-
         final Return retVal = new Return();
         retVal.put(ReturnValues.VALUES, list);
         return retVal;

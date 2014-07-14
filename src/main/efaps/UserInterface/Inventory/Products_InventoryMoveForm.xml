@@ -23,59 +23,63 @@
 
 -->
 
-<ui-form xmlns="http://www.efaps.org/xsd"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-
-  <uuid>b7ef2bce-693f-42f7-a0dc-abf5d068b7ee</uuid>
-  <file-application>eFapsApp-Products</file-application>
-  <file-revision>$Rev$</file-revision>
-
-  <definition>
-    <version-expression>(version==latest)</version-expression>
-    <name>Products_InventoryMoveForm</name>
-
-    <field name="date">
-      <property name="Attribute">Date</property>
-      <property name="ModeCreate">EDITABLE</property>
-      <property name="Required">true</property>
-    </field>
-    <field name="storage">
-      <property name="Attribute">Storage</property>
-      <property name="ModeCreate">EDITABLE</property>
-      <property name="Required">true</property>
-      <trigger program="org.efaps.esjp.common.uiform.Field"
+<ui-form xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>b7ef2bce-693f-42f7-a0dc-abf5d068b7ee</uuid>
+    <file-application>eFapsApp-Products</file-application>
+    <file-revision>$Rev$</file-revision>
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <name>Products_InventoryMoveForm</name>
+        <field name="date">
+            <property name="Attribute">Date</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="Required">true</property>
+        </field>
+        <field name="storage">
+            <property name="Attribute">Storage</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="Required">true</property>
+            <trigger program="org.efaps.esjp.common.uiform.Field"
                 method="dropDownFieldValue"
                 name="Products_TransactionAbstractForm.storage.UI_FIELD_VALUE"
-                event="UI_FIELD_VALUE" >
+                event="UI_FIELD_VALUE">
                 <property name="Type">Products_DynamicStorage</property>
                 <property name="StatusGroup">Products_StorageAbstractStatus</property>
                 <property name="Stati">Active</property>
                 <property name="Phrase">$&lt;attribute[Name]&gt;</property>
             </trigger>
-    </field>
-    <field name="product">
-      <property name="Attribute">Product</property>
-      <property name="ModeCreate">EDITABLE</property>
-      <property name="Required">true</property>
-      <trigger program="org.efaps.esjp.products.Product"
-               method="autoComplete4ProductsInStorage"
-               name="Products_InventoryMoveForm.product.autocomplete"
-               event="UI_FIELD_AUTOCOMPLETE"/>
-    </field>
-    <field name="quantity">
-      <property name="Attribute">Quantity</property>
-      <property name="ModeCreate">EDITABLE</property>
-      <property name="Required">true</property>
-    </field>
-    <field name="uoM">
-      <property name="ModeCreate">EDITABLE</property>
-      <property name="Attribute">UoM</property>
-    </field>
-    <field name="description">
-      <property name="Columns">40</property>
-      <property name="ModeCreate">EDITABLE</property>
-      <property name="Attribute">Description</property>
-    </field>
-  </definition>
+        </field>
+        <field name="product">
+            <property name="Attribute">Product</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="Required">true</property>
+            <trigger program="org.efaps.esjp.products.Product"
+                method="autoComplete4ProductsInStorage"
+                name="Products_InventoryMoveForm.product.UI_FIELD_AUTOCOMPLETE"
+                event="UI_FIELD_AUTOCOMPLETE" />
+            <trigger program="org.efaps.esjp.products.Product"
+                method="updateFields4Product"
+                name="Products_InventoryMoveForm.product.UI_FIELD_UPDATE"
+                event="UI_FIELD_UPDATE" />
+        </field>
+        <field name="quantity">
+            <property name="Attribute">Quantity</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="Required">true</property>
+        </field>
+        <field name="uoM">
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="Attribute">UoM</property>
+            <property name="Required">true</property>
+            <trigger event="UI_FIELD_VALUE" method="getUoMDropDownFieldValue"
+                name="Products_InventoryMoveForm.uoM.UI_FIELD_VALUE"
+                program="org.efaps.esjp.common.uiform.Field" />
+        </field>
+        <field name="description">
+            <property name="Columns">40</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="Attribute">Description</property>
+        </field>
+    </definition>
 </ui-form>

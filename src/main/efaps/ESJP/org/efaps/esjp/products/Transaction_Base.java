@@ -672,19 +672,12 @@ public abstract class Transaction_Base
                         CIFormProducts.Products_InventoryMoveMassiveForm.description.name);
         final String storageToId = _parameter.getParameterValue(
                         CIFormProducts.Products_InventoryMoveMassiveForm.storage.name);
-
         final String[] product = _parameter.getParameterValues(
                         CITableProducts.Products_InventoryMoveMassiveTable.product.name);
-
-        final String[] productDesc = _parameter.getParameterValues(
-                        CITableProducts.Products_InventoryMoveMassiveTable.product.name + "AutoComplete");
-
         final String[] quantity = _parameter.getParameterValues(
                         CITableProducts.Products_InventoryMoveMassiveTable.quantity.name);
-
         final String[] uoM = _parameter.getParameterValues(
                         CITableProducts.Products_InventoryMoveMassiveTable.uoM.name);
-
         final PrintQuery print = new PrintQuery(storageFromInst);
         print.addAttribute(CIProducts.StorageAbstract.Name);
         print.execute();
@@ -703,16 +696,40 @@ public abstract class Transaction_Base
         final List<CreatedDoc> transLists = new ArrayList<CreatedDoc>();
         if (product != null && product.length > 0) {
             for (int x = 0; x < product.length; x++) {
+                final Instance prodInst = Instance.get(product[x]);
+                final boolean individual = prodInst.getType().isKindOf(CIProducts.ProductIndividualAbstract.getType());
+                final PrintQuery prodPrint = new PrintQuery(prodInst);
+                final SelectBuilder selProdInst = SelectBuilder.get()
+                                .linkfrom(CIProducts.StockProductAbstract2IndividualAbstract.ToAbstract)
+                                .linkto(CIProducts.StockProductAbstract2IndividualAbstract.FromAbstract).instance();
+                if (individual) {
+                    prodPrint.addSelect(selProdInst);
+                }
+                prodPrint.addAttribute(CIProducts.ProductAbstract.Description);
+                prodPrint.executeWithoutAccessCheck();
+                final String productDesc = prodPrint.getAttribute(CIProducts.ProductAbstract.Description);
+
                 final String newDesc = DBProperties.getFormatedDBProperty(Transaction.class.getName()
                         + ".moveInventory.Description", new Object[] { desc, quantity[x],
-                        Dimension.getUoM(Long.parseLong(uoM[x])).getName(), productDesc[x], storageFrom, storateTo });
+                        Dimension.getUoM(Long.parseLong(uoM[x])).getName(), productDesc, storageFrom, storateTo });
+                Instance prodInstTmp;
+                if (individual) {
+                    prodInstTmp = prodPrint.getSelect(selProdInst);
+                    final CreatedDoc inbound = addTransactionProduct(CIProducts.TransactionIndividualInbound,
+                                    quantity[x], storageToId, uoM[x], date, prodInst, newDesc);
 
+                    final CreatedDoc outbound = addTransactionProduct(CIProducts.TransactionIndividualOutbound,
+                                    quantity[x], storageFromInst.getId(), uoM[x], date, prodInst, newDesc);
+                    transLists.add(inbound);
+                    transLists.add(outbound);
+                } else {
+                    prodInstTmp = prodInst;
+                }
                 final CreatedDoc inbound = addTransactionProduct(CIProducts.TransactionInbound,
-                                quantity[x], storageToId, uoM[x], date, product[x], newDesc);
+                                quantity[x], storageToId, uoM[x], date, prodInstTmp, newDesc);
 
                 final CreatedDoc outbound = addTransactionProduct(CIProducts.TransactionOutbound,
-                                quantity[x], storageFromInst.getId(), uoM[x], date, product[x], newDesc);
-
+                                quantity[x], storageFromInst.getId(), uoM[x], date, prodInstTmp, newDesc);
                 if (inbound.getInstance().isValid() && outbound.getInstance().isValid()) {
                     transLists.add(inbound);
                     transLists.add(outbound);
@@ -804,16 +821,19 @@ public abstract class Transaction_Base
         final Instance storageInst = _parameter.getInstance();
         final String[] quantities = _parameter.getParameterValues("quantity");
         final String[] products = _parameter.getParameterValues("product");
-        final String[] productAutos = _parameter.getParameterValues("productAutoComplete");
 
         boolean check = true;
         boolean heading = false;
         if (products != null && products.length > 0) {
             for (int y = 0; y < products.length; y++) {
-                final QueryBuilder queryBldr = new QueryBuilder(CIProducts.Inventory);
-                queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, storageInst.getId());
-                queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Product, products[y]);
+                final Instance prodInst = Instance.get(products[y]);
+                final QueryBuilder queryBldr = new QueryBuilder(CIProducts.InventoryAbstract);
+                queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, storageInst);
+                queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Product, prodInst);
                 final MultiPrintQuery multi = queryBldr.getPrint();
+                final SelectBuilder selDescr = SelectBuilder.get().linkto(CIProducts.Inventory.Product)
+                                .attribute(CIProducts.ProductAbstract.Description);
+                multi.addSelect(selDescr);
                 multi.addAttribute(CIProducts.Inventory.Quantity);
                 multi.execute();
 
@@ -827,7 +847,7 @@ public abstract class Transaction_Base
                             heading = true;
                         }
                         html.append(DBProperties.getProperty("esjp.Products_Transaction.validateMove.Prod"))
-                            .append(" ").append(productAutos[y]).append(" - ")
+                            .append(" ").append(multi.getSelect(selDescr)).append(" - ")
                             .append(DBProperties.getProperty("esjp.Products_Transaction.validateMove.Stock"))
                             .append(stock).append("<br>");
                         check = false;
