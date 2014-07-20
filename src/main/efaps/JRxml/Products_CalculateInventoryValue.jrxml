@@ -1,186 +1,185 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Products_CalculateInventoryValue" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
-	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
-	<property name="net.sf.jasperreports.export.xls.exclude.origin.band.2" value="pageFooter"/>
-	<property name="net.sf.jasperreports.export.xls.exclude.origin.keep.first.band.1" value="pageHeader"/>
-	<property name="net.sf.jasperreports.export.xls.exclude.origin.band.4" value="columnFooter"/>
-	<property name="net.sf.jasperreports.export.xls.exclude.origin.keep.first.band.3" value="columnHeader"/>
-	<property name="net.sf.jasperreports.export.xls.collapse.row.span" value="true"/>
-	<property name="net.sf.jasperreports.export.xls.ignore.cell.border" value="true"/>
-	<import value="org.efaps.admin.datamodel.ui.DecimalUI"/>
-	<parameter name="EFAPS_DEFINITION" class="java.lang.String" isForPrompting="false">
-		<property name="UUID" value="8e2e9c49-298c-4a75-8c06-6fa15469fa36"/>
-		<property name="Instance" value="true"/>
-	</parameter>
-	<parameter name="EFAPS_SUBREPORT" class="java.util.HashMap"/>
-	<parameter name="Storage" class="java.lang.String"/>
-	<parameter name="Date" class="java.util.Date"/>
-	<field name="Name" class="java.lang.String">
-		<property name="Key" value="Name"/>
-	</field>
-	<field name="Description" class="java.lang.String">
-		<property name="Key" value="Description"/>
-	</field>
-	<field name="UoM" class="java.lang.String">
-		<property name="Key" value="UoM"/>
-	</field>
-	<field name="Quantity" class="java.math.BigDecimal">
-		<property name="Key" value="Quantity"/>
-	</field>
-	<field name="Price" class="java.math.BigDecimal">
-		<property name="Key" value="Price"/>
-	</field>
-	<field name="Currency" class="java.lang.String">
-		<property name="Key" value="Currency"/>
-	</field>
-	<variable name="total" class="java.math.BigDecimal">
-		<variableExpression><![CDATA[$F{Quantity}.multiply( $F{Price} )]]></variableExpression>
-	</variable>
-	<pageHeader>
-		<band height="17" splitType="Stretch">
-			<textField pattern="dd/MM/yy">
-				<reportElement x="751" y="0" width="51" height="12"/>
-				<textElement textAlignment="Right"/>
-				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="0" y="0" width="179" height="12"/>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{Storage}]]></textFieldExpression>
-			</textField>
-			<textField pattern="dd/MM/yy">
-				<reportElement x="299" y="0" width="262" height="12"/>
-				<box leftPadding="2"/>
-				<textElement/>
-				<textFieldExpression class="java.util.Date"><![CDATA[$P{Date}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="179" y="0" width="120" height="12"/>
-				<textElement textAlignment="Right"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{Products_InventoryCalculateForm.date.Label} + ":"]]></textFieldExpression>
-			</textField>
-		</band>
-	</pageHeader>
-	<columnHeader>
-		<band height="21">
-			<textField>
-				<reportElement x="0" y="0" width="100" height="20"/>
-				<textElement textAlignment="Center"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{Products_Inventory/Quantity.Label}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="100" y="0" width="79" height="20"/>
-				<textElement textAlignment="Center"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{Products_Inventory/UoM.Label}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="299" y="0" width="262" height="20"/>
-				<textElement textAlignment="Center"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{Products_Inventory/Description.Label}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="179" y="0" width="120" height="20"/>
-				<textElement textAlignment="Center"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{Products_Inventory/Product.Label}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="561" y="0" width="100" height="20"/>
-				<textElement textAlignment="Center"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{Products_InventoryValue/Price.Label}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="661" y="0" width="90" height="20"/>
-				<textElement textAlignment="Center"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{Products_InventoryValue/Total.Label}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="751" y="0" width="51" height="20"/>
-				<textElement textAlignment="Center"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{Products_InventoryValue/CurrencyLink.Label}]]></textFieldExpression>
-			</textField>
-		</band>
-	</columnHeader>
-	<detail>
-		<band height="15" splitType="Stretch">
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="179" y="0" width="120" height="15"/>
-				<box leftPadding="2" rightPadding="2">
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{Name}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="299" y="0" width="262" height="15"/>
-				<box leftPadding="2" rightPadding="2">
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{Description}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" pattern="#,##0.####" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="100" height="15"/>
-				<box leftPadding="2" rightPadding="2">
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{Quantity}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="79" height="15"/>
-				<box leftPadding="2" rightPadding="2">
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{UoM}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="561" y="0" width="100" height="15"/>
-				<box leftPadding="2" rightPadding="2">
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{Price}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="661" y="0" width="90" height="15"/>
-				<box leftPadding="2" rightPadding="2">
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{total}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="751" y="0" width="51" height="15"/>
-				<box leftPadding="2" rightPadding="2">
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{Currency}]]></textFieldExpression>
-			</textField>
-		</band>
-	</detail>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Products_CalculateInventoryValue" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="8e2e9c49-298c-4a75-8c06-6fa15469fa36">
+    <property name="ireport.zoom" value="2.0"/>
+    <property name="ireport.x" value="0"/>
+    <property name="ireport.y" value="0"/>
+    <property name="net.sf.jasperreports.export.xls.exclude.origin.band.2" value="pageFooter"/>
+    <property name="net.sf.jasperreports.export.xls.exclude.origin.keep.first.band.1" value="pageHeader"/>
+    <property name="net.sf.jasperreports.export.xls.exclude.origin.band.4" value="columnFooter"/>
+    <property name="net.sf.jasperreports.export.xls.exclude.origin.keep.first.band.3" value="columnHeader"/>
+    <property name="net.sf.jasperreports.export.xls.collapse.row.span" value="true"/>
+    <property name="net.sf.jasperreports.export.xls.ignore.cell.border" value="true"/>
+    <import value="org.efaps.admin.datamodel.ui.DecimalUI"/>
+    <parameter name="EFAPS_DEFINITION" class="java.lang.String" isForPrompting="false">
+        <property name="Instance" value="true"/>
+    </parameter>
+    <parameter name="EFAPS_SUBREPORT" class="java.util.HashMap"/>
+    <parameter name="Storage" class="java.lang.String"/>
+    <parameter name="Date" class="java.util.Date"/>
+    <field name="Name" class="java.lang.String">
+        <property name="Key" value="Name"/>
+    </field>
+    <field name="Description" class="java.lang.String">
+        <property name="Key" value="Description"/>
+    </field>
+    <field name="UoM" class="java.lang.String">
+        <property name="Key" value="UoM"/>
+    </field>
+    <field name="Quantity" class="java.math.BigDecimal">
+        <property name="Key" value="Quantity"/>
+    </field>
+    <field name="Price" class="java.math.BigDecimal">
+        <property name="Key" value="Price"/>
+    </field>
+    <field name="Currency" class="java.lang.String">
+        <property name="Key" value="Currency"/>
+    </field>
+    <variable name="total" class="java.math.BigDecimal">
+        <variableExpression><![CDATA[$F{Quantity}.multiply( $F{Price} )]]></variableExpression>
+    </variable>
+    <pageHeader>
+        <band height="17" splitType="Stretch">
+            <textField pattern="dd/MM/yy">
+                <reportElement x="751" y="0" width="51" height="12"/>
+                <textElement textAlignment="Right"/>
+                <textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="0" width="179" height="12"/>
+                <textElement/>
+                <textFieldExpression class="java.lang.String"><![CDATA[$P{Storage}]]></textFieldExpression>
+            </textField>
+            <textField pattern="dd/MM/yy">
+                <reportElement x="299" y="0" width="262" height="12"/>
+                <box leftPadding="2"/>
+                <textElement/>
+                <textFieldExpression class="java.util.Date"><![CDATA[$P{Date}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="179" y="0" width="120" height="12"/>
+                <textElement textAlignment="Right"/>
+                <textFieldExpression class="java.lang.String"><![CDATA[$R{Products_InventoryCalculateForm.date.Label} + ":"]]></textFieldExpression>
+            </textField>
+        </band>
+    </pageHeader>
+    <columnHeader>
+        <band height="21">
+            <textField>
+                <reportElement x="0" y="0" width="100" height="20"/>
+                <textElement textAlignment="Center"/>
+                <textFieldExpression class="java.lang.String"><![CDATA[$R{Products_Inventory/Quantity.Label}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="100" y="0" width="79" height="20"/>
+                <textElement textAlignment="Center"/>
+                <textFieldExpression class="java.lang.String"><![CDATA[$R{Products_Inventory/UoM.Label}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="299" y="0" width="262" height="20"/>
+                <textElement textAlignment="Center"/>
+                <textFieldExpression class="java.lang.String"><![CDATA[$R{Products_Inventory/Description.Label}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="179" y="0" width="120" height="20"/>
+                <textElement textAlignment="Center"/>
+                <textFieldExpression class="java.lang.String"><![CDATA[$R{Products_Inventory/Product.Label}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="561" y="0" width="100" height="20"/>
+                <textElement textAlignment="Center"/>
+                <textFieldExpression class="java.lang.String"><![CDATA[$R{Products_InventoryValue/Price.Label}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="661" y="0" width="90" height="20"/>
+                <textElement textAlignment="Center"/>
+                <textFieldExpression class="java.lang.String"><![CDATA[$R{Products_InventoryValue/Total.Label}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="751" y="0" width="51" height="20"/>
+                <textElement textAlignment="Center"/>
+                <textFieldExpression class="java.lang.String"><![CDATA[$R{Products_InventoryValue/CurrencyLink.Label}]]></textFieldExpression>
+            </textField>
+        </band>
+    </columnHeader>
+    <detail>
+        <band height="15" splitType="Stretch">
+            <textField isStretchWithOverflow="true">
+                <reportElement stretchType="RelativeToTallestObject" x="179" y="0" width="120" height="15"/>
+                <box leftPadding="2" rightPadding="2">
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement verticalAlignment="Middle"/>
+                <textFieldExpression class="java.lang.String"><![CDATA[$F{Name}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true">
+                <reportElement stretchType="RelativeToTallestObject" x="299" y="0" width="262" height="15"/>
+                <box leftPadding="2" rightPadding="2">
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement verticalAlignment="Middle"/>
+                <textFieldExpression class="java.lang.String"><![CDATA[$F{Description}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" pattern="#,##0.####" isBlankWhenNull="true">
+                <reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="100" height="15"/>
+                <box leftPadding="2" rightPadding="2">
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Right" verticalAlignment="Middle"/>
+                <textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{Quantity}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true">
+                <reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="79" height="15"/>
+                <box leftPadding="2" rightPadding="2">
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement verticalAlignment="Middle"/>
+                <textFieldExpression class="java.lang.String"><![CDATA[$F{UoM}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+                <reportElement stretchType="RelativeToTallestObject" x="561" y="0" width="100" height="15"/>
+                <box leftPadding="2" rightPadding="2">
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Right" verticalAlignment="Middle"/>
+                <textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{Price}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+                <reportElement stretchType="RelativeToTallestObject" x="661" y="0" width="90" height="15"/>
+                <box leftPadding="2" rightPadding="2">
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Right" verticalAlignment="Middle"/>
+                <textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{total}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" isBlankWhenNull="true">
+                <reportElement stretchType="RelativeToTallestObject" x="751" y="0" width="51" height="15"/>
+                <box leftPadding="2" rightPadding="2">
+                    <topPen lineWidth="1.0"/>
+                    <leftPen lineWidth="1.0"/>
+                    <bottomPen lineWidth="1.0"/>
+                    <rightPen lineWidth="1.0"/>
+                </box>
+                <textElement verticalAlignment="Middle"/>
+                <textFieldExpression class="java.lang.String"><![CDATA[$F{Currency}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
 </jasperReport>
