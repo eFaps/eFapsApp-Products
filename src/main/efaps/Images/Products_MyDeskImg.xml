@@ -1,8 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
-<!--
-
- Copyright 2003 - 2009 The eFaps Team
+ Copyright 2003 - 2014 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -21,26 +19,22 @@
  Last Changed:    $Date$
  Last Changed By: $Author$
 
--->
+ Original Author: Yusuke Kamiyamane.
+ Original Name:   wooden-box.png
+ Original Web:    Fugue Icons
+                  [ http://p.yusukekamiyamane.com/ ]
+ Original License:Creative Creative Commons Attribution 3.0 License.
+                  [ http://creativecommons.org/licenses/by/3.0/ ]
 
-<ui-menu xmlns="http://www.efaps.org/xsd"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>0ff70869-361c-4971-bd09-6cf79a0a7dfb</uuid>
+-->
+<ui-image xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>e47f95fe-f1a8-475d-a2b7-d145bd0b91a3</uuid>
     <file-application>eFapsApp-Products</file-application>
     <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_MyDesk</name>
-        <icon>Products_MyDeskImg</icon>
-        <childs>
-            <child>Products_ProductSearchMyDesk</child>
-            <child>Products_Product_MyDesk</child>
-            <child>Products_PartList_MyDesk</child>
-            <child>Products_PriceListReport</child>
-            <child>Products_KardexMyDesk</child>
-            <child>Products_CatalogMyDesk</child>
-            <child>Products_StorageGroupAbstractMyDesk</child>
-        </childs>
+        <name>Products_MyDeskImg</name>
+        <file>Products_MyDeskImg.png</file>
     </definition>
-</ui-menu>
+</ui-image>
