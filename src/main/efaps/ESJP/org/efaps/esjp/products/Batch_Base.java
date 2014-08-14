@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2013 The eFaps Team
+ * Copyright 2003 - 2014 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,16 +20,25 @@
 
 package org.efaps.esjp.products;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.efaps.admin.dbproperty.DBProperties;
 import org.efaps.admin.event.Parameter;
+import org.efaps.admin.event.Return;
+import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
+import org.efaps.db.Context;
+import org.efaps.db.Insert;
 import org.efaps.db.Instance;
+import org.efaps.db.PrintQuery;
 import org.efaps.db.QueryBuilder;
+import org.efaps.db.SelectBuilder;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.erp.Naming;
 import org.efaps.util.EFapsException;
+import org.joda.time.DateTime;
 
 /**
  * TODO comment!
@@ -41,6 +50,8 @@ import org.efaps.util.EFapsException;
 @EFapsRevision("$Rev$")
 public abstract class Batch_Base
 {
+
+    protected static String SESSIONKEY = Batch.class.getName() + ".SessionKey";
 
     /**
      * @param _parameter Parameter as passed by the eFasp API
@@ -76,5 +87,98 @@ public abstract class Batch_Base
         queryBldr.addWhereAttrInQuery(CIProducts.ProductBatch.ID,
                         attrQueryBldr.getAttributeQuery(CIProducts.InventoryIndividual.Product));
         return queryBldr.getQuery().executeWithoutAccessCheck();
+    }
+
+    /**
+     * @param _parameter Parameter as passed by the eFasp API
+     * @throws EFapsException on error
+     * @return empty Return
+     */
+    public Return combine(final Parameter _parameter)
+        throws EFapsException
+    {
+        if (Context.getThreadContext().containsSessionAttribute(SESSIONKEY)) {
+            @SuppressWarnings("unchecked")
+            final List<Instance> insts = (List<Instance>) Context.getThreadContext().getSessionAttribute(SESSIONKEY);
+            if (insts != null && insts.size() ==2) {
+                final PrintQuery print = new PrintQuery(insts.get(0));
+                print.addAttribute(CIProducts.InventoryIndividual.Quantity, CIProducts.InventoryIndividual.Storage,
+                                CIProducts.InventoryIndividual.UoM, CIProducts.InventoryIndividual.Product);
+                print.executeWithoutAccessCheck();
+
+                final Insert insert = new Insert(CIProducts.TransactionIndividualOutbound);
+                insert.add(CIProducts.TransactionIndividualOutbound.Date, new DateTime());
+                insert.add(CIProducts.TransactionIndividualOutbound.Quantity,
+                                print.getAttribute(CIProducts.InventoryIndividual.Quantity));
+                insert.add(CIProducts.TransactionIndividualOutbound.Storage,
+                                print.getAttribute(CIProducts.InventoryIndividual.Storage));
+                insert.add(CIProducts.TransactionIndividualOutbound.UoM,
+                                print.getAttribute(CIProducts.InventoryIndividual.UoM));
+                insert.add(CIProducts.TransactionIndividualOutbound.Product,
+                                print.getAttribute(CIProducts.InventoryIndividual.Product));
+                insert.execute();
+
+                final PrintQuery print2 = new PrintQuery(insts.get(1));
+                print2.addAttribute(CIProducts.InventoryIndividual.Product, CIProducts.InventoryIndividual.Storage);
+                print2.executeWithoutAccessCheck();
+
+                final Insert insert2 = new Insert(CIProducts.TransactionIndividualInbound);
+                insert2.add(CIProducts.TransactionIndividualOutbound.Date, new DateTime());
+                insert2.add(CIProducts.TransactionIndividualInbound.Quantity,
+                                print.getAttribute(CIProducts.InventoryIndividual.Quantity));
+                insert2.add(CIProducts.TransactionIndividualInbound.Storage,
+                                print2.getAttribute(CIProducts.InventoryIndividual.Storage));
+                insert2.add(CIProducts.TransactionIndividualInbound.UoM,
+                                print.getAttribute(CIProducts.InventoryIndividual.UoM));
+                insert2.add(CIProducts.TransactionIndividualOutbound.Product,
+                                print2.getAttribute(CIProducts.InventoryIndividual.Product));
+                insert2.execute();
+            }
+            Context.getThreadContext().removeSessionAttribute(SESSIONKEY);
+        }
+        return new Return();
+    }
+
+    /**
+     * @param _parameter Parameter as passed by the eFasp API
+     * @throws EFapsException on error
+     * @return Return containing snipplet
+     */
+    public Return getMessage4CombineFieldValueUI(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        StringBuilder html = new StringBuilder();
+        final String[] oids = _parameter.getParameterValues("selectedRow");
+        final List<Instance> insts = new ArrayList<>();
+        for (final String oid : oids) {
+            final Instance inst = Instance.get(oid);
+            final PrintQuery print = new PrintQuery(inst);
+            final SelectBuilder selProdInst = SelectBuilder.get().linkto(CIProducts.InventoryIndividual.Product)
+                            .instance();
+            final SelectBuilder selProdName = SelectBuilder.get().linkto(CIProducts.InventoryIndividual.Product)
+                            .attribute(CIProducts.ProductAbstract.Name);
+            print.addSelect(selProdInst, selProdName);
+            print.executeWithoutAccessCheck();
+            final Instance prodInst = print.getSelect(selProdInst);
+            if (prodInst.getType().isKindOf(CIProducts.ProductBatch.getType())) {
+                final String prodName = print.getSelect(selProdName);
+                html.append(prodName).append("</br>");
+                insts.add(inst);
+            } else {
+                html = new StringBuilder();
+                insts.clear();
+                html.append(DBProperties.getProperty(Batch.class.getName() + ".cannotCombine"));
+                break;
+            }
+        }
+        //TODO check almacen, equal product
+        if (insts.isEmpty()) {
+            Context.getThreadContext().removeSessionAttribute(SESSIONKEY);
+        } else {
+            Context.getThreadContext().setSessionAttribute(SESSIONKEY, insts);
+        }
+        ret.put(ReturnValues.SNIPLETT, html.toString());
+        return ret;
     }
 }

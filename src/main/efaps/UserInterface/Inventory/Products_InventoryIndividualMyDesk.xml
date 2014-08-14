@@ -21,7 +21,8 @@
  Last Changed By: $Author$
 
 -->
-<ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+<ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>5630b452-5b51-4107-b29f-e8f9655ce309</uuid>
     <file-application>eFapsApp-Products</file-application>
     <file-revision>$Rev$</file-revision>
@@ -34,22 +35,18 @@
             <role>Products_Reader</role>
         </access>
         <target>
+            <menu>Products_InventoryIndividualMyDesk_Menu</menu>
             <table>Products_InventoryIndividualTableFiltered</table>
             <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
-                <property name="Types">Products_InventoryIndividual</property>
+                <property name="Type">Products_InventoryIndividual</property>
             </evaluate>
-            <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
-                method="configCheck"
-                name="Products_StorageAbstractTree_InventoryIndivual.UI_ACCESSCHECK"
-                event="UI_ACCESSCHECK">
+            <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI" method="configCheck"
+                name="Products_StorageAbstractTree_InventoryIndivual.UI_ACCESSCHECK" event="UI_ACCESSCHECK">
                 <!-- Products-Configuration -->
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.ActivateIndividual</property>
             </trigger>
-            <help>org.efaps.wiki.products.Products.wiki</help>
         </target>
-
-        <!-- properties -->
         <property name="Target">content</property>
         <property name="TargetShowCheckBoxes">true</property>
     </definition>
