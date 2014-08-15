@@ -492,7 +492,7 @@ public abstract class Product_Base
         final Instance storage = (Instance) Context.getThreadContext()
                         .getSessionAttribute(Transaction_Base.STORAGEINSTKEY);
         final Instance instance = _parameter.getInstance();
-        if ((storage != null && storage.isValid()) && instance == null) {
+        if (storage != null && storage.isValid() && instance == null) {
             _parameter.put(ParameterValues.INSTANCE, storage);
         }
         return autoComplete4ProductsInStorage(_parameter);
@@ -701,10 +701,10 @@ public abstract class Product_Base
         throws EFapsException
     {
         final Map<?, ?> properties = (Map<?, ?>) _parameter.get(ParameterValues.PROPERTIES);
-        if (properties.containsKey("ConnectType")) {
-            final String childAttr = (String) properties.get("ConnectChildAttribute");
-            final String parentAttr = (String) properties.get("ConnectParentAttribute");
-            final Type type = Type.get((String) properties.get("ConnectType"));
+        if (properties.containsKey("CloneConnectType")) {
+            final String childAttr = (String) properties.get("CloneConnectChildAttribute");
+            final String parentAttr = (String) properties.get("CloneConnectParentAttribute");
+            final Type type = Type.get((String) properties.get("CloneConnectType"));
 
             // make the relation between original and copy
             final Insert relInsert = new Insert(type);
