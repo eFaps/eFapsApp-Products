@@ -46,6 +46,7 @@
             <property name="Label">Products_ProductForm.image.Label</property>
             <property name="ModeEdit">NONE</property>
             <property name="RowSpan">5</property>
+            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
             <trigger program="org.efaps.esjp.products.Image"
                 method="getImageFieldValueUI"
                 name="Products_ImageForm.image.UI_FIELD_VALUE"
@@ -174,6 +175,7 @@
          <field name="image">
             <property name="Label">Products_ProductForm.image.Label</property>
             <property name="RowSpan">5</property>
+            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
             <trigger program="org.efaps.esjp.products.Image"
                 method="getImageFieldValueUI"
                 name="Products_ImageForm.image.UI_FIELD_VALUE"
@@ -298,6 +300,7 @@
          <field name="image">
             <property name="Label">Products_ProductForm.image.Label</property>
             <property name="RowSpan">5</property>
+            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
             <trigger program="org.efaps.esjp.products.Image"
                 method="getImageFieldValueUI"
                 name="Products_ImageForm.image.UI_FIELD_VALUE"

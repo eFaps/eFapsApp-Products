@@ -12,7 +12,8 @@
   Last Changed:    $Date$
   Last Changed By: $Author$
 
---><ui-form xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+-->
+<ui-form xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>3e23aac9-481a-44a8-8eac-5ea7e2b42697</uuid>
     <file-application>eFapsApp-Products</file-application>
     <file-revision>$Rev$</file-revision>
@@ -22,12 +23,15 @@
         <!-- fields -->
         <field name="description">
             <property name="HideLabel">true</property>
-            <trigger event="UI_FIELD_VALUE" method="getDBPropertiesFieldValue" name="Products_ProductBOMReportForm.description.UI_FIELD_VALUE" program="org.efaps.esjp.common.uiform.Field">
+            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+            <trigger event="UI_FIELD_VALUE" method="getDBPropertiesFieldValue" name="Products_ProductBOMReportForm.description.UI_FIELD_VALUE"
+                program="org.efaps.esjp.common.uiform.Field">
                 <property name="DBProperty">Products_ProductBOMReportForm.description.html</property>
             </trigger>
         </field>
         <field name="report">
             <property name="HideLabel">true</property>
+            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
             <trigger event="UI_FIELD_VALUE" method="getReport" name="Products_ProductBOMReportForm.report.UI_FIELD_VALUE" program="org.efaps.esjp.products.reports.TerminateProductReport">
                 <property name="Status">Open</property>
             </trigger>

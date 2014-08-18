@@ -36,6 +36,7 @@
         <name>Products_InventoryCalculateForm</name>
         <field name="mime">
             <property name="ModeCreate">READONLY</property>
+            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
             <property name="Label">Common_Main_PrintForm.mime.Label</property>
             <trigger program="org.efaps.esjp.ui.print.UserInterface"
                 method="getMimeFieldValueUI"

@@ -64,6 +64,7 @@
 
         <field name="javascript">
             <property name="ModeCreate">hidden</property>
+            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
             <trigger program="org.efaps.esjp.products.Product"
                 method="javascript4CreateIndividualFieldValue"
                 name="Products_ProductCreateIndividualForm.product.UI_FIELD_AUTOCOMPLETE"
