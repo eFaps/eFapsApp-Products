@@ -63,7 +63,7 @@
         </field>
 
         <field name="javascript">
-            <property name="ModeCreate">hidden</property>
+            <property name="ModeCreate">HIDDEN</property>
             <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
             <trigger program="org.efaps.esjp.products.Product"
                 method="javascript4CreateIndividualFieldValue"
