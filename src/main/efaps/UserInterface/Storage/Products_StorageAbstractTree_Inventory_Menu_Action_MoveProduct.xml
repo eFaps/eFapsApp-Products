@@ -31,29 +31,56 @@
     <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
+        <profiles>
+            <profile name="eFaps"/>
+        </profiles>
         <name>Products_StorageAbstractTree_Inventory_Menu_Action_MoveProduct</name>
         <access>
             <role>Products_Modifier</role>
             <role>Products_Admin</role>
         </access>
-        <!-- target definitions -->
         <target>
             <form>Products_InventoryMoveForm</form>
             <execute program="org.efaps.esjp.products.Transaction" method="moveInventory">
-                <!-- property implemented module sales -->
-                <property name="TransactionDocument">53a57515-60cc-46d1-923e-e4a879054093</property>
                 <property name="UseNumberGenerator4Name">true</property>
                 <property name="StatusGroup">Sales_TransactionDocumentStatus</property>
                 <property name="Status">Open</property>
             </execute>
             <validate program="org.efaps.esjp.products.Transaction" method="validateMove" />
         </target>
-        <!-- properties -->
         <property name="Target">modal</property>
         <property name="TargetCreateType">Products_TransactionInbound</property>
         <property name="TargetMode">create</property>
         <property name="WindowHeight">460</property>
         <property name="WindowWidth">515</property>
     </definition>
-
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <profiles>
+            <profile name="sales"/>
+        </profiles>
+        <name>Products_StorageAbstractTree_Inventory_Menu_Action_MoveProduct</name>
+        <access>
+            <role>Products_Modifier</role>
+            <role>Products_Admin</role>
+        </access>
+        <target>
+            <form>Products_InventoryMoveForm</form>
+            <execute program="org.efaps.esjp.products.Transaction" method="moveInventory">
+                <property name="TransactionDocument">53a57515-60cc-46d1-923e-e4a879054093</property>
+                <property name="UseNumberGenerator4Name">true</property>
+                <property name="StatusGroup">Sales_TransactionDocumentStatus</property>
+                <property name="Status">Open</property>
+                <property name="JasperReport">Sales_TransactionDocument</property>
+            </execute>
+            <validate program="org.efaps.esjp.products.Transaction" method="validateMove" />
+            <command>Products_StorageAbstractTree_Inventory_ShowName</command>
+        </target>
+        <property name="Target">modal</property>
+        <property name="TargetCreateType">Products_TransactionInbound</property>
+        <property name="TargetMode">create</property>
+        <property name="WindowHeight">460</property>
+        <property name="WindowWidth">515</property>
+        <property name="TargetShowFile">true</property>
+    </definition>
 </ui-command>

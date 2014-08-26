@@ -19,18 +19,47 @@
  Last Changed:    $Date$
  Last Changed By: $Author$
 
---><ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+-->
+<ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>c018120d-8f3e-4d38-b5fa-2fbd96120173</uuid>
     <file-application>eFapsApp-Products</file-application>
     <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
+        <profiles>
+            <profile name="eFaps" />
+        </profiles>
         <name>Products_StorageAbstractTree_Inventory_Menu_Action_MoveMassiveProduct</name>
         <access>
             <role>Products_Modifier</role>
             <role>Products_Admin</role>
         </access>
-        <!-- target definitions -->
+        <target>
+            <form>Products_InventoryMoveMassiveForm</form>
+            <execute method="moveInventory" program="org.efaps.esjp.products.Transaction">
+                <property name="UseNumberGenerator4Name">true</property>
+                <property name="StatusGroup">Sales_TransactionDocumentStatus</property>
+                <property name="Status">Open</property>
+            </execute>
+            <validate method="validateMove" program="org.efaps.esjp.products.Transaction" />
+        </target>
+        <property name="Target">modal</property>
+        <property name="TargetCreateType">Products_TransactionInbound</property>
+        <property name="TargetMode">create</property>
+        <property name="WindowHeight">460</property>
+        <property name="WindowWidth">515</property>
+    </definition>
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <profiles>
+            <profile name="sales" />
+        </profiles>
+        <name>Products_StorageAbstractTree_Inventory_Menu_Action_MoveMassiveProduct</name>
+        <access>
+            <role>Products_Modifier</role>
+            <role>Products_Admin</role>
+        </access>
         <target>
             <form>Products_InventoryMoveMassiveForm</form>
             <execute method="moveInventory" program="org.efaps.esjp.products.Transaction">
@@ -39,15 +68,16 @@
                 <property name="UseNumberGenerator4Name">true</property>
                 <property name="StatusGroup">Sales_TransactionDocumentStatus</property>
                 <property name="Status">Open</property>
+                <property name="JasperReport">Sales_TransactionDocument</property>
             </execute>
-            <validate method="validateMove" program="org.efaps.esjp.products.Transaction"/>
+            <validate method="validateMove" program="org.efaps.esjp.products.Transaction" />
+            <command>Products_StorageAbstractTree_Inventory_ShowName</command>
         </target>
-        <!-- properties -->
         <property name="Target">modal</property>
         <property name="TargetCreateType">Products_TransactionInbound</property>
         <property name="TargetMode">create</property>
         <property name="WindowHeight">460</property>
         <property name="WindowWidth">515</property>
+        <property name="TargetShowFile">true</property>
     </definition>
-
 </ui-command>

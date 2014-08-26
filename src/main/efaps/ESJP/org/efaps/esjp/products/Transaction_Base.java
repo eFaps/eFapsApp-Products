@@ -20,6 +20,7 @@
 
 package org.efaps.esjp.products;
 
+import java.io.File;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -91,6 +92,12 @@ public abstract class Transaction_Base
      * Key used to store info during request.
      */
     public static final String STORAGEINSTKEY = Transaction_Base.class + ".StorageInstKey";
+
+    /**
+     * Used to store the Revision in the Context.
+     */
+    public static final String NAMEKEY = Transaction.class.getName() + ".NameKey";
+
 
     /**
      * Method to assign the signum for the quantity value.
@@ -665,6 +672,7 @@ public abstract class Transaction_Base
     public Return moveInventory(final Parameter _parameter)
         throws EFapsException
     {
+        final Return ret =  new Return();
         final Instance storageFromInst = _parameter.getInstance();
         final String date = _parameter.getParameterValue(
                         CIFormProducts.Products_InventoryMoveMassiveForm.date.name);
@@ -711,7 +719,7 @@ public abstract class Transaction_Base
 
                 final String newDesc = DBProperties.getFormatedDBProperty(Transaction.class.getName()
                         + ".moveInventory.Description", new Object[] { desc, quantity[x],
-                        Dimension.getUoM(Long.parseLong(uoM[x])).getName(), productDesc, storageFrom, storateTo });
+                            Dimension.getUoM(Long.parseLong(uoM[x])).getName(), productDesc, storageFrom, storateTo });
                 Instance prodInstTmp;
                 if (individual) {
                     prodInstTmp = prodPrint.getSelect(selProdInst);
@@ -738,11 +746,39 @@ public abstract class Transaction_Base
         }
 
         if (!transLists.isEmpty()) {
-            addTransactionDocument2ConnectTransaction(_parameter, transLists.toArray(new CreatedDoc[transLists.size()]));
-        }
+            final CreatedDoc doc = addTransactionDocument2ConnectTransaction(_parameter,
+                            transLists.toArray(new CreatedDoc[transLists.size()]));
+            Context.getThreadContext().setSessionAttribute(NAMEKEY,
+                            doc.getValues().get(CIERP.DocumentAbstract.Name.name));
 
-        return new Return();
+            final File file = new TransactionDocument().createReport(_parameter, doc);
+            if (file != null) {
+                ret.put(ReturnValues.VALUES, file);
+                ret.put(ReturnValues.TRUE, true);
+            }
+        }
+        return ret;
     }
+
+    /**
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return Return with Snipplet
+     * @throws EFapsException on error
+     */
+    public Return showNameFieldValue(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        final String name = (String) Context.getThreadContext().getSessionAttribute(NAMEKEY);
+        Context.getThreadContext().removeSessionAttribute(NAMEKEY);
+        final StringBuilder html = new StringBuilder();
+        html.append("<span style=\"text-align: center; width: 98%; font-size:40pt; height: 55px; position:absolute\">")
+                        .append(name).append("</span>");
+        ret.put(ReturnValues.SNIPLETT, html.toString());
+        return ret;
+    }
+
+
 
     protected CreatedDoc addTransactionProduct(final CIType _ciType,
                                                final Object... values)
@@ -775,33 +811,40 @@ public abstract class Transaction_Base
         return createDoc;
     }
 
-    protected void addTransactionDocument2ConnectTransaction(final Parameter _parameter,
-                                                             final CreatedDoc... _transactions)
+    /**
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _transactions transaction
+     * @return createdoc for transactiondocument
+     * @throws EFapsException on error
+     */
+    protected CreatedDoc addTransactionDocument2ConnectTransaction(final Parameter _parameter,
+                                                                   final CreatedDoc... _transactions)
         throws EFapsException
     {
+        CreatedDoc ret = null;
         final String productDocumentType = _parameter.getParameterValue("productDocumentType");
         if (productDocumentType != null) {
             final Instance prodDocInst = Instance.get(productDocumentType);
             if (prodDocInst.isValid()) {
-                final CreatedDoc docTransactionCreate = new TransactionDocument()
-                                .createDoc(_parameter, _transactions[0]);
-                if (docTransactionCreate.getInstance().isValid()) {
+                ret = new TransactionDocument().createDoc(_parameter, _transactions[0]);
+                if (ret.getInstance().isValid()) {
                     // Sales_Document2ProductDocumentType
                     final Insert insert = new Insert(UUID.fromString("29438fb0-8b1f-4e4e-a409-812b2f9efdc0"));
-                    insert.add("DocumentLink", docTransactionCreate.getInstance());
+                    insert.add("DocumentLink", ret.getInstance());
                     insert.add("DocumentTypeLink", prodDocInst);
                     insert.execute();
 
                     if (_transactions != null && _transactions.length > 0) {
                         for (final CreatedDoc trans : _transactions) {
                             final Update update = new Update(trans.getInstance());
-                            update.add(CIProducts.TransactionAbstract.Document, docTransactionCreate.getInstance());
+                            update.add(CIProducts.TransactionAbstract.Document, ret.getInstance());
                             update.executeWithoutTrigger();
                         }
                     }
                 }
             }
         }
+        return ret;
     }
 
     /**
@@ -1332,6 +1375,14 @@ public abstract class Transaction_Base
 
             createdDoc.setInstance(insert.getInstance());
             return createdDoc;
+        }
+
+        @Override
+        public File createReport(final Parameter _parameter,
+                                 final CreatedDoc _createdDoc)
+            throws EFapsException
+        {
+            return super.createReport(_parameter, _createdDoc);
         }
 
         @Override
