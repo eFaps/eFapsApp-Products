@@ -78,7 +78,6 @@ import org.efaps.esjp.products.util.Products.ProductIndividual;
 import org.efaps.esjp.products.util.ProductsSettings;
 import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
-import org.efaps.util.cache.CacheReloadException;
 import org.joda.time.DateTime;
 
 /**
@@ -95,8 +94,7 @@ public abstract class Product_Base
     /**
      * CacheKey for ExchangeRates.
      */
-    public static String CACHEKEY4PRODUCT = Product.class.getName()+ ".CacheKey4Product";
-
+    public static final String CACHEKEY4PRODUCT = Product.class.getName() + ".CacheKey4Product";
 
     /**
      * @param _parameter _parameter
@@ -132,7 +130,7 @@ public abstract class Product_Base
     /**
      * @param _parameter Parameter as passed by the eFaps API
      * @return dafuelt value
-     * @throws EFapsException
+     * @throws EFapsException on error
      */
     public Return defaultUoMFieldValue(final Parameter _parameter)
         throws EFapsException
@@ -328,7 +326,7 @@ public abstract class Product_Base
                     final Instance defaultStorageInst = Products.getSysConfig().getLink(
                             ProductsSettings.DEFAULTWAREHOUSE);
                     if (defaultStorageInst != null && defaultStorageInst.isValid()) {
-                         attrQueryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, defaultStorageInst);
+                        attrQueryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, defaultStorageInst);
                     }
                 }
                 if ("true".equalsIgnoreCase(getProperty(_parameter, "ExcludeReservation"))) {
@@ -379,6 +377,41 @@ public abstract class Product_Base
     {
         // to be used from implementation
         return true;
+    }
+
+    /**
+     * @param _parameter    Parameter as passed by the eFaps API
+     * @return return with map for picker
+     * @throws EFapsException on error
+     */
+    public Return picker4Product(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return retVal = new Return();
+        final Map<String, Object> map = new HashMap<String, Object>();
+        retVal.put(ReturnValues.VALUES, map);
+
+        final Instance prodInst = Instance.get(_parameter.getParameterValue("selectedRow"));
+        if (prodInst.isValid()) {
+            final PrintQuery print = new PrintQuery(prodInst);
+            print.addAttribute(CIProducts.ProductAbstract.Name, CIProducts.ProductAbstract.Description,
+                            CIProducts.ProductAbstract.DefaultUoM, CIProducts.ProductAbstract.Dimension);
+            if (print.execute()) {
+                final String name = print.getAttribute(CIProducts.ProductAbstract.Name);
+                final String desc = print.getAttribute(CIProducts.ProductAbstract.Description);
+                final Dimension dim = Dimension.get(print.<Long>getAttribute(CIProducts.ProductAbstract.Dimension));
+                final Long defUoM = print.getAttribute(CIProducts.ProductAbstract.DefaultUoM);
+
+                map.put(EFapsKey.PICKER_VALUE.getKey(), name);
+                map.put("product", prodInst.getOid());
+                map.put("productDesc", desc);
+                map.put("uoM", getUoMFieldStr(defUoM == null ? dim.getBaseUoM().getId() : defUoM, dim.getId()));
+                if (prodInst.getType().isKindOf(CIProducts.ProductIndividualAbstract)) {
+                    map.put("quantity", "1");
+                }
+            }
+        }
+        return retVal;
     }
 
 
@@ -576,26 +609,6 @@ public abstract class Product_Base
         final Return retVal = new Return();
         retVal.put(ReturnValues.VALUES, list);
         return retVal;
-    }
-
-    /**
-     * Method to create a STring for UoM fields.
-     *
-     * @param _dimId id of the dimension the UoM is wanted for
-     * @return String
-     */
-    @Override
-    protected String getUoMFieldStr(final long _dimId)
-        throws CacheReloadException
-    {
-        final Dimension dim = Dimension.get(_dimId);
-        final StringBuilder js = new StringBuilder();
-        js.append("new Array('").append(dim.getBaseUoM().getId()).append("'");
-        for (final UoM uom : dim.getUoMs()) {
-            js.append(",'").append(uom.getId()).append("','").append(uom.getName()).append("'");
-        }
-        js.append(")");
-        return js.toString();
     }
 
     /**

@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
  Copyright 2003 - 2010 The eFaps Team
 
@@ -17,37 +15,33 @@
  limitations under the License.
 
  Author:          The eFaps Team
- Revision:        $Rev: 5375 $
- Last Changed:    $Date: 2010-08-20 14:31:15 -0500 (Fri, 20 Aug 2010) $
- Last Changed By: $Author: jorge.m.cueva $
+ Revision:        $Rev$
+ Last Changed:    $Date$
+ Last Changed By: $Author$
 
 -->
-
-<ui-command xmlns="http://www.efaps.org/xsd"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>23e52d73-6f6d-4fac-a20e-ec4e46cab037</uuid>
+<ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>d11ba02c-9db1-4f35-b965-f737cb8c80f5</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev: 83 $</file-revision>
+    <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductPicker</name>
-        <!-- target definitions -->
+        <name>Products_ProductIndividualPicker</name>
         <target>
-            <table>Products_ProductPickerTable</table>
-            <evaluate program="org.efaps.esjp.products.TreeViewStructurBrowser">
-                <property name="Type">Products_TreeViewRoot</property>
+            <table>Products_ProductIndividualPickerTable</table>
+            <evaluate program="org.efaps.esjp.products.Product" method="productMultiPrint">
+                <property name="Type">Products_ProductIndividual</property>
+                <property name="IncludeIndividual">true</property>
             </evaluate>
-            <trigger program="org.efaps.esjp.products.TreeView"
+            <trigger event="UI_PICKER"
                 method="picker4Product"
-                name="Products_ProductPickerForm.UI_PICKER"
-                event="UI_PICKER"/>
+                name="Products_ProductIndividualPicker.UI_PICKER"
+                program="org.efaps.esjp.products.Product" />
         </target>
-        <!-- properties -->
         <property name="Target">modal</property>
         <property name="TargetMode">view</property>
         <property name="TargetShowCheckBoxes">true</property>
-        <property name="TargetStructurBrowserField">label</property>
         <property name="NoUpdateAfterCOMMAND">true</property>
         <property name="WindowHeight">460</property>
         <property name="WindowWidth">515</property>
