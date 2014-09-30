@@ -73,6 +73,7 @@
             <property name="SelectAlternateOID">linkto[Product].oid</property>
             <property name="Select">linkto[Product].attribute[Name]</property>
             <property name="Label">Products_TransactionAbstract/Product.Label</property>
+            <property name="FilterType">PICKLIST</property>
         </field>
         <field name="productDesc">
             <property name="Select">linkto[Product].attribute[Description]</property>
