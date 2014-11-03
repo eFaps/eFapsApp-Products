@@ -32,8 +32,8 @@
             <menu>Products_StorageGroupAbstractTree_Storage_Menu</menu>
             <table>Products_StorageGroupAbstract2StorageAbstractTable</table>
             <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
-                <property name="Types">Products_StorageGroupAbstract2StorageAbstract</property>
-                <property name="LinkFroms">FromAbstractLink</property>
+                <property name="Type">Products_StorageGroupAbstract2StorageAbstract</property>
+                <property name="LinkFrom">FromAbstractLink</property>
             </evaluate>
         </target>
         <!-- properties -->

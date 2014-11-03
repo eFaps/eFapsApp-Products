@@ -42,8 +42,8 @@
             <menu>Products_ProductTree_Contacts_Menu</menu>
             <table>Products_Product2ContactTable</table>
             <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
-                <property name="Types">Products_Product2ContactAbstract</property>
-                <property name="LinkFroms">FromAbstract</property>
+                <property name="Type">Products_Product2ContactAbstract</property>
+                <property name="LinkFrom">FromAbstract</property>
             </evaluate>
             <help>org.efaps.wiki.products.Showproducts.wiki</help>
         </target>

@@ -34,7 +34,7 @@
             <form>Products_StorageAbstractForm</form>
             <table>Products_StorageAbstractTable</table>
             <evaluate program="org.efaps.esjp.common.uisearch.Search">
-                <property name="Types">Products_Warehouse</property>
+                <property name="Type">Products_Warehouse</property>
                 <property name="IgnoreCase4Fields">name;description</property>
             </evaluate>
         </target>

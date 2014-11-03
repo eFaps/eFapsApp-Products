@@ -37,8 +37,8 @@
             <menu>Products_TreeViewTree_Node_Menu</menu>
             <table>Products_TreeViewTable</table>
             <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
-                <property name="Types">Products_TreeViewNode</property>
-                <property name="LinkFroms">ParentLink</property>
+                <property name="Type">Products_TreeViewNode</property>
+                <property name="LinkFrom">ParentLink</property>
             </evaluate>
         </target>
         <!-- properties -->

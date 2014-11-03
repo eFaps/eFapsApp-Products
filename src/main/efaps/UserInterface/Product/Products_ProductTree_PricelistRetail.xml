@@ -42,8 +42,8 @@
             <menu>Products_ProductTree_PricelistRetail_Menu</menu>
             <table>Products_ProductPricelistTable</table>
             <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
-                <property name="Types">Products_ProductPricelistRetail</property>
-                <property name="LinkFroms">ProductLink</property>
+                <property name="Type">Products_ProductPricelistRetail</property>
+                <property name="LinkFrom">ProductLink</property>
             </evaluate>
             <help>org.efaps.wiki.products.Showproducts.wiki</help>
         </target>

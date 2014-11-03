@@ -39,7 +39,7 @@
             <menu>Products_InventoryValueMyDesk_Menu</menu>
             <table>Products_InventoryValueTable</table>
             <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
-                <property name="Types">Products_InventoryValue</property>
+                <property name="Type">Products_InventoryValue</property>
             </evaluate>
             <help>org.efaps.wiki.products.Products.wiki</help>
         </target>

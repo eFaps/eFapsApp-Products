@@ -42,8 +42,8 @@
             <menu>Products_ProductTree_Image_Menu</menu>
             <table>Products_Product2ImageTable</table>
             <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
-                <property name="Types">Products_Product2ImageAbstract</property>
-                <property name="LinkFroms">ProductAbstractLink</property>
+                <property name="Type">Products_Product2ImageAbstract</property>
+                <property name="LinkFrom">ProductAbstractLink</property>
             </evaluate>
             <trigger program="org.efaps.esjp.products.Image"
                 method="access4Image"

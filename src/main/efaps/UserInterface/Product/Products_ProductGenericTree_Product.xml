@@ -37,9 +37,10 @@
             <menu>Products_ProductGenericTree_Product_Menu</menu>
             <table>Products_Product2ProductTable</table>
             <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
-                <property name="Types">Products_ProductGeneric2Product</property>
-                <property name="LinkFroms">FromLink</property>
-                <property name="AlternateAttribute">ToLink</property>
+                <property name="Type">Products_ProductGeneric2Product</property>
+                <property name="LinkFrom">FromLink</property>
+                <property name="Type01">Products_ProductGeneric2Product</property>
+                <property name="LinkFrom01">ToLink</property>
             </evaluate>
         </target>
         <!-- properties -->

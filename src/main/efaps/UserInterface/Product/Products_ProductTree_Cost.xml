@@ -43,8 +43,8 @@
             <menu>Products_ProductTree_Cost_Menu</menu>
             <table>Products_ProductCostTable</table>
             <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
-                <property name="Types">Products_ProductCost</property>
-                <property name="LinkFroms">ProductLink</property>
+                <property name="Type">Products_ProductCost</property>
+                <property name="LinkFrom">ProductLink</property>
             </evaluate>
             <help>org.efaps.wiki.products.Showproducts.wiki</help>
         </target>

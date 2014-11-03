@@ -36,8 +36,8 @@
         <target>
             <table>Products_TransactionAbstractTable</table>
             <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
-                <property name="Types">Products_TransactionAbstract</property>
-                <property name="LinkFroms">Storage</property>
+                <property name="Type">Products_TransactionAbstract</property>
+                <property name="LinkFrom">Storage</property>
             </evaluate>
         </target>
         <!-- properties -->

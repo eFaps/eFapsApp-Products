@@ -31,8 +31,8 @@
             <menu>Products_StaticStorageTree_Inventory_Menu</menu>
             <table>Products_StaticInventoryTable</table>
             <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
-                <property name="Types">Products_StaticInventoryPosition</property>
-                <property name="LinkFroms">StaticInventory</property>
+                <property name="Type">Products_StaticInventoryPosition</property>
+                <property name="LinkFrom">StaticInventory</property>
             </evaluate>
             <trigger event="UI_ACCESSCHECK" method="checkInstanceStaticInventory"
                     name="Products_StaticStorageTree_Inventory.UI_ACCESSCHECK"

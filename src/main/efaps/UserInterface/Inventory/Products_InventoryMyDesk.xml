@@ -41,7 +41,7 @@
             <menu>Products_InventoryMyDesk_Menu</menu>
             <table>Products_InventoryTableFiltered</table>
             <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
-                <property name="Types">Products_Inventory</property>
+                <property name="Type">Products_Inventory</property>
             </evaluate>
             <help>org.efaps.wiki.products.Products.wiki</help>
         </target>

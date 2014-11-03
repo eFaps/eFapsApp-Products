@@ -31,8 +31,8 @@
             <!-- <menu>Products_StaticStorageTree_Inventory_Menu</menu>  -->
             <table>Products_StaticInventoryTable</table>
             <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
-                <property name="Types">Products_SnapshotPosition</property>
-                <property name="LinkFroms">Snapshot</property>
+                <property name="Type">Products_SnapshotPosition</property>
+                <property name="LinkFrom">Snapshot</property>
             </evaluate>
             <trigger event="UI_ACCESSCHECK" method="checkInstanceSnapshot"
                     name="Products_StaticStorageTree_Inventory.UI_ACCESSCHECK"

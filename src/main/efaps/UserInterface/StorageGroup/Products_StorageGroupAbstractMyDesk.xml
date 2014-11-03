@@ -36,7 +36,7 @@
             <menu>Products_StorageGroupAbstractMyDesk_Menu</menu>
             <table>Products_StorageGroupAbstractTable</table>
             <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
-                <property name="Types">Products_StorageGroupAbstract</property>
+                <property name="Type">Products_StorageGroupAbstract</property>
                 <property name="ExpandChildTypes">true</property>
             </evaluate>
         </target>

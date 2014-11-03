@@ -39,8 +39,8 @@
             <menu>Products_ProductPricelistTree_Position_Menu</menu>
             <table>Products_ProductPricelistPositionTable</table>
             <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
-                <property name="Types">Products_ProductPricelistPosition</property>
-                <property name="LinkFroms">ProductPricelist</property>
+                <property name="Type">Products_ProductPricelistPosition</property>
+                <property name="LinkFrom">ProductPricelist</property>
             </evaluate>
         </target>
         <!-- properties -->

@@ -62,8 +62,8 @@
             <property name="ModeView">NONE</property>
             <table>Products_StaticInventoryPositionTable</table>
             <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
-                <property name="Types">Products_StaticInventoryPosition</property>
-                <property name="LinkFroms">StaticInventory</property>
+                <property name="Type">Products_StaticInventoryPosition</property>
+                <property name="LinkFrom">StaticInventory</property>
             </evaluate>
         </field>
     </definition>
