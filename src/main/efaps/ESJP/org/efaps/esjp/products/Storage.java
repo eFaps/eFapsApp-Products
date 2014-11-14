@@ -18,12 +18,13 @@
  * Last Changed By: $Author$
  */
 
-
 package org.efaps.esjp.products;
 
+import org.efaps.admin.event.Parameter;
 import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
-
+import org.efaps.db.Instance;
+import org.efaps.util.EFapsException;
 
 /**
  * This class must be replaced for customization, therefore it is left empty.
@@ -39,4 +40,17 @@ public class Storage
     extends Storage_Base
 {
 
+    /**
+     * Get the default storage.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return instance of a storage
+     * @throws EFapsException on error
+     */
+    public static Instance getDefaultStorage(final Parameter _parameter,
+                                             final String _key)
+        throws EFapsException
+    {
+        return Storage_Base.getDefaultStorage(_parameter, _key);
+    }
 }

@@ -323,8 +323,7 @@ public abstract class Product_Base
                         attrQueryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, storInst);
                     }
                 } else if ("true".equalsIgnoreCase(getProperty(_parameter, "UseDefaultWareHouse"))) {
-                    final Instance defaultStorageInst = Products.getSysConfig().getLink(
-                            ProductsSettings.DEFAULTWAREHOUSE);
+                    final Instance defaultStorageInst = Storage.getDefaultStorage(_parameter, null);
                     if (defaultStorageInst != null && defaultStorageInst.isValid()) {
                         attrQueryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, defaultStorageInst);
                     }

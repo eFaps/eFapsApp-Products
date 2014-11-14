@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2010 The eFaps Team
+ * Copyright 2003 - 2014 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
  * Last Changed:    $Date$
  * Last Changed By: $Author$
  */
-
 
 package org.efaps.esjp.products;
 
@@ -59,12 +58,13 @@ import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.ci.CITableProducts;
 import org.efaps.esjp.erp.CommonDocument;
 import org.efaps.esjp.erp.NumberFormatter;
+import org.efaps.esjp.products.util.Products;
+import org.efaps.esjp.products.util.ProductsSettings;
 import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-
 
 /**
  * TODO comment!
@@ -78,6 +78,11 @@ public abstract class Storage_Base
     extends CommonDocument
 {
 
+    /**
+     * @param _parameter parameter as passed from the eFaps API
+     * @return Return with Map fro Autocomplete field
+     * @throws EFapsException on error
+     */
     public Return createFromStaticStorage(final Parameter _parameter)
         throws EFapsException
     {
@@ -130,6 +135,11 @@ public abstract class Storage_Base
         return new Return();
     }
 
+    /**
+     * @param _parameter parameter as passed from the eFaps API
+     * @return Return with Map fro Autocomplete field
+     * @throws EFapsException on error
+     */
     public Return createSnapshot(final Parameter _parameter)
         throws EFapsException
     {
@@ -222,6 +232,7 @@ public abstract class Storage_Base
 
     /**
      * Create a ststic Inventroy from the UserInterface.
+     *
      * @param _parameter Parameter as passed by the efasp API
      * @return new empty Return
      * @throws EFapsException on error
@@ -271,6 +282,13 @@ public abstract class Storage_Base
         return new Return();
     }
 
+    /**
+     * Method is used for an autocomplete field to get the list of Storages.
+     *
+     * @param _parameter parameter as passed from the eFaps API
+     * @return Return with Map fro Autocomplete field
+     * @throws EFapsException on error
+     */
     public Return editPositions4StaticInventory(final Parameter _parameter)
         throws EFapsException
     {
@@ -481,6 +499,28 @@ public abstract class Storage_Base
             ret.put(ReturnValues.TRUE, true);
         }
 
+        return ret;
+    }
+
+    /**
+     * Get the default storage.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _key optional key to be added
+     * @return instance of a storage
+     * @throws EFapsException on error
+     */
+    protected static Instance getDefaultStorage(final Parameter _parameter,
+                                                final String _key)
+        throws EFapsException
+    {
+        Instance ret = null;
+        if (_key != null) {
+            ret = Products.getSysConfig().getLink(ProductsSettings.DEFAULTWAREHOUSE + "." + _key);
+        }
+        if (ret == null || ret != null && !ret.isValid()) {
+            ret = Products.getSysConfig().getLink(ProductsSettings.DEFAULTWAREHOUSE);
+        }
         return ret;
     }
 }

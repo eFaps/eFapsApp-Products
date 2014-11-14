@@ -36,42 +36,48 @@ import org.efaps.admin.program.esjp.EFapsUUID;
 public interface ProductsSettings
 {
     /**
+     * ProductsSettings.BASE string.
+     */
+    String BASE = "org.efaps.products.";
+
+    /**
      * Boolean(true/false).<br/>
      * Activate the image menu.
      */
-    String ACTIVATEIMAGE = "org.efaps.products.ActivateImages";
+    String ACTIVATEIMAGE = ProductsSettings.BASE + "ActivateImages";
 
     /**
      * Boolean(true/false).<br/>
      * Activate the individual management menu.
      */
-    String ACTIVATEINDIVIDUAL = "org.efaps.products.ActivateIndividual";
+    String ACTIVATEINDIVIDUAL = ProductsSettings.BASE + "ActivateIndividual";
 
     /**
      * Boolean(true/false).<br/>
      * Activate the menu for updating Product Prices on mass.
      */
-    String ACTIVATEPRICEMASSUPDATE = "org.efaps.products.ActivatePriceMassUpdate";
+    String ACTIVATEPRICEMASSUPDATE = ProductsSettings.BASE + "ActivatePriceMassUpdate";
 
     /**
      * Properties.<br/>
      * Properties for image
      */
-    String IMAGEPROPERTIES = "org.efaps.products.ImagesProperties";
+    String IMAGEPROPERTIES = ProductsSettings.BASE + "ImagesProperties";
+
+    /**
+     * Link to a default warehouse instance. Can also be used as a link like
+     * "...DefaultWareHouse.Key"
+     */
+    String DEFAULTWAREHOUSE =  ProductsSettings.BASE + "DefaultWareHouse";
 
     /**
      * Link to a default warehouse instance.
      */
-    String DEFAULTWAREHOUSE = "org.efaps.products.DefaultWareHouse";
+    String DEFAULTSTORAGEGROUP = ProductsSettings.BASE + "StorageGroup4ProductBOM";
 
     /**
      * Link to a default warehouse instance.
      */
-    String DEFAULTSTORAGEGROUP = "org.efaps.products.StorageGroup4ProductBOM";
-
-    /**
-     * Link to a default warehouse instance.
-     */
-    String DEFAULTDIMENSION = "org.efaps.products.DefaultDimension";
+    String DEFAULTDIMENSION = ProductsSettings.BASE + "DefaultDimension";
 
 }
