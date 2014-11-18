@@ -18,10 +18,10 @@
  * Last Changed By: $Author: jan@moxter.net $
  */
 
-
 package org.efaps.esjp.products.reports;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.Map;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
@@ -39,6 +39,7 @@ import org.efaps.db.Instance;
 import org.efaps.db.PrintQuery;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.jasperreport.AbstractDynamicReport;
+import org.efaps.esjp.products.BOMCalculator;
 import org.efaps.util.EFapsException;
 
 public abstract class TerminateProductReport_Base
@@ -85,17 +86,17 @@ public abstract class TerminateProductReport_Base
         {
             final DRDataSource ret = new DRDataSource("name", "description", "quantity");
             final Instance instance = _parameter.getInstance();
-            final org.efaps.esjp.products.Product prod = new org.efaps.esjp.products.Product();
+            new org.efaps.esjp.products.Product();
 
-            PrintQuery print = new PrintQuery(instance);
+            final PrintQuery print = new PrintQuery(instance);
             print.addAttribute(CIProducts.ProductAbstract.Name, CIProducts.ProductAbstract.Description);
             print.execute();
-            String nameProduct = print.<String>getAttribute(CIProducts.ProductAbstract.Name);
-            String description = print.<String>getAttribute(CIProducts.ProductAbstract.Description);
+            final String nameProduct = print.<String>getAttribute(CIProducts.ProductAbstract.Name);
+            final String description = print.<String>getAttribute(CIProducts.ProductAbstract.Description);
 
-            int quantity = prod.getQuantity2ProductBOM(_parameter, instance);
+            final BOMCalculator bomCalc = new BOMCalculator(_parameter, instance, null);
 
-            ret.add(nameProduct, description, quantity);
+            ret.add(nameProduct, description, bomCalc.getQuantityOnPaper());
 
             return ret;
         }
@@ -112,9 +113,9 @@ public abstract class TerminateProductReport_Base
             final TextColumnBuilder<String> descriptionColumn = DynamicReports.col.column(DBProperties
                             .getProperty(TerminateProductReport.class.getName() + ".Column.description"),
                             "description", DynamicReports.type.stringType());
-            final TextColumnBuilder<Integer> quantityColumn = DynamicReports.col.column(DBProperties
+            final TextColumnBuilder<BigDecimal> quantityColumn = DynamicReports.col.column(DBProperties
                             .getProperty(TerminateProductReport.class.getName() + ".Column.quantity"),
-                            "quantity", DynamicReports.type.integerType());
+                            "quantity", DynamicReports.type.bigDecimalType());
 
             _builder.addColumn(nameColumn, descriptionColumn, quantityColumn);
         }

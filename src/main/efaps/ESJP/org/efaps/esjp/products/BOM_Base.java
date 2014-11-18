@@ -80,18 +80,16 @@ public abstract class BOM_Base
     public Return editBOMQuantity(final Parameter _parameter)
         throws EFapsException
     {
-        @SuppressWarnings("unchecked") final Map<String, String> oidMap = (Map<String, String>) _parameter
-                        .get(ParameterValues.OIDMAP4UI);
+        @SuppressWarnings("unchecked")
+        final Map<String, String> oidMap = (Map<String, String>) _parameter.get(ParameterValues.OIDMAP4UI);
         final String[] rowKeys = _parameter.getParameterValues(EFapsKey.TABLEROW_NAME.getKey());
         final String[] quantity = _parameter.getParameterValues("quantity");
         for (int i = 0; i < rowKeys.length; i++) {
             final Instance inst = Instance.get(oidMap.get(rowKeys[i]));
-
             final Update update = new Update(inst);
             update.add(CIProducts.BOMAbstract.Quantity, quantity[i]);
             update.execute();
         }
-
         return new Return();
     }
 }

@@ -20,7 +20,6 @@
 
 package org.efaps.esjp.products;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -65,7 +64,6 @@ import org.efaps.db.InstanceQuery;
 import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.PrintQuery;
 import org.efaps.db.QueryBuilder;
-import org.efaps.db.SelectBuilder;
 import org.efaps.esjp.admin.datamodel.RangesValue;
 import org.efaps.esjp.ci.CIFormProducts;
 import org.efaps.esjp.ci.CIProducts;
@@ -91,6 +89,7 @@ import org.joda.time.DateTime;
 public abstract class Product_Base
     extends CommonDocument
 {
+
     /**
      * CacheKey for ExchangeRates.
      */
@@ -106,6 +105,7 @@ public abstract class Product_Base
     {
         final RangesValue rval = new RangesValue()
         {
+
             @Override
             protected void setSelectedValue(final Parameter _parameter,
                                             final Map<?, ?> _valueMap)
@@ -179,7 +179,7 @@ public abstract class Product_Base
     }
 
     /**
-     * @param _parameter    Parameter as passed by the eFaps API
+     * @param _parameter Parameter as passed by the eFaps API
      * @param _prodInstance instance of a product the batch is wanted for
      * @return Instance of the Batch Product
      * @throws EFapsException on error
@@ -198,7 +198,6 @@ public abstract class Product_Base
         relInsert.execute();
         return batchInst;
     }
-
 
     protected String getName4Batch(final Parameter _parameter)
         throws EFapsException
@@ -238,7 +237,8 @@ public abstract class Product_Base
             final Insert insert = new Insert(CIProducts.TransactionIndividualInbound);
             insert.add(CIProducts.TransactionIndividualInbound.Quantity, 1);
             insert.add(CIProducts.TransactionIndividualInbound.UoM,
-                            Dimension.get(print.<Long>getAttribute(CIProducts.ProductIndividual.Dimension)).getBaseUoM());
+                            Dimension.get(print.<Long>getAttribute(CIProducts.ProductIndividual.Dimension))
+                                            .getBaseUoM());
             insert.add(CIProducts.TransactionIndividualInbound.Storage, warehouse);
             insert.add(CIProducts.TransactionIndividualInbound.Product, uniqueInst.getId());
             insert.add(CIProducts.TransactionIndividualInbound.Description,
@@ -365,8 +365,8 @@ public abstract class Product_Base
     }
 
     /**
-     * @param _parameter    Parameter as passed by the eFaps API
-     * @param _queryBldr    QueryBuilder to add to
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _queryBldr QueryBuilder to add to
      * @return true if allow cache, else false
      * @throws EFapsException on error
      */
@@ -379,7 +379,7 @@ public abstract class Product_Base
     }
 
     /**
-     * @param _parameter    Parameter as passed by the eFaps API
+     * @param _parameter Parameter as passed by the eFaps API
      * @return return with map for picker
      * @throws EFapsException on error
      */
@@ -413,11 +413,11 @@ public abstract class Product_Base
         return retVal;
     }
 
-
     public Return productMultiPrint(final Parameter _parameter)
         throws EFapsException
     {
-        final MultiPrint multi = new MultiPrint() {
+        final MultiPrint multi = new MultiPrint()
+        {
 
             @Override
             protected void add2QueryBldr(final Parameter _parameter,
@@ -425,7 +425,8 @@ public abstract class Product_Base
                 throws EFapsException
             {
                 super.add2QueryBldr(_parameter, _queryBldr);
-                // if products with serialnumber or batches is activated validate if they must be shown or not
+                // if products with serialnumber or batches is activated
+                // validate if they must be shown or not
                 if (Products.getSysConfig().getAttributeValueAsBoolean(ProductsSettings.ACTIVATEINDIVIDUAL)) {
                     if (!"true".equalsIgnoreCase(getProperty(_parameter, "IncludeIndividual"))) {
                         _queryBldr.addWhereAttrNotEqValue(CIProducts.ProductAbstract.Type,
@@ -499,20 +500,21 @@ public abstract class Product_Base
             print.addAttribute("Name");
             print.execute();
             js.append("<script type=\"text/javascript\">")
-                .append("Wicket.Event.add(window, \"domready\", function(event) {")
-                .append("document.getElementsByName('product')[0].value='").append(selected).append("';")
-                .append("document.getElementsByName('productAutoComplete')[0].value='")
-                .append(StringEscapeUtils.escapeEcmaScript((String) print.getAttribute("Name"))).append("';")
-                .append("});")
-                .append("</script>");
+                            .append("Wicket.Event.add(window, \"domready\", function(event) {")
+                            .append("document.getElementsByName('product')[0].value='").append(selected).append("';")
+                            .append("document.getElementsByName('productAutoComplete')[0].value='")
+                            .append(StringEscapeUtils.escapeEcmaScript((String) print.getAttribute("Name")))
+                            .append("';")
+                            .append("});")
+                            .append("</script>");
         } else {
             js.append("<script type=\"text/javascript\">")
-                .append("Wicket.Event.add(window, \"domready\", function(event) {")
-                .append("inputs = document.getElementsByTagName('INPUT');")
-                .append("for (i=0;i<inputs.length;i++) {")
-                .append("inputs[i].blur();")
-                .append(" });")
-                .append("</script>");
+                            .append("Wicket.Event.add(window, \"domready\", function(event) {")
+                            .append("inputs = document.getElementsByTagName('INPUT');")
+                            .append("for (i=0;i<inputs.length;i++) {")
+                            .append("inputs[i].blur();")
+                            .append(" });")
+                            .append("</script>");
         }
         ret.put(ReturnValues.SNIPLETT, js.toString());
         return ret;
@@ -551,7 +553,7 @@ public abstract class Product_Base
                 queryBldr.addOrderByAttributeAsc(CIProducts.ProductAbstract.Name);
             } else {
                 queryBldr.addWhereAttrMatchValue(CIProducts.ProductAbstract.Description, input + "*")
-                    .setIgnoreCase(true);
+                                .setIgnoreCase(true);
                 queryBldr.addOrderByAttributeAsc(CIProducts.ProductAbstract.Description);
             }
             if (Products.getSysConfig().getAttributeValueAsBoolean(ProductsSettings.ACTIVATEINDIVIDUAL)) {
@@ -585,7 +587,7 @@ public abstract class Product_Base
                 final QueryBuilder attrQueryBldr = new QueryBuilder(CIProducts.Inventory);
                 attrQueryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, storInst);
                 queryBldr.addWhereAttrInQuery(CIProducts.ProductAbstract.ID,
-                        attrQueryBldr.getAttributeQuery(CIProducts.Inventory.Product));
+                                attrQueryBldr.getAttributeQuery(CIProducts.Inventory.Product));
             }
             InterfaceUtils.addMaxResult2QueryBuilder4AutoComplete(_parameter, queryBldr);
 
@@ -641,8 +643,8 @@ public abstract class Product_Base
             // TODO that must be done by type or??
             if (addAttribute(attr, addedAttributes) && _cloneType.getAttributes().containsKey(attr.getName())) {
                 insert.add(_cloneType.getAttribute(attr.getName()), _attrMap.containsKey(attr.getName())
-                                    ? _attrMap.get(attr.getName())
-                                    : print.getAttribute(attr));
+                                ? _attrMap.get(attr.getName())
+                                : print.getAttribute(attr));
             }
         }
         insert.execute();
@@ -768,7 +770,7 @@ public abstract class Product_Base
         final TreeMap<String, Long> map = new TreeMap<String, Long>();
         long actual = 0;
 
-        //Sales_Configuration
+        // Sales_Configuration
         final SystemConfiguration config = SystemConfiguration.get(
                         UUID.fromString("c9a1cbc3-fd35-4463-80d2-412422a3802f"));
         if (config != null) {
@@ -794,7 +796,7 @@ public abstract class Product_Base
                 ret.append(" selected=\"selected\" ");
             }
             ret.append(" value=\"").append(entry.getValue()).append("\">").append(entry.getKey())
-               .append("</option>");
+                            .append("</option>");
         }
         ret.append("</select>");
         retVal.put(ReturnValues.SNIPLETT, ret.toString());
@@ -848,61 +850,12 @@ public abstract class Product_Base
         return html;
     }
 
-
-    protected List<BOMCalculator> getCalulators4Product(final Parameter _parameter,
-                                                        final Instance _prodInst)
-        throws EFapsException
-    {
-        final List<BOMCalculator> ret = new ArrayList<BOMCalculator>();
-        final QueryBuilder qlb = new QueryBuilder(CIProducts.BOMAbstract);
-        qlb.addWhereAttrEqValue(CIProducts.BOMAbstract.FromAbstract, _prodInst);
-        final MultiPrintQuery multi = qlb.getPrint();
-        multi.addAttribute(CIProducts.BOMAbstract.Quantity);
-        final SelectBuilder select = new SelectBuilder().linkto(CIProducts.BOMAbstract.ToAbstract).instance();
-        multi.addSelect(select);
-        multi.execute();
-        while(multi.next()){
-            final Instance instBOMproduct = multi.<Instance>getSelect(select);
-            final BigDecimal quantityRequired = multi.getAttribute(CIProducts.BOMAbstract.Quantity);
-            final BOMCalculator calBOM= new BOMCalculator(_parameter, instBOMproduct, quantityRequired);
-            ret.add(calBOM);
-        }
-
-        return ret;
-
-    }
-
-    public int getQuantity2ProductBOM(final Parameter _parameter,
-                                   final Instance _prodInst)
-        throws EFapsException
-    {
-        int productQuantity = 0;
-        final List<BOMCalculator> boms = getCalulators4Product(_parameter, _prodInst);
-        int i=0;
-        boolean band=true;
-        boolean first =true;
-        while (i < boms.size() && band) {
-            final BOMCalculator bom = boms.get(i);
-            final int bomquantity = bom.getFactory();
-            if (bomquantity == 0) {
-                productQuantity = 0;
-                band = false;
-            } else if (first) {
-                first = false;
-                productQuantity = bomquantity;
-            } else if (bomquantity < productQuantity) {
-                productQuantity = bomquantity;
-            }
-            i++;
-        }
-        return productQuantity;
-    }
-
     public Return getCosting4Product(final Parameter _parameter)
         throws EFapsException
     {
         final MultiPrint multi = new MultiPrint()
         {
+
             @Override
             protected void add2QueryBldr(final Parameter _parameter,
                                          final QueryBuilder _queryBldr)

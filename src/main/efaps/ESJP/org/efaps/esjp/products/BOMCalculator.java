@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2012 The eFaps Team
+ * Copyright 2003 - 2014 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,20 +24,36 @@ package org.efaps.esjp.products;
 import java.math.BigDecimal;
 
 import org.efaps.admin.event.Parameter;
+import org.efaps.admin.program.esjp.EFapsRevision;
+import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Instance;
 import org.efaps.util.EFapsException;
 
-
+/**
+ * This class must be replaced for customization, therefore it is left empty.
+ * Functional description can be found in the related "<code>_base</code>"
+ * class.
+ *
+ * @author The eFaps Team
+ * @version $Id: Cost.java 3449 2009-11-29 23:06:11Z tim.moxter $
+ */
+@EFapsUUID("0b9c3600-b968-4c94-bea9-b027f54e19bf")
+@EFapsRevision("$Rev: 3449 $")
 public class BOMCalculator
     extends BOMCalculator_Base
 {
+    /**
+     * @param _parameter        Parameter as passed by the eFasp API
+     * @param _prodInst         instance of the product to be produced
+     * @param _quantityRequired quantity required
+     * @throws EFapsException on error
+     */
     public BOMCalculator(final Parameter _parameter,
                          final Instance _prodInst,
                          final BigDecimal _quantityRequired)
         throws EFapsException
     {
         super(_parameter, _prodInst, _quantityRequired);
-        // TODO Auto-generated constructor stub
     }
 
 }
