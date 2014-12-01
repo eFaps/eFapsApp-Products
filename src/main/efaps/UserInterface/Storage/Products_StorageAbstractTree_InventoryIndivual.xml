@@ -46,5 +46,6 @@
         </target>
         <property name="Target">content</property>
         <property name="TargetMode">view</property>
+        <property name="TargetShowCheckBoxes">true</property>
     </definition>
 </ui-menu>
