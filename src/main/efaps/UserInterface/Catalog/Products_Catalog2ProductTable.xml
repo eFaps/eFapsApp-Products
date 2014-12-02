@@ -33,7 +33,7 @@
         <name>Products_Catalog2ProductTable</name>
         <!-- fields -->
         <field name="type">
-            <property name="Select">linkto[ProductLink].attribute[Type]</property>
+            <property name="Select">linkto[ProductLink].type.label</property>
             <property name="Label">Products_Catalog2ProductTable.type.Label</property>
             <property name="ShowTypeIcon">true</property>
         </field>
