@@ -127,7 +127,7 @@ public abstract class InventoryReport_Base
         /**
          * @param _filteredReport reports
          */
-        public DynInventoryReport(final InventoryReport_Base _filteredReport)
+        public DynInventoryReport(final FilteredReport _filteredReport)
         {
             this.filteredReport = _filteredReport;
         }
@@ -136,13 +136,19 @@ public abstract class InventoryReport_Base
         protected JRDataSource createDataSource(final Parameter _parameter)
             throws EFapsException
         {
-            final Inventory inventory = new Inventory();
+            final Inventory inventory = getInventoryObject(_parameter);
             inventory.setStorageInsts(getStorageInsts(_parameter));
+            inventory.setEvaluateCost(isEvaluateCost(_parameter));
             final List<InventoryBean> beans = inventory.getInventory(_parameter);
             Collections.sort(beans, getComparator(_parameter));
-
             return new JRBeanCollectionDataSource(beans);
         }
+
+        protected Inventory getInventoryObject(final Parameter _parameter)
+        {
+           return new Inventory();
+        }
+
 
         protected ComparatorChain<InventoryBean> getComparator(final Parameter _parameter)
             throws EFapsException
@@ -179,6 +185,14 @@ public abstract class InventoryReport_Base
         {
             return !getStorageInsts(_parameter).isEmpty();
         }
+
+        protected boolean isEvaluateCost(final Parameter _parameter)
+            throws EFapsException
+        {
+            return "true".equalsIgnoreCase(getProperty(_parameter, "EvaluateCost"));
+        }
+
+
 
         protected List<Instance> getStorageInsts(final Parameter _parameter)
             throws EFapsException
@@ -232,11 +246,28 @@ public abstract class InventoryReport_Base
                             .getProperty(InventoryReport.class.getName() + ".Column.reserved"),
                             "reserved", DynamicReports.type.bigDecimalType());
 
+            final TextColumnBuilder<BigDecimal> costColumn = DynamicReports.col.column(DBProperties
+                            .getProperty(InventoryReport.class.getName() + ".Column.cost"),
+                            "cost", DynamicReports.type.bigDecimalType());
+
+            final TextColumnBuilder<BigDecimal> totalColumn = DynamicReports.col.column(DBProperties
+                            .getProperty(InventoryReport.class.getName() + ".Column.total"),
+                            "total", DynamicReports.type.bigDecimalType());
+
+            final TextColumnBuilder<String> currencyColumn = DynamicReports.col.column(DBProperties
+                            .getProperty(InventoryReport.class.getName() + ".Column.currency"),
+                            "currency", DynamicReports.type.stringType());
+
             if (isShowStorage(_parameter)) {
                 _builder.addColumn(storageColumn);
                 _builder.groupBy(storageColumn);
             }
+
             _builder.addColumn(prodNameColumn, prodDescrColumn, uoMColumn, quantityColumn, reservedColumn);
+
+            if (isEvaluateCost(_parameter)) {
+                _builder.addColumn(costColumn, totalColumn, currencyColumn);
+            }
         }
 
         /**

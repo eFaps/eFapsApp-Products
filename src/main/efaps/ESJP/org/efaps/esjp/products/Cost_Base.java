@@ -45,6 +45,7 @@ import org.efaps.db.InstanceQuery;
 import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.PrintQuery;
 import org.efaps.db.QueryBuilder;
+import org.efaps.db.SelectBuilder;
 import org.efaps.db.Update;
 import org.efaps.esjp.ci.CIFormProducts;
 import org.efaps.esjp.ci.CIProducts;
@@ -61,6 +62,7 @@ import org.joda.time.DateTime;
 @EFapsRevision("$Rev$")
 public abstract class Cost_Base
 {
+
     /**
      * Method to get the value for the date field "Valid until". On create mode
      * a date in ten years future is returned.
@@ -124,7 +126,6 @@ public abstract class Cost_Base
         return new Return();
     }
 
-
     /**
      * Method for update a field of the contact.
      *
@@ -172,7 +173,7 @@ public abstract class Cost_Base
                         oldQuantity = oldQuantity.add(resTmp);
                     }
                 }
-                price = (oldPrice.multiply(oldQuantity).add(cost.multiply(quantity))).setScale(8)
+                price = oldPrice.multiply(oldQuantity).add(cost.multiply(quantity)).setScale(8)
                                 .divide(oldQuantity.add(quantity), BigDecimal.ROUND_HALF_UP)
                                 .setScale(getFractionDigit(), BigDecimal.ROUND_HALF_UP);
             } else {
@@ -205,7 +206,6 @@ public abstract class Cost_Base
         return retVal;
     }
 
-
     protected Integer getFractionDigit()
     {
         return 2;
@@ -232,6 +232,139 @@ public abstract class Cost_Base
             ret = BigDecimal.ZERO;
         }
         return ret;
+    }
+
+    public CostBean getCost(final Parameter _parameter,
+                            final Instance _prodInst)
+        throws EFapsException
+    {
+        return getCost(_parameter, new DateTime(), _prodInst);
+    }
+
+    public CostBean getCost(final Parameter _parameter,
+                            final DateTime _date,
+                            final Instance _prodInst)
+        throws EFapsException
+
+    {
+        return getCosts(_parameter, _prodInst).get(_prodInst);
+    }
+
+    public Map<Instance, CostBean> getCosts(final Parameter _parameter,
+                                            final Instance... _prodInst)
+        throws EFapsException
+    {
+
+        return getCosts(_parameter, new DateTime(), _prodInst);
+    }
+
+    public Map<Instance, CostBean> getCosts(final Parameter _parameter,
+                                            final DateTime _date,
+                                            final Instance... _prodInst)
+        throws EFapsException
+    {
+        final Map<Instance, CostBean> ret = new HashMap<>();
+        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductCost);
+        queryBldr.addWhereAttrLessValue(CIProducts.ProductCost.ValidFrom, _date.withTimeAtStartOfDay()
+                        .plusMinutes(1));
+        queryBldr.addWhereAttrGreaterValue(CIProducts.ProductCost.ValidUntil,
+                        _date.withTimeAtStartOfDay().minusMinutes(1));
+        queryBldr.addWhereAttrEqValue(CIProducts.ProductCost.ProductLink, (Object[]) _prodInst);
+        final MultiPrintQuery multi = queryBldr.getPrint();
+        final SelectBuilder selCurInst = SelectBuilder.get().linkto(CIProducts.ProductCost.CurrencyLink).instance();
+        final SelectBuilder selProdInst = SelectBuilder.get().linkto(CIProducts.ProductCost.ProductLink).instance();
+        multi.addSelect(selCurInst, selProdInst);
+        multi.addAttribute(CIProducts.ProductCost.Price);
+        multi.execute();
+        while (multi.next()) {
+            final Instance curInst = multi.getSelect(selCurInst);
+            final Instance prodInst = multi.getSelect(selProdInst);
+            final BigDecimal cost = multi.getAttribute(CIProducts.ProductCost.Price);
+            final CostBean bean = new CostBean().setProductInstance(prodInst).setCurrencyInstance(curInst)
+                            .setCost(cost);
+            ret.put(prodInst, bean);
+        }
+        return ret;
+    }
+
+    protected CostBean getBean(final Parameter _parameter)
+    {
+        return new CostBean();
+    }
+
+
+    public static class CostBean
+    {
+
+        private Instance currencyInstance;
+        private Instance productInstance;
+        private BigDecimal cost;
+
+        /**
+         * Getter method for the instance variable {@link #currencyInstance}.
+         *
+         * @return value of instance variable {@link #currencyInstance}
+         */
+        public Instance getCurrencyInstance()
+        {
+            return this.currencyInstance;
+        }
+
+        /**
+         * Setter method for instance variable {@link #currencyInstance}.
+         *
+         * @param _currencyInstance value for instance variable
+         *            {@link #currencyInstance}
+         */
+        public CostBean setCurrencyInstance(final Instance _currencyInstance)
+        {
+            this.currencyInstance = _currencyInstance;
+            return this;
+        }
+
+        /**
+         * Getter method for the instance variable {@link #productInstance}.
+         *
+         * @return value of instance variable {@link #productInstance}
+         */
+        public Instance getProductInstance()
+        {
+            return this.productInstance;
+        }
+
+        /**
+         * Setter method for instance variable {@link #productInstance}.
+         *
+         * @param _productInstance value for instance variable
+         *            {@link #productInstance}
+         */
+        public CostBean setProductInstance(final Instance _productInstance)
+        {
+            this.productInstance = _productInstance;
+            return this;
+        }
+
+        /**
+         * Getter method for the instance variable {@link #cost}.
+         *
+         * @return value of instance variable {@link #cost}
+         */
+        public BigDecimal getCost()
+        {
+            return this.cost;
+        }
+
+        /**
+         * Setter method for instance variable {@link #cost}.
+         *
+         * @param _cost value for instance variable {@link #cost}
+         */
+        public CostBean setCost(final BigDecimal _cost)
+        {
+            this.cost = _cost;
+            return this;
+        }
+
     }
 
 }
