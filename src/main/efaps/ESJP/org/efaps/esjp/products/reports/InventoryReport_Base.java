@@ -30,7 +30,11 @@ import java.util.Map;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.builder.DynamicReports;
+import net.sf.dynamicreports.report.builder.column.ComponentColumnBuilder;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
+import net.sf.dynamicreports.report.builder.component.GenericElementBuilder;
+import net.sf.dynamicreports.report.builder.expression.AbstractComplexExpression;
+import net.sf.dynamicreports.report.definition.ReportParameters;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
@@ -48,6 +52,7 @@ import org.efaps.esjp.erp.FilteredReport;
 import org.efaps.esjp.products.Inventory;
 import org.efaps.esjp.products.Inventory_Base.InventoryBean;
 import org.efaps.esjp.products.StorageGroup;
+import org.efaps.ui.wicket.models.EmbeddedLink;
 import org.efaps.util.EFapsException;
 
 /**
@@ -262,6 +267,14 @@ public abstract class InventoryReport_Base
                 _builder.addColumn(storageColumn);
                 _builder.groupBy(storageColumn);
             }
+            if (getExType().equals(ExportType.HTML)) {
+                final GenericElementBuilder linkElement = DynamicReports.cmp.genericElement(
+                                "http://www.efaps.org", "efapslink")
+                                .addParameter(EmbeddedLink.JASPER_PARAMETERKEY, new ProductLinkExpression())
+                                .setHeight(12).setWidth(25);
+                final ComponentColumnBuilder linkColumn = DynamicReports.col.componentColumn(linkElement).setTitle("");
+                _builder.addColumn(linkColumn);
+            }
 
             _builder.addColumn(prodNameColumn, prodDescrColumn, uoMColumn, quantityColumn, reservedColumn);
 
@@ -279,7 +292,35 @@ public abstract class InventoryReport_Base
         {
             return this.filteredReport;
         }
+    }
 
+    /**
+     * Expression used to render a link for the UserInterface.
+     */
+    public static class ProductLinkExpression
+        extends AbstractComplexExpression<EmbeddedLink>
+    {
+
+        /**
+         * Needed for serialization.
+         */
+        private static final long serialVersionUID = 1L;
+
+        /**
+         * Costructor.
+         */
+        public ProductLinkExpression()
+        {
+            addExpression(DynamicReports.field("prodOID", String.class));
+        }
+
+        @Override
+        public EmbeddedLink evaluate(final List<?> _values,
+                                     final ReportParameters _reportParameters)
+        {
+            final String oid = (String) _values.get(0);
+            return EmbeddedLink.getJasperLink(oid);
+        }
     }
 
 }

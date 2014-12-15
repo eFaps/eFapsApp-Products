@@ -460,6 +460,16 @@ public abstract class Inventory_Base
         }
 
         /**
+         * Getter method for the instance variable {@link #prodInstance}.
+         *
+         * @return value of instance variable {@link #prodInstance}
+         */
+        public String getProdOID()
+        {
+            return getProdInstance().getOid();
+        }
+
+        /**
          * Setter method for instance variable {@link #prodInstance}.
          *
          * @param _prodInstance value for instance variable
