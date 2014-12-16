@@ -260,29 +260,31 @@ public abstract class Cost_Base
 
     public Map<Instance, CostBean> getCosts(final Parameter _parameter,
                                             final DateTime _date,
-                                            final Instance... _prodInst)
+                                            final Instance... _prodInsts)
         throws EFapsException
     {
         final Map<Instance, CostBean> ret = new HashMap<>();
-        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductCost);
-        queryBldr.addWhereAttrLessValue(CIProducts.ProductCost.ValidFrom, _date.withTimeAtStartOfDay()
-                        .plusMinutes(1));
-        queryBldr.addWhereAttrGreaterValue(CIProducts.ProductCost.ValidUntil,
-                        _date.withTimeAtStartOfDay().minusMinutes(1));
-        queryBldr.addWhereAttrEqValue(CIProducts.ProductCost.ProductLink, (Object[]) _prodInst);
-        final MultiPrintQuery multi = queryBldr.getPrint();
-        final SelectBuilder selCurInst = SelectBuilder.get().linkto(CIProducts.ProductCost.CurrencyLink).instance();
-        final SelectBuilder selProdInst = SelectBuilder.get().linkto(CIProducts.ProductCost.ProductLink).instance();
-        multi.addSelect(selCurInst, selProdInst);
-        multi.addAttribute(CIProducts.ProductCost.Price);
-        multi.execute();
-        while (multi.next()) {
-            final Instance curInst = multi.getSelect(selCurInst);
-            final Instance prodInst = multi.getSelect(selProdInst);
-            final BigDecimal cost = multi.getAttribute(CIProducts.ProductCost.Price);
-            final CostBean bean = new CostBean().setProductInstance(prodInst).setCurrencyInstance(curInst)
-                            .setCost(cost);
-            ret.put(prodInst, bean);
+        if (_prodInsts != null && _prodInsts.length > 0) {
+            final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductCost);
+            queryBldr.addWhereAttrLessValue(CIProducts.ProductCost.ValidFrom, _date.withTimeAtStartOfDay()
+                            .plusMinutes(1));
+            queryBldr.addWhereAttrGreaterValue(CIProducts.ProductCost.ValidUntil,
+                            _date.withTimeAtStartOfDay().minusMinutes(1));
+            queryBldr.addWhereAttrEqValue(CIProducts.ProductCost.ProductLink, (Object[]) _prodInsts);
+            final MultiPrintQuery multi = queryBldr.getPrint();
+            final SelectBuilder selCurInst = SelectBuilder.get().linkto(CIProducts.ProductCost.CurrencyLink).instance();
+            final SelectBuilder selProdInst = SelectBuilder.get().linkto(CIProducts.ProductCost.ProductLink).instance();
+            multi.addSelect(selCurInst, selProdInst);
+            multi.addAttribute(CIProducts.ProductCost.Price);
+            multi.execute();
+            while (multi.next()) {
+                final Instance curInst = multi.getSelect(selCurInst);
+                final Instance prodInst = multi.getSelect(selProdInst);
+                final BigDecimal cost = multi.getAttribute(CIProducts.ProductCost.Price);
+                final CostBean bean = new CostBean().setProductInstance(prodInst).setCurrencyInstance(curInst)
+                                .setCost(cost);
+                ret.put(prodInst, bean);
+            }
         }
         return ret;
     }
