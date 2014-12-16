@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,9 +35,11 @@ import net.sf.dynamicreports.report.builder.column.ComponentColumnBuilder;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.builder.component.GenericElementBuilder;
 import net.sf.dynamicreports.report.builder.expression.AbstractComplexExpression;
+import net.sf.dynamicreports.report.builder.grid.ColumnTitleGroupBuilder;
 import net.sf.dynamicreports.report.definition.ReportParameters;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.data.JRMapCollectionDataSource;
 
 import org.apache.commons.collections4.comparators.ComparatorChain;
 import org.efaps.admin.dbproperty.DBProperties;
@@ -59,13 +62,19 @@ import org.efaps.util.EFapsException;
  * TODO comment!
  *
  * @author The eFaps Team
- * @version $Id$
+ * @version $Id: InventoryReport_Base.java 14621 2014-12-15 00:12:35Z
+ *          jan@moxter.net $
  */
 @EFapsUUID("db37f9fd-a5ce-4feb-8c07-8932da68228a")
 @EFapsRevision("$Rev$")
 public abstract class InventoryReport_Base
     extends FilteredReport
 {
+
+    public enum StorageDisplay
+    {
+        NONE, COLUMN, ROW;
+    }
 
     /**
      * @param _parameter Parameter as passed by the eFasp API
@@ -129,6 +138,8 @@ public abstract class InventoryReport_Base
          */
         private final FilteredReport filteredReport;
 
+        private List<InventoryBean> beans;
+
         /**
          * @param _filteredReport reports
          */
@@ -141,28 +152,58 @@ public abstract class InventoryReport_Base
         protected JRDataSource createDataSource(final Parameter _parameter)
             throws EFapsException
         {
-            final Inventory inventory = getInventoryObject(_parameter);
-            inventory.setStorageInsts(getStorageInsts(_parameter));
-            inventory.setEvaluateCost(isEvaluateCost(_parameter));
-            final List<InventoryBean> beans = inventory.getInventory(_parameter);
-            Collections.sort(beans, getComparator(_parameter));
-            return new JRBeanCollectionDataSource(beans);
+            JRDataSource ret;
+            if (StorageDisplay.COLUMN.equals(getStorageDisplay(_parameter))) {
+                final List<Map<String, ?>> source = getMapList(_parameter);
+                ret = new JRMapCollectionDataSource(source);
+            } else {
+                Collections.sort(getBeans(_parameter, null), getComparator(_parameter));
+                ret = new JRBeanCollectionDataSource(this.beans);
+            }
+            return ret;
+        }
+
+        protected List<Map<String, ?>> getMapList(final Parameter _parameter)
+            throws EFapsException
+        {
+            final List<Map<String, ?>> ret = new ArrayList<>();
+            final List<InventoryBean> tmpBeans = getBeans(_parameter, null);
+            Collections.sort(tmpBeans, getComparator(_parameter));
+            Map<String, Object> map = new HashMap<>();
+            BigDecimal quantity = BigDecimal.ZERO;
+            for(final InventoryBean bean : tmpBeans) {
+                if (!bean.getProdName().equals(map.get("prodName"))) {
+                    map = new HashMap<>();
+                    quantity = BigDecimal.ZERO;
+                    ret.add(map);
+                    map.put("prodName", bean.getProdName());
+                    map.put("prodDescr", bean.getProdDescr());
+                    map.put("prodOID", bean.getProdOID());
+                    map.put("currency", bean.getCurrency() );
+                    map.put("prodName", bean.getProdName());
+                    map.put("cost", bean.getCost());
+                    map.put("uoM", bean.getUoM());
+                }
+                quantity = quantity.add(bean.getQuantity()).add(bean.getReserved());
+                map.put("total", bean.getCost().multiply(quantity));
+                map.put(bean.getStorage() + "_quantity", bean.getQuantity());
+                map.put(bean.getStorage() + "_reserved", bean.getReserved());
+            }
+            return ret;
         }
 
         protected Inventory getInventoryObject(final Parameter _parameter)
         {
-           return new Inventory();
+            return new Inventory();
         }
-
 
         protected ComparatorChain<InventoryBean> getComparator(final Parameter _parameter)
             throws EFapsException
         {
             final ComparatorChain<InventoryBean> ret = new ComparatorChain<>();
-            if (isShowStorage(_parameter)) {
+            if (StorageDisplay.ROW.equals(getStorageDisplay(_parameter))) {
                 ret.addComparator(new Comparator<InventoryBean>()
                 {
-
                     @Override
                     public int compare(final InventoryBean _arg0,
                                        final InventoryBean _arg1)
@@ -171,10 +212,8 @@ public abstract class InventoryReport_Base
                     }
                 });
             }
-
             ret.addComparator(new Comparator<InventoryBean>()
             {
-
                 @Override
                 public int compare(final InventoryBean _arg0,
                                    final InventoryBean _arg1)
@@ -185,10 +224,17 @@ public abstract class InventoryReport_Base
             return ret;
         }
 
-        protected boolean isShowStorage(final Parameter _parameter)
+        protected StorageDisplay getStorageDisplay(final Parameter _parameter)
             throws EFapsException
         {
-            return !getStorageInsts(_parameter).isEmpty();
+            final EnumFilterValue filter = (EnumFilterValue) getFilterMap(_parameter).get("storageDisplay");
+            StorageDisplay ret;
+            if (filter != null) {
+                ret = (StorageDisplay) filter.getObject();
+            } else {
+                ret = StorageDisplay.NONE;
+            }
+            return ret;
         }
 
         protected boolean isEvaluateCost(final Parameter _parameter)
@@ -196,8 +242,6 @@ public abstract class InventoryReport_Base
         {
             return "true".equalsIgnoreCase(getProperty(_parameter, "EvaluateCost"));
         }
-
-
 
         protected List<Instance> getStorageInsts(final Parameter _parameter)
             throws EFapsException
@@ -231,9 +275,25 @@ public abstract class InventoryReport_Base
                                           final JasperReportBuilder _builder)
             throws EFapsException
         {
-            final TextColumnBuilder<String> storageColumn = DynamicReports.col.column(DBProperties
-                            .getProperty(InventoryReport.class.getName() + ".Column.storage"),
-                            "storage", DynamicReports.type.stringType());
+            final List<ColumnTitleGroupBuilder> groupBuilders = new ArrayList<>();
+            if (StorageDisplay.ROW.equals(getStorageDisplay(_parameter))) {
+                final TextColumnBuilder<String> storageColumn = DynamicReports.col.column(DBProperties
+                                .getProperty(InventoryReport.class.getName() + ".Column.storage"),
+                                "storage", DynamicReports.type.stringType());
+                _builder.addColumn(storageColumn);
+                _builder.groupBy(storageColumn);
+            }
+            final ColumnTitleGroupBuilder prodGroup = DynamicReports.grid.titleGroup(
+                            DBProperties.getProperty(InventoryReport.class.getName() + ".TitleGroup.product"));
+            if (getExType().equals(ExportType.HTML)) {
+                final GenericElementBuilder linkElement = DynamicReports.cmp.genericElement(
+                                "http://www.efaps.org", "efapslink")
+                                .addParameter(EmbeddedLink.JASPER_PARAMETERKEY, new ProductLinkExpression())
+                                .setHeight(12).setWidth(25);
+                final ComponentColumnBuilder linkColumn = DynamicReports.col.componentColumn(linkElement).setTitle("");
+                _builder.addColumn(linkColumn);
+                prodGroup.add(linkColumn);
+            }
 
             final TextColumnBuilder<String> prodNameColumn = DynamicReports.col.column(DBProperties
                             .getProperty(InventoryReport.class.getName() + ".Column.prodName"),
@@ -244,12 +304,33 @@ public abstract class InventoryReport_Base
             final TextColumnBuilder<String> uoMColumn = DynamicReports.col.column(DBProperties
                             .getProperty(InventoryReport.class.getName() + ".Column.uoM"),
                             "uoM", DynamicReports.type.stringType());
-            final TextColumnBuilder<BigDecimal> quantityColumn = DynamicReports.col.column(DBProperties
+            _builder.addColumn(prodNameColumn, prodDescrColumn, uoMColumn);
+
+            if (StorageDisplay.COLUMN.equals(getStorageDisplay(_parameter))) {
+                prodGroup.add(prodNameColumn, prodDescrColumn, uoMColumn);
+                groupBuilders.add(prodGroup);
+                for (final String storage : getStorages(_parameter)) {
+                    final TextColumnBuilder<BigDecimal> quantityColumn = DynamicReports.col.column(DBProperties
+                                    .getProperty(InventoryReport.class.getName() + ".Column.quantity"),
+                                    storage + "_quantity", DynamicReports.type.bigDecimalType());
+                    final TextColumnBuilder<BigDecimal> reservedColumn = DynamicReports.col.column(DBProperties
+                                    .getProperty(InventoryReport.class.getName() + ".Column.reserved"),
+                                    storage + "_reserved", DynamicReports.type.bigDecimalType());
+                    final ColumnTitleGroupBuilder storageGroup = DynamicReports.grid.titleGroup(storage, quantityColumn,
+                                    reservedColumn);
+                    groupBuilders.add(storageGroup);
+                    _builder.addColumn(quantityColumn, reservedColumn);
+                }
+
+            } else {
+                final TextColumnBuilder<BigDecimal> quantityColumn = DynamicReports.col.column(DBProperties
                             .getProperty(InventoryReport.class.getName() + ".Column.quantity"),
                             "quantity", DynamicReports.type.bigDecimalType());
-            final TextColumnBuilder<BigDecimal> reservedColumn = DynamicReports.col.column(DBProperties
+                final TextColumnBuilder<BigDecimal> reservedColumn = DynamicReports.col.column(DBProperties
                             .getProperty(InventoryReport.class.getName() + ".Column.reserved"),
                             "reserved", DynamicReports.type.bigDecimalType());
+                _builder.addColumn( quantityColumn, reservedColumn);
+            }
 
             final TextColumnBuilder<BigDecimal> costColumn = DynamicReports.col.column(DBProperties
                             .getProperty(InventoryReport.class.getName() + ".Column.cost"),
@@ -263,24 +344,31 @@ public abstract class InventoryReport_Base
                             .getProperty(InventoryReport.class.getName() + ".Column.currency"),
                             "currency", DynamicReports.type.stringType());
 
-            if (isShowStorage(_parameter)) {
-                _builder.addColumn(storageColumn);
-                _builder.groupBy(storageColumn);
-            }
-            if (getExType().equals(ExportType.HTML)) {
-                final GenericElementBuilder linkElement = DynamicReports.cmp.genericElement(
-                                "http://www.efaps.org", "efapslink")
-                                .addParameter(EmbeddedLink.JASPER_PARAMETERKEY, new ProductLinkExpression())
-                                .setHeight(12).setWidth(25);
-                final ComponentColumnBuilder linkColumn = DynamicReports.col.componentColumn(linkElement).setTitle("");
-                _builder.addColumn(linkColumn);
-            }
-
-            _builder.addColumn(prodNameColumn, prodDescrColumn, uoMColumn, quantityColumn, reservedColumn);
-
             if (isEvaluateCost(_parameter)) {
                 _builder.addColumn(costColumn, totalColumn, currencyColumn);
+                if (StorageDisplay.COLUMN.equals(getStorageDisplay(_parameter))) {
+                    final ColumnTitleGroupBuilder costGroup = DynamicReports.grid.titleGroup(
+                                    DBProperties.getProperty(InventoryReport.class.getName() + ".TitleGroup.cost"),
+                                    costColumn, totalColumn, currencyColumn);
+                    groupBuilders.add(costGroup);
+                }
             }
+            if (!groupBuilders.isEmpty()) {
+                _builder.columnGrid(groupBuilders.toArray(new ColumnTitleGroupBuilder[groupBuilders.size()]));
+            }
+        }
+
+        public List<String> getStorages(final Parameter _parameter)
+            throws EFapsException
+        {
+            final List<String> ret = new ArrayList<>();
+            for (final InventoryBean bean : getBeans(_parameter, null)) {
+                if (!ret.contains(bean.getStorage())) {
+                    ret.add(bean.getStorage());
+                }
+            }
+            Collections.sort(ret);
+            return ret;
         }
 
         /**
@@ -291,6 +379,40 @@ public abstract class InventoryReport_Base
         public FilteredReport getFilteredReport()
         {
             return this.filteredReport;
+        }
+
+        /**
+         * Getter method for the instance variable {@link #beans}.
+         *
+         * @return value of instance variable {@link #beans}
+         */
+        public List<InventoryBean> getBeans(final Parameter _parameter,
+                                            final Inventory _inventory)
+            throws EFapsException
+        {
+            if (this.beans == null) {
+                final Inventory inventory;
+                if (_inventory == null) {
+                    inventory = getInventoryObject(_parameter);
+                    inventory.setStorageInsts(getStorageInsts(_parameter));
+                    inventory.setEvaluateCost(isEvaluateCost(_parameter));
+                    inventory.setShowStorage(!StorageDisplay.NONE.equals(getStorageDisplay(_parameter)));
+                } else {
+                    inventory = _inventory;
+                }
+                this.beans = inventory.getInventory(_parameter);
+            }
+            return this.beans;
+        }
+
+        /**
+         * Setter method for instance variable {@link #beans}.
+         *
+         * @param _beans value for instance variable {@link #beans}
+         */
+        public void setBeans(final List<InventoryBean> _beans)
+        {
+            this.beans = _beans;
         }
     }
 

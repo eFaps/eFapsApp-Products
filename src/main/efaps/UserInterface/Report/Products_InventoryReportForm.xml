@@ -39,12 +39,15 @@
                 <property name="Field01">date</property>
                 <property name="Field02">storageGroup</property>
                 <property name="Field03">storage</property>
+                <property name="Field04">storageDisplay</property>
                 <property name="FilterType01">DateTime</property>
                 <property name="FilterType02">Instance</property>
                 <property name="FilterType03">Instance</property>
+                <property name="FilterType04">Enum</property>
                 <property name="FilterDefault01">TODAY</property>
                 <property name="FilterDefault02">-</property>
                 <property name="FilterDefault03">-</property>
+                <property name="FilterDefault04">org.efaps.esjp.products.reports.InventoryReport_Base$StorageDisplay</property>
             </trigger>
             <trigger event="UI_FIELD_VALUE" index="2" method="getFilterFieldValue"
                 name="Products_InventoryReportForm.filter.UI_FIELD_VALUE.2"
@@ -53,9 +56,11 @@
                 <property name="Field01">date</property>
                 <property name="Field02">storageGroup</property>
                 <property name="Field03">storage</property>
+                <property name="Field04">storageDisplay</property>
                 <property name="DBProperty01">org.efaps.esjp.products.reports.InventoryReport.date</property>
                 <property name="DBProperty02">org.efaps.esjp.products.reports.InventoryReport.storageGroup</property>
                 <property name="DBProperty03">org.efaps.esjp.products.reports.InventoryReport.storage</property>
+                <property name="DBProperty04">org.efaps.esjp.products.reports.InventoryReport.storageDisplay</property>
                 <property name="Products_WarehouseGroup_Select">attribute[Name]</property>
                 <property name="Products_Warehouse_Select">attribute[Name]</property>
             </trigger>
@@ -67,9 +72,6 @@
                 name="Products_InventoryReportForm.report.UI_FIELD_VALUE"
                 program="org.efaps.esjp.products.reports.InventoryReport">
                 <property name="FilterKey">org.efaps.esjp.products.reports.InventoryReport.FilterKey</property>
-                <property name="Type">Products_RetentionCertificate</property>
-                <property name="StatusGroup">Products_RetentionCertificateStatus</property>
-                <property name="Status">!Canceled</property>
             </trigger>
         </field>
     </definition>
