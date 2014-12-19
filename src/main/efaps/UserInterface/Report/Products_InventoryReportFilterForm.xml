@@ -76,7 +76,7 @@
             <property name="Label">org.efaps.esjp.products.reports.InventoryReport.storageDisplay</property>
             <trigger event="UI_FIELD_VALUE" method="getEnumFieldValue"
                 name="Products_InventoryReportFilterForm.storageDisplay.UI_FIELD_VALUE"
-                program="org.efaps.esjp.sales.report.DocumentSumReport" >
+                program="org.efaps.esjp.products.reports.InventoryReport" >
                 <property name="Enum">org.efaps.esjp.products.reports.InventoryReport_Base$StorageDisplay</property>
             </trigger>
         </field>
