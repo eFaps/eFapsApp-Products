@@ -36,9 +36,6 @@
             <execute method="exportReport" program="org.efaps.esjp.products.reports.InventoryReport">
                 <property name="Mime">xls</property>
                 <property name="FilterKey">org.efaps.esjp.products.reports.InventoryReport.FilterKey</property>
-                <property name="Type">Sales_RetentionCertificate</property>
-                <property name="StatusGroup">Sales_RetentionCertificateStatus</property>
-                <property name="Status">!Canceled</property>
             </execute>
         </target>
         <property name="Target">hidden</property>

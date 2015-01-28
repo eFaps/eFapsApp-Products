@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2014 The eFaps Team
+ * Copyright 2003 - 2015 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +22,16 @@ package org.efaps.esjp.products;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
 import org.efaps.admin.datamodel.Classification;
 import org.efaps.admin.datamodel.Dimension;
 import org.efaps.admin.datamodel.Dimension.UoM;
@@ -35,8 +39,10 @@ import org.efaps.admin.datamodel.Status;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
+import org.efaps.db.CachedPrintQuery;
 import org.efaps.db.Instance;
 import org.efaps.db.MultiPrintQuery;
+import org.efaps.db.PrintQuery;
 import org.efaps.db.QueryBuilder;
 import org.efaps.db.SelectBuilder;
 import org.efaps.esjp.ci.CIProducts;
@@ -45,6 +51,7 @@ import org.efaps.esjp.erp.CurrencyInst;
 import org.efaps.esjp.products.Cost_Base.CostBean;
 import org.efaps.util.EFapsException;
 import org.efaps.util.cache.CacheReloadException;
+import org.joda.time.DateTime;
 
 /**
  * TODO comment!
@@ -58,21 +65,35 @@ public abstract class Inventory_Base
     extends AbstractCommon
 {
 
-    private Boolean showStorage = null;
+    /**
+     * Show storage information. used as a Tristate.
+     */
+    private Boolean showStorage;
 
     /**
      * Show the classification in the report.
      */
     private boolean showProdClass;
 
-    private List<Instance> storageInsts = new ArrayList<>();
-
+    /**
+     * Activate Cost evaluation.
+     */
     private boolean evaluateCost = false;
 
     /**
-     * @param _parameter
-     * @return
-     * @throws EFapsException
+     * Instances of storages included in the inventory.
+     */
+    private List<Instance> storageInsts = new ArrayList<>();
+
+    /**
+     * Date of the inventory. used as a Tristate.
+     */
+    private DateTime date;
+
+    /**
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return list of beans
+     * @throws EFapsException on error
      */
     public List<InventoryBean> getInventory(final Parameter _parameter)
         throws EFapsException
@@ -108,6 +129,7 @@ public abstract class Inventory_Base
             if (isShowStorage()) {
                 bean = getBean(_parameter);
                 bean.setStorage(multi.<String>getSelect(selStorageName));
+                bean.setStorageInstance(multi.<Instance>getSelect(selStorageInst));
                 bean.setProdInstance(multi.<Instance>getSelect(selProdInst));
                 bean.setProdDescr(multi.<String>getSelect(selProdDescr));
                 bean.setProdName(multi.<String>getSelect(selProdName));
@@ -141,10 +163,124 @@ public abstract class Inventory_Base
             ret.addAll(map.values());
         }
 
+        calulateInventory(_parameter, ret, prodInsts);
+        if (isCalculateInventory()) {
+            CollectionUtils.filter(ret, new EmptyPredicate());
+        }
         addCost(_parameter, ret, prodInsts);
         return ret;
     }
 
+    /**
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _beans list of inventory beans
+     * @param _prodInsts set of product instances
+     * @throws EFapsException on error
+     */
+    protected void calulateInventory(final Parameter _parameter,
+                                     final List<InventoryBean> _beans,
+                                     final Set<Instance> _prodInsts)
+        throws EFapsException
+    {
+        if (isCalculateInventory()) {
+
+            final QueryBuilder queryBldr = new QueryBuilder(CIProducts.TransactionAbstract);
+            add2QueryBuilder4Transaction(_parameter, queryBldr);
+            final MultiPrintQuery multi = queryBldr.getPrint();
+
+            final SelectBuilder selStorageInst = SelectBuilder.get().linkto(CIProducts.TransactionAbstract.Storage)
+                            .instance();
+            if (isShowStorage()) {
+                multi.addSelect(selStorageInst);
+            }
+
+            final SelectBuilder selProdInst = SelectBuilder.get().linkto(CIProducts.TransactionAbstract.Product)
+                            .instance();
+            multi.addSelect(selProdInst);
+            multi.addAttribute(CIProducts.TransactionAbstract.UoM, CIProducts.TransactionAbstract.Quantity);
+            multi.execute();
+            final Map<Instance, Set<TransactionBean>> prodInst2beans = new HashMap<>();
+            while (multi.next()) {
+                final TransactionBean bean = getTransactionBean(_parameter);
+                final Instance prodInst = multi.<Instance>getSelect(selProdInst);
+                bean.setInstance(multi.getCurrentInstance())
+                                .setProdInstance(prodInst)
+                                .setQuantity(multi.<BigDecimal>getAttribute(CIProducts.TransactionAbstract.Quantity))
+                                .setUoM(Dimension.getUoM(multi
+                                                .<Long>getAttribute(CIProducts.TransactionAbstract.UoM)));
+                if (isShowStorage()) {
+                    bean.setStorageInstance(multi.<Instance>getSelect(selStorageInst));
+                }
+                Set<TransactionBean> beans;
+                if (prodInst2beans.containsKey(prodInst)) {
+                    beans = prodInst2beans.get(prodInst);
+                } else {
+                    beans = new HashSet<>();
+                    prodInst2beans.put(prodInst, beans);
+                }
+                beans.add(bean);
+            }
+
+            for (final Entry<Instance, Set<TransactionBean>> entry : prodInst2beans.entrySet()) {
+                final ProductPredicate predicate = new ProductPredicate(entry.getKey());
+                // filter the Collection
+                final Collection<InventoryBean> inventoryBeans = CollectionUtils.select(_beans, predicate);
+                if (isShowStorage()) {
+                    for (final TransactionBean bean : entry.getValue()) {
+                        final StoragePredicate storagePredicate = new StoragePredicate(bean.getStorageInstance());
+                        final Collection<InventoryBean> subInventoryBeans = CollectionUtils.select(inventoryBeans,
+                                        storagePredicate);
+                        final InventoryBean inventoryBean;
+                        if (subInventoryBeans.isEmpty()) {
+                            inventoryBean = getBean(_parameter);
+                            inventoryBean.setProdInstance(entry.getKey());
+                            inventoryBean.setStorageInstance(bean.getStorageInstance());
+                            inventoryBeans.add(inventoryBean);
+                            _beans.add(inventoryBean);
+                        } else {
+                            inventoryBean = subInventoryBeans.iterator().next();
+                        }
+                        inventoryBean.addTransaction(bean);
+                    }
+                } else {
+                    final InventoryBean inventoryBean;
+                    if (inventoryBeans.isEmpty()) {
+                        inventoryBean = getBean(_parameter);
+                        inventoryBean.setProdInstance(entry.getKey());
+                        inventoryBeans.add(inventoryBean);
+                        _beans.add(inventoryBean);
+                    } else {
+                        inventoryBean = inventoryBeans.iterator().next();
+                    }
+                    for (final TransactionBean bean : entry.getValue()) {
+                        inventoryBean.addTransaction(bean);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _queryBldr QueryBuilder to add to
+     * @throws EFapsException on error
+     */
+    protected void add2QueryBuilder4Transaction(final Parameter _parameter,
+                                                final QueryBuilder _queryBldr)
+        throws EFapsException
+    {
+        if (!getStorageInsts().isEmpty()) {
+            _queryBldr.addWhereAttrEqValue(CIProducts.TransactionAbstract.Storage, getStorageInsts().toArray());
+        }
+        _queryBldr.addWhereAttrGreaterValue(CIProducts.TransactionAbstract.Date, getDate().minusMinutes(1));
+    }
+
+    /**
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _beans list of inventory beans
+     * @param _prodInsts set of product instances
+     * @throws EFapsException on error
+     */
     protected void addCost(final Parameter _parameter,
                            final List<InventoryBean> _beans,
                            final Set<Instance> _prodInsts)
@@ -152,18 +288,31 @@ public abstract class Inventory_Base
     {
         if (isEvaluateCost()) {
             final Map<Instance, CostBean> costs = getCostObject(_parameter)
-                            .getCosts(_parameter, _prodInsts.toArray(new Instance[_prodInsts.size()]));
+                            .getCosts(_parameter, getDate() == null ? new DateTime() : getDate(),
+                                            _prodInsts.toArray(new Instance[_prodInsts.size()]));
             for (final InventoryBean bean : _beans) {
                 bean.setCostBean(costs.get(bean.getProdInstance()));
             }
         }
     }
 
+    /**
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return new Cost instance
+     * @throws EFapsException on error
+     */
     protected Cost getCostObject(final Parameter _parameter)
+
+        throws EFapsException
     {
         return new Cost();
     }
 
+    /**
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _queryBldr QueryBuilder to add to
+     * @throws EFapsException on error
+     */
     protected void add2QueryBuilder(final Parameter _parameter,
                                     final QueryBuilder _queryBldr)
         throws EFapsException
@@ -179,9 +328,26 @@ public abstract class Inventory_Base
         }
     }
 
+    /**
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return new InventoryBean instance
+     * @throws EFapsException on error
+     */
     protected InventoryBean getBean(final Parameter _parameter)
+        throws EFapsException
     {
         return new InventoryBean();
+    }
+
+    /**
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return new TransactionBean instance
+     * @throws EFapsException on error
+     */
+    protected TransactionBean getTransactionBean(final Parameter _parameter)
+        throws EFapsException
+    {
+        return new TransactionBean();
     }
 
     /**
@@ -267,6 +433,208 @@ public abstract class Inventory_Base
         this.showProdClass = _showProdClass;
     }
 
+    /**
+     * @return true if inventory must be calculated else false
+     */
+    public boolean isCalculateInventory()
+    {
+        return this.date != null && this.date.toLocalDate().isBefore(DateTime.now().toLocalDate());
+    }
+
+    /**
+     * Getter method for the instance variable {@link #date}.
+     *
+     * @return value of instance variable {@link #date}
+     */
+    public DateTime getDate()
+    {
+        return this.date;
+    }
+
+    /**
+     * Setter method for instance variable {@link #date}.
+     *
+     * @param _date value for instance variable {@link #date}
+     */
+    public void setDate(final DateTime _date)
+    {
+        this.date = _date;
+    }
+
+    public static class EmptyPredicate
+        implements Predicate<InventoryBean>
+    {
+
+        @Override
+        public boolean evaluate(final InventoryBean _inventoryBean)
+        {
+            return _inventoryBean.getQuantity().compareTo(BigDecimal.ZERO) != 0
+                            || _inventoryBean.getReserved().compareTo(BigDecimal.ZERO) != 0;
+        }
+    }
+
+    public static class ProductPredicate
+        implements Predicate<InventoryBean>
+    {
+
+        private final Instance productInstance;
+
+        /**
+         * @param _key
+         */
+        public ProductPredicate(final Instance _productInstance)
+        {
+            this.productInstance = _productInstance;
+        }
+
+        @Override
+        public boolean evaluate(final InventoryBean _inventoryBean)
+        {
+            return this.productInstance.equals(_inventoryBean.getProdInstance());
+        }
+    }
+
+    public static class StoragePredicate
+        implements Predicate<InventoryBean>
+    {
+
+        private final Instance storageInstance;
+
+        /**
+         * @param _key
+         */
+        public StoragePredicate(final Instance _storageInstance)
+        {
+            this.storageInstance = _storageInstance;
+        }
+
+        @Override
+        public boolean evaluate(final InventoryBean _inventoryBean)
+        {
+            return this.storageInstance.equals(_inventoryBean.getStorageInstance());
+        }
+    }
+
+
+    public static class TransactionBean
+    {
+
+        private Instance instance;
+        private BigDecimal quantity = BigDecimal.ZERO;
+        private UoM uoM;
+
+        private Instance prodInstance;
+
+        private Instance storageInstance;
+
+        /**
+         * Getter method for the instance variable {@link #instance}.
+         *
+         * @return value of instance variable {@link #instance}
+         */
+        public Instance getInstance()
+        {
+            return this.instance;
+        }
+
+        /**
+         * Setter method for instance variable {@link #instance}.
+         *
+         * @param _instance value for instance variable {@link #instance}
+         */
+        public TransactionBean setInstance(final Instance _instance)
+        {
+            this.instance = _instance;
+            return this;
+        }
+
+        /**
+         * Getter method for the instance variable {@link #quantity}.
+         *
+         * @return value of instance variable {@link #quantity}
+         */
+        public BigDecimal getQuantity()
+        {
+            return this.quantity;
+        }
+
+        /**
+         * Setter method for instance variable {@link #quantity}.
+         *
+         * @param _quantity value for instance variable {@link #quantity}
+         */
+        public TransactionBean setQuantity(final BigDecimal _quantity)
+        {
+            this.quantity = _quantity;
+            return this;
+        }
+
+        /**
+         * Getter method for the instance variable {@link #uoM}.
+         *
+         * @return value of instance variable {@link #uoM}
+         */
+        public UoM getUoM()
+        {
+            return this.uoM;
+        }
+
+        /**
+         * Setter method for instance variable {@link #uoM}.
+         *
+         * @param _uoM value for instance variable {@link #uoM}
+         */
+        public TransactionBean setUoM(final UoM _uoM)
+        {
+            this.uoM = _uoM;
+            return this;
+        }
+
+        /**
+         * Getter method for the instance variable {@link #prodInstance}.
+         *
+         * @return value of instance variable {@link #prodInstance}
+         */
+        public Instance getProdInstance()
+        {
+            return this.prodInstance;
+        }
+
+        /**
+         * Setter method for instance variable {@link #prodInstance}.
+         *
+         * @param _prodInstance value for instance variable
+         *            {@link #prodInstance}
+         */
+        public TransactionBean setProdInstance(final Instance _prodInstance)
+        {
+            this.prodInstance = _prodInstance;
+            return this;
+        }
+
+        /**
+         * Getter method for the instance variable {@link #storageInstance}.
+         *
+         * @return value of instance variable {@link #storageInstance}
+         */
+        public Instance getStorageInstance()
+        {
+            return this.storageInstance;
+        }
+
+        /**
+         * Setter method for instance variable {@link #storageInstance}.
+         *
+         * @param _storageInstance value for instance variable
+         *            {@link #storageInstance}
+         */
+        public TransactionBean setStorageInstance(final Instance _storageInstance)
+        {
+            this.storageInstance = _storageInstance;
+            return this;
+        }
+    }
+
     public static class InventoryBean
     {
 
@@ -278,6 +646,8 @@ public abstract class Inventory_Base
         private String prodName;
         private String prodDescr;
 
+        private Instance storageInstance;
+
         private String storage;
 
         private BigDecimal cost = BigDecimal.ZERO;
@@ -286,6 +656,30 @@ public abstract class Inventory_Base
         private CostBean costBean;
 
         private List<Classification> prodClasslist;
+
+        protected void initialize()
+        {
+            try {
+                if (getProdInstance() != null && getProdInstance().isValid() && this.prodName == null) {
+                    final PrintQuery print = CachedPrintQuery.get4Request(getProdInstance());
+                    print.addAttribute(CIProducts.ProductAbstract.Name, CIProducts.ProductAbstract.Description,
+                                    CIProducts.ProductAbstract.Dimension);
+                    print.execute();
+                    setProdName(print.<String>getAttribute(CIProducts.ProductAbstract.Name));
+                    setProdDescr(print.<String>getAttribute(CIProducts.ProductAbstract.Description));
+                    setUoM(Dimension.get(print.<Long>getAttribute(CIProducts.ProductAbstract.Dimension)).getBaseUoM());
+                }
+
+                if (getStorageInstance() != null && getStorageInstance().isValid() && this.storage == null) {
+                    final PrintQuery print = CachedPrintQuery.get4Request(getStorageInstance());
+                    print.addAttribute(CIProducts.StorageAbstract.Name);
+                    print.execute();
+                    setStorage(print.<String>getAttribute(CIProducts.StorageAbstract.Name));
+                }
+            } catch (final Exception e) {
+                // TODO: handle exception
+            }
+        }
 
         /**
          * Getter method for the instance variable {@link #quantity}.
@@ -338,6 +732,22 @@ public abstract class Inventory_Base
         }
 
         /**
+         * @param _bean
+         */
+        public void addTransaction(final TransactionBean _bean)
+        {
+            if (_bean.getInstance().getType().isCIType(CIProducts.TransactionInbound)) {
+                addQuantity(_bean.getQuantity().negate());
+            } else if (_bean.getInstance().getType().isCIType(CIProducts.TransactionOutbound)) {
+                addQuantity(_bean.getQuantity());
+            } else if (_bean.getInstance().getType().isCIType(CIProducts.TransactionReservationInbound)) {
+                addReserved(_bean.getQuantity().negate());
+            } else if (_bean.getInstance().getType().isCIType(CIProducts.TransactionReservationOutbound)) {
+                addReserved(_bean.getQuantity());
+            }
+        }
+
+        /**
          * Setter method for instance variable {@link #quantity}.
          *
          * @param _quantity value for instance variable {@link #quantity}
@@ -374,6 +784,7 @@ public abstract class Inventory_Base
          */
         public String getUoM()
         {
+            initialize();
             return this.uoM.getName();
         }
 
@@ -394,6 +805,7 @@ public abstract class Inventory_Base
          */
         public String getProdName()
         {
+            initialize();
             return this.prodName;
         }
 
@@ -414,6 +826,7 @@ public abstract class Inventory_Base
          */
         public String getProdDescr()
         {
+            initialize();
             return this.prodDescr;
         }
 
@@ -434,6 +847,7 @@ public abstract class Inventory_Base
          */
         public String getStorage()
         {
+            initialize();
             return this.storage;
         }
 
@@ -540,8 +954,8 @@ public abstract class Inventory_Base
             throws CacheReloadException
         {
             final StringBuilder ret = new StringBuilder();
-            if (this.prodClasslist != null && !this.prodClasslist.isEmpty()) {
-                for (final Classification clazz : this.prodClasslist) {
+            if (getProdClasslist() != null && !getProdClasslist().isEmpty()) {
+                for (final Classification clazz : getProdClasslist()) {
                     Classification clazzTmp = clazz;
                     while (!clazzTmp.isRoot()) {
                         if (ret.length() == 0) {
@@ -568,6 +982,7 @@ public abstract class Inventory_Base
          */
         public List<Classification> getProdClasslist()
         {
+            initialize();
             return this.prodClasslist;
         }
 
@@ -580,6 +995,27 @@ public abstract class Inventory_Base
         public void setProdClasslist(final List<Classification> _prodClasslist)
         {
             this.prodClasslist = _prodClasslist;
+        }
+
+        /**
+         * Getter method for the instance variable {@link #storageInstance}.
+         *
+         * @return value of instance variable {@link #storageInstance}
+         */
+        public Instance getStorageInstance()
+        {
+            return this.storageInstance;
+        }
+
+        /**
+         * Setter method for instance variable {@link #storageInstance}.
+         *
+         * @param _storageInstance value for instance variable
+         *            {@link #storageInstance}
+         */
+        public void setStorageInstance(final Instance _storageInstance)
+        {
+            this.storageInstance = _storageInstance;
         }
     }
 }

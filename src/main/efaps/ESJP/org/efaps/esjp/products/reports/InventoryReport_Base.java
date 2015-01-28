@@ -58,6 +58,7 @@ import org.efaps.esjp.products.Inventory_Base.InventoryBean;
 import org.efaps.esjp.products.StorageGroup;
 import org.efaps.ui.wicket.models.EmbeddedLink;
 import org.efaps.util.EFapsException;
+import org.joda.time.DateTime;
 
 /**
  * TODO comment!
@@ -467,8 +468,10 @@ public abstract class InventoryReport_Base
 
         /**
          * Getter method for the instance variable {@link #beans}.
-         *
+         * @param _parameter Parameter as passed by the eFaps API
+         * @param _inventory Inventory instance
          * @return value of instance variable {@link #beans}
+         * @throws EFapsException on error
          */
         public List<InventoryBean> getBeans(final Parameter _parameter,
                                             final Inventory _inventory)
@@ -482,6 +485,7 @@ public abstract class InventoryReport_Base
                     inventory.setEvaluateCost(isEvaluateCost(_parameter));
                     inventory.setShowStorage(!StorageDisplay.NONE.equals(getStorageDisplay(_parameter)));
                     inventory.setShowProdClass(!ClassDisplay.NONE.equals(getClassDisplay(_parameter)));
+                    inventory.setDate((DateTime) getFilterMap(_parameter).get("date"));
                 } else {
                     inventory = _inventory;
                 }

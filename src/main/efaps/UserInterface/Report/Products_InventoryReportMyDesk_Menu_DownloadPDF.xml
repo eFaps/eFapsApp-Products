@@ -38,9 +38,6 @@
                 <property name="PageType">A4</property>
                 <property name="PageOrientation">LANDSCAPE</property>
                 <property name="FilterKey">org.efaps.esjp.products.reports.InventoryReport.FilterKey</property>
-                <property name="Type">Products_RetentionCertificate</property>
-                <property name="StatusGroup">Products_RetentionCertificateStatus</property>
-                <property name="Status">!Canceled</property>
             </execute>
         </target>
         <property name="Target">hidden</property>
