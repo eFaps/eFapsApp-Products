@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.efaps.admin.datamodel.Classification;
 import org.efaps.admin.datamodel.Dimension;
 import org.efaps.admin.datamodel.Dimension.UoM;
 import org.efaps.admin.datamodel.Status;
@@ -43,6 +44,7 @@ import org.efaps.esjp.common.AbstractCommon;
 import org.efaps.esjp.erp.CurrencyInst;
 import org.efaps.esjp.products.Cost_Base.CostBean;
 import org.efaps.util.EFapsException;
+import org.efaps.util.cache.CacheReloadException;
 
 /**
  * TODO comment!
@@ -57,6 +59,11 @@ public abstract class Inventory_Base
 {
 
     private Boolean showStorage = null;
+
+    /**
+     * Show the classification in the report.
+     */
+    private boolean showProdClass;
 
     private List<Instance> storageInsts = new ArrayList<>();
 
@@ -87,9 +94,13 @@ public abstract class Inventory_Base
         }
         final SelectBuilder selProd = SelectBuilder.get().linkto(CIProducts.Inventory.Product);
         final SelectBuilder selProdInst = new SelectBuilder(selProd).instance();
+        final SelectBuilder selProdClass = new SelectBuilder(selProd).clazz().type();
         final SelectBuilder selProdName = new SelectBuilder(selProd).attribute(CIProducts.ProductAbstract.Name);
         final SelectBuilder selProdDescr = new SelectBuilder(selProd).attribute(CIProducts.ProductAbstract.Description);
-        multi.addSelect(selProdInst, selProdName, selProdDescr);
+        if (isShowProdClass()) {
+            multi.addSelect(selProdClass);
+        }
+        multi.addSelect(selProdClass, selProdInst, selProdName, selProdDescr);
         multi.addAttribute(CIProducts.Inventory.Quantity, CIProducts.Inventory.UoM, CIProducts.Inventory.Reserved);
         multi.execute();
         while (multi.next()) {
@@ -101,6 +112,9 @@ public abstract class Inventory_Base
                 bean.setProdDescr(multi.<String>getSelect(selProdDescr));
                 bean.setProdName(multi.<String>getSelect(selProdName));
                 bean.setUoM(Dimension.getUoM(multi.<Long>getAttribute(CIProducts.Inventory.UoM)));
+                if (isShowProdClass()) {
+                    bean.setProdClasslist(multi.<List<Classification>>getSelect(selProdClass));
+                }
                 ret.add(bean);
             } else {
                 final Instance prodInst = multi.getSelect(selProdInst);
@@ -112,6 +126,9 @@ public abstract class Inventory_Base
                     bean.setProdDescr(multi.<String>getSelect(selProdDescr));
                     bean.setProdName(multi.<String>getSelect(selProdName));
                     bean.setUoM(Dimension.getUoM(multi.<Long>getAttribute(CIProducts.Inventory.UoM)));
+                    if (isShowProdClass()) {
+                        bean.setProdClasslist(multi.<List<Classification>>getSelect(selProdClass));
+                    }
                     map.put(prodInst, bean);
                 }
             }
@@ -141,7 +158,6 @@ public abstract class Inventory_Base
             }
         }
     }
-
 
     protected Cost getCostObject(final Parameter _parameter)
     {
@@ -231,6 +247,26 @@ public abstract class Inventory_Base
         this.evaluateCost = _evaluateCost;
     }
 
+    /**
+     * Getter method for the instance variable {@link #showProdClass}.
+     *
+     * @return value of instance variable {@link #showProdClass}
+     */
+    public boolean isShowProdClass()
+    {
+        return this.showProdClass;
+    }
+
+    /**
+     * Setter method for instance variable {@link #showProdClass}.
+     *
+     * @param _showProdClass value for instance variable {@link #showProdClass}
+     */
+    public void setShowProdClass(final boolean _showProdClass)
+    {
+        this.showProdClass = _showProdClass;
+    }
+
     public static class InventoryBean
     {
 
@@ -248,6 +284,8 @@ public abstract class Inventory_Base
         private String currency = "";
 
         private CostBean costBean;
+
+        private List<Classification> prodClasslist;
 
         /**
          * Getter method for the instance variable {@link #quantity}.
@@ -459,6 +497,11 @@ public abstract class Inventory_Base
             return this.prodInstance;
         }
 
+        public String getProdType()
+        {
+            return getProdInstance().getType().getLabel();
+        }
+
         /**
          * Getter method for the instance variable {@link #prodInstance}.
          *
@@ -488,6 +531,55 @@ public abstract class Inventory_Base
         public CostBean getCostBean()
         {
             return this.costBean;
+        }
+
+        /**
+         * @return
+         */
+        public String getProdClass()
+            throws CacheReloadException
+        {
+            final StringBuilder ret = new StringBuilder();
+            if (this.prodClasslist != null && !this.prodClasslist.isEmpty()) {
+                for (final Classification clazz : this.prodClasslist) {
+                    Classification clazzTmp = clazz;
+                    while (!clazzTmp.isRoot()) {
+                        if (ret.length() == 0) {
+                            ret.append(clazz.getLabel());
+                        } else {
+                            ret.insert(0, clazzTmp.getLabel() + " - ");
+                        }
+                        clazzTmp = clazzTmp.getParentClassification();
+                    }
+                    if (ret.length() == 0) {
+                        ret.append(clazz.getLabel());
+                    }
+                }
+            } else {
+                ret.append("-");
+            }
+            return ret.toString();
+        }
+
+        /**
+         * Getter method for the instance variable {@link #prodClasslist}.
+         *
+         * @return value of instance variable {@link #prodClasslist}
+         */
+        public List<Classification> getProdClasslist()
+        {
+            return this.prodClasslist;
+        }
+
+        /**
+         * Setter method for instance variable {@link #prodClasslist}.
+         *
+         * @param _prodClasslist value for instance variable
+         *            {@link #prodClasslist}
+         */
+        public void setProdClasslist(final List<Classification> _prodClasslist)
+        {
+            this.prodClasslist = _prodClasslist;
         }
     }
 }

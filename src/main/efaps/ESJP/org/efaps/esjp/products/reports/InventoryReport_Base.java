@@ -36,6 +36,7 @@ import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.builder.component.GenericElementBuilder;
 import net.sf.dynamicreports.report.builder.expression.AbstractComplexExpression;
 import net.sf.dynamicreports.report.builder.grid.ColumnTitleGroupBuilder;
+import net.sf.dynamicreports.report.builder.group.ColumnGroupBuilder;
 import net.sf.dynamicreports.report.definition.ReportParameters;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -74,6 +75,16 @@ public abstract class InventoryReport_Base
     public enum StorageDisplay
     {
         NONE, COLUMN, ROW;
+    }
+
+    public enum TypeDisplay
+    {
+        NONE, COLUMN, GROUP;
+    }
+
+    public enum ClassDisplay
+    {
+        NONE, COLUMN, GROUP;
     }
 
     /**
@@ -171,15 +182,17 @@ public abstract class InventoryReport_Base
             Collections.sort(tmpBeans, getComparator(_parameter));
             Map<String, Object> map = new HashMap<>();
             BigDecimal quantity = BigDecimal.ZERO;
-            for(final InventoryBean bean : tmpBeans) {
+            for (final InventoryBean bean : tmpBeans) {
                 if (!bean.getProdName().equals(map.get("prodName"))) {
                     map = new HashMap<>();
                     quantity = BigDecimal.ZERO;
                     ret.add(map);
+                    map.put("prodType", bean.getProdType());
+                    map.put("prodClass", bean.getProdClass());
                     map.put("prodName", bean.getProdName());
                     map.put("prodDescr", bean.getProdDescr());
                     map.put("prodOID", bean.getProdOID());
-                    map.put("currency", bean.getCurrency() );
+                    map.put("currency", bean.getCurrency());
                     map.put("prodName", bean.getProdName());
                     map.put("cost", bean.getCost());
                     map.put("uoM", bean.getUoM());
@@ -237,6 +250,33 @@ public abstract class InventoryReport_Base
             return ret;
         }
 
+
+        protected TypeDisplay getTypeDisplay(final Parameter _parameter)
+            throws EFapsException
+        {
+            final EnumFilterValue filter = (EnumFilterValue) getFilterMap(_parameter).get("typeDisplay");
+            TypeDisplay ret;
+            if (filter != null) {
+                ret = (TypeDisplay) filter.getObject();
+            } else {
+                ret = TypeDisplay.NONE;
+            }
+            return ret;
+        }
+
+        protected ClassDisplay getClassDisplay(final Parameter _parameter)
+            throws EFapsException
+        {
+            final EnumFilterValue filter = (EnumFilterValue) getFilterMap(_parameter).get("classDisplay");
+            ClassDisplay ret;
+            if (filter != null) {
+                ret = (ClassDisplay) filter.getObject();
+            } else {
+                ret = ClassDisplay.NONE;
+            }
+            return ret;
+        }
+
         protected boolean isEvaluateCost(final Parameter _parameter)
             throws EFapsException
         {
@@ -276,15 +316,48 @@ public abstract class InventoryReport_Base
             throws EFapsException
         {
             final List<ColumnTitleGroupBuilder> groupBuilders = new ArrayList<>();
+            ColumnGroupBuilder storageSumGroup = null;
             if (StorageDisplay.ROW.equals(getStorageDisplay(_parameter))) {
                 final TextColumnBuilder<String> storageColumn = DynamicReports.col.column(DBProperties
                                 .getProperty(InventoryReport.class.getName() + ".Column.storage"),
                                 "storage", DynamicReports.type.stringType());
                 _builder.addColumn(storageColumn);
-                _builder.groupBy(storageColumn);
+                storageSumGroup = DynamicReports.grp.group(storageColumn);
+                _builder.groupBy(storageSumGroup);
             }
+
             final ColumnTitleGroupBuilder prodGroup = DynamicReports.grid.titleGroup(
                             DBProperties.getProperty(InventoryReport.class.getName() + ".TitleGroup.product"));
+
+            ColumnGroupBuilder typeGroup = null;
+            if (!TypeDisplay.NONE.equals(getTypeDisplay(_parameter))) {
+                final TextColumnBuilder<String> typeColumn = DynamicReports.col.column(DBProperties
+                                .getProperty(InventoryReport.class.getName() + ".Column.prodType"),
+                                "prodType", DynamicReports.type.stringType()).setWidth(150);
+                _builder.addColumn(typeColumn);
+
+                if (TypeDisplay.GROUP.equals(getTypeDisplay(_parameter))) {
+                    typeGroup = DynamicReports.grp.group(typeColumn);
+                    _builder.groupBy(typeGroup);
+                } else if (StorageDisplay.COLUMN.equals(getStorageDisplay(_parameter))) {
+                    prodGroup.add(typeColumn);
+                }
+            }
+            ColumnGroupBuilder classGroup = null;
+            if (!ClassDisplay.NONE.equals(getClassDisplay(_parameter))) {
+                final TextColumnBuilder<String> classColumn = DynamicReports.col.column(DBProperties
+                                .getProperty(InventoryReport.class.getName() + ".Column.prodClass"),
+                                "prodClass", DynamicReports.type.stringType()).setWidth(250);
+                _builder.addColumn(classColumn);
+
+                if (ClassDisplay.GROUP.equals(getClassDisplay(_parameter))) {
+                    classGroup = DynamicReports.grp.group(classColumn);
+                    _builder.groupBy(classGroup);
+                } else if (StorageDisplay.COLUMN.equals(getStorageDisplay(_parameter))) {
+                    prodGroup.add(classColumn);
+                }
+            }
+
             if (getExType().equals(ExportType.HTML)) {
                 final GenericElementBuilder linkElement = DynamicReports.cmp.genericElement(
                                 "http://www.efaps.org", "efapslink")
@@ -329,7 +402,7 @@ public abstract class InventoryReport_Base
                 final TextColumnBuilder<BigDecimal> reservedColumn = DynamicReports.col.column(DBProperties
                             .getProperty(InventoryReport.class.getName() + ".Column.reserved"),
                             "reserved", DynamicReports.type.bigDecimalType());
-                _builder.addColumn( quantityColumn, reservedColumn);
+                _builder.addColumn(quantityColumn, reservedColumn);
             }
 
             final TextColumnBuilder<BigDecimal> costColumn = DynamicReports.col.column(DBProperties
@@ -351,7 +424,18 @@ public abstract class InventoryReport_Base
                                     DBProperties.getProperty(InventoryReport.class.getName() + ".TitleGroup.cost"),
                                     costColumn, totalColumn, currencyColumn);
                     groupBuilders.add(costGroup);
+
                 }
+                if (TypeDisplay.GROUP.equals(getTypeDisplay(_parameter))) {
+                    _builder.addSubtotalAtGroupFooter(typeGroup, DynamicReports.sbt.sum(totalColumn));
+                }
+                if (ClassDisplay.GROUP.equals(getClassDisplay(_parameter))) {
+                    _builder.addSubtotalAtGroupFooter(classGroup, DynamicReports.sbt.sum(totalColumn));
+                }
+                if (StorageDisplay.ROW.equals(getStorageDisplay(_parameter))) {
+                    _builder.addSubtotalAtGroupFooter(storageSumGroup, DynamicReports.sbt.sum(totalColumn));
+                }
+                _builder.addSubtotalAtColumnFooter(DynamicReports.sbt.sum(totalColumn));
             }
             if (!groupBuilders.isEmpty()) {
                 _builder.columnGrid(groupBuilders.toArray(new ColumnTitleGroupBuilder[groupBuilders.size()]));
@@ -397,6 +481,7 @@ public abstract class InventoryReport_Base
                     inventory.setStorageInsts(getStorageInsts(_parameter));
                     inventory.setEvaluateCost(isEvaluateCost(_parameter));
                     inventory.setShowStorage(!StorageDisplay.NONE.equals(getStorageDisplay(_parameter)));
+                    inventory.setShowProdClass(!ClassDisplay.NONE.equals(getClassDisplay(_parameter)));
                 } else {
                     inventory = _inventory;
                 }
