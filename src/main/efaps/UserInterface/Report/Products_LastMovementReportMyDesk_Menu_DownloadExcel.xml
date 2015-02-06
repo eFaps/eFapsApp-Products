@@ -22,20 +22,20 @@
 -->
 <ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>9416afd4-c6c9-45be-b1ff-c1a3f901bb90</uuid>
+    <uuid>d7b7a1c5-5238-402a-9c33-e165fbd5fee0</uuid>
     <file-application>eFapsApp-Sales</file-application>
     <file-revision>$Rev: 14788 $</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_TransactionReportMyDesk_Menu_DownloadExcel</name>
+        <name>Products_LastMovementReportMyDesk_Menu_DownloadExcel</name>
         <icon>Document_Excel</icon>
         <access>
             <role>Sales_Admin</role>
         </access>
         <target>
-            <execute method="exportReport" program="org.efaps.esjp.products.reports.TransactionReport">
+            <execute method="exportReport" program="org.efaps.esjp.products.reports.LastMovementReport">
                 <property name="Mime">xls</property>
-                <property name="FilterKey">org.efaps.esjp.products.reports.TransactionReport.FilterKey</property>
+                <property name="FilterKey">org.efaps.esjp.products.reports.LastMovementReport.FilterKey</property>
             </execute>
         </target>
         <property name="Target">hidden</property>

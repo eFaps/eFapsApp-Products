@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
- Copyright 2003 - 2009 The eFaps Team
+ Copyright 2003 - 2014 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -15,31 +15,26 @@
  limitations under the License.
 
  Author:          The eFaps Team
- Revision:        $Rev: 14788 $
- Last Changed:    $Date: 2015-01-28 15:08:45 -0500 (Wed, 28 Jan 2015) $
+ Revision:        $Rev: 14618 $
+ Last Changed:    $Date: 2014-12-14 13:04:40 -0500 (Sun, 14 Dec 2014) $
  Last Changed By: $Author: jan@moxter.net $
 
 -->
 <ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>9416afd4-c6c9-45be-b1ff-c1a3f901bb90</uuid>
-    <file-application>eFapsApp-Sales</file-application>
-    <file-revision>$Rev: 14788 $</file-revision>
+    <uuid>d3e571f8-74b7-4e79-8639-73b548090251</uuid>
+    <file-application>eFapsApp-Products</file-application>
+    <file-revision>$Rev: 14618 $</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_TransactionReportMyDesk_Menu_DownloadExcel</name>
-        <icon>Document_Excel</icon>
+        <name>Products_LastMovementReportMyDesk</name>
         <access>
-            <role>Sales_Admin</role>
+            <role>Products_Admin</role>
         </access>
         <target>
-            <execute method="exportReport" program="org.efaps.esjp.products.reports.TransactionReport">
-                <property name="Mime">xls</property>
-                <property name="FilterKey">org.efaps.esjp.products.reports.TransactionReport.FilterKey</property>
-            </execute>
+            <menu>Products_LastMovementReportMyDesk_Menu</menu>
+            <form>Products_LastMovementReportForm</form>
         </target>
-        <property name="Target">hidden</property>
-        <property name="TargetShowFile">true</property>
-        <property name="Label">report.DownloadExcel</property>
+        <property name="Target">content</property>
     </definition>
 </ui-command>

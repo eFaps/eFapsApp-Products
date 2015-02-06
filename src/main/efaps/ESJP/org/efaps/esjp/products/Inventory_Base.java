@@ -95,7 +95,7 @@ public abstract class Inventory_Base
      * @return list of beans
      * @throws EFapsException on error
      */
-    public List<InventoryBean> getInventory(final Parameter _parameter)
+    public List<? extends InventoryBean> getInventory(final Parameter _parameter)
         throws EFapsException
     {
         final List<InventoryBean> ret = new ArrayList<>();

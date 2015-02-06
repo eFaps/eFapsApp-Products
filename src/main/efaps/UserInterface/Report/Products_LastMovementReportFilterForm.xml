@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
+
+  Copyright 2003 - 2014 The eFaps Team
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+  Author:          The eFaps Team
+  Revision:        $Rev: 14786 $
+  Last Changed:    $Date: 2015-01-27 19:31:01 -0500 (Tue, 27 Jan 2015) $
+  Last Changed By: $Author: jan@moxter.net $
+
+-->
+<ui-form xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>b32bb93c-8731-404d-82ed-a069d9bd27a4</uuid>
+    <file-application>eFapsApp-Commons</file-application>
+    <file-revision>$Rev: 14786 $</file-revision>
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <name>Products_LastMovementReportFilterForm</name>
+        <field name="date">
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.DateUI</property>
+            <property name="Label">org.efaps.esjp.products.reports.LastMovementReport.date</property>
+            <trigger event="UI_FIELD_VALUE" method="getDateFromFieldValue"
+                name="ERP_ReportFilterForm4DateFromToType.dateFrom.UI_FIELD_VALUE"
+                program="org.efaps.esjp.erp.FilteredReport" />
+        </field>
+        <field name="storageGroup">
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="Label">org.efaps.esjp.products.reports.LastMovementReport.storageGroup</property>
+            <trigger event="UI_FIELD_VALUE" method="getInstanceFieldValue"
+                name="Products_LastMovementReportFilterForm.storageGroup.UI_FIELD_VALUE"
+                program="org.efaps.esjp.erp.FilteredReport">
+                <property name="Products_WarehouseGroup_Select">attribute[Name]</property>
+            </trigger>
+            <trigger event="UI_FIELD_AUTOCOMPLETE" method="autoComplete4StorageGroup"
+                name="Products_LastMovementReportFilterForm.storageGroup.UI_FIELD_AUTOCOMPLETE"
+                program="org.efaps.esjp.products.StorageGroup">
+                <property name="Type">Products_StorageGroupAbstract</property>
+            </trigger>
+        </field>
+        <field name="storage">
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="Label">org.efaps.esjp.products.reports.LastMovementReport.storage</property>
+            <trigger event="UI_FIELD_VALUE" method="getInstanceFieldValue"
+                name="Products_LastMovementReportFilterForm.storageGroup.UI_FIELD_VALUE"
+                program="org.efaps.esjp.erp.FilteredReport">
+                <property name="Products_Warehouse_Select">attribute[Name]</property>
+            </trigger>
+            <trigger event="UI_FIELD_AUTOCOMPLETE" method="autoComplete4Storage"
+                name="Products_LastMovementReportFilterForm.storageGroup.UI_FIELD_AUTOCOMPLETE"
+                program="org.efaps.esjp.products.Storage">
+                <property name="Type">Products_DynamicStorage</property>
+            </trigger>
+        </field>
+        <field name="storageDisplay">
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="Label">org.efaps.esjp.products.reports.LastMovementReport.storageDisplay</property>
+            <trigger event="UI_FIELD_VALUE" method="getEnumFieldValue"
+                name="Products_LastMovementReportFilterForm.storageDisplay.UI_FIELD_VALUE"
+                program="org.efaps.esjp.products.reports.LastMovementReport">
+                <property name="Enum">org.efaps.esjp.products.reports.LastMovementReport_Base$StorageDisplay</property>
+            </trigger>
+        </field>
+        <field name="typeDisplay">
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="Label">org.efaps.esjp.products.reports.LastMovementReport.typeDisplay</property>
+            <trigger event="UI_FIELD_VALUE" method="getEnumFieldValue"
+                name="Products_LastMovementReportFilterForm.typeDisplay.UI_FIELD_VALUE"
+                program="org.efaps.esjp.products.reports.LastMovementReport">
+                <property name="Enum">org.efaps.esjp.products.reports.LastMovementReport_Base$TypeDisplay</property>
+            </trigger>
+        </field>
+        <field name="classDisplay">
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="Label">org.efaps.esjp.products.reports.LastMovementReport.classDisplay</property>
+            <trigger event="UI_FIELD_VALUE" method="getEnumFieldValue"
+                name="Products_LastMovementReportFilterForm.classDisplay.UI_FIELD_VALUE"
+                program="org.efaps.esjp.products.reports.LastMovementReport">
+                <property name="Enum">org.efaps.esjp.products.reports.LastMovementReport_Base$ClassDisplay</property>
+            </trigger>
+        </field>
+    </definition>
+</ui-form>

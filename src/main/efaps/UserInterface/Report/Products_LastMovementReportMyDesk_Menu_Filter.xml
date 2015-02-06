@@ -15,33 +15,35 @@
  limitations under the License.
 
  Author:          The eFaps Team
- Revision:        $Rev: 14788 $
- Last Changed:    $Date: 2015-01-28 15:08:45 -0500 (Wed, 28 Jan 2015) $
+ Revision:        $Rev: 14618 $
+ Last Changed:    $Date: 2014-12-14 13:04:40 -0500 (Sun, 14 Dec 2014) $
  Last Changed By: $Author: jan@moxter.net $
 
 -->
 <ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>4b17cfc4-db5a-4594-b96b-3b877c749e25</uuid>
+    <uuid>2561d978-bcaa-46c2-bedc-79e5f76325ae</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev: 14788 $</file-revision>
+    <file-revision>$Rev: 14618 $</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_TransactionReportMyDesk_Menu_DownloadPDF</name>
-        <icon>Document_PDF</icon>
+        <name>Products_LastMovementReportMyDesk_Menu_Filter</name>
+        <icon>Filter</icon>
         <access>
             <role>Products_Admin</role>
         </access>
         <target>
-            <execute method="exportReport" program="org.efaps.esjp.products.reports.TransactionReport">
-                <property name="Mime">pdf</property>
-                <property name="PageType">A4</property>
-                <property name="PageOrientation">LANDSCAPE</property>
-                <property name="FilterKey">org.efaps.esjp.products.reports.TransactionReport.FilterKey</property>
+            <form>Products_LastMovementReportFilterForm</form>
+            <execute method="setFilter" program="org.efaps.esjp.products.reports.LastMovementReport">
+                <property name="FilterKey">org.efaps.esjp.products.reports.LastMovementReport.FilterKey</property>
             </execute>
         </target>
-        <property name="Target">hidden</property>
-        <property name="TargetShowFile">true</property>
-        <property name="Label">report.DownloadPDF</property>
+        <property name="Target">modal</property>
+        <property name="TargetMode">edit</property>
+        <property name="Label">report.Filter</property>
+        <property name="TargetTitle">report.Filter</property>
+        <property name="FilterKey">org.efaps.esjp.products.reports.LastMovementReport.FilterKey</property>
+        <property name="FilterTargetForm">Products_LastMovementReportForm</property>
+        <property name="FilterTargetField">report</property>
     </definition>
 </ui-command>

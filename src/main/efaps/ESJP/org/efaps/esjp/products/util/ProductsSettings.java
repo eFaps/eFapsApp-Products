@@ -80,4 +80,8 @@ public interface ProductsSettings
      */
     String DEFAULTDIMENSION = ProductsSettings.BASE + "DefaultDimension";
 
+    /**
+     * Properties for the LastMovementReport.
+     */
+    String LASTMOVEREP = ProductsSettings.BASE + "LastMovementReport";
 }

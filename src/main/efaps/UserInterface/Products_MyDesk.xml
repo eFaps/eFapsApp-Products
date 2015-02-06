@@ -41,9 +41,7 @@
             <child>Products_KardexMyDesk</child>
             <child>Products_CatalogMyDesk</child>
             <child>Products_StorageGroupAbstractMyDesk</child>
-            <child>Products_InventoryReportMyDesk</child>
-            <child>Products_InventoryCostReportMyDesk</child>
-            <child>Products_TransactionReportMyDesk</child>
+            <child>Products_ReportsMyDesk</child>
         </childs>
     </definition>
 </ui-menu>

@@ -55,5 +55,17 @@ Thumbnail_Enlarge=false
             <value>false</value>
             <description>Boolean(true/false). Activate the menu for updating Product Prices on mass.</description>
         </attribute>
+        <attribute>
+            <key>org.efaps.products.LastMovementReport</key>
+            <value><![CDATA[maxDays=200
+color01=#DA3131
+smaller01=0
+color02=#01A01B
+smaller02=90
+color03=#D78405
+smaller03=181
+color04=#DA3131
+greater04=180]]></value>
+        </attribute>
     </definition>
 </common-systemconfiguration>

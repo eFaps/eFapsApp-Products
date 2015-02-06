@@ -218,6 +218,7 @@ public abstract class InventoryReport_Base
             if (StorageDisplay.ROW.equals(getStorageDisplay(_parameter))) {
                 ret.addComparator(new Comparator<InventoryBean>()
                 {
+
                     @Override
                     public int compare(final InventoryBean _arg0,
                                        final InventoryBean _arg1)
@@ -228,6 +229,7 @@ public abstract class InventoryReport_Base
             }
             ret.addComparator(new Comparator<InventoryBean>()
             {
+
                 @Override
                 public int compare(final InventoryBean _arg0,
                                    final InventoryBean _arg1)
@@ -250,7 +252,6 @@ public abstract class InventoryReport_Base
             }
             return ret;
         }
-
 
         protected TypeDisplay getTypeDisplay(final Parameter _parameter)
             throws EFapsException
@@ -390,7 +391,8 @@ public abstract class InventoryReport_Base
                     final TextColumnBuilder<BigDecimal> reservedColumn = DynamicReports.col.column(DBProperties
                                     .getProperty(InventoryReport.class.getName() + ".Column.reserved"),
                                     storage + "_reserved", DynamicReports.type.bigDecimalType());
-                    final ColumnTitleGroupBuilder storageGroup = DynamicReports.grid.titleGroup(storage, quantityColumn,
+                    final ColumnTitleGroupBuilder storageGroup = DynamicReports.grid.titleGroup(storage,
+                                    quantityColumn,
                                     reservedColumn);
                     groupBuilders.add(storageGroup);
                     _builder.addColumn(quantityColumn, reservedColumn);
@@ -398,11 +400,11 @@ public abstract class InventoryReport_Base
 
             } else {
                 final TextColumnBuilder<BigDecimal> quantityColumn = DynamicReports.col.column(DBProperties
-                            .getProperty(InventoryReport.class.getName() + ".Column.quantity"),
-                            "quantity", DynamicReports.type.bigDecimalType());
+                                .getProperty(InventoryReport.class.getName() + ".Column.quantity"),
+                                "quantity", DynamicReports.type.bigDecimalType());
                 final TextColumnBuilder<BigDecimal> reservedColumn = DynamicReports.col.column(DBProperties
-                            .getProperty(InventoryReport.class.getName() + ".Column.reserved"),
-                            "reserved", DynamicReports.type.bigDecimalType());
+                                .getProperty(InventoryReport.class.getName() + ".Column.reserved"),
+                                "reserved", DynamicReports.type.bigDecimalType());
                 _builder.addColumn(quantityColumn, reservedColumn);
             }
 
@@ -468,11 +470,13 @@ public abstract class InventoryReport_Base
 
         /**
          * Getter method for the instance variable {@link #beans}.
+         *
          * @param _parameter Parameter as passed by the eFaps API
          * @param _inventory Inventory instance
          * @return value of instance variable {@link #beans}
          * @throws EFapsException on error
          */
+        @SuppressWarnings("unchecked")
         public List<InventoryBean> getBeans(final Parameter _parameter,
                                             final Inventory _inventory)
             throws EFapsException
@@ -489,7 +493,7 @@ public abstract class InventoryReport_Base
                 } else {
                     inventory = _inventory;
                 }
-                this.beans = inventory.getInventory(_parameter);
+                this.beans = (List<InventoryBean>) inventory.getInventory(_parameter);
             }
             return this.beans;
         }
