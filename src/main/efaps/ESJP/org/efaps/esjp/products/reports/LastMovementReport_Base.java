@@ -210,12 +210,12 @@ public abstract class LastMovementReport_Base
                     }
                     final Iterator<DataBean> beanIter = beanList.iterator();
                     final DataBean bean = beanIter.next();
+                    bean.setDate(date);
                     if (bean.addMovement(transDate, quantity)) {
-                        bean.setDate(date);
                         done.add(prodInst);
-                        while (beanIter.hasNext()) {
-                            beanIter.next().setLastDate(bean.getLastDate()).setDate(bean.getDate());
-                        }
+                    }
+                    while (beanIter.hasNext()) {
+                        beanIter.next().setLastDate(bean.getLastDate()).setDate(bean.getDate());
                     }
                 }
             }
