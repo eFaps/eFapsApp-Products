@@ -306,7 +306,7 @@ public abstract class BOMCalculator_Base
             for (final Entry<Instance, BigDecimal> reqEntry : req.entrySet()) {
                 if (stocks.containsKey(reqEntry.getKey())) {
                     final BigDecimal newStock = stocks.get(reqEntry.getKey()).subtract(reqEntry.getValue());
-                    if (newStock.compareTo( BigDecimal.ZERO) < 0) {
+                    if (newStock.compareTo(BigDecimal.ZERO) < 0) {
                         hasStock = false;
                         break;
                     } else {
