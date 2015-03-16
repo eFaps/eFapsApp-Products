@@ -48,6 +48,12 @@
             <property name="Phrase">$&lt;linkto[Document].type.label&gt; - $&lt;linkto[Document].attribute[Name]&gt;</property>
             <property name="Label">Products_TransactionAbstract/Document.Label</property>
         </field>
+         <field name="contact">
+            <property name="SelectAlternateOID">linkto[Document].linkto[Contact].instance</property>
+            <property name="HRef">TREE</property>
+            <property name="Phrase">$&lt;linkto[Document].linkto[Contact].attribute[Name]&gt;</property>
+            <property name="Label">ERP_DocumentAbstract/Contact.Label</property>
+        </field>
         <field name="description">
             <property name="Attribute">Description</property>
             <property name="Label">Products_TransactionAbstract/Description.Label</property>
