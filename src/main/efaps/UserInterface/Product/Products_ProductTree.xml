@@ -32,13 +32,11 @@
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductTree</name>
-        <!-- targets -->
         <target>
             <menu>Products_ProductTree_Menu</menu>
             <form>Products_ProductForm</form>
             <help>org.efaps.wiki.products.Showproducts.wiki</help>
         </target>
-        <!-- type tree for -->
         <type>Products_StockProductAbstract</type>
         <childs>
             <child>Products_ProductTree_PricelistRetail</child>
@@ -47,12 +45,12 @@
             <child>Products_ProductTree_Cost</child>
             <child>Products_ProductTree_Product</child>
             <child>Products_ProductTree_BOM</child>
+            <child>Products_ProductTree_Individual</child>
             <child>Products_ProductTree_Image</child>
             <child>Products_ProductTree_Contacts</child>
             <child>Products_ProductTree_Transaction</child>
             <child>Products_ProductTree_Costing</child>
         </childs>
-        <!-- properties -->
         <property name="Target">content</property>
         <property name="TargetMode">view</property>
     </definition>

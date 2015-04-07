@@ -57,6 +57,7 @@ import org.efaps.admin.program.esjp.EFapsRevision;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
 import org.efaps.db.AttributeQuery;
+import org.efaps.db.CachedPrintQuery;
 import org.efaps.db.Context;
 import org.efaps.db.Insert;
 import org.efaps.db.Instance;
@@ -871,6 +872,25 @@ public abstract class Product_Base
             }
         };
         return multi.execute(_parameter);
+    }
+
+
+    public Return check4Individual(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        final Instance inst = _parameter.getInstance();
+        if (inst != null && inst.isValid() && inst.getType().isKindOf(CIProducts.ProductAbstract)) {
+            final PrintQuery print = CachedPrintQuery.get4Request(inst);
+            print.addAttribute(CIProducts.ProductAbstract.Individual);
+            print.execute();
+            final Object indi = print.getAttribute(CIProducts.ProductAbstract.Individual);
+            if (indi != null && indi instanceof ProductIndividual &&
+                            (ProductIndividual.INDIVIDUAL.equals(indi) || ProductIndividual.BATCH.equals(indi))) {
+                ret.put(ReturnValues.TRUE, true);
+            }
+        }
+        return ret;
     }
 
 }
