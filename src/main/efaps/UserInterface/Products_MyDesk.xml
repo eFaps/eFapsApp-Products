@@ -42,6 +42,8 @@
             <child>Products_CatalogMyDesk</child>
             <child>Products_StorageGroupAbstractMyDesk</child>
             <child>Products_ReportsMyDesk</child>
+            <child>Products_TreeViewMyDesk</child>
+            <child>Products_ProductLineMyDesk</child>
         </childs>
     </definition>
 </ui-menu>
