@@ -20,6 +20,7 @@
 
 package org.efaps.esjp.products;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,6 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -53,7 +55,7 @@ import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
 import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
-import org.efaps.admin.program.esjp.EFapsRevision;
+import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
 import org.efaps.db.AttributeQuery;
@@ -65,9 +67,11 @@ import org.efaps.db.InstanceQuery;
 import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.PrintQuery;
 import org.efaps.db.QueryBuilder;
+import org.efaps.db.SelectBuilder;
 import org.efaps.esjp.admin.datamodel.RangesValue;
 import org.efaps.esjp.ci.CIFormProducts;
 import org.efaps.esjp.ci.CIProducts;
+import org.efaps.esjp.common.uiform.Create;
 import org.efaps.esjp.common.uiform.Field;
 import org.efaps.esjp.common.uitable.MultiPrint;
 import org.efaps.esjp.common.util.InterfaceUtils;
@@ -86,7 +90,7 @@ import org.joda.time.DateTime;
  * @version $Id$
  */
 @EFapsUUID("5c2c078f-852d-49d9-af34-4ff5022b6f82")
-@EFapsRevision("$Rev$")
+@EFapsApplication("eFapsApp-Products")
 public abstract class Product_Base
     extends CommonDocument
 {
@@ -177,6 +181,39 @@ public abstract class Product_Base
         js.append(")");
         map.put(CIFormProducts.Products_ProductForm.defaultUoM.name, js.toString());
         return ret;
+    }
+
+    public Return create(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Create create = new Create()
+        {
+            @Override
+            protected void add2basicInsert(final Parameter _parameter,
+                                           final Insert _insert)
+                throws EFapsException
+            {
+                super.add2basicInsert(_parameter, _insert);
+                add2Create(_parameter, _insert);
+            }
+        };
+        return create.execute(_parameter);
+    }
+
+    protected void add2Create(final Parameter _parameter,
+                              final Insert _insert)
+        throws EFapsException
+    {
+        if (Products.getSysConfig().getAttributeValueAsBoolean(ProductsSettings.ACTIVATEFAMILIES)) {
+            final Instance famInst = Instance.get(_parameter
+                            .getParameterValue(CIFormProducts.Products_ProductForm.productFamilyLink.name));
+            if (famInst.isValid()) {
+                _insert.add(CIProducts.ProductAbstract.ProductFamilyLink, famInst);
+                final String name = new ProductFamily().getCode(_parameter, famInst) + "."
+                                + _parameter.getParameterValue(CIFormProducts.Products_ProductForm.nameSuffix.name);
+                _insert.add(CIProducts.ProductAbstract.Name, name);
+            }
+        }
     }
 
     /**
@@ -874,7 +911,6 @@ public abstract class Product_Base
         return multi.execute(_parameter);
     }
 
-
     public Return check4Individual(final Parameter _parameter)
         throws EFapsException
     {
@@ -891,6 +927,94 @@ public abstract class Product_Base
             }
         }
         return ret;
+    }
+
+    public Return getFieldFormatFieldValueUI(final Parameter _parameter)
+        throws EFapsException
+    {
+        final StringBuilder html = new StringBuilder();
+        final Map<?, ?> props = (Map<?, ?>) _parameter.get(ParameterValues.PROPERTIES);
+        final String key = (String) props.get("Properties");
+
+        String suffix = "";
+        String preffix = "";
+
+        final SelectBuilder clazz = new SelectBuilder().clazz().type();
+
+        final PrintQuery print = new PrintQuery(_parameter.getInstance());
+        print.addAttribute("Name");
+        print.addSelect(clazz);
+        if (print.execute()) {
+            final List<Classification> clazzList = print.getSelect(clazz);
+            final String name = print.<String>getAttribute("Name");
+            if (clazzList != null && !clazzList.isEmpty()) {
+                preffix = getBaseNum(_parameter, clazzList.get(clazzList.size() - 1));
+            }
+            suffix = name.substring(preffix.length() < name.length() ? preffix.length() : 0, name.length());
+        }
+
+        if (key != null && key.equalsIgnoreCase("Preffix")) {
+            html.append(preffix);
+        } else {
+            html.append(suffix);
+        }
+
+        final Return ret = new Return();
+        ret.put(ReturnValues.VALUES, html.toString());
+        return ret;
+    }
+
+    public String getBaseNum(final Parameter _parameter,
+                             final Classification _class)
+        throws EFapsException
+    {
+        final Map<?, ?> props = (Map<?, ?>) _parameter.get(ParameterValues.PROPERTIES);
+        final Properties properties = new Properties();
+        final StringBuilder num = new StringBuilder();
+        Classification classification = _class;
+        num.append(properties.getProperty(_class.getName()));
+        while (!classification.isRoot()) {
+            classification = classification.getParentClassification();
+            final String clazzProp = (String) props.get("Class");
+            if (classification.isRoot() && clazzProp != null && !clazzProp.isEmpty()) {
+                num.insert(0, properties.getProperty(clazzProp));
+            } else {
+                num.insert(0, properties.getProperty(classification.getName()));
+            }
+        }
+        num.append(".");
+        return num.toString();
+    }
+
+    public String getSuffix4Family(final Parameter _parameter,
+                                   final Instance _famInst)
+        throws EFapsException
+    {
+        Integer length = Products.getSysConfig().getAttributeValueAsInteger(ProductsSettings.FAMILYSUFFIXLENGTH);
+        if (length == null || length < 1) {
+            length = 3;
+        }
+        Integer val = 1;
+        final ProductFamily fam = new ProductFamily();
+        final String code = fam.getCode(_parameter, _famInst);
+        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductAbstract);
+        queryBldr.addWhereAttrMatchValue(CIProducts.ProductAbstract.Name, code + ".*");
+        queryBldr.addOrderByAttributeDesc(CIProducts.ProductAbstract.Name);
+        queryBldr.setLimit(1);
+        final MultiPrintQuery multi = queryBldr.getPrint();
+        multi.addAttribute(CIProducts.ProductAbstract.Name);
+        multi.execute();
+        while (multi.next()) {
+            final String name = multi.getAttribute(CIProducts.ProductAbstract.Name);
+            final String[] nameAr = name.split("\\.");
+            final String numStr = nameAr[nameAr.length - 1];
+            val = Integer.parseInt(numStr) + 1;
+        }
+        final NumberFormat nf = NumberFormat.getInstance();
+        nf.setMinimumIntegerDigits(length);
+        nf.setMaximumIntegerDigits(length);
+        nf.setGroupingUsed(false);
+        return nf.format(val);
     }
 
 }

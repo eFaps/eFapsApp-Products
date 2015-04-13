@@ -2,7 +2,7 @@
 
 <!--
 
-  Copyright 2003 - 2012 The eFaps Team
+  Copyright 2003 - 2015 The eFaps Team
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -15,11 +15,6 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-
-  Author:          The eFaps Team
-  Revision:        $Rev$
-  Last Changed:    $Date$
-  Last Changed By: $Author$
 
 -->
 
@@ -172,6 +167,131 @@
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
         </field>
+         <field character="Group" name="nameGroup">
+            <property name="GroupCount">3</property>
+            <property name="ModeCreate">READONLY</property>
+            <property name="ModeView">NONE</property>
+            <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                name="Products_ProductForm.nameGroup.UI_ACCESSCHECK"
+                method="configCheck"
+                event="UI_ACCESSCHECK">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.ActivateFamilies</property>
+            </trigger>
+        </field>
+        <field name="productFamilyLink">
+            <property name="ModeCreate">HIDDEN</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="ModeEdit">NONE</property>
+            <property name="ModeView">NONE</property>
+            <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                name="Products_ProductForm.namePrefix.UI_ACCESSCHECK"
+                method="configCheck"
+                event="UI_ACCESSCHECK">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.ActivateFamilies</property>
+            </trigger>
+        </field>
+        <field name="namePrefix">
+            <property name="ModeCreate">READONLY</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="Label">Products_ProductForm.namePrefix.Label</property>
+            <property name="ModeEdit">NONE</property>
+            <property name="ModeView">NONE</property>
+            <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                name="Products_ProductForm.namePrefix.UI_ACCESSCHECK"
+                method="configCheck"
+                event="UI_ACCESSCHECK">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.ActivateFamilies</property>
+            </trigger>
+        </field>
+        <field name="nameSuffix">
+            <property name="Columns">8</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="ModeView">NONE</property>
+            <property name="ModeEdit">NONE</property>
+            <property name="Label">Products_ProductForm.nameSuffix.Label</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                name="Products_ProductForm.nameSuffix.UI_ACCESSCHECK"
+                method="configCheck"
+                event="UI_ACCESSCHECK">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.ActivateFamilies</property>
+            </trigger>
+        </field>
+        <field name="namePrefix4Edit">
+            <property name="Attribute">Name</property>
+            <property name="Label">Products_ProductForm.namePrefix.Label</property>
+            <property name="ModeView">NONE</property>
+            <property name="ModeCreate">NONE</property>
+            <property name="ModePrint">NONE</property>
+            <property name="ModeView">NONE</property>
+            <property name="ModeEdit">READONLY</property>
+            <trigger program="org.efaps.esjp.products.Product" method="getFieldFormatFieldValueUI"
+                name="Products_ProductForm.namePrefix4Edit.UI_FIELD_FORMAT"
+                event="UI_FIELD_FORMAT">
+                <property name="Properties">Preffix</property>
+            </trigger>
+            <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                name="Products_ProductForm.namePrefix4Edit.UI_ACCESSCHECK"
+                method="configCheck"
+                event="UI_ACCESSCHECK">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.ActivateFamilies</property>
+            </trigger>
+        </field>
+        <field name="nameSuffix4Edit">
+            <property name="Required">true</property>
+            <property name="Columns">8</property>
+            <property name="Attribute">Name</property>
+            <property name="Label">Products_ProductForm.nameSuffix.Label</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ModeView">NONE</property>
+            <property name="ModeCreate">NONE</property>
+            <property name="ModePrint">NONE</property>
+            <property name="ModeView">NONE</property>
+            <trigger program="org.efaps.esjp.products.Product" method="getFieldFormatFieldValueUI"
+                name="Products_ProductForm.nameSuffix4Edit.UI_FIELD_FORMAT"
+                event="UI_FIELD_FORMAT">
+                <property name="Properties">Suffix</property>
+            </trigger>
+            <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                name="Products_ProductFamilyMyDesk.nameSuffix4Edit.UI_ACCESSCHECK"
+                method="configCheck"
+                event="UI_ACCESSCHECK">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.ActivateFamilies</property>
+            </trigger>
+        </field>
+        <field character="Picker" name="updateButton">
+            <property name="ModeCreate">READONLY</property>
+            <property name="ModeView">NONE</property>
+            <property name="ModeEdit">READONLY</property>
+            <property name="Label">Products_ProductForm.updateButton.Label</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="CmdIcon">ACCEPT</property>
+            <property name="UIType">BUTTON</property>
+            <picker name="Products_ProductFamilyPicker"/>
+            <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                name="Products_ProductForm.updateButton.UI_ACCESSCHECK"
+                method="configCheck"
+                event="UI_ACCESSCHECK">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.ActivateFamilies</property>
+            </trigger>
+        </field>
+
+
+
          <field name="image">
             <property name="Label">Products_ProductForm.image.Label</property>
             <property name="RowSpan">5</property>
@@ -196,6 +316,15 @@
             <property name="ModeSearch">EDITABLE</property>
             <property name="Attribute">Name</property>
             <property name="Required">true</property>
+            <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                name="Products_ProductForm.updateButton.UI_ACCESSCHECK"
+                method="configCheck"
+                event="UI_ACCESSCHECK">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.ActivateFamilies</property>
+                <property name="Inverse">true</property>
+            </trigger>
         </field>
         <field name="description">
             <property name="Columns">40</property>
@@ -209,6 +338,28 @@
             <property name="Attribute">Dimension</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+            <property name="ModeView">READONLY</property>
+            <trigger program="org.efaps.esjp.products.Product"
+                method="updateFields4Dimension"
+                name="Products_ProductForm.dimension.UI_FIELD_UPDATE"
+                event="UI_FIELD_UPDATE" />
+        </field>
+        <field name="defaultUoM">
+            <property name="Attribute">DefaultUoM</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ModeView">NONE</property>
+            <property name="Required">true</property>
+            <trigger program="org.efaps.esjp.products.Product"
+                method="defaultUoMFieldValue"
+                name="Products_ProductForm.defaultUoM4Create.UI_FIELD_VALUE"
+                event="UI_FIELD_VALUE" />
+        </field>
+        <field name="defaultUoM4View">
+            <property name="Select">linkto[DefaultUoM].attribute[Name]</property>
+            <property name="ModeEdit">NONE</property>
+            <property name="ModeView">READONLY</property>
+            <property name="Label">Products_ProductAbstract/DefaultUoM.Label</property>
         </field>
         <field name="active">
             <property name="Attribute">Active</property>
@@ -219,6 +370,14 @@
             <property name="Attribute">Individual</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+            <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                name="Products_ProductFamilyMyDesk.UI_ACCESSCHECK"
+                method="configCheck"
+                event="UI_ACCESSCHECK">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.ActivateIndividual</property>
+            </trigger>
         </field>
         <field name="salesUnit">
             <property name="Attribute">SalesUnit</property>

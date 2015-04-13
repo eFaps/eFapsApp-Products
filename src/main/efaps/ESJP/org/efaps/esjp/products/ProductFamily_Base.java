@@ -17,6 +17,9 @@
 
 package org.efaps.esjp.products;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
@@ -86,8 +89,16 @@ public abstract class ProductFamily_Base
         throws EFapsException
     {
         final Return ret = new Return();
+        ret.put(ReturnValues.VALUES, getCode(_parameter, _parameter.getInstance()));
+        return ret;
+    }
+
+    public String getCode(final Parameter _parameter,
+                          final Instance _famInst)
+        throws EFapsException
+    {
         final StringBuilder strBldr = new StringBuilder();
-        Instance inst = _parameter.getInstance();
+        Instance inst = _famInst;
         while (!inst.getType().isCIType(CIProducts.ProductFamilyRoot)) {
             final PrintQuery print = new CachedPrintQuery(inst, CACHEKEY);
             final SelectBuilder selParentInst = SelectBuilder.get().linkto(CIProducts.ProductFamilyStandart.ParentLink)
@@ -104,11 +115,25 @@ public abstract class ProductFamily_Base
         print.addSelect(selLineCode);
         print.addAttribute(CIProducts.ProductFamilyAbstract.CodePart);
         print.execute();
-        strBldr.insert(0,print.getAttribute(CIProducts.ProductFamilyAbstract.CodePart));
-        strBldr.insert(0,print.getSelect(selLineCode));
+        strBldr.insert(0, print.getAttribute(CIProducts.ProductFamilyAbstract.CodePart));
+        strBldr.insert(0, print.getSelect(selLineCode));
 
-        ret.put(ReturnValues.VALUES, strBldr.toString());
-        return ret;
+        return strBldr.toString();
     }
 
+    public Return picker4Family(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        final Instance famInst = Instance.get(_parameter.getParameterValue("selectedRow"));
+
+        final String code = getCode(_parameter, famInst);
+        final Map<String, Object> map = new HashMap<>();
+        map.put(CIFormProducts.Products_ProductForm.namePrefix.name, code);
+        map.put(CIFormProducts.Products_ProductForm.nameSuffix.name,
+                        new Product().getSuffix4Family(_parameter, famInst));
+        map.put(CIFormProducts.Products_ProductForm.productFamilyLink.name, famInst.getOid());
+        ret.put(ReturnValues.VALUES, map);
+        return ret;
+    }
 }

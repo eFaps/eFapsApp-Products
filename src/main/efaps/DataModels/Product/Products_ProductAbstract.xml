@@ -109,6 +109,13 @@
             <defaultvalue>0</defaultvalue>
         </attribute>
         <attribute>
+            <name>ProductFamilyLink</name>
+            <type>Link</type>
+            <typelink>Products_ProductFamilyAbstract</typelink>
+            <sqltable>Products_ProductSQLTable</sqltable>
+            <sqlcolumn>FAMILYID</sqlcolumn>
+        </attribute>
+        <attribute>
             <name>Creator</name>
             <type>CreatorLink</type>
             <sqltable>Products_ProductSQLTable</sqltable>
@@ -212,6 +219,13 @@
             <sqltable>Products_ProductSQLTable</sqltable>
             <sqlcolumn>INDIVIDUAL</sqlcolumn>
             <defaultvalue>0</defaultvalue>
+        </attribute>
+         <attribute>
+            <name>ProductFamilyLink</name>
+            <type>Link</type>
+            <typelink>Products_ProductFamilyAbstract</typelink>
+            <sqltable>Products_ProductSQLTable</sqltable>
+            <sqlcolumn>FAMILYID</sqlcolumn>
         </attribute>
         <attribute>
             <name>SalesUnit</name>

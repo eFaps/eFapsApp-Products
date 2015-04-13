@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2013 The eFaps Team
+ * Copyright 2003 - 2015 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Revision:        $Rev$
- * Last Changed:    $Date$
- * Last Changed By: $Author$
  */
 
 
 package org.efaps.esjp.products.util;
 
-import org.efaps.admin.program.esjp.EFapsRevision;
+import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 
 
@@ -32,7 +29,7 @@ import org.efaps.admin.program.esjp.EFapsUUID;
  * @version $Id$
  */
 @EFapsUUID("3cad9ef8-22e6-4b3f-9a97-3aa984d8d6c6")
-@EFapsRevision("$Rev$")
+@EFapsApplication("eFapsApp-Products")
 public interface ProductsSettings
 {
     /**
@@ -59,6 +56,12 @@ public interface ProductsSettings
     String ACTIVATEPRICEMASSUPDATE = ProductsSettings.BASE + "ActivatePriceMassUpdate";
 
     /**
+     * Boolean(true/false).<br/>
+     * Activate the menu for updating Product Prices on mass.
+     */
+    String ACTIVATEFAMILIES = ProductsSettings.BASE + "ActivateFamilies";
+
+    /**
      * Properties.<br/>
      * Properties for image
      */
@@ -76,7 +79,7 @@ public interface ProductsSettings
     String DEFAULTSTORAGEGROUP = ProductsSettings.BASE + "StorageGroup4ProductBOM";
 
     /**
-     * Link to a default warehouse instance.
+     * Link to a default dimension.
      */
     String DEFAULTDIMENSION = ProductsSettings.BASE + "DefaultDimension";
 
@@ -84,4 +87,9 @@ public interface ProductsSettings
      * Properties for the LastMovementReport.
      */
     String LASTMOVEREP = ProductsSettings.BASE + "LastMovementReport";
+
+    /**
+     * Properties for the LastMovementReport.
+     */
+    String FAMILYSUFFIXLENGTH = ProductsSettings.BASE + "FamilySuffixRegex";
 }

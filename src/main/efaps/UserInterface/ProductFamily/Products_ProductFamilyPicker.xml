@@ -17,23 +17,28 @@
 -->
 <ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>4cf25745-0e11-4576-b101-4a51e69ecb96</uuid>
+    <uuid>3f41d372-744c-43a9-99c9-76546bbd2b93</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
+    <file-revision>$Rev: 83 $</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductInStockMyDesk_Menu_Action_CreateTools</name>
-        <access>
-            <role>Products_Admin</role>
-            <role>Products_Modifier</role>
-        </access>
+        <name>Products_ProductFamilyPicker</name>
         <target>
-            <form>Products_ProductForm</form>
-            <execute program="org.efaps.esjp.products.Product" method="create" />
+            <table>Products_ProductFamilyPickerTable</table>
+            <evaluate program="org.efaps.esjp.products.ProductFamilyStructurBrowser">
+                <property name="Type">Products_ProductFamilyRoot</property>
+                <property name="Child_Type">Products_ProductFamilyStandart</property>
+                <property name="Child_LinkFrom">ParentLink</property>
+            </evaluate>
+            <trigger event="UI_PICKER" method="picker4Family"
+                name="Products_ProductFamilyPicker.UI_PICKER"
+                program="org.efaps.esjp.products.ProductFamily" />
         </target>
         <property name="Target">modal</property>
-        <property name="TargetCreateType">Products_ProductTools</property>
-        <property name="TargetMode">create</property>
+        <property name="TargetMode">view</property>
+        <property name="TargetShowCheckBoxes">true</property>
+        <property name="TargetStructurBrowserField">name</property>
+        <property name="NoUpdateAfterCOMMAND">true</property>
         <property name="WindowHeight">460</property>
         <property name="WindowWidth">515</property>
     </definition>

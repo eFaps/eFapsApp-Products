@@ -33,6 +33,14 @@
             <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
                 <property name="Type">Products_ProductLineAbstract</property>
             </evaluate>
+            <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                name="Products_ProductLineMyDesk.UI_ACCESSCHECK"
+                method="configCheck"
+                event="UI_ACCESSCHECK">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.ActivateFamilies</property>
+            </trigger>
         </target>
         <property name="Target">content</property>
         <property name="TargetShowCheckBoxes">true</property>
