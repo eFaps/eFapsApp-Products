@@ -28,7 +28,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -67,11 +66,12 @@ import org.efaps.db.InstanceQuery;
 import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.PrintQuery;
 import org.efaps.db.QueryBuilder;
-import org.efaps.db.SelectBuilder;
+import org.efaps.db.Update;
 import org.efaps.esjp.admin.datamodel.RangesValue;
 import org.efaps.esjp.ci.CIFormProducts;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.uiform.Create;
+import org.efaps.esjp.common.uiform.Edit;
 import org.efaps.esjp.common.uiform.Field;
 import org.efaps.esjp.common.uitable.MultiPrint;
 import org.efaps.esjp.common.util.InterfaceUtils;
@@ -213,6 +213,34 @@ public abstract class Product_Base
                                 + _parameter.getParameterValue(CIFormProducts.Products_ProductForm.nameSuffix.name);
                 _insert.add(CIProducts.ProductAbstract.Name, name);
             }
+        }
+    }
+
+    public Return edit(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Edit create = new Edit()
+        {
+            @Override
+            protected void add2MainUpdate(final Parameter _parameter,
+                                          final Update _update)
+                throws EFapsException
+            {
+                super.add2MainUpdate(_parameter, _update);
+                add2Edit(_parameter, _update);
+            }
+        };
+        return create.execute(_parameter);
+    }
+
+    protected void add2Edit(final Parameter _parameter,
+                            final Update _update)
+        throws EFapsException
+    {
+        if (Products.getSysConfig().getAttributeValueAsBoolean(ProductsSettings.ACTIVATEFAMILIES)) {
+            final String name = new ProductFamily().getCode(_parameter, _parameter.getInstance()) + "."
+                            + _parameter.getParameterValue(CIFormProducts.Products_ProductForm.nameSuffix4Edit.name);
+            _update.add(CIProducts.ProductAbstract.Name, name);
         }
     }
 
@@ -932,58 +960,17 @@ public abstract class Product_Base
     public Return getFieldFormatFieldValueUI(final Parameter _parameter)
         throws EFapsException
     {
-        final StringBuilder html = new StringBuilder();
-        final Map<?, ?> props = (Map<?, ?>) _parameter.get(ParameterValues.PROPERTIES);
-        final String key = (String) props.get("Properties");
-
-        String suffix = "";
-        String preffix = "";
-
-        final SelectBuilder clazz = new SelectBuilder().clazz().type();
-
+        String name = null;
         final PrintQuery print = new PrintQuery(_parameter.getInstance());
-        print.addAttribute("Name");
-        print.addSelect(clazz);
+        print.addAttribute(CIProducts.ProductAbstract.Name);
         if (print.execute()) {
-            final List<Classification> clazzList = print.getSelect(clazz);
-            final String name = print.<String>getAttribute("Name");
-            if (clazzList != null && !clazzList.isEmpty()) {
-                preffix = getBaseNum(_parameter, clazzList.get(clazzList.size() - 1));
-            }
-            suffix = name.substring(preffix.length() < name.length() ? preffix.length() : 0, name.length());
+           final String nameTmp = print.getAttribute(CIProducts.ProductAbstract.Name);
+           final String[] nameAr = nameTmp.split("\\.");
+           name = nameAr[nameAr.length - 1];
         }
-
-        if (key != null && key.equalsIgnoreCase("Preffix")) {
-            html.append(preffix);
-        } else {
-            html.append(suffix);
-        }
-
         final Return ret = new Return();
-        ret.put(ReturnValues.VALUES, html.toString());
+        ret.put(ReturnValues.VALUES, name);
         return ret;
-    }
-
-    public String getBaseNum(final Parameter _parameter,
-                             final Classification _class)
-        throws EFapsException
-    {
-        final Map<?, ?> props = (Map<?, ?>) _parameter.get(ParameterValues.PROPERTIES);
-        final Properties properties = new Properties();
-        final StringBuilder num = new StringBuilder();
-        Classification classification = _class;
-        num.append(properties.getProperty(_class.getName()));
-        while (!classification.isRoot()) {
-            classification = classification.getParentClassification();
-            final String clazzProp = (String) props.get("Class");
-            if (classification.isRoot() && clazzProp != null && !clazzProp.isEmpty()) {
-                num.insert(0, properties.getProperty(clazzProp));
-            } else {
-                num.insert(0, properties.getProperty(classification.getName()));
-            }
-        }
-        num.append(".");
-        return num.toString();
     }
 
     public String getSuffix4Family(final Parameter _parameter,

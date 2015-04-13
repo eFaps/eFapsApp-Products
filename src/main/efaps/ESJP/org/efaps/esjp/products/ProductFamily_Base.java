@@ -94,11 +94,20 @@ public abstract class ProductFamily_Base
     }
 
     public String getCode(final Parameter _parameter,
-                          final Instance _famInst)
+                          final Instance _inst)
         throws EFapsException
     {
         final StringBuilder strBldr = new StringBuilder();
-        Instance inst = _famInst;
+        Instance inst = _inst;
+        if (inst.getType().isKindOf(CIProducts.ProductAbstract)) {
+            final PrintQuery print = new PrintQuery(inst);
+            final SelectBuilder selFamInts = SelectBuilder.get().linkto(CIProducts.ProductAbstract.ProductFamilyLink)
+                            .instance();
+            print.addSelect(selFamInts);
+            print.execute();
+            inst = print.getSelect(selFamInts);
+        }
+
         while (!inst.getType().isCIType(CIProducts.ProductFamilyRoot)) {
             final PrintQuery print = new CachedPrintQuery(inst, CACHEKEY);
             final SelectBuilder selParentInst = SelectBuilder.get().linkto(CIProducts.ProductFamilyStandart.ParentLink)

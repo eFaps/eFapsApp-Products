@@ -171,6 +171,19 @@
             <property name="GroupCount">3</property>
             <property name="ModeCreate">READONLY</property>
             <property name="ModeView">NONE</property>
+            <property name="ModeEdit">NONE</property>
+            <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                name="Products_ProductForm.nameGroup.UI_ACCESSCHECK"
+                method="configCheck"
+                event="UI_ACCESSCHECK">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.ActivateFamilies</property>
+            </trigger>
+        </field>
+         <field character="Group" name="nameGroup4edit">
+            <property name="GroupCount">2</property>
+            <property name="ModeView">NONE</property>
             <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
                 name="Products_ProductForm.nameGroup.UI_ACCESSCHECK"
                 method="configCheck"
@@ -226,17 +239,16 @@
             </trigger>
         </field>
         <field name="namePrefix4Edit">
-            <property name="Attribute">Name</property>
             <property name="Label">Products_ProductForm.namePrefix.Label</property>
             <property name="ModeView">NONE</property>
             <property name="ModeCreate">NONE</property>
             <property name="ModePrint">NONE</property>
             <property name="ModeView">NONE</property>
             <property name="ModeEdit">READONLY</property>
-            <trigger program="org.efaps.esjp.products.Product" method="getFieldFormatFieldValueUI"
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
+            <trigger program="org.efaps.esjp.products.ProductFamily" method="getCodeUIFieldValue"
                 name="Products_ProductForm.namePrefix4Edit.UI_FIELD_FORMAT"
-                event="UI_FIELD_FORMAT">
-                <property name="Properties">Preffix</property>
+                event="UI_FIELD_VALUE">
             </trigger>
             <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
                 name="Products_ProductForm.namePrefix4Edit.UI_ACCESSCHECK"
@@ -274,7 +286,7 @@
         <field character="Picker" name="updateButton">
             <property name="ModeCreate">READONLY</property>
             <property name="ModeView">NONE</property>
-            <property name="ModeEdit">READONLY</property>
+            <property name="ModeEdit">NONE</property>
             <property name="Label">Products_ProductForm.updateButton.Label</property>
             <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
             <property name="CmdIcon">ACCEPT</property>
@@ -289,10 +301,7 @@
                 <property name="Attribute">org.efaps.products.ActivateFamilies</property>
             </trigger>
         </field>
-
-
-
-         <field name="image">
+        <field name="image">
             <property name="Label">Products_ProductForm.image.Label</property>
             <property name="RowSpan">5</property>
             <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
@@ -312,8 +321,9 @@
         <field name="name">
             <property name="Columns">40</property>
             <property name="ModeCreate">EDITABLE</property>
-            <property name="ModeEdit">EDITABLE</property>
-            <property name="ModeSearch">EDITABLE</property>
+            <property name="ModeEdit">NONE</property>
+            <property name="ModeSearch">NONE</property>
+            <property name="ModeView">NONE</property>
             <property name="Attribute">Name</property>
             <property name="Required">true</property>
             <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
@@ -325,6 +335,12 @@
                 <property name="Attribute">org.efaps.products.ActivateFamilies</property>
                 <property name="Inverse">true</property>
             </trigger>
+        </field>
+        <field name="name4view">
+            <property name="ModeEdit">NONE</property>
+            <property name="ModeSearch">NONE</property>
+            <property name="ModeView">READONLY</property>
+            <property name="Attribute">Name</property>
         </field>
         <field name="description">
             <property name="Columns">40</property>
