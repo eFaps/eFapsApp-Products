@@ -30,11 +30,14 @@
         <target>
             <menu>Products_ProductFamilyMyDesk_Menu</menu>
             <table>Products_ProductFamilyTable</table>
-            <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
+            <evaluate program="org.efaps.esjp.products.ProductFamilyStructurBrowser">
                 <property name="Type">Products_ProductFamilyRoot</property>
+                <property name="Child_Type">Products_ProductFamilyStandart</property>
+                <property name="Child_LinkFrom">ParentLink</property>
             </evaluate>
         </target>
         <property name="Target">content</property>
         <property name="TargetShowCheckBoxes">true</property>
+        <property name="TargetStructurBrowserField">name</property>
     </definition>
 </ui-command>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
- Copyright 2003 - 2015 The eFaps Team
+ Copyright 2003 - 215 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -15,21 +15,16 @@
  limitations under the License.
 
 -->
-<datamodel-type xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>e4e0534c-4666-4e36-9682-acb987fd344d</uuid>
+    <uuid>c347f6db-bd38-4c92-bfdf-8746ab830811</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
+    <file-revision>$Rev: 5316 $</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductFamilyStandart</name>
-        <parent>Products_ProductFamilyAbstract</parent>
-         <attribute>
-            <name>ParentLink</name>
-            <type>Link</type>
-            <typelink>Products_ProductFamilyAbstract</typelink>
-            <sqltable>Products_ProductFamilySQLTable</sqltable>
-            <sqlcolumn>PARENTID</sqlcolumn>
-        </attribute>
+        <name>Products_ProductFamilyRootTree_Menu</name>
+        <childs>
+            <child>Products_ProductFamilyRootTree_Menu_Action</child>
+        </childs>
     </definition>
-</datamodel-type>
+</ui-menu>

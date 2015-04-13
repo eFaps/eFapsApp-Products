@@ -23,6 +23,23 @@
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductFamilyForm</name>
+        <field name="parentOID">
+            <property name="ModeCreate">HIDDEN</property>
+            <property name="ModeView">NONE</property>
+            <property name="ModeEdit">NONE</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
+            <trigger program="org.efaps.esjp.common.uiform.Field"
+                method="getStoreOIDsFieldValue"
+                name="Archives_ArchiveNodeForm.archiveOID.UI_FIELD_VALUE" event="UI_FIELD_VALUE"/>
+        </field>
+        <field name="codePart">
+            <property name="Columns">8</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ModeSearch">EDITABLE</property>
+            <property name="Attribute">CodePart</property>
+            <property name="Required">true</property>
+        </field>
         <field name="name">
             <property name="Columns">40</property>
             <property name="ModeCreate">EDITABLE</property>

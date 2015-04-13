@@ -15,18 +15,27 @@
   limitations under the License.
 
 -->
-<ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>e17b715b-201b-4f0f-b2af-6e4fdb21fd09</uuid>
+    <uuid>90f8d5c9-e2a2-4dce-ab91-8fac221fde19</uuid>
     <file-application>eFapsApp-Products</file-application>
     <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductFamilyMyDesk_Menu_Action</name>
-        <childs>
-            <child>Products_ProductFamilyMyDesk_Menu_Action_CreateRoot</child>
-            <child>Products_ProductFamilyMyDesk_Menu_Action_CreateStandart</child>
-            <child>Products_ProductFamilyMyDesk_Menu_Action_Delete</child>
-        </childs>
+        <name>Products_ProductFamilyMyDesk_Menu_Action_CreateStandart</name>
+        <access>
+            <role>Products_Admin</role>
+        </access>
+        <target>
+            <form>Products_ProductFamilyForm</form>
+            <execute program="org.efaps.esjp.products.ProductFamily" method="create" />
+        </target>
+        <property name="Target">modal</property>
+        <property name="TargetCreateType">Products_ProductFamilyStandart</property>
+        <property name="TargetMode">create</property>
+        <property name="WindowHeight">460</property>
+        <property name="WindowWidth">515</property>
+        <property name="Submit">true</property>
+        <property name="SubmitSelectedRows">1</property>
     </definition>
-</ui-menu>
+</ui-command>

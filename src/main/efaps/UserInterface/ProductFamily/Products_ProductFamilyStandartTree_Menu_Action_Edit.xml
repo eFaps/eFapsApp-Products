@@ -15,21 +15,25 @@
  limitations under the License.
 
 -->
-<datamodel-type xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>e4e0534c-4666-4e36-9682-acb987fd344d</uuid>
+    <uuid>faa65431-7896-4bfa-b7e4-8f738d099f76</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
+    <file-revision>$Rev: 5316 $</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductFamilyStandart</name>
-        <parent>Products_ProductFamilyAbstract</parent>
-         <attribute>
-            <name>ParentLink</name>
-            <type>Link</type>
-            <typelink>Products_ProductFamilyAbstract</typelink>
-            <sqltable>Products_ProductFamilySQLTable</sqltable>
-            <sqlcolumn>PARENTID</sqlcolumn>
-        </attribute>
+        <name>Products_ProductFamilyStandartTree_Menu_Action_Edit</name>
+        <access>
+            <role>Products_Admin</role>
+            <role>Products_Modifier</role>
+        </access>
+        <target>
+            <form>Products_ProductFamilyForm</form>
+            <execute program="org.efaps.esjp.common.uiform.Edit" />
+        </target>
+        <property name="Target">modal</property>
+        <property name="TargetMode">edit</property>
+        <property name="WindowHeight">460</property>
+        <property name="WindowWidth">515</property>
     </definition>
-</datamodel-type>
+</ui-command>

@@ -23,7 +23,14 @@
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductLineForm</name>
-        <!-- fields -->
+        <field name="codePart">
+            <property name="Columns">8</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ModeSearch">EDITABLE</property>
+            <property name="Attribute">CodePart</property>
+            <property name="Required">true</property>
+        </field>
         <field name="name">
             <property name="Columns">40</property>
             <property name="ModeCreate">EDITABLE</property>

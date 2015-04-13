@@ -25,7 +25,8 @@
         <name>Products_ProductFamilyRootForm</name>
         <field name="productLineLink">
             <property name="ModeCreate">EDITABLE</property>
-            <property name="ModeEdit">EDITABLE</property>
+            <property name="ModeEdit">NONE</property>
+            <property name="ModeView">NONE</property>
             <property name="Attribute">ProductLineLink</property>
             <property name="Required">true</property>
             <trigger program="org.efaps.esjp.common.uiform.Field"
@@ -36,6 +37,19 @@
                 <property name="Select">attribute[Name]</property>
                 <property name="SetSelected">true</property>
             </trigger>
+        </field>
+         <field name="productLineLink4view">
+            <property name="ModeEdit">NONE</property>
+            <property name="Select">linkto[ProductLineLink].attribute[Name]</property>
+            <property name="Label">Products_ProductFamilyRoot/ProductLineLink.Label</property>
+        </field>
+        <field name="codePart">
+            <property name="Columns">8</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ModeSearch">EDITABLE</property>
+            <property name="Attribute">CodePart</property>
+            <property name="Required">true</property>
         </field>
         <field name="name">
             <property name="Columns">40</property>

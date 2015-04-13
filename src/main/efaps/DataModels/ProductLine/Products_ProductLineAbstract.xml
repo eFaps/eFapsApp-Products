@@ -48,6 +48,12 @@ xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.
             <sqltable>Products_ProductLineSQLTable</sqltable>
             <sqlcolumn>COMPANYID</sqlcolumn>
         </attribute>
+         <attribute>
+            <name>CodePart</name>
+            <type>String</type>
+            <sqltable>Products_ProductLineSQLTable</sqltable>
+            <sqlcolumn>CODE</sqlcolumn>
+        </attribute>
         <attribute>
             <name>Name</name>
             <type>String</type>

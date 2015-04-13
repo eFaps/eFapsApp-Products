@@ -14,29 +14,29 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
---><ui-table xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+-->
+<ui-table xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>c3b59c6f-908c-4ad6-a61a-f26ad18ba231</uuid>
     <file-application>eFapsApp-Products</file-application>
     <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductFamilyTable</name>
-        <field name="type">
-            <property name="Attribute">Type</property>
-            <property name="Label">Products_ProductLineAbstract/Type.Label</property>
-            <property name="ShowTypeIcon">true</property>
-            <property name="ModeSearch">READONLY</property>
+        <field name="codePart">
+            <property name="Attribute">CodePart</property>
+            <property name="Label">Products_ProductFamilyAbstract/CodePart.Label</property>
         </field>
         <field name="name">
             <property name="Attribute">Name</property>
             <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
-            <property name="Label">Products_ProductLineAbstract/Name.Label</property>
+            <property name="Label">Products_ProductFamilyAbstract/Name.Label</property>
             <property name="ShowTypeIcon">true</property>
             <property name="ModeSearch">READONLY</property>
         </field>
         <field name="description">
             <property name="Attribute">Description</property>
-            <property name="Label">Products_ProductLineAbstract/Description.Label</property>
+            <property name="Label">Products_ProductFamilyAbstract/Description.Label</property>
             <property name="ModeSearch">READONLY</property>
         </field>
         <field name="buttonOpenInNewWindow">

@@ -29,6 +29,13 @@
             <property name="ShowTypeIcon">true</property>
             <property name="ModeSearch">READONLY</property>
         </field>
+        <field name="codePart">
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ModeSearch">EDITABLE</property>
+            <property name="Attribute">CodePart</property>
+            <property name="Label">Products_ProductLineAbstract/CodePart.Label</property>
+        </field>
         <field name="name">
             <property name="Attribute">Name</property>
             <property name="HRef">${COMMONURL}/MenuTree.jsp</property>

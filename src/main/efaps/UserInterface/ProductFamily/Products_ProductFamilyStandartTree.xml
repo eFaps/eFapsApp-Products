@@ -17,16 +17,23 @@
 -->
 <ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>e17b715b-201b-4f0f-b2af-6e4fdb21fd09</uuid>
+    <uuid>e3a56b19-d464-431d-a834-c8f9e6cc70b2</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
+    <file-revision>$Rev: 5372 $</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductFamilyMyDesk_Menu_Action</name>
-        <childs>
-            <child>Products_ProductFamilyMyDesk_Menu_Action_CreateRoot</child>
-            <child>Products_ProductFamilyMyDesk_Menu_Action_CreateStandart</child>
-            <child>Products_ProductFamilyMyDesk_Menu_Action_Delete</child>
-        </childs>
+        <name>Products_ProductFamilyStandartTree</name>
+        <target>
+            <menu>Products_ProductFamilyStandartTree_Menu</menu>
+            <form>Products_ProductFamilyForm</form>
+             <evaluate program="org.efaps.esjp.products.ProductFamilyStructurBrowser">
+                <property name="Type">Products_ProductFamilyStandart</property>
+                <property name="Child_Type">Products_ProductFamilyStandart</property>
+                <property name="Child_LinkFrom">ParentLink</property>
+            </evaluate>
+        </target>
+        <type>Products_ProductFamilyStandart</type>
+        <property name="Target">content</property>
+        <property name="TargetMode">view</property>
     </definition>
 </ui-menu>

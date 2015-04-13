@@ -63,6 +63,12 @@
             <sqlcolumn>PARENTID</sqlcolumn>
         </attribute>
         <attribute>
+            <name>CodePart</name>
+            <type>String</type>
+            <sqltable>Products_ProductFamilySQLTable</sqltable>
+            <sqlcolumn>CODE</sqlcolumn>
+        </attribute>
+        <attribute>
             <name>Name</name>
             <type>String</type>
             <sqltable>Products_ProductFamilySQLTable</sqltable>
