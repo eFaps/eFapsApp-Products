@@ -96,7 +96,7 @@ public abstract class ProductFamily_Base
             print.addAttribute(CIProducts.ProductFamilyAbstract.CodePart);
             print.execute();
             inst = print.getSelect(selParentInst);
-            strBldr.append(print.getAttribute(CIProducts.ProductFamilyAbstract.CodePart));
+            strBldr.insert(0, print.getAttribute(CIProducts.ProductFamilyAbstract.CodePart));
         }
         final PrintQuery print = new CachedPrintQuery(inst, CACHEKEY);
         final SelectBuilder selLineCode = SelectBuilder.get().linkto(CIProducts.ProductFamilyAbstract.ProductLineLink)
@@ -104,10 +104,10 @@ public abstract class ProductFamily_Base
         print.addSelect(selLineCode);
         print.addAttribute(CIProducts.ProductFamilyAbstract.CodePart);
         print.execute();
-        strBldr.append(print.getAttribute(CIProducts.ProductFamilyAbstract.CodePart));
-        strBldr.append(print.getSelect(selLineCode));
+        strBldr.insert(0,print.getAttribute(CIProducts.ProductFamilyAbstract.CodePart));
+        strBldr.insert(0,print.getSelect(selLineCode));
 
-        ret.put(ReturnValues.VALUES, strBldr.reverse().toString());
+        ret.put(ReturnValues.VALUES, strBldr.toString());
         return ret;
     }
 
