@@ -19,12 +19,15 @@ package org.efaps.esjp.products;
 
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Return;
+import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
+import org.efaps.db.CachedPrintQuery;
 import org.efaps.db.Context;
 import org.efaps.db.Insert;
 import org.efaps.db.Instance;
 import org.efaps.db.PrintQuery;
+import org.efaps.db.SelectBuilder;
 import org.efaps.esjp.ci.CIFormProducts;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.AbstractCommon;
@@ -41,6 +44,8 @@ import org.efaps.util.EFapsException;
 public abstract class ProductFamily_Base
     extends AbstractCommon
 {
+
+    public static String CACHEKEY = ProductFamily.class.getName() + ".CacheKey";
 
     public Return create(final Parameter _parameter)
         throws EFapsException
@@ -76,4 +81,34 @@ public abstract class ProductFamily_Base
                         print.getAttribute(CIProducts.ProductFamilyAbstract.ProductLineLink));
 
     }
+
+    public Return getCodeUIFieldValue(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        final StringBuilder strBldr = new StringBuilder();
+        Instance inst = _parameter.getInstance();
+        while (!inst.getType().isCIType(CIProducts.ProductFamilyRoot)) {
+            final PrintQuery print = new CachedPrintQuery(inst, CACHEKEY);
+            final SelectBuilder selParentInst = SelectBuilder.get().linkto(CIProducts.ProductFamilyStandart.ParentLink)
+                            .instance();
+            print.addSelect(selParentInst);
+            print.addAttribute(CIProducts.ProductFamilyAbstract.CodePart);
+            print.execute();
+            inst = print.getSelect(selParentInst);
+            strBldr.append(print.getAttribute(CIProducts.ProductFamilyAbstract.CodePart));
+        }
+        final PrintQuery print = new CachedPrintQuery(inst, CACHEKEY);
+        final SelectBuilder selLineCode = SelectBuilder.get().linkto(CIProducts.ProductFamilyAbstract.ProductLineLink)
+                        .attribute(CIProducts.ProductLineAbstract.CodePart);
+        print.addSelect(selLineCode);
+        print.addAttribute(CIProducts.ProductFamilyAbstract.CodePart);
+        print.execute();
+        strBldr.append(print.getAttribute(CIProducts.ProductFamilyAbstract.CodePart));
+        strBldr.append(print.getSelect(selLineCode));
+
+        ret.put(ReturnValues.VALUES, strBldr.reverse().toString());
+        return ret;
+    }
+
 }

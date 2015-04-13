@@ -24,8 +24,12 @@
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductFamilyTable</name>
         <field name="codePart">
-            <property name="Attribute">CodePart</property>
+            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
             <property name="Label">Products_ProductFamilyAbstract/CodePart.Label</property>
+            <trigger program="org.efaps.esjp.products.ProductFamily"
+                name="Products_ProductFamilyTable.codePart.UI_FIELD_VALUE"
+                method="getCodeUIFieldValue"
+                event="UI_FIELD_VALUE"></trigger>
         </field>
         <field name="name">
             <property name="Attribute">Name</property>
