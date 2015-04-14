@@ -30,6 +30,7 @@
         <target>
             <form>Products_ProductFamilyRootForm</form>
             <execute program="org.efaps.esjp.common.uiform.Edit" />
+            <validate program="org.efaps.esjp.products.ProductFamily" method="validate"/>
         </target>
         <property name="Target">modal</property>
         <property name="TargetMode">edit</property>

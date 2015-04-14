@@ -29,6 +29,7 @@
         <target>
             <form>Products_ProductFamilyForm</form>
             <execute program="org.efaps.esjp.products.ProductFamily" method="create" />
+            <validate program="org.efaps.esjp.products.ProductFamily" method="validate"/>
         </target>
         <property name="Target">modal</property>
         <property name="TargetCreateType">Products_ProductFamilyStandart</property>

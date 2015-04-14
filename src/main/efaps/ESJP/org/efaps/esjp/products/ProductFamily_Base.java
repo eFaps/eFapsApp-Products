@@ -17,7 +17,9 @@
 
 package org.efaps.esjp.products;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.efaps.admin.datamodel.ui.IUIValue;
@@ -27,16 +29,21 @@ import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
+import org.efaps.admin.ui.AbstractCommand;
 import org.efaps.db.CachedPrintQuery;
 import org.efaps.db.Context;
 import org.efaps.db.Insert;
 import org.efaps.db.Instance;
 import org.efaps.db.PrintQuery;
+import org.efaps.db.QueryBuilder;
 import org.efaps.db.SelectBuilder;
 import org.efaps.esjp.ci.CIFormProducts;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.AbstractCommon;
 import org.efaps.esjp.common.uiform.Create;
+import org.efaps.esjp.erp.AbstractWarning;
+import org.efaps.esjp.erp.IWarning;
+import org.efaps.esjp.erp.WarningUtil;
 import org.efaps.util.EFapsException;
 
 /**
@@ -151,7 +158,6 @@ public abstract class ProductFamily_Base
         return ret;
     }
 
-
     public Return productFamilyFieldFormat(final Parameter _parameter)
         throws EFapsException
     {
@@ -163,7 +169,6 @@ public abstract class ProductFamily_Base
         }
         return ret;
     }
-
 
     public String getName(final Parameter _parameter,
                           final Instance _inst)
@@ -209,5 +214,74 @@ public abstract class ProductFamily_Base
         strBldr.insert(0, print.getAttribute(CIProducts.ProductFamilyAbstract.Name));
         strBldr.insert(0, print.getSelect(selLineCode) + " - ");
         return strBldr.toString();
+    }
+
+    public Return validate(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        final List<IWarning> warnings = new ArrayList<IWarning>();
+        final String codePart = _parameter.getParameterValue(CIFormProducts.Products_ProductFamilyForm.codePart.name);
+        final AbstractCommand cmd = (AbstractCommand) _parameter.get(ParameterValues.UIOBJECT);
+        if (cmd.getTargetCreateType() != null && cmd.getTargetCreateType().isCIType(CIProducts.ProductFamilyRoot)) {
+            final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductFamilyRoot);
+            queryBldr.addWhereAttrEqValue(CIProducts.ProductFamilyRoot.CodePart, codePart);
+            if (!queryBldr.getQuery().execute().isEmpty()) {
+                warnings.add(new FamilyCodeInvalidWarning());
+            }
+        } else  if (cmd.getTargetCreateType() != null) {
+            final Instance parentInst = Instance.get(((String[]) Context.getThreadContext().getSessionAttribute(
+                            CIFormProducts.Products_ProductFamilyForm.parentOID.name))[0]);
+            final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductFamilyStandart);
+            queryBldr.addWhereAttrEqValue(CIProducts.ProductFamilyStandart.CodePart, codePart);
+            queryBldr.addWhereAttrEqValue(CIProducts.ProductFamilyStandart.ParentLink, parentInst);
+            if (!queryBldr.getQuery().execute().isEmpty()) {
+                warnings.add(new FamilyCodeInvalidWarning());
+            }
+        } else if (_parameter.getInstance().getType().isCIType(CIProducts.ProductFamilyRoot)) {
+            final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductFamilyRoot);
+            queryBldr.addWhereAttrEqValue(CIProducts.ProductFamilyRoot.CodePart, codePart);
+            queryBldr.addWhereAttrNotEqValue(CIProducts.ProductFamilyRoot.ID, _parameter.getInstance());
+            if (!queryBldr.getQuery().execute().isEmpty()) {
+                warnings.add(new FamilyCodeInvalidWarning());
+            }
+        } else {
+            final PrintQuery print = new PrintQuery(_parameter.getInstance());
+            print.addAttribute(CIProducts.ProductFamilyStandart.ParentLink);
+            print.execute();
+            final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductFamilyStandart);
+            queryBldr.addWhereAttrEqValue(CIProducts.ProductFamilyStandart.CodePart, codePart);
+            queryBldr.addWhereAttrNotEqValue(CIProducts.ProductFamilyStandart.ID, _parameter.getInstance());
+            queryBldr.addWhereAttrEqValue(CIProducts.ProductFamilyStandart.ParentLink,
+                            print.getAttribute(CIProducts.ProductFamilyStandart.ParentLink));
+            if (!queryBldr.getQuery().execute().isEmpty()) {
+                warnings.add(new FamilyCodeInvalidWarning());
+            }
+        }
+
+        if (warnings.isEmpty()) {
+            ret.put(ReturnValues.TRUE, true);
+        } else {
+            ret.put(ReturnValues.SNIPLETT, WarningUtil.getHtml4Warning(warnings).toString());
+            if (!WarningUtil.hasError(warnings)) {
+                ret.put(ReturnValues.TRUE, true);
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * Warning for invalid name.
+     */
+    public static class FamilyCodeInvalidWarning
+        extends AbstractWarning
+    {
+        /**
+         * Constructor.
+         */
+        public FamilyCodeInvalidWarning()
+        {
+            setError(true);
+        }
     }
 }
