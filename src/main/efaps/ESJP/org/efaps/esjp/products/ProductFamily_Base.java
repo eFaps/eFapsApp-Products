@@ -20,7 +20,7 @@ package org.efaps.esjp.products;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.efaps.admin.datamodel.ui.FieldValue;
+import org.efaps.admin.datamodel.ui.IUIValue;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
 import org.efaps.admin.event.Return;
@@ -141,7 +141,10 @@ public abstract class ProductFamily_Base
         final String code = getCode(_parameter, famInst);
         final Map<String, Object> map = new HashMap<>();
         map.put(CIFormProducts.Products_ProductForm.namePrefix.name, code);
+        map.put(CIFormProducts.Products_ProductForm.namePrefix4Edit.name, code);
         map.put(CIFormProducts.Products_ProductForm.nameSuffix.name,
+                        new Product().getSuffix4Family(_parameter, famInst));
+        map.put(CIFormProducts.Products_ProductForm.nameSuffix4Edit.name,
                         new Product().getSuffix4Family(_parameter, famInst));
         map.put(CIFormProducts.Products_ProductForm.productFamilyLink.name, famInst.getOid());
         ret.put(ReturnValues.VALUES, map);
@@ -153,10 +156,10 @@ public abstract class ProductFamily_Base
         throws EFapsException
     {
         final Return ret = new Return();
-        final FieldValue value = (FieldValue) _parameter.get(ParameterValues.UIOBJECT);
-        if (value.getValue() instanceof Instance) {
-            final Instance inst = (Instance) value.getValue();
-            value.setValue(getName(_parameter, inst));
+        final IUIValue value = (IUIValue) _parameter.get(ParameterValues.UIOBJECT);
+        if (value.getObject() instanceof Instance) {
+            final Instance inst = (Instance) value.getObject();
+            ret.put(ReturnValues.VALUES, getName(_parameter, inst));
         }
         return ret;
     }

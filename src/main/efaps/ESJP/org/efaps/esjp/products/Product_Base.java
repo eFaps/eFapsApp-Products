@@ -238,9 +238,16 @@ public abstract class Product_Base
         throws EFapsException
     {
         if (Products.getSysConfig().getAttributeValueAsBoolean(ProductsSettings.ACTIVATEFAMILIES)) {
-            final String name = new ProductFamily().getCode(_parameter, _parameter.getInstance()) + "."
-                            + _parameter.getParameterValue(CIFormProducts.Products_ProductForm.nameSuffix4Edit.name);
-            _update.add(CIProducts.ProductAbstract.Name, name);
+            final Instance famInst = Instance.get(_parameter
+                            .getParameterValue(CIFormProducts.Products_ProductForm.productFamilyLink.name));
+            final String codease;
+            if (famInst.isValid()) {
+                codease = new ProductFamily().getCode(_parameter, famInst);
+            } else {
+                codease = new ProductFamily().getCode(_parameter, _parameter.getInstance());
+            }
+            _update.add(CIProducts.ProductAbstract.Name, codease + "."
+                            + _parameter.getParameterValue(CIFormProducts.Products_ProductForm.nameSuffix4Edit.name));
         }
     }
 

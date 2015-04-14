@@ -25,7 +25,7 @@
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductMaterialTree</name>
         <target>
-            <menu>Products_ProductTree_Menu</menu>
+            <menu>Products_ProductMaterialTree_Menu</menu>
             <form>Products_ProductMaterialForm</form>
         </target>
         <type>Products_ProductMaterial</type>
