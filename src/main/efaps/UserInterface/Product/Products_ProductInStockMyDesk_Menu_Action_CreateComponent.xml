@@ -42,6 +42,6 @@
         <property name="TargetCreateType">Products_ProductComponent</property>
         <property name="TargetMode">create</property>
         <property name="WindowHeight">460</property>
-        <property name="WindowWidth">515</property>
+        <property name="WindowWidth">850</property>
     </definition>
 </ui-command>

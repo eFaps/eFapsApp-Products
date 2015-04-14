@@ -52,7 +52,7 @@
         <property name="TargetCreateType">Products_ProductIndividual</property>
         <property name="TargetMode">create</property>
         <property name="WindowHeight">460</property>
-        <property name="WindowWidth">515</property>
+        <property name="WindowWidth">850</property>
         <property name="Submit">true</property>
         <property name="SubmitSelectedRows">-1</property>
     </definition>
