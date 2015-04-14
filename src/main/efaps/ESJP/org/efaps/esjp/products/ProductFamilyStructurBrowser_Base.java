@@ -21,8 +21,12 @@ import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Return;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
+import org.efaps.esjp.ci.CITableProducts;
 import org.efaps.esjp.ui.structurbrowser.StandartStructurBrowser;
+import org.efaps.ui.wicket.models.objects.UIStructurBrowser;
 import org.efaps.util.EFapsException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * TODO description!
@@ -35,11 +39,43 @@ public abstract class ProductFamilyStructurBrowser_Base
     extends StandartStructurBrowser
 {
 
+    /**
+     * Logging instance used in this class.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(ProductFamilyStructurBrowser.class);
+
+
     @Override
     protected Return checkHideColumn4Row(final Parameter _parameter)
         throws EFapsException
     {
         return new Return();
+    }
+
+    /**
+     * @param _parameter Paraemter as passed from the eFasp API
+     * @return Comparable value
+     */
+    @Override
+    @SuppressWarnings("rawtypes")
+    protected Comparable getComparable(final Parameter _parameter,
+                                       final UIStructurBrowser _structurBrowser)
+    {
+        final StringBuilder ret = new StringBuilder();
+        UIStructurBrowser brwsr = _structurBrowser;
+        while(!brwsr.isRoot()) {
+            brwsr = brwsr.getParentBrws();
+        }
+        if (CITableProducts.Products_ProductFamilyTable.codePart.name.equals(brwsr.getSortKey())) {
+            try {
+                ret.append(new ProductFamily().getCode(_parameter, _structurBrowser.getInstance()));
+            } catch (final EFapsException e) {
+                LOG.error("Catched error on evaluation of Comparable", e);
+            }
+        } else {
+            ret.append(_structurBrowser.getLabel());
+        }
+        return ret.toString();
     }
 
 }

@@ -42,6 +42,7 @@
             <property name="Attribute">Description</property>
             <property name="Label">Products_ProductFamilyAbstract/Description.Label</property>
             <property name="ModeSearch">READONLY</property>
+            <property name="SortAble">false</property>
         </field>
         <field name="buttonOpenInNewWindow">
             <icon>eFapsActionNewWindow</icon>
