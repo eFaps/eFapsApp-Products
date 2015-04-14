@@ -32,7 +32,6 @@
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductTable</name>
-        <!-- fields -->
         <field name="type">
             <property name="Attribute">Type</property>
             <property name="Label">Products_ProductAbstract/Type.Label</property>
@@ -58,6 +57,22 @@
                 method="classificationFieldFormat"
                 name="Contacts_ContactTable.classification"
                 event="UI_FIELD_FORMAT" />
+        </field>
+        <field name="productFamilyLink">
+            <property name="Select">linkto[ProductFamilyLink].instance</property>
+            <property name="Label">Products_ProductAbstract/ProductFamilyLink.Label</property>
+            <trigger program="org.efaps.esjp.products.ProductFamily"
+                method="productFamilyFieldFormat"
+                name="Products_ProductTable.productFamilyLink."
+                event="UI_FIELD_FORMAT" />
+            <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                name="Products_ProductForm.namePrefix.UI_ACCESSCHECK"
+                method="configCheck"
+                event="UI_ACCESSCHECK">
+                    <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.ActivateFamilies</property>
+            </trigger>
         </field>
         <field name="active">
             <property name="Attribute">Active</property>

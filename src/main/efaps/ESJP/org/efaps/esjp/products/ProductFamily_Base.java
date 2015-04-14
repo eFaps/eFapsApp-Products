@@ -20,7 +20,9 @@ package org.efaps.esjp.products;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.efaps.admin.datamodel.ui.FieldValue;
 import org.efaps.admin.event.Parameter;
+import org.efaps.admin.event.Parameter.ParameterValues;
 import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsApplication;
@@ -144,5 +146,65 @@ public abstract class ProductFamily_Base
         map.put(CIFormProducts.Products_ProductForm.productFamilyLink.name, famInst.getOid());
         ret.put(ReturnValues.VALUES, map);
         return ret;
+    }
+
+
+    public Return productFamilyFieldFormat(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        final FieldValue value = (FieldValue) _parameter.get(ParameterValues.UIOBJECT);
+        if (value.getValue() instanceof Instance) {
+            final Instance inst = (Instance) value.getValue();
+            value.setValue(getName(_parameter, inst));
+        }
+        return ret;
+    }
+
+
+    public String getName(final Parameter _parameter,
+                          final Instance _inst)
+        throws EFapsException
+    {
+        final StringBuilder strBldr = new StringBuilder();
+        Instance inst = _inst;
+        if (inst.getType().isKindOf(CIProducts.ProductAbstract)) {
+            final PrintQuery print = new PrintQuery(inst);
+            final SelectBuilder selFamInts = SelectBuilder.get().linkto(CIProducts.ProductAbstract.ProductFamilyLink)
+                            .instance();
+            print.addSelect(selFamInts);
+            print.execute();
+            inst = print.getSelect(selFamInts);
+        }
+        boolean first = true;
+        while (!inst.getType().isCIType(CIProducts.ProductFamilyRoot)) {
+            final PrintQuery print = new CachedPrintQuery(inst, CACHEKEY);
+            final SelectBuilder selParentInst = SelectBuilder.get().linkto(CIProducts.ProductFamilyStandart.ParentLink)
+                            .instance();
+            print.addSelect(selParentInst);
+            print.addAttribute(CIProducts.ProductFamilyAbstract.Name);
+            print.execute();
+            inst = print.getSelect(selParentInst);
+            if (first) {
+                first = false;
+            } else {
+                strBldr.insert(0, " - ");
+            }
+            strBldr.insert(0, print.getAttribute(CIProducts.ProductFamilyAbstract.Name));
+        }
+        final PrintQuery print = new CachedPrintQuery(inst, CACHEKEY);
+        final SelectBuilder selLineCode = SelectBuilder.get().linkto(CIProducts.ProductFamilyAbstract.ProductLineLink)
+                        .attribute(CIProducts.ProductLineAbstract.Name);
+        print.addSelect(selLineCode);
+        print.addAttribute(CIProducts.ProductFamilyAbstract.Name);
+        print.execute();
+        if (first) {
+            first = false;
+        } else {
+            strBldr.insert(0, " - ");
+        }
+        strBldr.insert(0, print.getAttribute(CIProducts.ProductFamilyAbstract.Name));
+        strBldr.insert(0, print.getSelect(selLineCode) + " - ");
+        return strBldr.toString();
     }
 }
