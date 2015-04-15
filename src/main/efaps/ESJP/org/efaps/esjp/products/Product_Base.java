@@ -62,7 +62,6 @@ import org.efaps.db.CachedPrintQuery;
 import org.efaps.db.Context;
 import org.efaps.db.Insert;
 import org.efaps.db.Instance;
-import org.efaps.db.InstanceQuery;
 import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.PrintQuery;
 import org.efaps.db.QueryBuilder;
@@ -75,7 +74,10 @@ import org.efaps.esjp.common.uiform.Edit;
 import org.efaps.esjp.common.uiform.Field;
 import org.efaps.esjp.common.uitable.MultiPrint;
 import org.efaps.esjp.common.util.InterfaceUtils;
+import org.efaps.esjp.erp.AbstractWarning;
 import org.efaps.esjp.erp.CommonDocument;
+import org.efaps.esjp.erp.IWarning;
+import org.efaps.esjp.erp.WarningUtil;
 import org.efaps.esjp.products.util.Products;
 import org.efaps.esjp.products.util.Products.ProductIndividual;
 import org.efaps.esjp.products.util.ProductsSettings;
@@ -209,9 +211,7 @@ public abstract class Product_Base
                             .getParameterValue(CIFormProducts.Products_ProductForm.productFamilyLink.name));
             if (famInst.isValid()) {
                 _insert.add(CIProducts.ProductAbstract.ProductFamilyLink, famInst);
-                final String name = new ProductFamily().getCode(_parameter, famInst) + "."
-                                + _parameter.getParameterValue(CIFormProducts.Products_ProductForm.nameSuffix.name);
-                _insert.add(CIProducts.ProductAbstract.Name, name);
+                _insert.add(CIProducts.ProductAbstract.Name, getNameFromUI(_parameter));
             }
         }
     }
@@ -240,14 +240,10 @@ public abstract class Product_Base
         if (Products.getSysConfig().getAttributeValueAsBoolean(ProductsSettings.ACTIVATEFAMILIES)) {
             final Instance famInst = Instance.get(_parameter
                             .getParameterValue(CIFormProducts.Products_ProductForm.productFamilyLink.name));
-            final String codease;
             if (famInst.isValid()) {
-                codease = new ProductFamily().getCode(_parameter, famInst);
-            } else {
-                codease = new ProductFamily().getCode(_parameter, _parameter.getInstance());
+                _update.add(CIProducts.ProductAbstract.ProductFamilyLink, famInst);
             }
-            _update.add(CIProducts.ProductAbstract.Name, codease + "."
-                            + _parameter.getParameterValue(CIFormProducts.Products_ProductForm.nameSuffix4Edit.name));
+            _update.add(CIProducts.ProductAbstract.Name, getNameFromUI(_parameter));
         }
     }
 
@@ -883,44 +879,61 @@ public abstract class Product_Base
      * @return Return containing true if valid
      * @throws EFapsException on error
      */
-    public Return validateProductName(final Parameter _parameter)
+    public Return validate(final Parameter _parameter)
         throws EFapsException
     {
         final Return ret = new Return();
-        final String name = _parameter.getParameterValue("name");
-        final StringBuilder warnHtml = validateName4Product(_parameter, name);
-        if (!warnHtml.toString().isEmpty()) {
-            ret.put(ReturnValues.SNIPLETT, warnHtml.toString());
-        } else {
-            ret.put(ReturnValues.TRUE, true);
+        final List<IWarning> warnings = new ArrayList<IWarning>();
+        final String name =  getNameFromUI(_parameter);
+        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductAbstract);
+        queryBldr.addWhereAttrEqValue(CIProducts.ProductAbstract.Name, name);
+        if (_parameter.getInstance() != null && _parameter.getInstance().isValid()
+                        && _parameter.getInstance().getType().isKindOf(CIProducts.ProductAbstract)) {
+            queryBldr.addWhereAttrNotEqValue(CIProducts.ProductAbstract.ID, _parameter.getInstance());
         }
-
+        if (!queryBldr.getQuery().execute().isEmpty()) {
+            warnings.add(new ProductNameInvalidWarning());
+        }
+        if (warnings.isEmpty()) {
+            ret.put(ReturnValues.TRUE, true);
+        } else {
+            ret.put(ReturnValues.SNIPLETT, WarningUtil.getHtml4Warning(warnings).toString());
+            if (!WarningUtil.hasError(warnings)) {
+                ret.put(ReturnValues.TRUE, true);
+            }
+        }
         return ret;
     }
 
     /**
-     * Method for return the name of a product.
-     *
-     * @param _parameter Parameter as passed from the eFaps API
-     * @param _html StringBuilder to append to
-     * @param _name String
-     * @return StringBuilder with html.
-     * @throws EFapsException on error
+     * @param _parameter
+     * @return
      */
-    protected StringBuilder validateName4Product(final Parameter _parameter,
-                                                 final String _name)
+    protected String getNameFromUI(final Parameter _parameter)
         throws EFapsException
     {
-        final StringBuilder html = new StringBuilder();
-        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductStandart);
-        queryBldr.addWhereAttrEqValue(CIProducts.ProductStandart.Name, _name).setIgnoreCase(true);
-        final InstanceQuery query = queryBldr.getQuery();
-        if (!query.execute().isEmpty()) {
-            html.append("<div style=\"text-align:center;\">")
-                            .append(DBProperties.getProperty("org.efaps.esjp.products.Product.existingProduct"))
-                            .append("</div>");
+        String ret = null;
+        if (_parameter.getParameterValue(CIFormProducts.Products_ProductForm.name.name) != null) {
+            ret = _parameter.getParameterValue(CIFormProducts.Products_ProductForm.name.name);
+        } else if (Products.getSysConfig().getAttributeValueAsBoolean(ProductsSettings.ACTIVATEFAMILIES)) {
+            final Instance famInst = Instance.get(_parameter
+                            .getParameterValue(CIFormProducts.Products_ProductForm.productFamilyLink.name));
+            String codePartFam = null;
+            if (famInst.isValid()) {
+                codePartFam = new ProductFamily().getCode(_parameter, famInst);
+            } else if (_parameter.getInstance() != null && _parameter.getInstance().isValid() &&
+                            _parameter.getInstance().getType().isKindOf(CIProducts.ProductAbstract)) {
+                codePartFam = new ProductFamily().getCode(_parameter, _parameter.getInstance());
+            }
+            if (codePartFam != null) {
+                String suffix = _parameter.getParameterValue(CIFormProducts.Products_ProductForm.nameSuffix.name);
+                if (suffix == null) {
+                    suffix = _parameter.getParameterValue(CIFormProducts.Products_ProductForm.nameSuffix4Edit.name);
+                }
+                ret = codePartFam + "." + suffix;
+            }
         }
-        return html;
+        return ret;
     }
 
     public Return getCosting4Product(final Parameter _parameter)
@@ -1011,4 +1024,19 @@ public abstract class Product_Base
         return nf.format(val);
     }
 
+
+    /**
+     * Warning for invalid name.
+     */
+    public static class ProductNameInvalidWarning
+        extends AbstractWarning
+    {
+        /**
+         * Constructor.
+         */
+        public ProductNameInvalidWarning()
+        {
+            setError(true);
+        }
+    }
 }

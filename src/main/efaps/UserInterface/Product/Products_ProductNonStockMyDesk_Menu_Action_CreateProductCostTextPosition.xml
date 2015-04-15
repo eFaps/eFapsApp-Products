@@ -35,6 +35,7 @@
         <target>
             <form>Products_ProductNonStockForm</form>
             <execute program="org.efaps.esjp.common.uiform.Create"/>
+            <validate program="org.efaps.esjp.products.Product" method="validate" />
         </target>
 
         <!-- properties -->

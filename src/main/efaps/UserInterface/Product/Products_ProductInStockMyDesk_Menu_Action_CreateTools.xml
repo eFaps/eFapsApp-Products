@@ -30,6 +30,7 @@
         <target>
             <form>Products_ProductForm</form>
             <execute program="org.efaps.esjp.products.Product" method="create" />
+            <validate program="org.efaps.esjp.products.Product" method="validate" />
         </target>
         <property name="Target">modal</property>
         <property name="TargetCreateType">Products_ProductTools</property>

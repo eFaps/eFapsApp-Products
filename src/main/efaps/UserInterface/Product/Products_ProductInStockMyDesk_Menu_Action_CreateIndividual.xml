@@ -45,6 +45,7 @@
                 <property name="ConnectParentAttribute">FromLink</property>
                 <property name="ConnectType">Products_ProductStandart2Individual</property>
             </execute>
+            
         </target>
 
         <!-- properties -->
