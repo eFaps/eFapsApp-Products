@@ -40,7 +40,7 @@ import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
 import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
-import org.efaps.admin.program.esjp.EFapsRevision;
+import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
 import org.efaps.admin.ui.field.Field.Display;
@@ -60,7 +60,10 @@ import org.efaps.esjp.ci.CIERP;
 import org.efaps.esjp.ci.CIFormProducts;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.ci.CITableProducts;
+import org.efaps.esjp.erp.AbstractWarning;
 import org.efaps.esjp.erp.CommonDocument;
+import org.efaps.esjp.erp.IWarning;
+import org.efaps.esjp.erp.WarningUtil;
 import org.efaps.ui.wicket.models.cell.UIFormCell;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
@@ -69,11 +72,9 @@ import org.joda.time.DateTime;
  * TODO comment!
  *
  * @author The eFaps Team
- * @version $Id: Transaction_Base.java 7003 2011-08-27 02:03:45Z jan@moxter.net
- *          $
  */
 @EFapsUUID("aa16287e-6148-41d2-a40f-05a65946ecfc")
-@EFapsRevision("$Rev$")
+@EFapsApplication("eFapsApp-Products")
 public abstract class Transaction_Base
     extends CommonDocument
 {
@@ -1108,10 +1109,10 @@ public abstract class Transaction_Base
         throws EFapsException
     {
         final Return ret = new Return();
-        final StringBuilder html = new StringBuilder();
+        final List<IWarning> warnings = new ArrayList<IWarning>();
 
-        final Long idTypeTrans = Long.parseLong(_parameter
-                        .getParameterValue(CIFormProducts.Products_TransactionAbstractForm.type.name));
+        final Type transType = Type.get(Long.parseLong(_parameter
+                        .getParameterValue(CIFormProducts.Products_TransactionAbstractForm.type.name)));
 
         final Instance productInst = Instance.get(_parameter
                         .getParameterValue(CIFormProducts.Products_TransactionAbstractForm.product.name));
@@ -1123,14 +1124,14 @@ public abstract class Transaction_Base
         BigDecimal quantityInventory = BigDecimal.ZERO;
         BigDecimal quantityReserved = BigDecimal.ZERO;
 
-
-        final QueryBuilder quanInvent = new QueryBuilder(CIProducts.Inventory);
-        quanInvent.addWhereAttrEqValue(CIProducts.Inventory.Product, productInst.getId());
-        quanInvent.addWhereAttrEqValue(CIProducts.Inventory.Storage,  storageId);
+        final QueryBuilder quanInvent = new QueryBuilder(transType.isKindOf(CIProducts.TransactionIndividualAbstract)
+                        ? CIProducts.InventoryIndividual : CIProducts.Inventory);
+        quanInvent.addWhereAttrEqValue(CIProducts.InventoryAbstract.Product, productInst);
+        quanInvent.addWhereAttrEqValue(CIProducts.InventoryAbstract.Storage, storageId);
 
         final MultiPrintQuery multiQuanti = quanInvent.getPrint();
-        multiQuanti.addAttribute(CIProducts.Inventory.Quantity);
-        multiQuanti.addAttribute(CIProducts.Inventory.Reserved);
+        multiQuanti.addAttribute(CIProducts.InventoryAbstract.Quantity);
+        multiQuanti.addAttribute(CIProducts.InventoryAbstract.Reserved);
         multiQuanti.execute();
 
         while (multiQuanti.next()) {
@@ -1143,57 +1144,60 @@ public abstract class Transaction_Base
         final PrintQuery printProduct = new PrintQuery(productInst);
         printProduct.addAttribute(CIProducts.ProductAbstract.Name);
         printProduct.execute();
+        final String prodName = printProduct.<String>getAttribute(CIProducts.ProductAbstract.Name);
 
-        final String name = printProduct.<String>getAttribute(CIProducts.ProductAbstract.Name);
+        final PrintQuery printStorage = new PrintQuery(CIProducts.StorageAbstract.getType(), storageId);
+        printStorage.addAttribute(CIProducts.StorageAbstract.Name);
+        printStorage.execute();
 
-        final long idReserOut = CIProducts.TransactionReservationOutbound.getType().getId();
-        final long idTransIn = CIProducts.TransactionInbound.getType().getId();
-        final long idReserIn = CIProducts.TransactionReservationInbound.getType().getId();
-        final long idTransOut = CIProducts.TransactionOutbound.getType().getId();
+        final String storageName = printStorage.<String>getAttribute(CIProducts.StorageAbstract.Name);
 
-        if (idTypeTrans == idReserOut) {
+        if (transType.isCIType(CIProducts.TransactionReservationOutbound)) {
             if (quantityReserved.intValue() < quantity.intValue()) {
-                html.append("<span>")
-                                .append(quantity)
-                                .append("<span><br/>")
-                                .append(DBProperties
-                                                .getProperty("org.efaps.esjp.products.Transaction.validateReserved"));
+                warnings.add(new InsufficientStock4Transaction());
             } else {
-                bodyTransac(html, quantity, name,
-                                DBProperties.getProperty("Products_TransactionReservationOutbound.Label"), ret);
+                warnings.add(new TransactionVerify().addObject(
+                                CIProducts.TransactionReservationOutbound.getType().getLabel(),
+                                quantity, prodName, storageName));
             }
-        } else if (idTypeTrans == idTransIn) {
-            bodyTransac(html, quantity, name, DBProperties.getProperty("Products_TransactionInbound.Label"), ret);
+        } else if (transType.isCIType(CIProducts.TransactionIndividualOutbound)) {
+            if (quantityInventory.intValue() < quantity.intValue()) {
+                warnings.add(new InsufficientStock4Transaction());
+            } else {
+                warnings.add(new TransactionVerify().addObject(
+                                CIProducts.TransactionIndividualOutbound.getType().getLabel(),
+                                quantity, prodName, storageName));
+            }
+        } else if (transType.isCIType(CIProducts.TransactionInbound)) {
+            warnings.add(new TransactionVerify().addObject(
+                            CIProducts.TransactionInbound.getType().getLabel(),
+                            quantity, prodName, storageName));
+        } else if (transType.isCIType(CIProducts.TransactionIndividualInbound)) {
+            warnings.add(new TransactionVerify().addObject(
+                            CIProducts.TransactionIndividualInbound.getType().getLabel(),
+                            quantity, prodName, storageName));
         } else if (quantityInventory.intValue() >= quantity.intValue() + quantityReserved.intValue()) {
-            if (idTypeTrans == idReserIn) {
-                bodyTransac(html, quantity, name,
-                                DBProperties.getProperty("Products_TransactionReservationInbound.Label"), ret);
-            } else if (idTypeTrans == idTransOut) {
-                bodyTransac(html, quantity, name, DBProperties.getProperty("Products_TransactionOutbound.Label"), ret);
+            if (transType.isCIType(CIProducts.TransactionReservationInbound)) {
+                warnings.add(new TransactionVerify().addObject(
+                                CIProducts.TransactionReservationInbound.getType().getLabel(),
+                                quantity, prodName, storageName));
+            } else if (transType.isCIType(CIProducts.TransactionOutbound)) {
+                warnings.add(new TransactionVerify().addObject(
+                                CIProducts.TransactionOutbound.getType().getLabel(),
+                                quantity, prodName, storageName));
             }
         } else {
-            html.append("<span>").append(quantity).append("<span><br/>")
-                            .append(DBProperties.getProperty("org.efaps.esjp.products.Transaction.validate"));
+            warnings.add(new InsufficientStock4Transaction());
         }
-        ret.put(ReturnValues.SNIPLETT, html.toString());
+        if (warnings.isEmpty()) {
+            ret.put(ReturnValues.TRUE, true);
+        } else {
+            ret.put(ReturnValues.SNIPLETT, WarningUtil.getHtml4Warning(warnings).toString());
+            if (!WarningUtil.hasError(warnings)) {
+                ret.put(ReturnValues.TRUE, true);
+            }
+        }
         return ret;
-    }
-
-    private void bodyTransac(final StringBuilder _html,
-                             final BigDecimal _quantity,
-                             final String _name,
-                             final String _typeTrans,
-                             final Return _ret)
-    {
-        _html.append("<table><tr><td colspan='2'>")
-            .append(_typeTrans)
-            .append("</td></tr><tr>")
-            .append("<td>").append(DBProperties.getProperty("Products_ProductAbstract/Name.Label"))
-            .append("</td><td>").append(_name).append("</td></tr>")
-            .append("<tr><td>").append(DBProperties.getProperty("Products_TransactionAbstract/Quantity.Label"))
-            .append("</td><td>").append(_quantity).append("</td>")
-            .append("</tr></table>");
-        _ret.put(ReturnValues.TRUE, true);
     }
 
     public Return reCalculateInventory(final Parameter _parameter)
@@ -1399,5 +1403,36 @@ public abstract class Transaction_Base
             return typeTransactionDoc;
         }
     }
+
+    /**
+     * Warning for insufficient Stock name.
+     */
+    public static class InsufficientStock4Transaction
+        extends AbstractWarning
+    {
+        /**
+         * Constructor.
+         */
+        public InsufficientStock4Transaction()
+        {
+            setError(true);
+        }
+    }
+
+    /**
+     * Warning for insufficient Stock name.
+     */
+    public static class TransactionVerify
+        extends AbstractWarning
+    {
+        /**
+         * Constructor.
+         */
+        public TransactionVerify()
+        {
+
+        }
+    }
+
 }
 
