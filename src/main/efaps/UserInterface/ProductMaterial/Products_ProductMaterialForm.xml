@@ -321,7 +321,7 @@
         </field>
         <field name="name4view">
             <property name="ModeEdit">NONE</property>
-            <property name="ModeSearch">NONE</property>
+            <property name="ModeSearch">EDITABLE</property>
             <property name="ModeView">READONLY</property>
             <property name="Attribute">Name</property>
         </field>

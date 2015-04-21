@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
  Copyright 2003 - 2015 The eFaps Team
 
@@ -19,20 +17,23 @@
  Author:          The eFaps Team
 
 -->
-<ui-search xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>c39908f1-f7b2-448f-b38f-3a43c33ddbea</uuid>
+    <uuid>fd63df66-ed45-4912-bd65-e4c0df8faa78</uuid>
     <file-application>eFapsApp-Products</file-application>
     <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductGenericTree_Product_Menu_Action_AddExistingProduct_Search</name>
-        <default>
-            <command>Products_ProductSearch</command>
-        </default>
-        <childs>
-            <child>Products_ProductSearch</child>
-            <child>Products_ProductMaterialSearch</child>
-        </childs>
+        <name>Products_ProductMaterialSearch</name>
+        <target>
+            <form>Products_ProductMaterialForm</form>
+            <table>Products_ProductTable</table>
+            <evaluate program="org.efaps.esjp.common.uisearch.Search">
+                <property name="Type">Products_ProductMaterial</property>
+                <property name="IgnoreCase4Field01">name4view</property>
+                <property name="IgnoreCase4Field02">description</property>
+            </evaluate>
+        </target>
+        <property name="TargetMode">search</property>
     </definition>
-</ui-search>
+</ui-command>
