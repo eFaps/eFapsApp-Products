@@ -74,6 +74,7 @@ import org.efaps.esjp.common.uiform.Edit;
 import org.efaps.esjp.common.uiform.Field;
 import org.efaps.esjp.common.uitable.MultiPrint;
 import org.efaps.esjp.common.util.InterfaceUtils;
+import org.efaps.esjp.common.util.InterfaceUtils_Base.DojoLibs;
 import org.efaps.esjp.erp.AbstractWarning;
 import org.efaps.esjp.erp.CommonDocument;
 import org.efaps.esjp.erp.IWarning;
@@ -81,6 +82,9 @@ import org.efaps.esjp.erp.WarningUtil;
 import org.efaps.esjp.products.util.Products;
 import org.efaps.esjp.products.util.Products.ProductIndividual;
 import org.efaps.esjp.products.util.ProductsSettings;
+import org.efaps.ui.wicket.models.objects.UIForm;
+import org.efaps.ui.wicket.models.objects.UITable;
+import org.efaps.ui.wicket.models.objects.UITable.TableFilter;
 import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
@@ -534,6 +538,60 @@ public abstract class Product_Base
         };
         return multi.execute(_parameter);
     }
+
+    public Return getSetFilteredFamiliesUIValue(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        StringBuilder js = new StringBuilder();
+        final UIForm uiform = (UIForm) _parameter.get(ParameterValues.CLASS);
+        final String sessKey =  uiform.getCallingCommand().getUUID() + "-" + UITable.UserCacheKey.FILTER.getValue();
+        if (Context.getThreadContext().containsSessionAttribute(sessKey)) {
+            @SuppressWarnings("unchecked")
+            final Map<String, TableFilter> sessfilter = (Map<String, TableFilter>) Context
+                            .getThreadContext().getSessionAttribute(sessKey);
+            if (sessfilter.containsKey("productFamilyLink")) {
+                final TableFilter filter = sessfilter.get("productFamilyLink");
+                final Map<String, Object> map = filter.getMap4esjp();
+                js.append("var selected = [");
+                if (map != null && map.containsKey("selectedRow")) {
+                    final String[] oids = (String[]) map.get("selectedRow");
+                    final List<Instance> familyInsts = new ArrayList<>();
+                    for (final String oid : oids) {
+                        final Instance instance = Instance.get(oid);
+                        if (instance.isValid()) {
+                            familyInsts.add(instance);
+                        }
+                    }
+                    final List<Instance> tmpInsts = new ArrayList<>();
+                    tmpInsts.addAll(familyInsts);
+                    for (final Instance inst : familyInsts) {
+                        tmpInsts.addAll(ProductFamily.getDescendants(_parameter, inst));
+                    }
+                    boolean first = true;
+                    for (final Instance inst : tmpInsts) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            js.append(",");
+                        }
+                        js.append("'").append(inst.getOid()).append("'");
+                    }
+                }
+                js.append("];\n")
+                    .append("var nl = query(\"[name='selectedRow']\").forEach(function(node){\n")
+                    .append("if (array.indexOf(selected, node.value) > -1) {\n")
+                    .append("domAttr.set(node, \"checked\", \"checked\");\n")
+                    .append("};\n")
+                    .append("});\n");
+
+                js = InterfaceUtils.wrapInDojoRequire(_parameter, js, DojoLibs.QUERY, DojoLibs.DOMATTR, DojoLibs.ARRAY);
+            }
+        }
+        ret.put(ReturnValues.SNIPLETT, InterfaceUtils.wrappInScriptTag(_parameter, js, true, 1000));
+        return ret;
+    }
+
 
     public Return updateFields4Product(final Parameter _parameter)
         throws EFapsException
