@@ -242,12 +242,14 @@ public abstract class ProductFamily_Base
         final List<IWarning> warnings = new ArrayList<IWarning>();
         final String codePart = _parameter.getParameterValue(CIFormProducts.Products_ProductFamilyForm.codePart.name);
         final AbstractCommand cmd = (AbstractCommand) _parameter.get(ParameterValues.UIOBJECT);
+        // CreateMode and FamilyRoot
         if (cmd.getTargetCreateType() != null && cmd.getTargetCreateType().isCIType(CIProducts.ProductFamilyRoot)) {
             final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductFamilyRoot);
             queryBldr.addWhereAttrEqValue(CIProducts.ProductFamilyRoot.CodePart, codePart);
             if (!queryBldr.getQuery().execute().isEmpty()) {
                 warnings.add(new FamilyCodeInvalidWarning());
             }
+        // CreateMode and Family
         } else  if (cmd.getTargetCreateType() != null) {
             final Instance parentInst = Instance.get(((String[]) Context.getThreadContext().getSessionAttribute(
                             CIFormProducts.Products_ProductFamilyForm.parentOID.name))[0]);
@@ -257,6 +259,14 @@ public abstract class ProductFamily_Base
             if (!queryBldr.getQuery().execute().isEmpty()) {
                 warnings.add(new FamilyCodeInvalidWarning());
             }
+            // check if the selected family has allready products assigned
+            final QueryBuilder prodQueryBldr = new QueryBuilder(CIProducts.ProductAbstract);
+            prodQueryBldr.addWhereAttrEqValue(CIProducts.ProductAbstract.ProductFamilyLink, parentInst);
+            if (!prodQueryBldr.getQuery().execute().isEmpty()) {
+                warnings.add(new FamilyHasProductsWarning());
+            }
+
+         // EditMode and FamilyRoot
         } else if (_parameter.getInstance().getType().isCIType(CIProducts.ProductFamilyRoot)) {
             final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductFamilyRoot);
             queryBldr.addWhereAttrEqValue(CIProducts.ProductFamilyRoot.CodePart, codePart);
@@ -264,6 +274,7 @@ public abstract class ProductFamily_Base
             if (!queryBldr.getQuery().execute().isEmpty()) {
                 warnings.add(new FamilyCodeInvalidWarning());
             }
+         // EditMode and Family
         } else {
             final PrintQuery print = new PrintQuery(_parameter.getInstance());
             print.addAttribute(CIProducts.ProductFamilyStandart.ParentLink);
@@ -303,4 +314,20 @@ public abstract class ProductFamily_Base
             setError(true);
         }
     }
+
+    /**
+     * Warning for invalid name.
+     */
+    public static class FamilyHasProductsWarning
+        extends AbstractWarning
+    {
+        /**
+         * Constructor.
+         */
+        public FamilyHasProductsWarning()
+        {
+            setError(true);
+        }
+    }
+
 }
