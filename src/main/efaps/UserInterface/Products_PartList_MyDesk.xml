@@ -35,6 +35,7 @@
         <childs>
             <child>Products_ProductNonStockMyDesk</child>
             <child>Products_InventoryPartListMyDesk</child>
+            <child>Products_ProductGenericMyDesk</child>
         </childs>
     </definition>
 </ui-menu>
