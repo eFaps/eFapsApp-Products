@@ -33,6 +33,10 @@
             </evaluate>
         </target>
         <type>Products_ProductFamilyRoot</type>
+        <childs>
+            <child>Products_ProductFamilyRootTree_Products</child>
+            <child>Products_ProductFamilyRootTree_Families</child>
+        </childs>
         <property name="Target">content</property>
         <property name="TargetMode">view</property>
     </definition>

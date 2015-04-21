@@ -60,6 +60,22 @@ public abstract class ProductFamily_Base
 
     public static String CACHEKEY = ProductFamily.class.getName() + ".CacheKey";
 
+    public Return check4SubFamilies(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+
+        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductFamilyStandart);
+        queryBldr.addWhereAttrEqValue(CIProducts.ProductFamilyStandart.ParentLink, _parameter.getInstance());
+        final boolean access = queryBldr.getQuery().execute().isEmpty();
+        final boolean inverse = "true".equalsIgnoreCase(getProperty(_parameter, "Inverse"));
+        if (!inverse && access || inverse && !access) {
+            ret.put(ReturnValues.TRUE, true);
+        }
+        return ret;
+    }
+
+
     public Return create(final Parameter _parameter)
         throws EFapsException
     {

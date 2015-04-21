@@ -14,29 +14,29 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
+  Author:          The eFaps Team
+
 -->
 <ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>e3a56b19-d464-431d-a834-c8f9e6cc70b2</uuid>
+    <uuid>77efe757-c4c4-46bd-a61a-53213826f639</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev: 5372 $</file-revision>
+    <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductFamilyStandartTree</name>
+        <name>Products_ProductFamilyStandartTree_Families</name>
         <target>
-            <menu>Products_ProductFamilyStandartTree_Menu</menu>
-            <form>Products_ProductFamilyForm</form>
-             <evaluate program="org.efaps.esjp.products.ProductFamilyStructurBrowser">
+            <table>Products_ProductFamilyTable</table>
+            <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
                 <property name="Type">Products_ProductFamilyStandart</property>
-                <property name="Child_Type">Products_ProductFamilyStandart</property>
-                <property name="Child_LinkFrom">ParentLink</property>
+                <property name="LinkFrom">ParentLink</property>
             </evaluate>
+            <trigger event="UI_ACCESSCHECK" method="check4SubFamilies"
+                name="Products_ProductFamilyStandartTree_Families.UI_ACCESSCHECK"
+                program="org.efaps.esjp.products.ProductFamily" >
+                <property name="Inverse">true</property>
+            </trigger>
         </target>
-        <type>Products_ProductFamilyStandart</type>
-        <childs>
-            <child>Products_ProductFamilyStandartTree_Products</child>
-            <child>Products_ProductFamilyStandartTree_Families</child>
-        </childs>
         <property name="Target">content</property>
         <property name="TargetMode">view</property>
     </definition>
