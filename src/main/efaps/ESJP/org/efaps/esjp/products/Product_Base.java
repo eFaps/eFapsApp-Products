@@ -503,6 +503,33 @@ public abstract class Product_Base
                                         CIProducts.ProductBatch.getType().getId());
                     }
                 }
+                if (Products.getSysConfig().getAttributeValueAsBoolean(ProductsSettings.ACTIVATEFAMILIES)) {
+                    @SuppressWarnings("unchecked")
+                    final Map<String, Object> filterMap = (Map<String, Object>) _parameter.get(ParameterValues.OTHERS);
+                    if (filterMap != null && filterMap.containsKey("productFamilyLink")) {
+                        @SuppressWarnings("unchecked")
+                        final Map<String, Object> map =  (Map<String, Object>) filterMap.get("productFamilyLink");
+                        if (map != null && map.containsKey("selectedRow")) {
+                            final String[] oids = (String[]) map.get("selectedRow");
+                            final List<Instance> familyInsts = new ArrayList<>();
+                            for (final String oid : oids) {
+                                final Instance instance = Instance.get(oid);
+                                if (instance.isValid()) {
+                                    familyInsts.add(instance);
+                                }
+                            }
+                            final List<Instance> tmpInsts = new ArrayList<>();
+                            tmpInsts.addAll(familyInsts);
+                            for (final Instance inst : familyInsts) {
+                                tmpInsts.addAll(ProductFamily.getDescendants(_parameter, inst));
+                            }
+                            _queryBldr.addWhereAttrEqValue(CIProducts.ProductAbstract.ProductFamilyLink,
+                                            tmpInsts.toArray());
+                        } else {
+                            _queryBldr.addWhereAttrEqValue(CIProducts.ProductAbstract.ID, 0);
+                        }
+                    }
+                }
             }
         };
         return multi.execute(_parameter);

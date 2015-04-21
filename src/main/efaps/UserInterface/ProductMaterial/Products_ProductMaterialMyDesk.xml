@@ -32,7 +32,7 @@
         </access>
         <target>
             <menu>Products_ProductMaterialMyDesk_Menu</menu>
-            <table>Products_ProductTable</table>
+            <table>Products_ProductFilteredTable</table>
             <evaluate method="productMultiPrint" program="org.efaps.esjp.products.Product">
                 <property name="Type">Products_ProductMaterial</property>
             </evaluate>

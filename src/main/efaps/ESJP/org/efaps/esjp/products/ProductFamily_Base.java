@@ -30,6 +30,7 @@ import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.admin.ui.AbstractCommand;
+import org.efaps.db.CachedInstanceQuery;
 import org.efaps.db.CachedPrintQuery;
 import org.efaps.db.Context;
 import org.efaps.db.Insert;
@@ -169,6 +170,24 @@ public abstract class ProductFamily_Base
         }
         return ret;
     }
+
+    protected static List<Instance> getDescendants(final Parameter _parameter,
+                                                   final Instance _famInst)
+        throws EFapsException
+    {
+        final List<Instance> ret = new ArrayList<>();
+        final QueryBuilder queryBlr = new QueryBuilder(CIProducts.ProductFamilyStandart);
+        queryBlr.addWhereAttrEqValue(CIProducts.ProductFamilyStandart.ParentLink, _famInst);
+        final CachedInstanceQuery query = queryBlr.getCachedQuery(ProductFamily_Base.CACHEKEY);
+        ret.addAll(query.execute());
+        final List<Instance> tmp = new ArrayList<>();
+        for (final Instance inst : ret) {
+            tmp.addAll(ProductFamily.getDescendants(_parameter, inst));
+        }
+        ret.addAll(tmp);
+        return ret;
+    }
+
 
     public String getName(final Parameter _parameter,
                           final Instance _inst)

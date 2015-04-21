@@ -17,8 +17,13 @@
 
 package org.efaps.esjp.products;
 
+import java.util.List;
+
+import org.efaps.admin.event.Parameter;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
+import org.efaps.db.Instance;
+import org.efaps.util.EFapsException;
 
 /**
  * TODO comment!
@@ -31,4 +36,10 @@ public class ProductFamily
     extends ProductFamily_Base
 {
 
+    public static List<Instance> getDescendants(final Parameter _parameter,
+                                                final Instance _famInst)
+        throws EFapsException
+    {
+        return ProductFamily_Base.getDescendants(_parameter, _famInst);
+    }
 }
