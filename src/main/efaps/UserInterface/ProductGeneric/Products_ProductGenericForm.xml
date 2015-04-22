@@ -45,12 +45,16 @@
             <property name="Attribute">Description</property>
             <property name="Required">true</property>
         </field>
-        <field name="dimension">
+       <field name="dimension">
             <property name="Attribute">Dimension</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+            <trigger event="UI_FIELD_UPDATE"
+                method="updateFields4Dimension"
+                name="Products_ProductForm.dimension.UI_FIELD_UPDATE"
+                program="org.efaps.esjp.products.Product" />
         </field>
-         <field name="defaultUoM">
+        <field name="defaultUoM">
             <property name="Attribute">DefaultUoM</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
@@ -278,6 +282,10 @@
             <property name="Attribute">Dimension</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+            <trigger event="UI_FIELD_UPDATE"
+                method="updateFields4Dimension"
+                name="Products_ProductForm.dimension.UI_FIELD_UPDATE"
+                program="org.efaps.esjp.products.Product" />
         </field>
          <field name="defaultUoM">
             <property name="Attribute">DefaultUoM</property>
