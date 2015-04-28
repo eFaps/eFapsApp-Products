@@ -65,6 +65,7 @@ import org.efaps.db.Instance;
 import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.PrintQuery;
 import org.efaps.db.QueryBuilder;
+import org.efaps.db.SelectBuilder;
 import org.efaps.db.Update;
 import org.efaps.esjp.admin.datamodel.RangesValue;
 import org.efaps.esjp.ci.CIFormProducts;
@@ -1109,6 +1110,26 @@ public abstract class Product_Base
         return nf.format(val);
     }
 
+    public List<Instance> getReplacements4Generic(final Parameter _parameter,
+                                                  final Instance _genericInst)
+        throws EFapsException
+    {
+        final List<Instance> ret = new ArrayList<>();
+        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductGeneric2Product);
+        queryBldr.addWhereAttrEqValue(CIProducts.ProductGeneric2Product.FromLink, _genericInst);
+
+        final MultiPrintQuery multi = queryBldr.getPrint();
+        final SelectBuilder selInst = SelectBuilder.get().linkto(CIProducts.ProductGeneric2Product.ToLink).instance();
+        multi.addSelect(selInst);
+        multi.execute();
+        while (multi.next()) {
+            final Instance prodInst = multi.getSelect(selInst);
+            if (prodInst != null && prodInst.isValid()) {
+                ret.add(prodInst);
+            }
+        }
+        return ret;
+    }
 
     /**
      * Warning for invalid name.
