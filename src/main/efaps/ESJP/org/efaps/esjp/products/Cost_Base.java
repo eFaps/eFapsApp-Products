@@ -36,7 +36,7 @@ import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
 import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
-import org.efaps.admin.program.esjp.EFapsRevision;
+import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
 import org.efaps.db.Context;
@@ -49,6 +49,9 @@ import org.efaps.db.SelectBuilder;
 import org.efaps.db.Update;
 import org.efaps.esjp.ci.CIFormProducts;
 import org.efaps.esjp.ci.CIProducts;
+import org.efaps.esjp.common.AbstractCommon;
+import org.efaps.esjp.erp.Currency;
+import org.efaps.esjp.erp.RateInfo;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
 
@@ -59,8 +62,9 @@ import org.joda.time.DateTime;
  * @version $Id$
  */
 @EFapsUUID("a7a6c100-8fce-4217-bc8e-c9066b1ab9e2")
-@EFapsRevision("$Rev$")
+@EFapsApplication("eFapsApp-Products")
 public abstract class Cost_Base
+    extends AbstractCommon
 {
 
     /**
@@ -294,6 +298,25 @@ public abstract class Cost_Base
         return new CostBean();
     }
 
+    protected static BigDecimal getCost4Currency(final Parameter _parameter,
+                                                 final Instance _productInstance,
+                                                 final Instance _currencyInstance)
+        throws EFapsException
+    {
+        BigDecimal ret = BigDecimal.ZERO;
+        final CostBean costBean = new Cost().getCost(_parameter, _productInstance);
+        if (costBean != null && costBean.getCost().compareTo(BigDecimal.ZERO) != 0) {
+            if (costBean.getCurrencyInstance().equals(_currencyInstance)) {
+                ret = costBean.getCost();
+            } else {
+                final RateInfo[] rateInfos = new Currency().evaluateRateInfos(_parameter, (String) null,
+                                costBean.getCurrencyInstance(), _currencyInstance);
+                final RateInfo rateInfo = rateInfos[2];
+                ret = costBean.getCost().divide(rateInfo.getRate(), BigDecimal.ROUND_HALF_UP);
+            }
+        }
+        return ret;
+    }
 
     public static class CostBean
     {
