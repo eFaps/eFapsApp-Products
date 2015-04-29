@@ -27,6 +27,7 @@ import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Instance;
 import org.efaps.util.EFapsException;
+import org.joda.time.DateTime;
 
 /**
  * This class must be replaced for customization, therefore it is left empty.
@@ -48,6 +49,15 @@ public class Cost
         throws EFapsException
     {
         return Cost_Base.getCost4Currency(_parameter, _productInstance, _currencyInstance);
+    }
+
+    public static BigDecimal getCost4Currency(final Parameter _parameter,
+                                              final DateTime _date,
+                                              final Instance _productInstance,
+                                              final Instance _currencyInstance)
+        throws EFapsException
+    {
+        return Cost_Base.getCost4Currency(_parameter, _date, _productInstance, _currencyInstance);
     }
 
 }
