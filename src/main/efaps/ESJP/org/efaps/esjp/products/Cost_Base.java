@@ -251,7 +251,7 @@ public abstract class Cost_Base
         throws EFapsException
 
     {
-        return getCosts(_parameter, _prodInst).get(_prodInst);
+        return getCosts(_parameter, _date, _prodInst).get(_prodInst);
     }
 
     public Map<Instance, CostBean> getCosts(final Parameter _parameter,
