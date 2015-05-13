@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,7 @@ import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.base.expression.AbstractSimpleExpression;
 import net.sf.dynamicreports.report.builder.DynamicReports;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
+import net.sf.dynamicreports.report.builder.group.ColumnGroupBuilder;
 import net.sf.dynamicreports.report.builder.subtotal.AggregationSubtotalBuilder;
 import net.sf.dynamicreports.report.constant.Calculation;
 import net.sf.dynamicreports.report.definition.ReportParameters;
@@ -72,7 +74,7 @@ public abstract class TransactionResultReport_Base
 
     public enum StorageDisplay
     {
-        NONE, COLUMN, ROW;
+        NONE, GROUP, ROW;
     }
 
     /**
@@ -154,7 +156,10 @@ public abstract class TransactionResultReport_Base
             final SelectBuilder selDocName = new SelectBuilder(selDoc).attribute(CIERP.DocumentAbstract.Name);
             final SelectBuilder selDocContactName = new SelectBuilder(selDoc).linkto(CIERP.DocumentAbstract.Contact)
                                 .attribute(CIContacts.ContactAbstract.Name);
-            multi.addSelect(selDocInst, selDocName, selDocContactName);
+            final SelectBuilder selStorage = SelectBuilder.get().linkto(CIProducts.TransactionInOutAbstract.Storage);
+            final SelectBuilder selStorageInst = new SelectBuilder(selStorage).instance();
+            final SelectBuilder selStorageName = new SelectBuilder(selStorage).attribute(CIProducts.StorageAbstract.Name);
+            multi.addSelect(selDocInst, selDocName, selDocContactName, selStorageName, selStorageInst);
             multi.addAttribute(CIProducts.TransactionInOutAbstract.Quantity,
                             CIProducts.TransactionInOutAbstract.Description,
                             CIProducts.TransactionInOutAbstract.Date,
@@ -169,10 +174,24 @@ public abstract class TransactionResultReport_Base
                     .setDescription(multi.<String>getAttribute(CIProducts.TransactionInOutAbstract.Description))
                     .setDocInst(multi.<Instance>getSelect(selDocInst))
                     .setDocName(multi.<String>getSelect(selDocName))
-                    .setDocContactName(multi.<String>getSelect(selDocContactName));
+                    .setDocContactName(multi.<String>getSelect(selDocContactName))
+                    .setStorageName(multi.<String>getSelect(selStorageName))
+                    .setStorageInst(multi.<Instance>getSelect(selStorageInst));
                 beans.add(bean);
             }
             final ComparatorChain<DataBean> chain = new ComparatorChain<DataBean>();
+            if (StorageDisplay.GROUP.equals(getStorageDisplay(_parameter))) {
+                chain.addComparator(new Comparator<DataBean>()
+                {
+
+                    @Override
+                    public int compare(final DataBean _bean0,
+                                       final DataBean _bean1)
+                    {
+                        return _bean0.getStorageName().compareTo(_bean1.getStorageName());
+                    }
+                });
+            }
             chain.addComparator(new Comparator<DataBean>()
             {
 
@@ -197,14 +216,30 @@ public abstract class TransactionResultReport_Base
             Collections.sort(beans, chain);
 
             final ReverseListIterator<DataBean> iter = new ReverseListIterator<>(beans);
-            BigDecimal current = getInventory(_parameter, prodInst);
-            getReport().addParameter("Inventory", current);
+            final Map<Instance, BigDecimal> inventorymap = getInventory(_parameter, prodInst);
+            BigDecimal inventory = BigDecimal.ZERO;
+            for (final BigDecimal inven : inventorymap.values()) {
+                inventory = inventory.add(inven);
+            }
+            getReport().addParameter("Inventory", inventory);
+            getReport().addParameter("InventoryMap", inventorymap);
+
+            BigDecimal current = null;
+            if (!StorageDisplay.GROUP.equals(getStorageDisplay(_parameter))) {
+                current = inventory;
+            }
+            Instance currentStorageInst = null;
             while (iter.hasNext()) {
                final DataBean bean = iter.next();
+               if (StorageDisplay.GROUP.equals(getStorageDisplay(_parameter))) {
+                   if (!bean.getStorageInst().equals(currentStorageInst)) {
+                       current = inventorymap.get(bean.getStorageInst());
+                       currentStorageInst = bean.getStorageInst();
+                   }
+               }
                bean.setTotal(current);
                current = current.subtract(bean.getQuantity());
             }
-
             return new JRBeanCollectionDataSource(beans);
         }
 
@@ -251,14 +286,13 @@ public abstract class TransactionResultReport_Base
             return ret;
         }
 
-        protected BigDecimal getInventory(final Parameter _parameter,
-                                          final Instance _prodInst)
+        protected Map<Instance, BigDecimal> getInventory(final Parameter _parameter,
+                                                         final Instance _prodInst)
             throws EFapsException
         {
-            BigDecimal ret = BigDecimal.ZERO;
+            final Map<Instance, BigDecimal> ret = new HashMap<>();
             final Inventory inventory = new Inventory()
             {
-
                 @Override
                 protected void add2QueryBuilder(final Parameter _parameter,
                                                 final QueryBuilder _queryBldr)
@@ -268,9 +302,13 @@ public abstract class TransactionResultReport_Base
                     _queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Product, _prodInst);
                 }
             };
+            inventory.setShowStorage(true);
             final List<? extends InventoryBean> beans = inventory.getInventory(_parameter);
             for (final InventoryBean bean : beans) {
-                ret = ret.add(bean.getQuantity());
+                if (!ret.containsKey(bean.getStorageInstance())) {
+                    ret.put(bean.getStorageInstance(), BigDecimal.ZERO);
+                }
+                ret.put(bean.getStorageInstance(), ret.get(bean.getStorageInstance()).add(bean.getQuantity()));
             }
             return ret;
         }
@@ -280,6 +318,19 @@ public abstract class TransactionResultReport_Base
                                           final JasperReportBuilder _builder)
             throws EFapsException
         {
+
+            ColumnGroupBuilder storageGroup  = null;
+            if (!StorageDisplay.NONE.equals(getStorageDisplay(_parameter))) {
+                final TextColumnBuilder<String> storageColumn = DynamicReports.col.column(
+                                this.filteredReport.getDBProperty("Column.StorageName"),
+                                "storageName", DynamicReports.type.stringType());
+                _builder.addColumn(storageColumn);
+                if (StorageDisplay.GROUP.equals(getStorageDisplay(_parameter))) {
+                    storageGroup = DynamicReports.grp.group(storageColumn);
+                    _builder.groupBy(storageGroup);
+                }
+            }
+
             final TextColumnBuilder<DateTime> dateColumn = DynamicReports.col.column(
                             this.filteredReport.getDBProperty("Column.Date"),
                             "date", DateTimeDate.get());
@@ -298,7 +349,7 @@ public abstract class TransactionResultReport_Base
 
             final TextColumnBuilder<String> descrColumn = DynamicReports.col.column(
                             this.filteredReport.getDBProperty("Column.Description"),
-                            "description", DynamicReports.type.stringType());
+                            "description", DynamicReports.type.stringType()).setWidth(250);
 
             final TextColumnBuilder<String> docNameColumn = DynamicReports.col.column(
                             this.filteredReport.getDBProperty("Column.DocName"),
@@ -310,17 +361,43 @@ public abstract class TransactionResultReport_Base
 
             final TextColumnBuilder<String> docContactNameColumn = DynamicReports.col.column(
                             this.filteredReport.getDBProperty("Column.DocContactName"),
-                            "docContactName", DynamicReports.type.stringType());
+                            "docContactName", DynamicReports.type.stringType()).setWidth(250);
 
             final AggregationSubtotalBuilder<BigDecimal> incomingSum = DynamicReports.sbt.sum("incoming",
                             BigDecimal.class, inColumn);
             final AggregationSubtotalBuilder<BigDecimal> outgoingSum = DynamicReports.sbt.sum("outgoing",
                             BigDecimal.class, outColumn);
-            final AggregationSubtotalBuilder<Object> totalSum = DynamicReports.sbt.aggregate(new TotalExpression(),
+            final AggregationSubtotalBuilder<Object> totalSum = DynamicReports.sbt.aggregate(new TotalExpression(false),
                             totalColumn, Calculation.NOTHING).setDataType(DynamicReports.type.bigDecimalType());
             _builder.addColumn(dateColumn, inColumn, outColumn, totalColumn, descrColumn, docTypeColumn, docNameColumn,
                              docContactNameColumn)
-                            .addSubtotalAtColumnFooter(incomingSum, outgoingSum, totalSum);
+                            .addSubtotalAtSummary(incomingSum, outgoingSum, totalSum);
+
+            if (storageGroup != null) {
+                final AggregationSubtotalBuilder<BigDecimal> incomingSum4Grp = DynamicReports.sbt.sum("incoming",
+                                BigDecimal.class, inColumn);
+                final AggregationSubtotalBuilder<BigDecimal> outgoingSum4Grp = DynamicReports.sbt.sum("outgoing",
+                                BigDecimal.class, outColumn);
+                final AggregationSubtotalBuilder<Object> totalSum4Grp = DynamicReports.sbt.aggregate(
+                                new TotalExpression(true),
+                                totalColumn, Calculation.NOTHING).setDataType(DynamicReports.type.bigDecimalType());
+                _builder.subtotalsAtGroupFooter(storageGroup, incomingSum4Grp, outgoingSum4Grp, totalSum4Grp);
+            }
+            _builder.addField("storageInst", Instance.class);
+        }
+
+        protected StorageDisplay getStorageDisplay(final Parameter _parameter)
+            throws EFapsException
+        {
+            final EnumFilterValue filter = (EnumFilterValue) getFilteredReport().getFilterMap(_parameter).get(
+                            "storageDisplay");
+            StorageDisplay ret;
+            if (filter != null) {
+                ret = (StorageDisplay) filter.getObject();
+            } else {
+                ret = StorageDisplay.NONE;
+            }
+            return ret;
         }
 
         /**
@@ -354,6 +431,10 @@ public abstract class TransactionResultReport_Base
         private String docName;
 
         private String docContactName;
+
+        private String storageName;
+
+        private Instance storageInst;
 
         public boolean isTransOut()
         {
@@ -481,7 +562,6 @@ public abstract class TransactionResultReport_Base
             return this;
         }
 
-
         /**
          * Getter method for the instance variable {@link #total}.
          *
@@ -524,7 +604,6 @@ public abstract class TransactionResultReport_Base
             return this;
         }
 
-
         /**
          * Getter method for the instance variable {@link #docName}.
          *
@@ -534,7 +613,6 @@ public abstract class TransactionResultReport_Base
         {
             return this.docName;
         }
-
 
         /**
          * Setter method for instance variable {@link #docName}.
@@ -546,7 +624,6 @@ public abstract class TransactionResultReport_Base
             this.docName = _docName;
             return this;
         }
-
 
         /**
          * Getter method for the instance variable {@link #docInst}.
@@ -589,18 +666,78 @@ public abstract class TransactionResultReport_Base
             this.docContactName = _docContactName;
             return this;
         }
+
+        /**
+         * Getter method for the instance variable {@link #storage}.
+         *
+         * @return value of instance variable {@link #storage}
+         */
+        public String getStorageName()
+        {
+            return this.storageName;
+        }
+
+        /**
+         * Setter method for instance variable {@link #storage}.
+         *
+         * @param _storage value for instance variable {@link #storage}
+         */
+        public DataBean setStorageName(final String _storage)
+        {
+            this.storageName = _storage;
+            return this;
+        }
+
+        /**
+         * Getter method for the instance variable {@link #storageInst}.
+         *
+         * @return value of instance variable {@link #storageInst}
+         */
+        public Instance getStorageInst()
+        {
+            return this.storageInst;
+        }
+
+        /**
+         * Setter method for instance variable {@link #storageInst}.
+         *
+         * @param _storageInst value for instance variable {@link #storageInst}
+         */
+        public DataBean setStorageInst(final Instance _storageInst)
+        {
+            this.storageInst = _storageInst;
+            return this;
+        }
     }
 
     public static class TotalExpression
         extends AbstractSimpleExpression<BigDecimal>
     {
 
+        private final boolean group;
+
         private static final long serialVersionUID = 1L;
+
+        /**
+         * @param _b
+         */
+        public TotalExpression(final boolean _group)
+        {
+            this.group = _group;
+        }
 
         @Override
         public BigDecimal evaluate(final ReportParameters _reportParameters)
         {
-            return _reportParameters.getValue("Inventory");
+            BigDecimal ret;
+            if (this.group) {
+                final Map<Instance, BigDecimal> inventorymap = _reportParameters.getValue("InventoryMap");
+                final Object storageInst = _reportParameters.getFieldValue("storageInst");
+                ret = inventorymap.get(storageInst);
+            } else {
+                ret = _reportParameters.getValue("Inventory");
+            }
+            return ret;
         }
     }
 }
