@@ -38,6 +38,7 @@
         <type>Products_ProductBatch</type>
         <childs>
             <child>Products_ProductTree_Transaction</child>
+            <child>Products_ProductTree_TransactionResultReport</child>
         </childs>
         <!-- properties -->
         <property name="Target">content</property>
