@@ -235,6 +235,9 @@ public abstract class TransactionResultReport_Base
                    if (!bean.getStorageInst().equals(currentStorageInst)) {
                        current = inventorymap.get(bean.getStorageInst());
                        currentStorageInst = bean.getStorageInst();
+                       if (current == null) {
+                           current = BigDecimal.ZERO;
+                       }
                    }
                }
                bean.setTotal(current);
