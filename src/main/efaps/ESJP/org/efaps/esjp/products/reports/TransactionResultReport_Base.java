@@ -220,6 +220,7 @@ public abstract class TransactionResultReport_Base
             Collections.sort(beans, chain);
 
             final ReverseListIterator<DataBean> iter = new ReverseListIterator<>(beans);
+
             final Map<Instance, BigDecimal> inventorymap = getInventory(_parameter, prodInst);
             BigDecimal inventory = BigDecimal.ZERO;
             for (final BigDecimal inven : inventorymap.values()) {
@@ -307,6 +308,8 @@ public abstract class TransactionResultReport_Base
                                                          final Instance _prodInst)
             throws EFapsException
         {
+            final Map<String, Object> filter = getFilteredReport().getFilterMap(_parameter);
+
             final Map<Instance, BigDecimal> ret = new HashMap<>();
             final Inventory inventory = new Inventory()
             {
@@ -318,8 +321,21 @@ public abstract class TransactionResultReport_Base
                     super.add2QueryBuilder(_parameter, _queryBldr);
                     _queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Product, _prodInst);
                 }
+
+                @Override
+                protected void add2QueryBuilder4Transaction(final Parameter _parameter,
+                                                            final QueryBuilder _queryBldr)
+                    throws EFapsException
+                {
+                    super.add2QueryBuilder4Transaction(_parameter, _queryBldr);
+                    _queryBldr.addWhereAttrEqValue(CIProducts.TransactionAbstract.Product, _prodInst);
+                }
             };
             inventory.setShowStorage(true);
+            if (filter.containsKey("dateTo")) {
+                final DateTime date = (DateTime) filter.get("dateTo");
+                inventory.setDate(date.withTimeAtStartOfDay().plusDays(1));
+            }
             final List<? extends InventoryBean> beans = inventory.getInventory(_parameter);
             for (final InventoryBean bean : beans) {
                 if (!ret.containsKey(bean.getStorageInstance())) {
