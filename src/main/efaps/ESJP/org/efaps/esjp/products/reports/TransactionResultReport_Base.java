@@ -39,6 +39,7 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import org.apache.commons.collections4.comparators.ComparatorChain;
 import org.apache.commons.collections4.iterators.ReverseListIterator;
+import org.efaps.admin.datamodel.Status;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
 import org.efaps.admin.event.Return;
@@ -152,6 +153,7 @@ public abstract class TransactionResultReport_Base
             queryBldr.addWhereAttrEqValue(CIProducts.TransactionInOutAbstract.Product, prodInst);
             final MultiPrintQuery multi = queryBldr.getPrint();
             final SelectBuilder selDoc = SelectBuilder.get().linkto(CIProducts.TransactionInOutAbstract.Document);
+            final SelectBuilder selDocStatus = new SelectBuilder(selDoc).status();
             final SelectBuilder selDocInst = new SelectBuilder(selDoc).instance();
             final SelectBuilder selDocName = new SelectBuilder(selDoc).attribute(CIERP.DocumentAbstract.Name);
             final SelectBuilder selDocContactName = new SelectBuilder(selDoc).linkto(CIERP.DocumentAbstract.Contact)
@@ -159,25 +161,27 @@ public abstract class TransactionResultReport_Base
             final SelectBuilder selStorage = SelectBuilder.get().linkto(CIProducts.TransactionInOutAbstract.Storage);
             final SelectBuilder selStorageInst = new SelectBuilder(selStorage).instance();
             final SelectBuilder selStorageName = new SelectBuilder(selStorage).attribute(CIProducts.StorageAbstract.Name);
-            multi.addSelect(selDocInst, selDocName, selDocContactName, selStorageName, selStorageInst);
+            multi.addSelect(selDocInst, selDocStatus, selDocName, selDocContactName, selStorageName, selStorageInst);
             multi.addAttribute(CIProducts.TransactionInOutAbstract.Quantity,
                             CIProducts.TransactionInOutAbstract.Description,
                             CIProducts.TransactionInOutAbstract.Date,
                             CIProducts.TransactionInOutAbstract.Position);
             multi.execute();
             while (multi.next()) {
-                final DataBean bean = new DataBean()
-                    .setTransInst(multi.getCurrentInstance())
-                    .setDate(multi.<DateTime>getAttribute(CIProducts.TransactionInOutAbstract.Date))
-                    .setPosition(multi.<Integer>getAttribute(CIProducts.TransactionInOutAbstract.Position))
-                    .setQuantity(multi.<BigDecimal>getAttribute(CIProducts.TransactionInOutAbstract.Quantity))
-                    .setDescription(multi.<String>getAttribute(CIProducts.TransactionInOutAbstract.Description))
-                    .setDocInst(multi.<Instance>getSelect(selDocInst))
-                    .setDocName(multi.<String>getSelect(selDocName))
-                    .setDocContactName(multi.<String>getSelect(selDocContactName))
-                    .setStorageName(multi.<String>getSelect(selStorageName))
-                    .setStorageInst(multi.<Instance>getSelect(selStorageInst));
-                beans.add(bean);
+                if (isValidStatus(_parameter, multi.<Status>getSelect(selDocStatus))) {
+                    final DataBean bean = new DataBean()
+                        .setTransInst(multi.getCurrentInstance())
+                        .setDate(multi.<DateTime>getAttribute(CIProducts.TransactionInOutAbstract.Date))
+                        .setPosition(multi.<Integer>getAttribute(CIProducts.TransactionInOutAbstract.Position))
+                        .setQuantity(multi.<BigDecimal>getAttribute(CIProducts.TransactionInOutAbstract.Quantity))
+                        .setDescription(multi.<String>getAttribute(CIProducts.TransactionInOutAbstract.Description))
+                        .setDocInst(multi.<Instance>getSelect(selDocInst))
+                        .setDocName(multi.<String>getSelect(selDocName))
+                        .setDocContactName(multi.<String>getSelect(selDocContactName))
+                        .setStorageName(multi.<String>getSelect(selStorageName))
+                        .setStorageInst(multi.<Instance>getSelect(selStorageInst));
+                    beans.add(bean);
+                }
             }
             final ComparatorChain<DataBean> chain = new ComparatorChain<DataBean>();
             if (StorageDisplay.GROUP.equals(getStorageDisplay(_parameter))) {
@@ -244,6 +248,16 @@ public abstract class TransactionResultReport_Base
                current = current.subtract(bean.getQuantity());
             }
             return new JRBeanCollectionDataSource(beans);
+        }
+
+        protected boolean isValidStatus(final Parameter _parameter,
+                                        final Status _status)
+        {
+            boolean ret = true;
+            if (_status != null) {
+                ret = !"Canceled".equals(_status.getKey());
+            }
+            return ret;
         }
 
         protected void add2QueryBuilder(final Parameter _parameter,
