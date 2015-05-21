@@ -63,6 +63,62 @@
                 <property name="Products_WarehouseGroup_Select">attribute[Name]</property>
                 <property name="Products_Warehouse_Select">attribute[Name]</property>
             </trigger>
+            <trigger program="org.efaps.esjp.products.Product"
+                method="individualAccessCheck"
+                name="Products_TransactionResultReportForm.filter.UI_ACCESSCHECK" event="UI_ACCESSCHECK">
+                <property name="Individual01">NONE</property>
+            </trigger>
+        </field>
+        <field name="filterIndividual">
+            <property name="HideLabel">true</property>
+            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+            <trigger event="UI_FIELD_VALUE" index="1" method="setDefaultFilter"
+                name="Products_TransactionResultReportForm.filter.UI_FIELD_VALUE.1" program="org.efaps.esjp.products.reports.TransactionResultReport">
+                <property name="FilterKey">org.efaps.esjp.products.reports.TransactionResultReport.FilterKey</property>
+               <property name="Field01">dateFrom</property>
+                <property name="Field02">dateTo</property>
+                <property name="Field03">storageGroup</property>
+                <property name="Field04">storage</property>
+                <property name="Field05">storageDisplay</property>
+                <property name="Field06">individual</property>
+                <property name="FilterType01">DateTime</property>
+                <property name="FilterType02">DateTime</property>
+                <property name="FilterType03">Instance</property>
+                <property name="FilterType04">Instance</property>
+                <property name="FilterType05">Enum</property>
+                <property name="FilterType06">Boolean</property>
+                <property name="FilterDefault01">YEARS:-1</property>
+                <property name="FilterDefault02">TODAY</property>
+                <property name="FilterDefault03">-</property>
+                <property name="FilterDefault04">-</property>
+                <property name="FilterDefault05">org.efaps.esjp.products.reports.TransactionResultReport_Base$StorageDisplay</property>
+                <property name="FilterDefault06">false</property>
+            </trigger>
+            <trigger event="UI_FIELD_VALUE" index="2" method="getFilterFieldValue"
+                name="Products_TransactionResultReportForm.filter.UI_FIELD_VALUE.2"
+                program="org.efaps.esjp.products.reports.TransactionResultReport">
+                <property name="FilterKey">org.efaps.esjp.products.reports.TransactionResultReport.FilterKey</property>
+                <property name="Field01">dateFrom</property>
+                <property name="Field02">dateTo</property>
+                <property name="Field03">storageGroup</property>
+                <property name="Field04">storage</property>
+                <property name="Field05">storageDisplay</property>
+                <property name="Field06">individual</property>
+                <property name="DBProperty01">org.efaps.esjp.products.reports.TransactionResultReport.dateFrom</property>
+                <property name="DBProperty02">org.efaps.esjp.products.reports.TransactionResultReport.dateTo</property>
+                <property name="DBProperty03">org.efaps.esjp.products.reports.TransactionResultReport.storageGroup</property>
+                <property name="DBProperty04">org.efaps.esjp.products.reports.TransactionResultReport.storage</property>
+                <property name="DBProperty05">org.efaps.esjp.products.reports.TransactionResultReport.storageDisplay</property>
+                <property name="DBProperty06">org.efaps.esjp.products.reports.TransactionResultReport.individual</property>
+                <property name="Products_WarehouseGroup_Select">attribute[Name]</property>
+                <property name="Products_Warehouse_Select">attribute[Name]</property>
+            </trigger>
+            <trigger program="org.efaps.esjp.products.Product"
+                method="individualAccessCheck"
+                name="Products_TransactionResultReportForm.filter.UI_ACCESSCHECK" event="UI_ACCESSCHECK">
+                <property name="Individual01">INDIVIDUAL</property>
+                <property name="Individual02">BATCH</property>
+            </trigger>
         </field>
         <field name="report">
             <property name="HideLabel">true</property>

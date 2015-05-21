@@ -80,5 +80,19 @@
                 <property name="Enum">org.efaps.esjp.products.reports.TransactionResultReport_Base$StorageDisplay</property>
             </trigger>
         </field>
+         <field name="individual">
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.BooleanUI</property>
+            <property name="Label">org.efaps.esjp.products.reports.TransactionResultReport.individual</property>
+            <trigger event="UI_FIELD_VALUE" method="getBooleanFieldValue"
+                name="Products_TransactionResultReportFilterForm.individual.UI_FIELD_VALUE"
+                program="org.efaps.esjp.erp.FilteredReport" />
+            <trigger program="org.efaps.esjp.products.Product"
+                method="individualAccessCheck"
+                name="Products_TransactionResultReportFilterForm.individual.UI_ACCESSCHECK" event="UI_ACCESSCHECK">
+                <property name="Individual01">INDIVIDUAL</property>
+                <property name="Individual02">BATCH</property>
+            </trigger>
+        </field>
     </definition>
 </ui-form>

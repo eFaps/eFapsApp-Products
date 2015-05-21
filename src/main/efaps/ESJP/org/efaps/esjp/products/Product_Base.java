@@ -32,6 +32,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.efaps.admin.common.NumberGenerator;
 import org.efaps.admin.common.SystemConfiguration;
@@ -590,6 +591,43 @@ public abstract class Product_Base
             }
         }
         ret.put(ReturnValues.SNIPLETT, InterfaceUtils.wrappInScriptTag(_parameter, js, true, 1000));
+        return ret;
+    }
+
+
+    public Return individualAccessCheck(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        final PrintQuery print = CachedPrintQuery.get4Request(_parameter.getInstance());
+        print.addAttribute(CIProducts.ProductAbstract.Individual);
+        print.execute();
+        final Object obj = print.getAttribute(CIProducts.ProductAbstract.Individual);
+
+        final Collection<String> indivuals = analyseProperty(_parameter, "Individual").values();
+        for (final String indivualStr : indivuals) {
+            final ProductIndividual individual = EnumUtils.getEnum(Products.ProductIndividual.class, indivualStr);
+            switch (individual) {
+                case BATCH:
+                    if (ProductIndividual.BATCH.equals(obj)) {
+                        ret.put(ReturnValues.TRUE, true);
+                        break;
+                    }
+                    break;
+                case INDIVIDUAL:
+                    if (ProductIndividual.INDIVIDUAL.equals(obj)) {
+                        ret.put(ReturnValues.TRUE, true);
+                        break;
+                    }
+                    break;
+                default:
+                    if (ProductIndividual.NONE.equals(obj) || obj == null) {
+                        ret.put(ReturnValues.TRUE, true);
+                        break;
+                    }
+                    break;
+            }
+        }
         return ret;
     }
 

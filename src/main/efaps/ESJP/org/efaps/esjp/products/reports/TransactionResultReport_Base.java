@@ -55,9 +55,11 @@ import org.efaps.esjp.ci.CIERP;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.jasperreport.AbstractDynamicReport;
 import org.efaps.esjp.common.jasperreport.datatype.DateTimeDate;
+import org.efaps.esjp.common.parameter.ParameterUtil;
 import org.efaps.esjp.erp.FilteredReport;
 import org.efaps.esjp.products.Inventory;
 import org.efaps.esjp.products.Inventory_Base.InventoryBean;
+import org.efaps.esjp.products.Product;
 import org.efaps.esjp.products.StorageGroup;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
@@ -135,6 +137,8 @@ public abstract class TransactionResultReport_Base
         private final FilteredReport filteredReport;
         private ColumnGroupBuilder storageGroup  = null;
 
+        private Boolean individual = null;
+
         /**
          * @param _transactionResultReport_Base
          */
@@ -149,11 +153,15 @@ public abstract class TransactionResultReport_Base
         {
             final List<DataBean> beans = new ArrayList<>();
             final Instance prodInst = _parameter.getInstance();
-            final QueryBuilder queryBldr = new QueryBuilder(CIProducts.TransactionInOutAbstract);
-            queryBldr.addWhereAttrEqValue(CIProducts.TransactionInOutAbstract.Product, prodInst);
+            final QueryBuilder queryBldr;
+            if (isIndividual(_parameter)) {
+                queryBldr = new QueryBuilder(CIProducts.TransactionIndividualAbstract);
+            } else {
+                queryBldr = new QueryBuilder(CIProducts.TransactionInOutAbstract);
+            }
             add2QueryBuilder(_parameter, queryBldr);
             final MultiPrintQuery multi = queryBldr.getPrint();
-            final SelectBuilder selDoc = SelectBuilder.get().linkto(CIProducts.TransactionInOutAbstract.Document);
+            final SelectBuilder selDoc = SelectBuilder.get().linkto(CIProducts.TransactionAbstract.Document);
             final SelectBuilder selDocStatus = new SelectBuilder(selDoc).status();
             final SelectBuilder selDocInst = new SelectBuilder(selDoc).instance();
             final SelectBuilder selDocName = new SelectBuilder(selDoc).attribute(CIERP.DocumentAbstract.Name);
@@ -162,25 +170,29 @@ public abstract class TransactionResultReport_Base
             final SelectBuilder selStorage = SelectBuilder.get().linkto(CIProducts.TransactionInOutAbstract.Storage);
             final SelectBuilder selStorageInst = new SelectBuilder(selStorage).instance();
             final SelectBuilder selStorageName = new SelectBuilder(selStorage).attribute(CIProducts.StorageAbstract.Name);
-            multi.addSelect(selDocInst, selDocStatus, selDocName, selDocContactName, selStorageName, selStorageInst);
-            multi.addAttribute(CIProducts.TransactionInOutAbstract.Quantity,
-                            CIProducts.TransactionInOutAbstract.Description,
-                            CIProducts.TransactionInOutAbstract.Date,
-                            CIProducts.TransactionInOutAbstract.Position);
+            final SelectBuilder selProdName =  SelectBuilder.get().linkto(CIProducts.TransactionAbstract.Product)
+                            .attribute(CIProducts.ProductAbstract.Name);
+            multi.addSelect(selDocInst, selDocStatus, selDocName, selDocContactName, selStorageName, selStorageInst,
+                            selProdName);
+            multi.addAttribute(CIProducts.TransactionAbstract.Quantity,
+                            CIProducts.TransactionAbstract.Description,
+                            CIProducts.TransactionAbstract.Date,
+                            CIProducts.TransactionAbstract.Position);
             multi.execute();
             while (multi.next()) {
                 if (isValidStatus(_parameter, multi.<Status>getSelect(selDocStatus))) {
                     final DataBean bean = getDataBean()
                         .setTransInst(multi.getCurrentInstance())
-                        .setDate(multi.<DateTime>getAttribute(CIProducts.TransactionInOutAbstract.Date))
-                        .setPosition(multi.<Integer>getAttribute(CIProducts.TransactionInOutAbstract.Position))
-                        .setQuantity(multi.<BigDecimal>getAttribute(CIProducts.TransactionInOutAbstract.Quantity))
-                        .setDescription(multi.<String>getAttribute(CIProducts.TransactionInOutAbstract.Description))
+                        .setDate(multi.<DateTime>getAttribute(CIProducts.TransactionAbstract.Date))
+                        .setPosition(multi.<Integer>getAttribute(CIProducts.TransactionAbstract.Position))
+                        .setQuantity(multi.<BigDecimal>getAttribute(CIProducts.TransactionAbstract.Quantity))
+                        .setDescription(multi.<String>getAttribute(CIProducts.TransactionAbstract.Description))
                         .setDocInst(multi.<Instance>getSelect(selDocInst))
                         .setDocName(multi.<String>getSelect(selDocName))
                         .setDocContactName(multi.<String>getSelect(selDocContactName))
                         .setStorageName(multi.<String>getSelect(selStorageName))
-                        .setStorageInst(multi.<Instance>getSelect(selStorageInst));
+                        .setStorageInst(multi.<Instance>getSelect(selStorageInst))
+                        .setProdName(multi.<String>getSelect(selProdName));
                     beans.add(bean);
                     add2Bean(_parameter, bean);
                 }
@@ -253,6 +265,29 @@ public abstract class TransactionResultReport_Base
             return new JRBeanCollectionDataSource(beans);
         }
 
+        protected boolean isIndividual(final Parameter _parameter)
+            throws EFapsException
+        {
+            if (this.individual == null) {
+                final Parameter parameter = ParameterUtil.clone(_parameter);
+                ParameterUtil.setProperty(parameter, "Individual01", "BATCH");
+                ParameterUtil.setProperty(parameter, "Individual02", "INDIVIDUAL");
+                final Return ret = new Product().individualAccessCheck(parameter);
+                if (ret.contains(ReturnValues.TRUE)) {
+                    final Map<String, Object> filter = getFilteredReport().getFilterMap(_parameter);
+                    if (filter.containsKey("individual")) {
+                        this.individual = (Boolean) filter.get("individual");
+                    }
+                    else {
+                        this.individual = false;
+                    }
+                } else {
+                    this.individual = false;
+                }
+            }
+            return this.individual;
+        }
+
         /**
          * @param _parameter
          * @param _bean
@@ -283,6 +318,17 @@ public abstract class TransactionResultReport_Base
                                         final QueryBuilder _queryBldr)
             throws EFapsException
         {
+            final Instance prodInst = _parameter.getInstance();
+            if (isIndividual(_parameter)) {
+                final QueryBuilder attrQueryBldr = new QueryBuilder(CIProducts.StockProductAbstract2IndividualAbstract);
+                attrQueryBldr.addWhereAttrEqValue(CIProducts.StockProductAbstract2IndividualAbstract.FromAbstract,
+                                prodInst);
+                _queryBldr.addWhereAttrInQuery(CIProducts.TransactionAbstract.Product,
+                                attrQueryBldr.getAttributeQuery(
+                                        CIProducts.StockProductAbstract2IndividualAbstract.ToAbstract));
+            } else {
+                _queryBldr.addWhereAttrEqValue(CIProducts.TransactionAbstract.Product, prodInst);
+            }
             final Map<String, Object> filter = getFilteredReport().getFilterMap(_parameter);
             if (filter.containsKey("dateFrom")) {
                 final DateTime date = (DateTime) filter.get("dateFrom");
@@ -369,8 +415,6 @@ public abstract class TransactionResultReport_Base
                                           final JasperReportBuilder _builder)
             throws EFapsException
         {
-
-
             if (!StorageDisplay.NONE.equals(getStorageDisplay(_parameter))) {
                 final TextColumnBuilder<String> storageColumn = DynamicReports.col.column(
                                 this.filteredReport.getDBProperty("Column.StorageName"),
@@ -385,6 +429,14 @@ public abstract class TransactionResultReport_Base
             final TextColumnBuilder<DateTime> dateColumn = DynamicReports.col.column(
                             this.filteredReport.getDBProperty("Column.Date"),
                             "date", DateTimeDate.get());
+            _builder.addColumn(dateColumn);
+
+            if (isIndividual(_parameter)) {
+                final TextColumnBuilder<String> prodNameColumn = DynamicReports.col.column(
+                                this.filteredReport.getDBProperty("Column.ProdName"),
+                                "prodName", DynamicReports.type.stringType());
+                _builder.addColumn(prodNameColumn);
+            }
 
             final TextColumnBuilder<BigDecimal> inColumn = DynamicReports.col.column(
                             this.filteredReport.getDBProperty("Column.Incoming"),
@@ -420,7 +472,7 @@ public abstract class TransactionResultReport_Base
                             BigDecimal.class, outColumn);
             final AggregationSubtotalBuilder<Object> totalSum = DynamicReports.sbt.aggregate(new TotalExpression(false),
                             totalColumn, Calculation.NOTHING).setDataType(DynamicReports.type.bigDecimalType());
-            _builder.addColumn(dateColumn, inColumn, outColumn, totalColumn, docContactNameColumn, docTypeColumn,
+            _builder.addColumn(inColumn, outColumn, totalColumn, docContactNameColumn, docTypeColumn,
                             docNameColumn, descrColumn)
                             .addSubtotalAtSummary(incomingSum, outgoingSum, totalSum);
 
@@ -498,9 +550,12 @@ public abstract class TransactionResultReport_Base
 
         private Instance storageInst;
 
+        private String prodName;
+
         public boolean isTransOut()
         {
-            return getTransInst().getType().isCIType(CIProducts.TransactionOutbound);
+            return getTransInst().getType().isCIType(CIProducts.TransactionOutbound)
+                            || getTransInst().getType().isCIType(CIProducts.TransactionIndividualOutbound);
         }
 
         public String getDocType()
@@ -768,6 +823,29 @@ public abstract class TransactionResultReport_Base
         public DataBean setStorageInst(final Instance _storageInst)
         {
             this.storageInst = _storageInst;
+            return this;
+        }
+
+
+        /**
+         * Getter method for the instance variable {@link #prodName}.
+         *
+         * @return value of instance variable {@link #prodName}
+         */
+        public String getProdName()
+        {
+            return this.prodName;
+        }
+
+
+        /**
+         * Setter method for instance variable {@link #prodName}.
+         *
+         * @param _prodName value for instance variable {@link #prodName}
+         */
+        public DataBean setProdName(final String _prodName)
+        {
+            this.prodName = _prodName;
             return this;
         }
     }
