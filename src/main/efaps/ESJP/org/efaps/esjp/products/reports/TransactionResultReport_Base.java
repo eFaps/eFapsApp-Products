@@ -133,6 +133,7 @@ public abstract class TransactionResultReport_Base
     {
 
         private final FilteredReport filteredReport;
+        private ColumnGroupBuilder storageGroup  = null;
 
         /**
          * @param _transactionResultReport_Base
@@ -149,8 +150,8 @@ public abstract class TransactionResultReport_Base
             final List<DataBean> beans = new ArrayList<>();
             final Instance prodInst = _parameter.getInstance();
             final QueryBuilder queryBldr = new QueryBuilder(CIProducts.TransactionInOutAbstract);
-            add2QueryBuilder(_parameter, queryBldr);
             queryBldr.addWhereAttrEqValue(CIProducts.TransactionInOutAbstract.Product, prodInst);
+            add2QueryBuilder(_parameter, queryBldr);
             final MultiPrintQuery multi = queryBldr.getPrint();
             final SelectBuilder selDoc = SelectBuilder.get().linkto(CIProducts.TransactionInOutAbstract.Document);
             final SelectBuilder selDocStatus = new SelectBuilder(selDoc).status();
@@ -169,7 +170,7 @@ public abstract class TransactionResultReport_Base
             multi.execute();
             while (multi.next()) {
                 if (isValidStatus(_parameter, multi.<Status>getSelect(selDocStatus))) {
-                    final DataBean bean = new DataBean()
+                    final DataBean bean = getDataBean()
                         .setTransInst(multi.getCurrentInstance())
                         .setDate(multi.<DateTime>getAttribute(CIProducts.TransactionInOutAbstract.Date))
                         .setPosition(multi.<Integer>getAttribute(CIProducts.TransactionInOutAbstract.Position))
@@ -181,6 +182,7 @@ public abstract class TransactionResultReport_Base
                         .setStorageName(multi.<String>getSelect(selStorageName))
                         .setStorageInst(multi.<Instance>getSelect(selStorageInst));
                     beans.add(bean);
+                    add2Bean(_parameter, bean);
                 }
             }
             final ComparatorChain<DataBean> chain = new ComparatorChain<DataBean>();
@@ -249,6 +251,22 @@ public abstract class TransactionResultReport_Base
                current = current.subtract(bean.getQuantity());
             }
             return new JRBeanCollectionDataSource(beans);
+        }
+
+        /**
+         * @param _parameter
+         * @param _bean
+         */
+        protected void add2Bean(final Parameter _parameter,
+                                final DataBean _bean)
+            throws EFapsException
+        {
+            // to be used by implementations
+        }
+
+        protected DataBean getDataBean()
+        {
+            return new DataBean();
         }
 
         protected boolean isValidStatus(final Parameter _parameter,
@@ -352,15 +370,15 @@ public abstract class TransactionResultReport_Base
             throws EFapsException
         {
 
-            ColumnGroupBuilder storageGroup  = null;
+
             if (!StorageDisplay.NONE.equals(getStorageDisplay(_parameter))) {
                 final TextColumnBuilder<String> storageColumn = DynamicReports.col.column(
                                 this.filteredReport.getDBProperty("Column.StorageName"),
                                 "storageName", DynamicReports.type.stringType());
                 _builder.addColumn(storageColumn);
                 if (StorageDisplay.GROUP.equals(getStorageDisplay(_parameter))) {
-                    storageGroup = DynamicReports.grp.group(storageColumn);
-                    _builder.groupBy(storageGroup);
+                    this.storageGroup = DynamicReports.grp.group(storageColumn);
+                    _builder.groupBy(this.storageGroup);
                 }
             }
 
@@ -380,9 +398,9 @@ public abstract class TransactionResultReport_Base
                             this.filteredReport.getDBProperty("Column.Total"),
                             "total", DynamicReports.type.bigDecimalType());
 
-            final TextColumnBuilder<String> descrColumn = DynamicReports.col.column(
-                            this.filteredReport.getDBProperty("Column.Description"),
-                            "description", DynamicReports.type.stringType()).setWidth(250);
+            final TextColumnBuilder<String> docContactNameColumn = DynamicReports.col.column(
+                            this.filteredReport.getDBProperty("Column.DocContactName"),
+                            "docContactName", DynamicReports.type.stringType()).setWidth(250);
 
             final TextColumnBuilder<String> docNameColumn = DynamicReports.col.column(
                             this.filteredReport.getDBProperty("Column.DocName"),
@@ -392,9 +410,9 @@ public abstract class TransactionResultReport_Base
                             this.filteredReport.getDBProperty("Column.DocType"),
                             "docType", DynamicReports.type.stringType());
 
-            final TextColumnBuilder<String> docContactNameColumn = DynamicReports.col.column(
-                            this.filteredReport.getDBProperty("Column.DocContactName"),
-                            "docContactName", DynamicReports.type.stringType()).setWidth(250);
+            final TextColumnBuilder<String> descrColumn = DynamicReports.col.column(
+                            this.filteredReport.getDBProperty("Column.Description"),
+                            "description", DynamicReports.type.stringType()).setWidth(250);
 
             final AggregationSubtotalBuilder<BigDecimal> incomingSum = DynamicReports.sbt.sum("incoming",
                             BigDecimal.class, inColumn);
@@ -402,11 +420,11 @@ public abstract class TransactionResultReport_Base
                             BigDecimal.class, outColumn);
             final AggregationSubtotalBuilder<Object> totalSum = DynamicReports.sbt.aggregate(new TotalExpression(false),
                             totalColumn, Calculation.NOTHING).setDataType(DynamicReports.type.bigDecimalType());
-            _builder.addColumn(dateColumn, inColumn, outColumn, totalColumn, descrColumn, docTypeColumn, docNameColumn,
-                             docContactNameColumn)
+            _builder.addColumn(dateColumn, inColumn, outColumn, totalColumn, docContactNameColumn, docTypeColumn,
+                            docNameColumn, descrColumn)
                             .addSubtotalAtSummary(incomingSum, outgoingSum, totalSum);
 
-            if (storageGroup != null) {
+            if (this.storageGroup != null) {
                 final AggregationSubtotalBuilder<BigDecimal> incomingSum4Grp = DynamicReports.sbt.sum("incoming",
                                 BigDecimal.class, inColumn);
                 final AggregationSubtotalBuilder<BigDecimal> outgoingSum4Grp = DynamicReports.sbt.sum("outgoing",
@@ -414,7 +432,7 @@ public abstract class TransactionResultReport_Base
                 final AggregationSubtotalBuilder<Object> totalSum4Grp = DynamicReports.sbt.aggregate(
                                 new TotalExpression(true),
                                 totalColumn, Calculation.NOTHING).setDataType(DynamicReports.type.bigDecimalType());
-                _builder.subtotalsAtGroupFooter(storageGroup, incomingSum4Grp, outgoingSum4Grp, totalSum4Grp);
+                _builder.subtotalsAtGroupFooter(this.storageGroup, incomingSum4Grp, outgoingSum4Grp, totalSum4Grp);
             }
             _builder.addField("storageInst", Instance.class);
         }
@@ -441,6 +459,17 @@ public abstract class TransactionResultReport_Base
         public FilteredReport getFilteredReport()
         {
             return this.filteredReport;
+        }
+
+
+        /**
+         * Getter method for the instance variable {@link #storageGroup}.
+         *
+         * @return value of instance variable {@link #storageGroup}
+         */
+        protected ColumnGroupBuilder getStorageGroup()
+        {
+            return this.storageGroup;
         }
     }
 
