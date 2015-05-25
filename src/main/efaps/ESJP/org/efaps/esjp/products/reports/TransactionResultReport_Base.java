@@ -452,7 +452,7 @@ public abstract class TransactionResultReport_Base
 
             final TextColumnBuilder<String> docContactNameColumn = DynamicReports.col.column(
                             this.filteredReport.getDBProperty("Column.DocContactName"),
-                            "docContactName", DynamicReports.type.stringType()).setWidth(250);
+                            "docContactName", DynamicReports.type.stringType()).setWidth(200);
 
             final TextColumnBuilder<String> docNameColumn = DynamicReports.col.column(
                             this.filteredReport.getDBProperty("Column.DocName"),
@@ -464,7 +464,7 @@ public abstract class TransactionResultReport_Base
 
             final TextColumnBuilder<String> descrColumn = DynamicReports.col.column(
                             this.filteredReport.getDBProperty("Column.Description"),
-                            "description", DynamicReports.type.stringType()).setWidth(250);
+                            "description", DynamicReports.type.stringType()).setWidth(200);
 
             final AggregationSubtotalBuilder<BigDecimal> incomingSum = DynamicReports.sbt.sum("incoming",
                             BigDecimal.class, inColumn);
