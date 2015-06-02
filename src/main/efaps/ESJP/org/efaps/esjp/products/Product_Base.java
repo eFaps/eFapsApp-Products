@@ -721,6 +721,9 @@ public abstract class Product_Base
         final Instance instance = _parameter.getInstance();
         if (storage != null && storage.isValid() && instance == null) {
             _parameter.put(ParameterValues.INSTANCE, storage);
+        } else if (_parameter.getCallInstance() != null && _parameter.getCallInstance().isValid()
+                        && _parameter.getCallInstance().getType().isKindOf(CIProducts.StorageAbstract)) {
+            _parameter.put(ParameterValues.INSTANCE, _parameter.getCallInstance());
         }
         return autoComplete4ProductsInStorage(_parameter);
     }

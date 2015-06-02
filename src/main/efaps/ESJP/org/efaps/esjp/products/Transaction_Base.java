@@ -23,6 +23,7 @@ package org.efaps.esjp.products;
 import java.io.File;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,6 +64,7 @@ import org.efaps.esjp.ci.CITableProducts;
 import org.efaps.esjp.erp.AbstractWarning;
 import org.efaps.esjp.erp.CommonDocument;
 import org.efaps.esjp.erp.IWarning;
+import org.efaps.esjp.erp.NumberFormatter;
 import org.efaps.esjp.erp.WarningUtil;
 import org.efaps.ui.wicket.models.cell.UIFormCell;
 import org.efaps.util.EFapsException;
@@ -1052,57 +1054,75 @@ public abstract class Transaction_Base
      * @return new Return.
      * @throws EFapsException on error.
      */
-    public Return restoreInventory(final Parameter _parameter)
+    public Return setInventory(final Parameter _parameter)
         throws EFapsException
     {
-        final String dateStr = _parameter.getParameterValue("date");
-        // get a new DateTime from the ISO Date String fomr the Parameters
-        final DateTime date = new DateTime(dateStr);
-        final BigDecimal quantityOld = new BigDecimal(_parameter.getParameterValue("quantity"));
+        final Return ret = new Return();
+        final String date = _parameter.getParameterValue(CIFormProducts.Products_InventorySet4ProductsForm.date.name);
+        final String descr = _parameter
+                        .getParameterValue(CIFormProducts.Products_InventorySet4ProductsForm.description.name);
 
-        final Instance storageInst = _parameter.getInstance();
-        final Instance productInst = Instance.get(_parameter.getParameterValue("product"));
-        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.Inventory);
-        queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, storageInst.getId());
-        queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Product, productInst.getId());
-        final MultiPrintQuery multi = queryBldr.getPrint();
-        multi.addAttribute(CIProducts.Inventory.Quantity);
-        multi.execute();
-        while (multi.next()) {
-            final BigDecimal quantityCur = multi.<BigDecimal>getAttribute(CIProducts.Inventory.Quantity);
-            BigDecimal quantityAux = quantityCur;
+        final Instance storageInst = _parameter.getCallInstance();
+        final String[] products = _parameter
+                        .getParameterValues(CITableProducts.Products_InventorySet4ProductsTable.product.name);
+        final String[] quantities = _parameter
+                        .getParameterValues(CITableProducts.Products_InventorySet4ProductsTable.quantity.name);
+        final String[] uoMs = _parameter
+                        .getParameterValues(CITableProducts.Products_InventorySet4ProductsTable.uoM.name);
 
-            final QueryBuilder transQueryBldr = new QueryBuilder(CIProducts.TransactionInOutAbstract);
-            transQueryBldr.addWhereAttrEqValue(CIProducts.TransactionInOutAbstract.Storage, storageInst.getId());
-            transQueryBldr.addWhereAttrEqValue(CIProducts.TransactionInOutAbstract.Product, productInst.getId());
-            transQueryBldr.addWhereAttrGreaterValue(CIProducts.TransactionInOutAbstract.Date, date.minusMinutes(1));
-            final MultiPrintQuery transMulti = transQueryBldr.getPrint();
-            transMulti.addAttribute(CIProducts.TransactionInOutAbstract.Quantity,
-                            CIProducts.TransactionInOutAbstract.UoM);
-            transMulti.execute();
-            while (transMulti.next()) {
-                BigDecimal quantity = transMulti.<BigDecimal>getAttribute(CIProducts.TransactionInOutAbstract.Quantity);
-                final Long uoMId = transMulti.<Long>getAttribute(CIProducts.TransactionInOutAbstract.UoM);
-                final UoM uoM = Dimension.getUoM(uoMId);
-                quantity = quantity.multiply(new BigDecimal(uoM.getNumerator())
-                                .divide(new BigDecimal(uoM.getDenominator())));
-                final Instance inst = transMulti.getCurrentInstance();
-                if (inst.getType().isKindOf(CIProducts.TransactionInbound.getType())) {
-                    quantity = quantity.negate();
+        final List<CreatedDoc> transLists = new ArrayList<CreatedDoc>();
+        if (products != null) {
+            for (int i = 0; i < products.length; i++) {
+                final Instance productInst = Instance.get(products[i]);
+                BigDecimal quantity = null;
+                try {
+                    quantity = (BigDecimal) NumberFormatter.get().getFormatter().parse(quantities[i]);
+                } catch (final ParseException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
                 }
-                quantity = quantityAux.add(quantity);
-                quantityAux = quantity;
+                final Long uoMId = Long.parseLong(uoMs[i]);
+
+                if (productInst != null && productInst.isValid() && quantity != null && uoMId != null) {
+
+                    final QueryBuilder queryBldr = new QueryBuilder(CIProducts.Inventory);
+                    queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, storageInst);
+                    queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Product, productInst);
+                    final MultiPrintQuery multi = queryBldr.getPrint();
+                    multi.addAttribute(CIProducts.Inventory.Quantity);
+                    multi.execute();
+                    while (multi.next()) {
+                        final BigDecimal currQuantity = multi.<BigDecimal>getAttribute(CIProducts.Inventory.Quantity);
+                        BigDecimal moveQty;
+                        CIType type;
+                        if (quantity.compareTo(currQuantity) != 0) {
+                            if (quantity.compareTo(currQuantity) > 0) {
+                                moveQty = quantity.subtract(currQuantity);
+                                type = CIProducts.TransactionInbound;
+                            } else {
+                                moveQty = currQuantity.subtract(quantity);
+                                type = CIProducts.TransactionOutbound;
+                            }
+                            final CreatedDoc trans = addTransactionProduct(type,
+                                            moveQty, storageInst, uoMId, date, productInst, descr);
+                            transLists.add(trans);
+                        }
+                    }
+                }
             }
-
-            final BigDecimal diff = quantityOld.subtract(quantityAux);
-            final BigDecimal quantityNew = quantityCur.add(diff);
-
-            final Update update = new Update(multi.getCurrentInstance());
-            update.add(CIProducts.Inventory.Quantity, quantityNew);
-            update.execute();
         }
-
-        return new Return();
+        if (!transLists.isEmpty()) {
+            final CreatedDoc doc = addTransactionDocument2ConnectTransaction(_parameter,
+                            transLists.toArray(new CreatedDoc[transLists.size()]));
+            Context.getThreadContext().setSessionAttribute(NAMEKEY,
+                            doc.getValues().get(CIERP.DocumentAbstract.Name.name));
+            final File file = new TransactionDocument().createReport(_parameter, doc);
+            if (file != null) {
+                ret.put(ReturnValues.VALUES, file);
+                ret.put(ReturnValues.TRUE, true);
+            }
+        }
+        return ret;
     }
 
     public Return validateQuantity(final Parameter _parameter)
