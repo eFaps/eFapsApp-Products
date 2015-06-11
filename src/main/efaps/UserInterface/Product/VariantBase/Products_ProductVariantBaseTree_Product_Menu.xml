@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
  Copyright 2003 - 2015 The eFaps Team
 
@@ -17,24 +15,15 @@
  limitations under the License.
 
 -->
-
 <ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>246542fc-173b-48ec-8cc4-9b635920dc9a</uuid>
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>3b4eef77-a181-499e-b00d-830a9b88d3a1</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_Product_MyDesk</name>
+        <name>Products_ProductVariantBaseTree_Product_Menu</name>
         <childs>
-            <child>Products_ProductInStockMyDesk</child>
-            <child>Products_ProductMaterialMyDesk</child>
-            <child>Products_ProductVariantBaseMyDesk</child>
-            <child>Products_InventoryMyDesk</child>
-            <child>Products_InventoryValueMyDesk</child>
-            <child>Products_InventoryIndividualMyDesk</child>
-            <child>Products_StorageAbstractMyDesk</child>
-            <child>Products_StaticStorageMyDesk</child>
-            <child>Products_TransactionAbstractMyDesk</child>
+            <child>Products_ProductVariantBaseTree_Product_Menu_Action</child>
         </childs>
     </definition>
 </ui-menu>
