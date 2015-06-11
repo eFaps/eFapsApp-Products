@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2014 The eFaps Team
+ * Copyright 2003 - 2015 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Revision:        $Rev$
- * Last Changed:    $Date$
- * Last Changed By: $Author$
  */
 
 package org.efaps.esjp.products.reports;
@@ -48,7 +45,7 @@ import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
 import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
-import org.efaps.admin.program.esjp.EFapsRevision;
+import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Instance;
 import org.efaps.esjp.common.jasperreport.AbstractDynamicReport;
@@ -64,11 +61,9 @@ import org.joda.time.DateTime;
  * TODO comment!
  *
  * @author The eFaps Team
- * @version $Id: InventoryReport_Base.java 14621 2014-12-15 00:12:35Z
- *          jan@moxter.net $
  */
 @EFapsUUID("db37f9fd-a5ce-4feb-8c07-8932da68228a")
-@EFapsRevision("$Rev$")
+@EFapsApplication("eFapsApp-Products")
 public abstract class InventoryReport_Base
     extends FilteredReport
 {
@@ -279,10 +274,18 @@ public abstract class InventoryReport_Base
             return ret;
         }
 
-        protected boolean isEvaluateCost(final Parameter _parameter)
+        protected Instance getCurrencyInst(final Parameter _parameter)
             throws EFapsException
         {
-            return "true".equalsIgnoreCase(getProperty(_parameter, "EvaluateCost"));
+            Instance ret = null;
+            if ("true".equalsIgnoreCase(getProperty(_parameter, "EvaluateCost"))) {
+                final Map<String, Object> map = getFilterMap(_parameter);
+                if (map.containsKey("currency")) {
+                    final CurrencyFilterValue filter = (CurrencyFilterValue) map.get("currency");
+                    ret = filter.getObject();
+                }
+            }
+            return ret;
         }
 
         protected List<Instance> getStorageInsts(final Parameter _parameter)
@@ -420,7 +423,7 @@ public abstract class InventoryReport_Base
                             .getProperty(InventoryReport.class.getName() + ".Column.currency"),
                             "currency", DynamicReports.type.stringType());
 
-            if (isEvaluateCost(_parameter)) {
+            if (getCurrencyInst(_parameter) != null) {
                 _builder.addColumn(costColumn, totalColumn, currencyColumn);
                 if (StorageDisplay.COLUMN.equals(getStorageDisplay(_parameter))) {
                     final ColumnTitleGroupBuilder costGroup = DynamicReports.grid.titleGroup(
@@ -486,7 +489,7 @@ public abstract class InventoryReport_Base
                 if (_inventory == null) {
                     inventory = getInventoryObject(_parameter);
                     inventory.setStorageInsts(getStorageInsts(_parameter));
-                    inventory.setEvaluateCost(isEvaluateCost(_parameter));
+                    inventory.setCurrencyInst(getCurrencyInst(_parameter));
                     inventory.setShowStorage(!StorageDisplay.NONE.equals(getStorageDisplay(_parameter)));
                     inventory.setShowProdClass(!ClassDisplay.NONE.equals(getClassDisplay(_parameter)));
                     inventory.setDate((DateTime) getFilterMap(_parameter).get("date"));

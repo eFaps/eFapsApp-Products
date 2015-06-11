@@ -286,7 +286,7 @@ public abstract class Cost_Base
                 final Instance prodInst = multi.getSelect(selProdInst);
                 final BigDecimal cost = multi.getAttribute(CIProducts.ProductCost.Price);
                 final CostBean bean = new CostBean().setProductInstance(prodInst).setCurrencyInstance(curInst)
-                                .setCost(cost);
+                                .setCost(cost).setDate(_date);
                 ret.put(prodInst, bean);
             }
         }
@@ -314,16 +314,8 @@ public abstract class Cost_Base
     {
         BigDecimal ret = BigDecimal.ZERO;
         final CostBean costBean = new Cost().getCost(_parameter, _date, _productInstance);
-        if (costBean != null && costBean.getCost().compareTo(BigDecimal.ZERO) != 0) {
-            if (costBean.getCurrencyInstance().equals(_currencyInstance)) {
-                ret = costBean.getCost();
-            } else {
-                final RateInfo[] rateInfos = new Currency().evaluateRateInfos(_parameter, (String) null,
-                                costBean.getCurrencyInstance(), _currencyInstance);
-                final RateInfo rateInfo = rateInfos[2];
-                ret = costBean.getCost().setScale(8, BigDecimal.ROUND_HALF_UP)
-                                .divide(rateInfo.getRate(), BigDecimal.ROUND_HALF_UP);
-            }
+        if (costBean != null) {
+            ret = costBean.getCost4Currency(_parameter, _currencyInstance);
         }
         return ret;
     }
@@ -331,7 +323,7 @@ public abstract class Cost_Base
 
     public static class CostBean
     {
-
+        private DateTime date;
         private Instance currencyInstance;
         private Instance productInstance;
         private BigDecimal cost;
@@ -390,6 +382,22 @@ public abstract class Cost_Base
             return this.cost;
         }
 
+        public BigDecimal getCost4Currency(final Parameter _parameter,
+                                           final Instance _currencyInst) throws EFapsException
+        {
+            BigDecimal ret = BigDecimal.ZERO;
+            if (getCurrencyInstance().equals(_currencyInst)) {
+                ret = getCost();
+            } else if (getCost().compareTo( BigDecimal.ZERO) != 0){
+                final RateInfo[] rateInfos = new Currency().evaluateRateInfos(_parameter, getDate(),
+                                getCurrencyInstance(), _currencyInst);
+                final RateInfo rateInfo = rateInfos[2];
+                ret = getCost().setScale(8, BigDecimal.ROUND_HALF_UP)
+                                .divide(rateInfo.getRate(), BigDecimal.ROUND_HALF_UP);
+            }
+            return ret;
+        }
+
         /**
          * Setter method for instance variable {@link #cost}.
          *
@@ -401,6 +409,25 @@ public abstract class Cost_Base
             return this;
         }
 
-    }
+        /**
+         * Getter method for the instance variable {@link #date}.
+         *
+         * @return value of instance variable {@link #date}
+         */
+        public DateTime getDate()
+        {
+            return this.date;
+        }
 
+        /**
+         * Setter method for instance variable {@link #date}.
+         *
+         * @param _date value for instance variable {@link #date}
+         */
+        public CostBean setDate(final DateTime _date)
+        {
+            this.date = _date;
+            return this;
+        }
+    }
 }

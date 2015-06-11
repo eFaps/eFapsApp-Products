@@ -13,9 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Revision:        $Rev$
- * Last Changed:    $Date$
- * Last Changed By: $Author$
  */
 
 package org.efaps.esjp.products;
@@ -37,7 +34,7 @@ import org.efaps.admin.datamodel.Dimension;
 import org.efaps.admin.datamodel.Dimension.UoM;
 import org.efaps.admin.datamodel.Status;
 import org.efaps.admin.event.Parameter;
-import org.efaps.admin.program.esjp.EFapsRevision;
+import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.CachedPrintQuery;
 import org.efaps.db.Instance;
@@ -57,10 +54,9 @@ import org.joda.time.DateTime;
  * TODO comment!
  *
  * @author The eFaps Team
- * @version $Id$
  */
 @EFapsUUID("f2ec6675-5dec-4529-8e62-3849e8dcadd2")
-@EFapsRevision("$Rev$")
+@EFapsApplication("eFapsApp-Products")
 public abstract class Inventory_Base
     extends AbstractCommon
 {
@@ -76,9 +72,10 @@ public abstract class Inventory_Base
     private boolean showProdClass;
 
     /**
-     * Activate Cost evaluation.
+     * Currency the cost evaluation will be executed for.
+     * If null no cost evaluation is done.
      */
-    private boolean evaluateCost = false;
+    private Instance currencyInst;
 
     /**
      * Instances of storages included in the inventory.
@@ -291,7 +288,7 @@ public abstract class Inventory_Base
                             .getCosts(_parameter, getDate() == null ? new DateTime() : getDate(),
                                             _prodInsts.toArray(new Instance[_prodInsts.size()]));
             for (final InventoryBean bean : _beans) {
-                bean.setCostBean(costs.get(bean.getProdInstance()));
+                bean.setCostBean(_parameter, costs.get(bean.getProdInstance()), getCurrencyInst());
             }
         }
     }
@@ -400,17 +397,27 @@ public abstract class Inventory_Base
      */
     public boolean isEvaluateCost()
     {
-        return this.evaluateCost;
+        return getCurrencyInst() != null && this.currencyInst.isValid();
     }
 
     /**
-     * Setter method for instance variable {@link #evaluateCost}.
+     * Setter method for instance variable {@link #currencyInst}.
      *
-     * @param _evaluateCost value for instance variable {@link #evaluateCost}
+     * @param _evaluateCost value for instance variable {@link #currencyInst}
      */
-    public void setEvaluateCost(final boolean _evaluateCost)
+    public void setCurrencyInst(final Instance _currencyInst)
     {
-        this.evaluateCost = _evaluateCost;
+        this.currencyInst = _currencyInst;
+    }
+
+    /**
+     * Getter method for the instance variable {@link #currencyInst}.
+     *
+     * @return value of instance variable {@link #currencyInst}
+     */
+    public Instance getCurrencyInst()
+    {
+        return this.currencyInst;
     }
 
     /**
@@ -694,13 +701,20 @@ public abstract class Inventory_Base
         /**
          * @param _costBean
          */
-        public void setCostBean(final CostBean _costBean)
+        public void setCostBean(final Parameter _parameter,
+                                final CostBean _costBean,
+                                final Instance _currencyInst)
             throws EFapsException
         {
             if (_costBean != null) {
                 this.costBean = _costBean;
-                this.cost = getCostBean().getCost();
-                this.currency = CurrencyInst.get(getCostBean().getCurrencyInstance()).getName();
+                if (_currencyInst != null && _currencyInst.isValid()) {
+                    this.currency = CurrencyInst.get(_currencyInst).getSymbol();
+                    this.cost = getCostBean().getCost4Currency(_parameter, _currencyInst);
+                } else {
+                    this.currency = CurrencyInst.get(getCostBean().getCurrencyInstance()).getSymbol();
+                    this.cost = getCostBean().getCost();
+                }
             }
         }
 
