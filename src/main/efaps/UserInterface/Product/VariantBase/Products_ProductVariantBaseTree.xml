@@ -23,7 +23,7 @@
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductVariantBaseTree</name>
         <target>
-            <menu>Products_ProductTree_Menu</menu>
+            <menu>Products_ProductVariantBaseTree_Menu</menu>
             <form>Products_ProductVariantBaseForm</form>
         </target>
         <type>Products_ProductVariantBase</type>

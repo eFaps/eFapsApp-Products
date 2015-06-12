@@ -40,12 +40,12 @@
         <!-- target definitions -->
         <target>
             <form>Products_ProductCreateIndividualForm</form>
-            <execute program="org.efaps.esjp.products.Product" method="createUnique">
+            <execute program="org.efaps.esjp.products.Product" method="createIndividual">
                 <property name="ConnectChildAttribute">ToLink</property>
                 <property name="ConnectParentAttribute">FromLink</property>
                 <property name="ConnectType">Products_ProductStandart2Individual</property>
             </execute>
-            
+
         </target>
 
         <!-- properties -->
