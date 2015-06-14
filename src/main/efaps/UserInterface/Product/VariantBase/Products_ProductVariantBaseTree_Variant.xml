@@ -17,20 +17,15 @@
 -->
 <ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>2bf1ce59-3713-4d4f-b5ad-98ea8691838a</uuid>
+    <uuid>240dfffe-3868-49ee-88e6-06bba4607435</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductVariantBaseTree</name>
+        <name>Products_ProductVariantBaseTree_Variant</name>
         <target>
-            <menu>Products_ProductVariantBaseTree_Menu</menu>
-            <form>Products_ProductVariantBaseForm</form>
+            <menu>Products_ProductVariantBaseTree_Variant_Menu</menu>
+            <form>Products_ProductVariantBaseVariantForm</form>
         </target>
-        <type>Products_ProductVariantBase</type>
-        <childs>
-            <child>Products_ProductVariantBaseTree_Product</child>
-            <child>Products_ProductVariantBaseTree_Variant</child>
-        </childs>
         <property name="Target">content</property>
         <property name="TargetMode">view</property>
     </definition>

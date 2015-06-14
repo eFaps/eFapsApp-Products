@@ -15,25 +15,27 @@
  limitations under the License.
 
 -->
-<ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<datamodel-type xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>50c95dca-87e2-423f-a740-3f523a18912e</uuid>
+    <uuid>9fbbb266-a13b-4596-a776-bf0b15a4d258</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductVariantBaseMyDesk_Menu_Action_Create</name>
-        <access>
-            <role>Products_Admin</role>
-        </access>
-        <target>
-            <form>Products_ProductVariantBaseForm</form>
-            <execute program="org.efaps.esjp.products.variant.Variant" method="create"/>
-            <validate method="validate" program="org.efaps.esjp.products.Product" />
-        </target>
-        <property name="Target">modal</property>
-        <property name="TargetCreateType">Products_ProductVariantBase</property>
-        <property name="TargetMode">create</property>
-        <property name="WindowHeight">460</property>
-        <property name="WindowWidth">515</property>
+        <name>Products_ProductVariantBase2Product</name>
+        <parent>Products_Product2ProductAbstract</parent>
+        <attribute>
+            <name>FromLink</name>
+            <type>Link</type>
+            <typelink>Products_ProductVariantBase</typelink>
+            <sqltable>Products_Product2ProductAbstractSQLTable</sqltable>
+            <sqlcolumn>FROMID</sqlcolumn>
+        </attribute>
+        <attribute>
+            <name>ToLink</name>
+            <type>Link</type>
+            <typelink>Products_ProductAbstract</typelink>
+            <sqltable>Products_Product2ProductAbstractSQLTable</sqltable>
+            <sqlcolumn>TOID</sqlcolumn>
+        </attribute>
     </definition>
-</ui-command>
+</datamodel-type>

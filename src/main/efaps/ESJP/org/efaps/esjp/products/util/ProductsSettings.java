@@ -89,7 +89,12 @@ public interface ProductsSettings
     String LASTMOVEREP = ProductsSettings.BASE + "LastMovementReport";
 
     /**
-     * Properties for the LastMovementReport.
+     * Length of the Suffix for families.
      */
     String FAMILYSUFFIXLENGTH = ProductsSettings.BASE + "FamilySuffixRegex";
+
+    /**
+     * Properties. Can be concatenated. Setting for Variant Attributes.
+     */
+    String VARIANTCONFIG = ProductsSettings.BASE + "VariantConfiguration";
 }

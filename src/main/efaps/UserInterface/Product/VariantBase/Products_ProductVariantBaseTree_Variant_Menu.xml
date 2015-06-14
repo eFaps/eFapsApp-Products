@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
  Copyright 2003 - 2015 The eFaps Team
 
@@ -16,24 +15,15 @@
  limitations under the License.
 
 -->
-<ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>1c5c38f2-87cd-4be2-965f-cc074b3fc0d9</uuid>
+    <uuid>cccf879f-d5f5-4438-bb50-0448d7f6fab3</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductVariantBaseTree_Menu_Action_Edit</name>
-        <access>
-            <role>Products_Admin</role>
-            <role>Products_Modifier</role>
-        </access>
-        <target>
-            <form>Products_ProductVariantBaseForm</form>
-             <execute program="org.efaps.esjp.products.variant.Variant" method="edit"/>
-        </target>
-        <property name="Target">modal</property>
-        <property name="TargetMode">edit</property>
-        <property name="WindowHeight">800</property>
-        <property name="WindowWidth">900</property>
+        <name>Products_ProductVariantBaseTree_Variant_Menu</name>
+        <childs>
+            <child>Products_ProductVariantBaseTree_Variant_Menu_Action</child>
+        </childs>
     </definition>
-</ui-command>
+</ui-menu>
