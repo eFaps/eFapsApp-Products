@@ -202,9 +202,14 @@ public abstract class Variant_Base
         final boolean inverse = "true".equalsIgnoreCase(getProperty(_parameter, "Inverse"));
         boolean access = false;
         if (TargetMode.CREATE.equals(_parameter.get(ParameterValues.ACCESSMODE))) {
-            final Command cmd = (Command) _parameter.get(ParameterValues.CALL_CMD);
-            access = cmd != null && cmd.getTargetCreateType() != null
-                            && cmd.getTargetCreateType().isCIType(CIProducts.ProductVariantBase);
+            // if in a classification form during edit
+            if (_parameter.getCallInstance() != null && _parameter.getCallInstance().isValid()) {
+                access = _parameter.getCallInstance().getType().isCIType(CIProducts.ProductVariantBase);
+            } else {
+                final Command cmd = (Command) _parameter.get(ParameterValues.CALL_CMD);
+                access = cmd != null && cmd.getTargetCreateType() != null
+                                && cmd.getTargetCreateType().isCIType(CIProducts.ProductVariantBase);
+            }
         } else {
             if (_parameter.getInstance().getType().isCIType(CIProducts.ProductVariantBase)) {
                 access = true;
