@@ -40,5 +40,8 @@ import org.efaps.admin.program.esjp.EFapsUUID;
 public class VariantElement
     extends VariantElement_Base
 {
-
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
 }

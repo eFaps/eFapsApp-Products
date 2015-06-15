@@ -886,11 +886,16 @@ public abstract class Product_Base
                             for (final Attribute attr : subClassType.getAttributes().values()) {
                                 if (addAttribute(attr, addedAttributes)
                                                 && !subClassType.getLinkAttributeName().equals(attr.getName())) {
-                                    final Object object = multi.getAttribute(attr);
-                                    if (object instanceof Object[]) {
-                                        subInsert.add(attr, (Object[]) object);
+                                    if (_attrMap.containsKey(subClassType.getName() + "_" +  attr.getName())) {
+                                        subInsert.add(attr, _attrMap.get(subClassType.getName()
+                                                        + "_" +  attr.getName()));
                                     } else {
-                                        subInsert.add(attr, object);
+                                        final Object object = multi.getAttribute(attr);
+                                        if (object instanceof Object[]) {
+                                            subInsert.add(attr, (Object[]) object);
+                                        } else {
+                                            subInsert.add(attr, object);
+                                        }
                                     }
                                 }
                             }

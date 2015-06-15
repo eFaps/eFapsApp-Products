@@ -15,15 +15,24 @@
  limitations under the License.
 
 -->
-<ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>bca594f6-4bc7-4513-a457-b0e7ec47140e</uuid>
+    <uuid>74e4b7b0-b75d-4403-bd11-0d47790c06c5</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductVariantBaseTree_Variant_Menu_Action</name>
-        <childs>
-            <child>Products_ProductVariantBaseTree_Variant_Menu_Action_CreateVariants</child>
-        </childs>
+        <name>Products_ProductVariantBaseTree_Variant_Menu_Action_CreateVariants</name>
+        <access>
+            <role>Products_Admin</role>
+        </access>
+        <target>
+            <form>Products_ProductVariantBaseVariantForm</form>
+            <execute method="createVariants" program="org.efaps.esjp.products.variant.Variant" />
+        </target>
+        <property name="Target">modal</property>
+        <property name="TargetCreateType">Products_ProductVariantBase</property>
+        <property name="TargetMode">create</property>
+        <property name="WindowHeight">460</property>
+        <property name="WindowWidth">515</property>
     </definition>
-</ui-menu>
+</ui-command>

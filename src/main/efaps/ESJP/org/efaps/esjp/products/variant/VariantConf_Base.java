@@ -70,7 +70,7 @@ public abstract class VariantConf_Base
     {
         VariantAttribute ret = null;
         for (final VariantAttribute attr : getAttributes()) {
-            if (attr.getName().equals(_key)) {
+            if (attr.getKey().equals(_key)) {
                 ret = attr;
                 break;
             }

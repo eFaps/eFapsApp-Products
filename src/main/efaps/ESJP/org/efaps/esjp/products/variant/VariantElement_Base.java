@@ -17,10 +17,13 @@
 
 package org.efaps.esjp.products.variant;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 
@@ -33,7 +36,12 @@ import org.efaps.admin.program.esjp.EFapsUUID;
 @EFapsApplication("eFapsApp-Products")
 @XmlAccessorType(XmlAccessType.NONE)
 public abstract class VariantElement_Base
+    implements Serializable
 {
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
 
     @XmlAttribute(name = "oid")
     private String oid;
@@ -56,5 +64,11 @@ public abstract class VariantElement_Base
     public void setOid(final String _oid)
     {
         this.oid = _oid;
+    }
+
+    @Override
+    public String toString()
+    {
+        return ToStringBuilder.reflectionToString(this);
     }
 }

@@ -17,7 +17,9 @@
 
 package org.efaps.esjp.products.variant;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -38,23 +40,31 @@ import org.efaps.admin.program.esjp.EFapsUUID;
 @EFapsApplication("eFapsApp-Products")
 @XmlAccessorType(XmlAccessType.NONE)
 public abstract class VariantAttribute_Base
+    implements Serializable
 {
 
-    @XmlAttribute(name = "name")
-    private String name;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+
+    @XmlAttribute(name = "key")
+    private String key;
 
     @XmlElementWrapper(name = "elements")
     @XmlElement(name = "variantElement")
     private final List<VariantElement> elements = new ArrayList<VariantElement>();
+
+    private Iterator<VariantElement> iterator;
 
     /**
      * Getter method for the instance variable {@link #name}.
      *
      * @return value of instance variable {@link #name}
      */
-    public String getName()
+    public String getKey()
     {
-        return this.name;
+        return this.key;
     }
 
     /**
@@ -62,9 +72,9 @@ public abstract class VariantAttribute_Base
      *
      * @param _name value for instance variable {@link #name}
      */
-    public void setName(final String _name)
+    public void setKey(final String _name)
     {
-        this.name = _name;
+        this.key = _name;
     }
 
     /**
@@ -75,5 +85,13 @@ public abstract class VariantAttribute_Base
     public List<VariantElement> getElements()
     {
         return this.elements;
+    }
+
+    public boolean hasNext()
+    {
+        if (this.iterator == null) {
+            this.iterator = this.elements.iterator();
+        }
+        return this.iterator.hasNext();
     }
 }

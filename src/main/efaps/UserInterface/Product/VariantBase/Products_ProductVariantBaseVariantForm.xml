@@ -23,9 +23,10 @@
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductVariantBaseVariantForm</name>
         <field name="variantAttributes">
+            <property name="ModeCreate">EDITABLE</property>
             <property name="HideLabel">true</property>
             <property name="UIType">SNIPPLET</property>
-            <trigger program="org.efaps.esjp.products.Variant"
+            <trigger program="org.efaps.esjp.products.variant.Variant"
                 method="variantFieldValue"
                 name="Products_ProductVariantBaseVariantForm.variantAttributes.UI_FIELD_VALUE"
                 event="UI_FIELD_VALUE"></trigger>

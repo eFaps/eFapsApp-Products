@@ -41,4 +41,9 @@ public class VariantAttribute
     extends VariantAttribute_Base
 {
 
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+
 }
