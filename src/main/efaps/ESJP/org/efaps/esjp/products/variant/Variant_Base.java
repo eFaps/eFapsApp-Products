@@ -61,7 +61,7 @@ import org.efaps.util.EFapsException;
 import com.google.common.collect.Sets;
 
 /**
- * Select4UI,Attribute
+ * Select4UI,Attribute,Phrase4Description
  *
  * SortPrefix, Header
  *
@@ -126,6 +126,9 @@ public abstract class Variant_Base
                 final Map<String, Object> map = new HashMap<String, Object>();
                 map.put(CIProducts.ProductStandart.Name.name,
                                 getName4Variant(_parameter, _parameter.getCallInstance()));
+                map.put(CIProducts.ProductStandart.Description.name,
+                                getDescription4Variant(_parameter, _parameter.getCallInstance(), variant));
+
                 for (final ElementWrapper ele : variant.getElements()) {
                     final Attribute attr = ele.getAttribute();
                     if (attr.getParent() instanceof Classification) {
@@ -171,6 +174,31 @@ public abstract class Variant_Base
             ret = baseName + String.format(".%02d", idx);
         }
         return ret;
+    }
+
+    protected String getDescription4Variant(final Parameter _parameter,
+                                            final Instance _baseInst,
+                                            final VariantWrapper _variant)
+        throws EFapsException
+    {
+        final StringBuilder ret = new StringBuilder();
+        final PrintQuery print = new PrintQuery(_baseInst);
+        print.addAttribute(CIProducts.ProductAbstract.Description);
+        print.execute();
+        final String baseDescription= print.<String>getAttribute(CIProducts.ProductAbstract.Description);
+        ret.append(baseDescription);
+
+        final Properties properties = Products.getSysConfig().getAttributeValueAsProperties(
+                        ProductsSettings.VARIANTCONFIG, true);
+
+        for (final ElementWrapper ele : _variant.getElements()) {
+            final String phrase = properties.getProperty(ele.getAttrKey() + ".Phrase4Description");
+            final PrintQuery elePrint =new PrintQuery(ele.getObjInst());
+            elePrint.addPhrase("Phrase", phrase);
+            elePrint.execute();
+            ret.append(elePrint.getPhrase("Phrase"));
+        }
+        return ret.toString();
     }
 
 
