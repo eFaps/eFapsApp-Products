@@ -52,8 +52,6 @@ import org.efaps.db.SelectBuilder;
 import org.efaps.db.Update;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.AbstractCommon;
-import org.efaps.esjp.common.uiform.Create;
-import org.efaps.esjp.common.uiform.Edit;
 import org.efaps.esjp.products.Product;
 import org.efaps.esjp.products.util.Products;
 import org.efaps.esjp.products.util.ProductsSettings;
@@ -82,37 +80,37 @@ public abstract class Variant_Base
     public Return create(final Parameter _parameter)
         throws EFapsException
     {
-        final Create create = new Create()
+        final Product product = new Product()
         {
 
             @Override
-            protected void add2basicInsert(final Parameter _parameter,
-                                           final org.efaps.db.Insert _insert)
+            protected void add2Create(final Parameter _parameter,
+                                      final Insert _insert)
                 throws EFapsException
             {
-                super.add2basicInsert(_parameter, _insert);
+                super.add2Create(_parameter, _insert);
                 _insert.add(CIProducts.ProductVariantBase.VariantConfig, getVariantConf(_parameter));
-            };
+            }
         };
-        return create.execute(_parameter);
+        return product.create(_parameter);
     }
 
     public Return edit(final Parameter _parameter)
         throws EFapsException
     {
-        final Edit create = new Edit()
+        final Product product = new Product()
         {
 
             @Override
-            protected void add2MainUpdate(final Parameter _parameter,
-                                          final Update _update)
+            protected void add2Edit(final Parameter _parameter,
+                                    final Update _update)
                 throws EFapsException
             {
-                super.add2MainUpdate(_parameter, _update);
+                super.add2Edit(_parameter, _update);
                 _update.add(CIProducts.ProductVariantBase.VariantConfig, getVariantConf(_parameter));
             }
         };
-        return create.execute(_parameter);
+        return product.edit(_parameter);
     }
 
     public Return createVariants(final Parameter _parameter)

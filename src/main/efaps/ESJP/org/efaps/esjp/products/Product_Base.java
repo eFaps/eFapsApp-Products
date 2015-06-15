@@ -515,22 +515,24 @@ public abstract class Product_Base
                     if (filterMap != null && filterMap.containsKey("productFamilyLink")) {
                         @SuppressWarnings("unchecked")
                         final Map<String, Object> map =  (Map<String, Object>) filterMap.get("productFamilyLink");
-                        if (map != null && map.containsKey("selectedRow")) {
-                            final String[] oids = (String[]) map.get("selectedRow");
-                            final List<Instance> familyInsts = new ArrayList<>();
-                            for (final String oid : oids) {
-                                final Instance instance = Instance.get(oid);
-                                if (instance.isValid()) {
-                                    familyInsts.add(instance);
+                        if (map != null && map.containsKey(EFapsKey.SELECTEDROW_NAME.getKey())) {
+                            if (!map.containsKey(EFapsKey.SELECTEALL_NAME.getKey())) {
+                                final String[] oids = (String[]) map.get(EFapsKey.SELECTEDROW_NAME.getKey());
+                                final List<Instance> familyInsts = new ArrayList<>();
+                                for (final String oid : oids) {
+                                    final Instance instance = Instance.get(oid);
+                                    if (instance.isValid()) {
+                                        familyInsts.add(instance);
+                                    }
                                 }
+                                final List<Instance> tmpInsts = new ArrayList<>();
+                                tmpInsts.addAll(familyInsts);
+                                for (final Instance inst : familyInsts) {
+                                    tmpInsts.addAll(ProductFamily.getDescendants(_parameter, inst));
+                                }
+                                _queryBldr.addWhereAttrEqValue(CIProducts.ProductAbstract.ProductFamilyLink,
+                                                tmpInsts.toArray());
                             }
-                            final List<Instance> tmpInsts = new ArrayList<>();
-                            tmpInsts.addAll(familyInsts);
-                            for (final Instance inst : familyInsts) {
-                                tmpInsts.addAll(ProductFamily.getDescendants(_parameter, inst));
-                            }
-                            _queryBldr.addWhereAttrEqValue(CIProducts.ProductAbstract.ProductFamilyLink,
-                                            tmpInsts.toArray());
                         } else {
                             _queryBldr.addWhereAttrEqValue(CIProducts.ProductAbstract.ID, 0);
                         }

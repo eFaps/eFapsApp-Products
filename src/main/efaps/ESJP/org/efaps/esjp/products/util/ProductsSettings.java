@@ -62,6 +62,12 @@ public interface ProductsSettings
     String ACTIVATEFAMILIES = ProductsSettings.BASE + "ActivateFamilies";
 
     /**
+     * Boolean(true/false).<br/>
+     * Activate the menu for updating Product Prices on mass.
+     */
+    String ACTIVATEVARIANT = ProductsSettings.BASE + "ActivateVariant";
+
+    /**
      * Properties.<br/>
      * Properties for image
      */

@@ -28,9 +28,16 @@
         <target>
             <menu>Products_ProductVariantBaseMyDesk_Menu</menu>
             <table>Products_ProductVariantBaseTable</table>
-            <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
+            <evaluate method="productMultiPrint" program="org.efaps.esjp.products.Product">
                 <property name="Type">Products_ProductVariantBase</property>
             </evaluate>
+             <trigger event="UI_ACCESSCHECK" method="configCheck"
+                name="Products_ProductVariantBaseMyDesk.UI_ACCESSCHECK"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI">
+                    <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.ActivateVariant</property>
+            </trigger>
         </target>
         <property name="Target">content</property>
         <property name="TargetShowCheckBoxes">true</property>

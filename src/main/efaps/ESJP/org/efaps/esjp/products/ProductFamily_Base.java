@@ -124,35 +124,40 @@ public abstract class ProductFamily_Base
         throws EFapsException
     {
         final StringBuilder strBldr = new StringBuilder();
-        Instance inst = _inst;
-        if (inst.getType().isKindOf(CIProducts.ProductAbstract)) {
-            final PrintQuery print = new PrintQuery(inst);
-            final SelectBuilder selFamInts = SelectBuilder.get().linkto(CIProducts.ProductAbstract.ProductFamilyLink)
-                            .instance();
-            print.addSelect(selFamInts);
-            print.execute();
-            inst = print.getSelect(selFamInts);
+        if (_inst != null && _inst.isValid()) {
+            Instance inst = _inst;
+            if (inst.getType().isKindOf(CIProducts.ProductAbstract)) {
+                final PrintQuery print = new PrintQuery(inst);
+                final SelectBuilder selFamInts = SelectBuilder.get()
+                                .linkto(CIProducts.ProductAbstract.ProductFamilyLink)
+                                .instance();
+                print.addSelect(selFamInts);
+                print.execute();
+                inst = print.getSelect(selFamInts);
+            }
+            if (inst.isValid()) {
+                while (!inst.getType().isCIType(CIProducts.ProductFamilyRoot)) {
+                    final PrintQuery print = new CachedPrintQuery(inst, CACHEKEY);
+                    final SelectBuilder selParentInst = SelectBuilder.get()
+                                    .linkto(CIProducts.ProductFamilyStandart.ParentLink)
+                                    .instance();
+                    print.addSelect(selParentInst);
+                    print.addAttribute(CIProducts.ProductFamilyAbstract.CodePart);
+                    print.execute();
+                    inst = print.getSelect(selParentInst);
+                    strBldr.insert(0, print.getAttribute(CIProducts.ProductFamilyAbstract.CodePart));
+                }
+                final PrintQuery print = new CachedPrintQuery(inst, CACHEKEY);
+                final SelectBuilder selLineCode = SelectBuilder.get()
+                                .linkto(CIProducts.ProductFamilyAbstract.ProductLineLink)
+                                .attribute(CIProducts.ProductLineAbstract.CodePart);
+                print.addSelect(selLineCode);
+                print.addAttribute(CIProducts.ProductFamilyAbstract.CodePart);
+                print.execute();
+                strBldr.insert(0, print.getAttribute(CIProducts.ProductFamilyAbstract.CodePart));
+                strBldr.insert(0, print.getSelect(selLineCode));
+            }
         }
-
-        while (!inst.getType().isCIType(CIProducts.ProductFamilyRoot)) {
-            final PrintQuery print = new CachedPrintQuery(inst, CACHEKEY);
-            final SelectBuilder selParentInst = SelectBuilder.get().linkto(CIProducts.ProductFamilyStandart.ParentLink)
-                            .instance();
-            print.addSelect(selParentInst);
-            print.addAttribute(CIProducts.ProductFamilyAbstract.CodePart);
-            print.execute();
-            inst = print.getSelect(selParentInst);
-            strBldr.insert(0, print.getAttribute(CIProducts.ProductFamilyAbstract.CodePart));
-        }
-        final PrintQuery print = new CachedPrintQuery(inst, CACHEKEY);
-        final SelectBuilder selLineCode = SelectBuilder.get().linkto(CIProducts.ProductFamilyAbstract.ProductLineLink)
-                        .attribute(CIProducts.ProductLineAbstract.CodePart);
-        print.addSelect(selLineCode);
-        print.addAttribute(CIProducts.ProductFamilyAbstract.CodePart);
-        print.execute();
-        strBldr.insert(0, print.getAttribute(CIProducts.ProductFamilyAbstract.CodePart));
-        strBldr.insert(0, print.getSelect(selLineCode));
-
         return strBldr.toString();
     }
 
@@ -182,7 +187,11 @@ public abstract class ProductFamily_Base
         final IUIValue value = (IUIValue) _parameter.get(ParameterValues.UIOBJECT);
         if (value.getObject() instanceof Instance) {
             final Instance inst = (Instance) value.getObject();
-            ret.put(ReturnValues.VALUES, getName(_parameter, inst));
+            if (inst != null && inst.isValid()) {
+                ret.put(ReturnValues.VALUES, getName(_parameter, inst));
+            } else {
+                ret.put(ReturnValues.VALUES, "");
+            }
         }
         return ret;
     }
