@@ -23,6 +23,12 @@
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductFamilyTable</name>
+        <field name="productLineLink">
+            <property name="SelectAlternateOID">linkto[ProductLineLink].oid</property>
+            <property name="HRef">TREE</property>
+            <property name="Select">linkto[ProductLineLink].attribute[Name]</property>
+            <property name="Label">Products_ProductLineStandart.Label</property>
+        </field>
         <field name="codePart">
             <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
             <property name="Label">Products_ProductFamilyAbstract/CodePart.Label</property>
