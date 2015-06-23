@@ -33,7 +33,7 @@
         <property name="Target">modal</property>
         <property name="TargetCreateType">Products_ProductVariantBase</property>
         <property name="TargetMode">create</property>
-        <property name="WindowHeight">460</property>
-        <property name="WindowWidth">515</property>
+        <property name="WindowHeight">600</property>
+        <property name="WindowWidth">800</property>
     </definition>
 </ui-command>
