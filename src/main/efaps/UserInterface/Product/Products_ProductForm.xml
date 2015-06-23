@@ -18,20 +18,16 @@
 
 -->
 
-<ui-form xmlns="http://www.efaps.org/xsd"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<ui-form xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>5142d865-8a1d-4409-a56f-b1c5c92d01ef</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
-
     <definition>
         <version-expression>(version==latest)</version-expression>
         <profiles>
             <profile name="eFaps"/>
         </profiles>
         <name>Products_ProductForm</name>
-
         <field name="classification" character="Classification">
             <property name="Classification">Products_Class</property>
             <property name="ModeCreate">EDITABLE</property>
@@ -70,6 +66,12 @@
             <property name="ModeSearch">EDITABLE</property>
             <property name="Attribute">Description</property>
             <property name="Required">true</property>
+        </field>
+        <field name="barcode">
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ModeSearch">EDITABLE</property>
+            <property name="Attribute">Barcode</property>
         </field>
         <field name="dimension">
             <property name="Attribute">Dimension</property>
@@ -153,21 +155,18 @@
             </evaluate>
         </field>
     </definition>
-
-
     <definition>
         <version-expression>(version==latest)</version-expression>
         <profiles>
             <profile name="sales"/>
         </profiles>
         <name>Products_ProductForm</name>
-        <!-- fields -->
         <field name="classification" character="Classification">
             <property name="Classification">Products_Class</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
         </field>
-                <field character="Group" name="nameGroup">
+        <field character="Group" name="nameGroup">
             <property name="GroupCount">3</property>
             <property name="ModeCreate">READONLY</property>
             <property name="ModeView">NONE</property>
@@ -344,6 +343,12 @@
             <property name="ModeSearch">EDITABLE</property>
             <property name="Attribute">Description</property>
             <property name="Required">true</property>
+        </field>
+        <field name="barcode">
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ModeSearch">EDITABLE</property>
+            <property name="Attribute">Barcode</property>
         </field>
         <field name="dimension">
             <property name="Attribute">Dimension</property>

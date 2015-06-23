@@ -116,6 +116,12 @@
             <sqlcolumn>FAMILYID</sqlcolumn>
         </attribute>
         <attribute>
+            <name>Barcode</name>
+            <type>String</type>
+            <sqltable>Products_ProductSQLTable</sqltable>
+            <sqlcolumn>CODE</sqlcolumn>
+        </attribute>
+        <attribute>
             <name>Creator</name>
             <type>CreatorLink</type>
             <sqltable>Products_ProductSQLTable</sqltable>
@@ -238,6 +244,12 @@
             <type>Long</type>
             <sqltable>Products_ProductSQLTable</sqltable>
             <sqlcolumn>TAXCATID</sqlcolumn>
+        </attribute>
+        <attribute>
+            <name>Barcode</name>
+            <type>String</type>
+            <sqltable>Products_ProductSQLTable</sqltable>
+            <sqlcolumn>CODE</sqlcolumn>
         </attribute>
         <attribute>
             <name>Creator</name>
