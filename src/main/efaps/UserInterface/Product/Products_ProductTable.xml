@@ -2,7 +2,7 @@
 
 <!--
 
- Copyright 2003 - 2009 The eFaps Team
+ Copyright 2003 - 2015 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -16,19 +16,12 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
- Author:          The eFaps Team
- Revision:        $Rev$
- Last Changed:    $Date$
- Last Changed By: $Author$
-
 -->
 
-<ui-table xmlns="http://www.efaps.org/xsd"
-          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<ui-table xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>56016e1d-43fa-4105-82aa-7b4ca9dc496b</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductTable</name>
@@ -53,22 +46,53 @@
         <field name="classification">
             <property name="Select">class.type</property>
             <property name="Label">Products_ProductTable.classification.Label</property>
-            <trigger program="org.efaps.esjp.common.uiform.Field"
-                method="classificationFieldFormat"
+            <property name="FilterType">CLASSIFICATION</property>
+            <property name="FilterRequired">true</property>
+            <property name="FilterBase">DATABASE</property>
+            <property name="Classification">Products_Class</property>
+            <trigger event="UI_FIELD_FORMAT" method="classificationFieldFormat"
                 name="Products_ProductTable.classification"
-                event="UI_FIELD_FORMAT" />
+                program="org.efaps.esjp.common.uiform.Field" />
+            <trigger event="UI_ACCESSCHECK" method="configCheck"
+                name="Products_ProductTable.classification.UI_ACCESSCHECK"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI">
+                    <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.ActivateFamilies</property>
+                <property name="Inverse">true</property>
+            </trigger>
+        </field>
+        <field name="classificationWithFamily">
+            <property name="Select">class.type</property>
+            <property name="Label">Products_ProductTable.classification.Label</property>
+            <property name="FilterType">CLASSIFICATION</property>
+            <property name="FilterRequired">false</property>
+            <property name="FilterBase">DATABASE</property>
+            <property name="Classification">Products_Class</property>
+            <trigger event="UI_FIELD_FORMAT" method="classificationFieldFormat"
+                name="Products_ProductTable.classificationWithFamily"
+                program="org.efaps.esjp.common.uiform.Field" />
+            <trigger event="UI_ACCESSCHECK" method="configCheck"
+                name="Products_ProductTable.classificationWithFamily.UI_ACCESSCHECK"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI">
+                    <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.ActivateFamilies</property>
+            </trigger>
         </field>
         <field name="productFamilyLink">
             <property name="Select">linkto[ProductFamilyLink].instance</property>
             <property name="Label">Products_ProductAbstract/ProductFamilyLink.Label</property>
-            <trigger program="org.efaps.esjp.products.ProductFamily"
-                method="productFamilyFieldFormat"
+            <property name="FilterType">FORM</property>
+            <property name="FilterCmd">Products_ProductFamilyFilterCmd</property>
+            <property name="FilterRequired">true</property>
+            <property name="FilterBase">DATABASE</property>
+            <trigger event="UI_FIELD_FORMAT" method="productFamilyFieldFormat"
                 name="Products_ProductTable.productFamilyLink."
-                event="UI_FIELD_FORMAT" />
-            <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
-                name="Products_ProductForm.namePrefix.UI_ACCESSCHECK"
-                method="configCheck"
-                event="UI_ACCESSCHECK">
+                program="org.efaps.esjp.products.ProductFamily" />
+            <trigger event="UI_ACCESSCHECK" method="configCheck"
+                name="Products_ProductTable.productFamilyLink.UI_ACCESSCHECK"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI">
                     <!-- Products-Configuration -->
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.ActivateFamilies</property>
