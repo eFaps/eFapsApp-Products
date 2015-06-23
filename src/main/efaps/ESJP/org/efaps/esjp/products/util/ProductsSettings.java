@@ -68,6 +68,12 @@ public interface ProductsSettings
     String ACTIVATEVARIANT = ProductsSettings.BASE + "ActivateVariant";
 
     /**
+     * Boolean(true/false).<br/>
+     * Activate the barcode column etc..
+     */
+    String ACTIVATEBARCODE = ProductsSettings.BASE + "ActivateBarcode";
+
+    /**
      * Properties.<br/>
      * Properties for image
      */
