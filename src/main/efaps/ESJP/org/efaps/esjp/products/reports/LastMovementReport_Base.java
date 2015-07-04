@@ -13,9 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Revision:        $Rev$
- * Last Changed:    $Date$
- * Last Changed By: $Author$
  */
 
 package org.efaps.esjp.products.reports;
@@ -32,27 +29,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
-import net.sf.dynamicreports.report.base.expression.AbstractSimpleExpression;
-import net.sf.dynamicreports.report.builder.DynamicReports;
-import net.sf.dynamicreports.report.builder.column.ComponentColumnBuilder;
-import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
-import net.sf.dynamicreports.report.builder.component.GenericElementBuilder;
-import net.sf.dynamicreports.report.builder.expression.AbstractComplexExpression;
-import net.sf.dynamicreports.report.builder.grid.ColumnTitleGroupBuilder;
-import net.sf.dynamicreports.report.builder.group.ColumnGroupBuilder;
-import net.sf.dynamicreports.report.builder.style.ConditionalStyleBuilder;
-import net.sf.dynamicreports.report.builder.style.StyleBuilder;
-import net.sf.dynamicreports.report.definition.ReportParameters;
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-
 import org.efaps.admin.dbproperty.DBProperties;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
 import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
-import org.efaps.admin.program.esjp.EFapsRevision;
+import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Instance;
 import org.efaps.db.MultiPrintQuery;
@@ -72,6 +54,21 @@ import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
+import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
+import net.sf.dynamicreports.report.base.expression.AbstractSimpleExpression;
+import net.sf.dynamicreports.report.builder.DynamicReports;
+import net.sf.dynamicreports.report.builder.column.ComponentColumnBuilder;
+import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
+import net.sf.dynamicreports.report.builder.component.GenericElementBuilder;
+import net.sf.dynamicreports.report.builder.expression.AbstractComplexExpression;
+import net.sf.dynamicreports.report.builder.grid.ColumnTitleGroupBuilder;
+import net.sf.dynamicreports.report.builder.group.ColumnGroupBuilder;
+import net.sf.dynamicreports.report.builder.style.ConditionalStyleBuilder;
+import net.sf.dynamicreports.report.builder.style.StyleBuilder;
+import net.sf.dynamicreports.report.definition.ReportParameters;
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+
 /**
  * TODO comment!
  *
@@ -79,7 +76,7 @@ import org.joda.time.Days;
  * @version $Id: $
  */
 @EFapsUUID("45d70db0-b427-461f-8d34-f4872c1708a4")
-@EFapsRevision("$Rev: 12451 $")
+@EFapsApplication("eFapsApp-Products")
 public abstract class LastMovementReport_Base
     extends FilteredReport
 {
@@ -245,6 +242,7 @@ public abstract class LastMovementReport_Base
                 if (_inventory == null) {
                     inventory = getInventoryObject(_parameter);
                     inventory.setStorageInsts(getStorageInsts(_parameter));
+                    inventory.setCurrencyInst(getCurrencyInst(_parameter));
                     inventory.setShowStorage(!StorageDisplay.NONE.equals(getStorageDisplay(_parameter)));
                     inventory.setShowProdClass(!ClassDisplay.NONE.equals(getClassDisplay(_parameter)));
                     inventory.setDate((DateTime) getFilterMap(_parameter).get("date"));
@@ -282,6 +280,21 @@ public abstract class LastMovementReport_Base
             }
             return ret;
         }
+
+        protected Instance getCurrencyInst(final Parameter _parameter)
+            throws EFapsException
+        {
+            Instance ret = null;
+            if ("true".equalsIgnoreCase(getProperty(_parameter, "EvaluateCost"))) {
+                final Map<String, Object> map = getFilterMap(_parameter);
+                if (map.containsKey("currency")) {
+                    final CurrencyFilterValue filter = (CurrencyFilterValue) map.get("currency");
+                    ret = filter.getObject();
+                }
+            }
+            return ret;
+        }
+
 
         protected TypeDisplay getTypeDisplay(final Parameter _parameter)
             throws EFapsException
@@ -447,7 +460,22 @@ public abstract class LastMovementReport_Base
             final TextColumnBuilder<Integer> daysColumn = DynamicReports.col.column(getLabel("Column.days"),
                             "days", DynamicReports.type.integerType());
             daysColumn.setStyle(styleBldr);
+
             _builder.addColumn(lastDateColumn, daysColumn);
+
+            final TextColumnBuilder<BigDecimal> costColumn = DynamicReports.col.column(getLabel("Column.cost"),
+                            "cost", DynamicReports.type.bigDecimalType());
+
+            final TextColumnBuilder<BigDecimal> totalColumn = DynamicReports.col.column(getLabel("Column.total"),
+                            "total", DynamicReports.type.bigDecimalType());
+
+            final TextColumnBuilder<String> currencyColumn = DynamicReports.col.column(getLabel("Column.currency"),
+                            "currency", DynamicReports.type.stringType());
+
+            if (getCurrencyInst(_parameter) != null) {
+                _builder.addColumn(costColumn, totalColumn, currencyColumn);
+                _builder.addSubtotalAtColumnFooter(DynamicReports.sbt.sum(totalColumn));
+            }
         }
 
         protected String getLabel(final String _key)
@@ -519,7 +547,7 @@ public abstract class LastMovementReport_Base
                 setLastDate(_transDate);
                 this.checkQuantity = _quantity;
             } else {
-                // new register add the same day
+                // new register on the same day
                 if (Days.daysBetween(getLastDate(), _transDate).getDays() == 0) {
                     this.checkQuantity = this.checkQuantity.add(_quantity);
                 } else {

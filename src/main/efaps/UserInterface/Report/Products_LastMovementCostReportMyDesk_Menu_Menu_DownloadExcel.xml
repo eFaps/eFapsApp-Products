@@ -14,26 +14,26 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
- Author:          The eFaps Team
- Revision:        $Rev: 14806 $
- Last Changed:    $Date: 2015-02-03 12:07:37 -0500 (Tue, 03 Feb 2015) $
- Last Changed By: $Author: jan@moxter.net $
-
 -->
-<ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>08fb1f9a-187f-452a-88d8-546a140de3cb</uuid>
+    <uuid>0ae61d26-d04f-401f-80e0-0c43c1b11edd</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev: 14806 $</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ReportsMyDesk</name>
-        <childs>
-            <child>Products_InventoryReportMyDesk</child>
-            <child>Products_InventoryCostReportMyDesk</child>
-            <child>Products_TransactionReportMyDesk</child>
-            <child>Products_LastMovementReportMyDesk</child>
-            <child>Products_LastMovementCostReportMyDesk</child>
-        </childs>
+        <name>Products_LastMovementCostReportMyDesk_Menu_Menu_DownloadExcel</name>
+        <icon>Document_Excel</icon>
+        <access>
+            <role>Sales_Admin</role>
+        </access>
+        <target>
+            <execute method="exportReport" program="org.efaps.esjp.products.reports.LastMovementReport">
+                <property name="Mime">xls</property>
+                <property name="FilterKey">org.efaps.esjp.products.reports.LastMovementCostReport.FilterKey</property>
+            </execute>
+        </target>
+        <property name="Target">hidden</property>
+        <property name="TargetShowFile">true</property>
+        <property name="Label">report.DownloadExcel</property>
     </definition>
-</ui-menu>
+</ui-command>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
- Copyright 2003 - 2015 The eFaps Team
+ Copyright 2003 - 2014 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -14,26 +14,18 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
- Author:          The eFaps Team
- Revision:        $Rev: 14806 $
- Last Changed:    $Date: 2015-02-03 12:07:37 -0500 (Tue, 03 Feb 2015) $
- Last Changed By: $Author: jan@moxter.net $
-
 -->
 <ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>08fb1f9a-187f-452a-88d8-546a140de3cb</uuid>
+    <uuid>36318c04-4f16-4ae9-98c5-1e35efc66d1d</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev: 14806 $</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ReportsMyDesk</name>
+        <name>Products_LastMovementCostReportMyDesk_Menu</name>
         <childs>
-            <child>Products_InventoryReportMyDesk</child>
-            <child>Products_InventoryCostReportMyDesk</child>
-            <child>Products_TransactionReportMyDesk</child>
-            <child>Products_LastMovementReportMyDesk</child>
-            <child>Products_LastMovementCostReportMyDesk</child>
+            <child>Products_LastMovementCostReportMyDesk_Menu_Menu_DownloadExcel</child>
+            <child>Products_LastMovementCostReportMyDesk_Menu_Menu_DownloadPDF</child>
+            <child>Products_LastMovementCostReportMyDesk_Menu_Menu_Filter</child>
         </childs>
     </definition>
 </ui-menu>
