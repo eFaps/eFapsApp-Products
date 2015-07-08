@@ -67,6 +67,8 @@ import net.sf.dynamicreports.report.builder.style.ConditionalStyleBuilder;
 import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.definition.ReportParameters;
 import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRRewindableDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 /**
@@ -168,55 +170,67 @@ public abstract class LastMovementReport_Base
         protected JRDataSource createDataSource(final Parameter _parameter)
             throws EFapsException
         {
-            final DateTime date = (DateTime) getFilterMap(_parameter).get("date");
-            final DateTime mindate = date.minusDays(getMaxDays(_parameter));
-            final List<DataBean> tmpBeans = getBeans(_parameter, null);
-            final Map<Instance, List<DataBean>> prod2beans = new HashMap<>();
-            for (final DataBean bean : tmpBeans) {
-                List<DataBean> ilist;
-                if (prod2beans.containsKey(bean.getProdInstance())) {
-                    ilist = prod2beans.get(bean.getProdInstance());
-                } else {
-                    ilist = new ArrayList<>();
-                    prod2beans.put(bean.getProdInstance(), ilist);
+            JRRewindableDataSource ret;
+            if (this.filteredReport.isCached()) {
+                ret = this.filteredReport.getDataSourceFromCache();
+                try {
+                    ret.moveFirst();
+                } catch (final JRException e) {
+                    LOG.error("Catched error", e);
                 }
-                ilist.add(bean);
-            }
-            final Set<Instance> done = new HashSet<>();
-            final QueryBuilder queryBldr = new QueryBuilder(CIProducts.TransactionInOutAbstract);
-            queryBldr.addWhereAttrLessValue(CIProducts.TransactionInOutAbstract.Date, date.plusMinutes(1));
-            queryBldr.addWhereAttrGreaterValue(CIProducts.TransactionInOutAbstract.Date, mindate.minusMinutes(1));
-            queryBldr.addWhereAttrEqValue(CIProducts.TransactionInOutAbstract.Product, prod2beans.keySet().toArray());
-            queryBldr.addOrderByAttributeDesc(CIProducts.TransactionInOutAbstract.Date);
-            final MultiPrintQuery multi = queryBldr.getPrint();
-            multi.setEnforceSorted(true);
-            final SelectBuilder selProdInst = SelectBuilder.get().linkto(CIProducts.TransactionInOutAbstract.Product)
-                            .instance();
-            multi.addSelect(selProdInst);
-            multi.addAttribute(CIProducts.TransactionInOutAbstract.Date, CIProducts.TransactionInOutAbstract.Quantity);
-            multi.execute();
+            } else {
+                final DateTime date = (DateTime) getFilterMap(_parameter).get("date");
+                final DateTime mindate = date.minusDays(getMaxDays(_parameter));
+                final List<DataBean> tmpBeans = getBeans(_parameter, null);
+                final Map<Instance, List<DataBean>> prod2beans = new HashMap<>();
+                for (final DataBean bean : tmpBeans) {
+                    List<DataBean> ilist;
+                    if (prod2beans.containsKey(bean.getProdInstance())) {
+                        ilist = prod2beans.get(bean.getProdInstance());
+                    } else {
+                        ilist = new ArrayList<>();
+                        prod2beans.put(bean.getProdInstance(), ilist);
+                    }
+                    ilist.add(bean);
+                }
+                final Set<Instance> done = new HashSet<>();
+                final QueryBuilder queryBldr = new QueryBuilder(CIProducts.TransactionInOutAbstract);
+                queryBldr.addWhereAttrLessValue(CIProducts.TransactionInOutAbstract.Date, date.plusMinutes(1));
+                queryBldr.addWhereAttrGreaterValue(CIProducts.TransactionInOutAbstract.Date, mindate.minusMinutes(1));
+                queryBldr.addWhereAttrEqValue(CIProducts.TransactionInOutAbstract.Product, prod2beans.keySet().toArray());
+                queryBldr.addOrderByAttributeDesc(CIProducts.TransactionInOutAbstract.Date);
+                final MultiPrintQuery multi = queryBldr.getPrint();
+                multi.setEnforceSorted(true);
+                final SelectBuilder selProdInst = SelectBuilder.get().linkto(CIProducts.TransactionInOutAbstract.Product)
+                                .instance();
+                multi.addSelect(selProdInst);
+                multi.addAttribute(CIProducts.TransactionInOutAbstract.Date, CIProducts.TransactionInOutAbstract.Quantity);
+                multi.execute();
 
-            while (multi.next() && done.size() < tmpBeans.size()) {
-                final Instance prodInst = multi.getSelect(selProdInst);
-                if (!done.contains(prodInst)) {
-                    final List<DataBean> beanList = prod2beans.get(prodInst);
-                    final DateTime transDate = multi.getAttribute(CIProducts.TransactionInOutAbstract.Date);
-                    BigDecimal quantity = multi.getAttribute(CIProducts.TransactionInOutAbstract.Quantity);
-                    if (multi.getCurrentInstance().getType().isCIType(CIProducts.TransactionOutbound)) {
-                        quantity = quantity.negate();
-                    }
-                    final Iterator<DataBean> beanIter = beanList.iterator();
-                    final DataBean bean = beanIter.next();
-                    bean.setDate(date);
-                    if (bean.addMovement(transDate, quantity)) {
-                        done.add(prodInst);
-                    }
-                    while (beanIter.hasNext()) {
-                        beanIter.next().setLastDate(bean.getLastDate()).setDate(bean.getDate());
+                while (multi.next() && done.size() < tmpBeans.size()) {
+                    final Instance prodInst = multi.getSelect(selProdInst);
+                    if (!done.contains(prodInst)) {
+                        final List<DataBean> beanList = prod2beans.get(prodInst);
+                        final DateTime transDate = multi.getAttribute(CIProducts.TransactionInOutAbstract.Date);
+                        BigDecimal quantity = multi.getAttribute(CIProducts.TransactionInOutAbstract.Quantity);
+                        if (multi.getCurrentInstance().getType().isCIType(CIProducts.TransactionOutbound)) {
+                            quantity = quantity.negate();
+                        }
+                        final Iterator<DataBean> beanIter = beanList.iterator();
+                        final DataBean bean = beanIter.next();
+                        bean.setDate(date);
+                        if (bean.addMovement(transDate, quantity)) {
+                            done.add(prodInst);
+                        }
+                        while (beanIter.hasNext()) {
+                            beanIter.next().setLastDate(bean.getLastDate()).setDate(bean.getDate());
+                        }
                     }
                 }
+                ret =  new JRBeanCollectionDataSource(tmpBeans);
+                this.filteredReport.cache(ret);
             }
-            return new JRBeanCollectionDataSource(tmpBeans);
+            return ret;
         }
 
         protected StorageDisplay getStorageDisplay(final Parameter _parameter)
