@@ -24,12 +24,13 @@
         <name>Products_LastMovementCostReportMyDesk_Menu_Menu_DownloadExcel</name>
         <icon>Document_Excel</icon>
         <access>
-            <role>Sales_Admin</role>
+            <role>Products_Admin</role>
         </access>
         <target>
             <execute method="exportReport" program="org.efaps.esjp.products.reports.LastMovementReport">
                 <property name="Mime">xls</property>
                 <property name="FilterKey">org.efaps.esjp.products.reports.LastMovementCostReport.FilterKey</property>
+                <property name="EvaluateCost">true</property>
             </execute>
         </target>
         <property name="Target">hidden</property>
