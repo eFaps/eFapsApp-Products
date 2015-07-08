@@ -26,19 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
-import net.sf.dynamicreports.report.builder.DynamicReports;
-import net.sf.dynamicreports.report.builder.column.ComponentColumnBuilder;
-import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
-import net.sf.dynamicreports.report.builder.component.GenericElementBuilder;
-import net.sf.dynamicreports.report.builder.expression.AbstractComplexExpression;
-import net.sf.dynamicreports.report.builder.grid.ColumnTitleGroupBuilder;
-import net.sf.dynamicreports.report.builder.group.ColumnGroupBuilder;
-import net.sf.dynamicreports.report.definition.ReportParameters;
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.engine.data.JRMapCollectionDataSource;
-
 import org.apache.commons.collections4.comparators.ComparatorChain;
 import org.efaps.admin.dbproperty.DBProperties;
 import org.efaps.admin.event.Parameter;
@@ -57,6 +44,21 @@ import org.efaps.ui.wicket.models.EmbeddedLink;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
 
+import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
+import net.sf.dynamicreports.report.builder.DynamicReports;
+import net.sf.dynamicreports.report.builder.column.ComponentColumnBuilder;
+import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
+import net.sf.dynamicreports.report.builder.component.GenericElementBuilder;
+import net.sf.dynamicreports.report.builder.expression.AbstractComplexExpression;
+import net.sf.dynamicreports.report.builder.grid.ColumnTitleGroupBuilder;
+import net.sf.dynamicreports.report.builder.group.ColumnGroupBuilder;
+import net.sf.dynamicreports.report.definition.ReportParameters;
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRRewindableDataSource;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.data.JRMapCollectionDataSource;
+
 /**
  * TODO comment!
  *
@@ -68,19 +70,43 @@ public abstract class InventoryReport_Base
     extends FilteredReport
 {
 
+    /**
+     * The Enum StorageDisplay.
+     */
     public enum StorageDisplay
     {
-        NONE, COLUMN, ROW;
+        /** show no storage. */
+        NONE,
+        /** Show as column. */
+        COLUMN,
+        /** Show as row. */
+        ROW;
     }
 
+    /**
+     * The Enum TypeDisplay.
+     */
     public enum TypeDisplay
     {
-        NONE, COLUMN, GROUP;
+        /** Show no type. */
+        NONE,
+        /** Show as column. */
+        COLUMN,
+        /** Show as group. */
+        GROUP;
     }
 
+    /**
+     * The Enum ClassDisplay.
+     */
     public enum ClassDisplay
     {
-        NONE, COLUMN, GROUP;
+        /** Show no classification. */
+        NONE,
+        /** Show as column. */
+        COLUMN,
+        /** Show as group. */
+        GROUP;
     }
 
     /**
@@ -139,12 +165,12 @@ public abstract class InventoryReport_Base
     public static class DynInventoryReport
         extends AbstractDynamicReport
     {
-
         /**
          * The related filtered report.
          */
         private final FilteredReport filteredReport;
 
+        /** The beans. */
         private List<InventoryBean> beans;
 
         /**
@@ -159,17 +185,34 @@ public abstract class InventoryReport_Base
         protected JRDataSource createDataSource(final Parameter _parameter)
             throws EFapsException
         {
-            JRDataSource ret;
-            if (StorageDisplay.COLUMN.equals(getStorageDisplay(_parameter))) {
-                final List<Map<String, ?>> source = getMapList(_parameter);
-                ret = new JRMapCollectionDataSource(source);
+            JRRewindableDataSource ret;
+            if (this.filteredReport.isCached()) {
+                ret = this.filteredReport.getDataSourceFromCache();
+                try {
+                    ret.moveFirst();
+                } catch (final JRException e) {
+                    LOG.error("Catched error", e);
+                }
             } else {
-                Collections.sort(getBeans(_parameter, null), getComparator(_parameter));
-                ret = new JRBeanCollectionDataSource(this.beans);
+                if (StorageDisplay.COLUMN.equals(getStorageDisplay(_parameter))) {
+                    final List<Map<String, ?>> source = getMapList(_parameter);
+                    ret = new JRMapCollectionDataSource(source);
+                } else {
+                    Collections.sort(getBeans(_parameter, null), getComparator(_parameter));
+                    ret = new JRBeanCollectionDataSource(this.beans);
+                }
+                this.filteredReport.cache(ret);
             }
             return ret;
         }
 
+        /**
+         * Gets the map list.
+         *
+         * @param _parameter the _parameter
+         * @return the map list
+         * @throws EFapsException the e faps exception
+         */
         protected List<Map<String, ?>> getMapList(final Parameter _parameter)
             throws EFapsException
         {
@@ -201,11 +244,24 @@ public abstract class InventoryReport_Base
             return ret;
         }
 
+        /**
+         * Gets the inventory object.
+         *
+         * @param _parameter the _parameter
+         * @return the inventory object
+         */
         protected Inventory getInventoryObject(final Parameter _parameter)
         {
             return new Inventory();
         }
 
+        /**
+         * Gets the comparator.
+         *
+         * @param _parameter the _parameter
+         * @return the comparator
+         * @throws EFapsException the e faps exception
+         */
         protected ComparatorChain<InventoryBean> getComparator(final Parameter _parameter)
             throws EFapsException
         {
@@ -235,6 +291,13 @@ public abstract class InventoryReport_Base
             return ret;
         }
 
+        /**
+         * Gets the storage display.
+         *
+         * @param _parameter the _parameter
+         * @return the storage display
+         * @throws EFapsException the e faps exception
+         */
         protected StorageDisplay getStorageDisplay(final Parameter _parameter)
             throws EFapsException
         {
@@ -248,6 +311,13 @@ public abstract class InventoryReport_Base
             return ret;
         }
 
+        /**
+         * Gets the type display.
+         *
+         * @param _parameter the _parameter
+         * @return the type display
+         * @throws EFapsException the e faps exception
+         */
         protected TypeDisplay getTypeDisplay(final Parameter _parameter)
             throws EFapsException
         {
@@ -261,6 +331,13 @@ public abstract class InventoryReport_Base
             return ret;
         }
 
+        /**
+         * Gets the class display.
+         *
+         * @param _parameter the _parameter
+         * @return the class display
+         * @throws EFapsException the e faps exception
+         */
         protected ClassDisplay getClassDisplay(final Parameter _parameter)
             throws EFapsException
         {
@@ -274,6 +351,13 @@ public abstract class InventoryReport_Base
             return ret;
         }
 
+        /**
+         * Gets the currency inst.
+         *
+         * @param _parameter the _parameter
+         * @return the currency inst
+         * @throws EFapsException the e faps exception
+         */
         protected Instance getCurrencyInst(final Parameter _parameter)
             throws EFapsException
         {
@@ -288,6 +372,13 @@ public abstract class InventoryReport_Base
             return ret;
         }
 
+        /**
+         * Gets the storage insts.
+         *
+         * @param _parameter the _parameter
+         * @return the storage insts
+         * @throws EFapsException the e faps exception
+         */
         protected List<Instance> getStorageInsts(final Parameter _parameter)
             throws EFapsException
         {
@@ -309,6 +400,13 @@ public abstract class InventoryReport_Base
             return ret;
         }
 
+        /**
+         * Gets the filter map.
+         *
+         * @param _parameter the _parameter
+         * @return the filter map
+         * @throws EFapsException the e faps exception
+         */
         protected Map<String, Object> getFilterMap(final Parameter _parameter)
             throws EFapsException
         {
@@ -318,7 +416,7 @@ public abstract class InventoryReport_Base
         @Override
         protected void addColumnDefintion(final Parameter _parameter,
                                           final JasperReportBuilder _builder)
-            throws EFapsException
+                                              throws EFapsException
         {
             final List<ColumnTitleGroupBuilder> groupBuilders = new ArrayList<>();
             ColumnGroupBuilder storageSumGroup = null;
@@ -448,6 +546,13 @@ public abstract class InventoryReport_Base
             }
         }
 
+        /**
+         * Gets the storages.
+         *
+         * @param _parameter the _parameter
+         * @return the storages
+         * @throws EFapsException the e faps exception
+         */
         public List<String> getStorages(final Parameter _parameter)
             throws EFapsException
         {
@@ -482,7 +587,7 @@ public abstract class InventoryReport_Base
         @SuppressWarnings("unchecked")
         public List<InventoryBean> getBeans(final Parameter _parameter,
                                             final Inventory _inventory)
-            throws EFapsException
+                                                throws EFapsException
         {
             if (this.beans == null) {
                 final Inventory inventory;
