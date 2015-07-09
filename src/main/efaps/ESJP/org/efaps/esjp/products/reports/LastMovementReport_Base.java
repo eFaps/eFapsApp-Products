@@ -171,8 +171,8 @@ public abstract class LastMovementReport_Base
             throws EFapsException
         {
             JRRewindableDataSource ret;
-            if (this.filteredReport.isCached()) {
-                ret = this.filteredReport.getDataSourceFromCache();
+            if (this.filteredReport.isCached(_parameter)) {
+                ret = this.filteredReport.getDataSourceFromCache(_parameter);
                 try {
                     ret.moveFirst();
                 } catch (final JRException e) {
@@ -228,7 +228,7 @@ public abstract class LastMovementReport_Base
                     }
                 }
                 ret =  new JRBeanCollectionDataSource(tmpBeans);
-                this.filteredReport.cache(ret);
+                this.filteredReport.cache(_parameter, ret);
             }
             return ret;
         }

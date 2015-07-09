@@ -186,8 +186,8 @@ public abstract class InventoryReport_Base
             throws EFapsException
         {
             JRRewindableDataSource ret;
-            if (this.filteredReport.isCached()) {
-                ret = this.filteredReport.getDataSourceFromCache();
+            if (this.filteredReport.isCached(_parameter)) {
+                ret = this.filteredReport.getDataSourceFromCache(_parameter);
                 try {
                     ret.moveFirst();
                 } catch (final JRException e) {
@@ -201,7 +201,7 @@ public abstract class InventoryReport_Base
                     Collections.sort(getBeans(_parameter, null), getComparator(_parameter));
                     ret = new JRBeanCollectionDataSource(this.beans);
                 }
-                this.filteredReport.cache(ret);
+                this.filteredReport.cache(_parameter, ret);
             }
             return ret;
         }
