@@ -1118,9 +1118,9 @@ public abstract class Product_Base
         final PrintQuery print = new PrintQuery(_parameter.getInstance());
         print.addAttribute(CIProducts.ProductAbstract.Name);
         if (print.execute()) {
-           final String nameTmp = print.getAttribute(CIProducts.ProductAbstract.Name);
-           final String[] nameAr = nameTmp.split("\\.");
-           name = nameAr[nameAr.length - 1];
+            final String nameTmp = print.getAttribute(CIProducts.ProductAbstract.Name);
+            final String[] nameAr = nameTmp.split("\\.");
+            name = nameAr[nameAr.length - 1];
         }
         final Return ret = new Return();
         ret.put(ReturnValues.VALUES, name);
@@ -1158,6 +1158,14 @@ public abstract class Product_Base
         return nf.format(val);
     }
 
+    /**
+     * Gets the instances for the replacement products of a generic.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _genericInst the instance of the generic product
+     * @return the replacements 4 generic
+     * @throws EFapsException on error
+     */
     public List<Instance> getReplacements4Generic(final Parameter _parameter,
                                                   final Instance _genericInst)
         throws EFapsException
@@ -1178,6 +1186,36 @@ public abstract class Product_Base
         }
         return ret;
     }
+
+    /**
+     * Gets the instance for the generic product of a replacement.
+     *
+     * @param _parameter the _parameter
+     * @param _replInst the _generic inst
+     * @return the generic4 replacment
+     * @throws EFapsException on error
+     */
+    public Instance getGeneric4Replacment(final Parameter _parameter,
+                                          final Instance _replInst)
+         throws EFapsException
+    {
+        Instance ret = null;
+        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductGeneric2Product);
+        queryBldr.addWhereAttrEqValue(CIProducts.ProductGeneric2Product.ToLink, _replInst);
+
+        final MultiPrintQuery multi = queryBldr.getPrint();
+        final SelectBuilder selInst = SelectBuilder.get().linkto(CIProducts.ProductGeneric2Product.FromLink).instance();
+        multi.addSelect(selInst);
+        multi.execute();
+        while (multi.next()) {
+            final Instance prodInst = multi.getSelect(selInst);
+            if (prodInst != null) {
+                ret = prodInst;
+            }
+        }
+        return ret == null ? Instance.get("") : ret;
+    }
+
 
     /**
      * Warning for invalid name.
