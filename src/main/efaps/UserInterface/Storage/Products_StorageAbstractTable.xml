@@ -54,7 +54,10 @@
             <property name="ShowTypeIcon">true</property>
         </field>
         <field name="status">
-            <property name="FilterType">PICKLIST</property>
+            <property name="FilterType">STATUS</property>
+            <property name="FilterRequired">TRUE</property>
+            <property name="FilterBase">DATABASE</property>
+            <property name="FilterDefault">Active</property>
             <property name="Attribute">StatusAbstract</property>
             <property name="Label">Products_StorageAbstract/Status.Label</property>
             <property name="ModeSearch">READONLY</property>
