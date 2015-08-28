@@ -35,7 +35,7 @@ import org.efaps.admin.access.AccessTypeEnums;
 import org.efaps.admin.datamodel.Dimension;
 import org.efaps.admin.datamodel.Dimension.UoM;
 import org.efaps.admin.datamodel.Type;
-import org.efaps.admin.datamodel.ui.FieldValue;
+import org.efaps.admin.datamodel.ui.IUIValue;
 import org.efaps.admin.dbproperty.DBProperties;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
@@ -113,12 +113,11 @@ public abstract class Transaction_Base
         throws EFapsException
     {
         final Return ret = new Return();
-        final FieldValue fieldvalue = (FieldValue) _parameter.get(ParameterValues.UIOBJECT);
-        final BigDecimal value = (BigDecimal) fieldvalue.getValue();
+        final IUIValue fieldvalue = (IUIValue) _parameter.get(ParameterValues.UIOBJECT);
+        final BigDecimal value = (BigDecimal) fieldvalue.getObject();
         if (value != null && !Display.NONE.equals(fieldvalue.getDisplay())) {
             if (fieldvalue.getInstance().getType().isKindOf(CIProducts.TransactionOutbound.getType())) {
                 final BigDecimal retValue = value.negate();
-                fieldvalue.setValue(null);
                 ret.put(ReturnValues.VALUES, retValue);
             }
         }
