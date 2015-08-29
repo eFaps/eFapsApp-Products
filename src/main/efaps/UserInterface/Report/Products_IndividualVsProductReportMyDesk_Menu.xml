@@ -17,18 +17,15 @@
 -->
 <ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>08fb1f9a-187f-452a-88d8-546a140de3cb</uuid>
+    <uuid>29b49304-4d48-41d3-9bbb-d9ca4232e94c</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ReportsMyDesk</name>
+        <name>Products_IndividualVsProductReportMyDesk_Menu</name>
         <childs>
-            <child>Products_InventoryReportMyDesk</child>
-            <child>Products_InventoryCostReportMyDesk</child>
-            <child>Products_TransactionReportMyDesk</child>
-            <child>Products_LastMovementReportMyDesk</child>
-            <child>Products_LastMovementCostReportMyDesk</child>
-            <child>Products_IndividualVsProductReportMyDesk</child>
+            <child>Products_IndividualVsProductReportMyDesk_Menu_DownloadExcel</child>
+            <child>Products_IndividualVsProductReportMyDesk_Menu_DownloadPDF</child>
+            <child>Products_IndividualVsProductReportMyDesk_Menu_Filter</child>
         </childs>
     </definition>
 </ui-menu>
