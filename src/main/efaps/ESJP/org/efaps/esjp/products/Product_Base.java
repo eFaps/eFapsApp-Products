@@ -502,7 +502,7 @@ public abstract class Product_Base
                 super.add2QueryBldr(_parameter, _queryBldr);
                 // if products with serialnumber or batches is activated
                 // validate if they must be shown or not
-                if (Products.getSysConfig().getAttributeValueAsBoolean(ProductsSettings.ACTIVATEINDIVIDUAL)) {
+                if (Products.ACTIVATEINDIVIDUAL.get()) {
                     if (!"true".equalsIgnoreCase(getProperty(_parameter, "IncludeIndividual"))) {
                         _queryBldr.addWhereAttrNotEqValue(CIProducts.ProductAbstract.Type,
                                         CIProducts.ProductIndividual.getType().getId(),
@@ -754,7 +754,7 @@ public abstract class Product_Base
                                 .setIgnoreCase(true);
                 queryBldr.addOrderByAttributeAsc(CIProducts.ProductAbstract.Description);
             }
-            if (Products.getSysConfig().getAttributeValueAsBoolean(ProductsSettings.ACTIVATEINDIVIDUAL)) {
+            if (Products.ACTIVATEINDIVIDUAL.get()) {
                 final QueryBuilder inQueryBldr = new QueryBuilder(CIProducts.ProductAbstract);
 
                 final QueryBuilder attrQueryBldr = new QueryBuilder(CIProducts.InventoryIndividual);

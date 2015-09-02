@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2013 The eFaps Team
+ * Copyright 2003 - 2015 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Revision:        $Rev$
- * Last Changed:    $Date$
- * Last Changed By: $Author$
  */
 
 package org.efaps.esjp.products.util;
@@ -24,20 +21,36 @@ import java.util.UUID;
 
 import org.efaps.admin.common.SystemConfiguration;
 import org.efaps.admin.datamodel.IEnum;
-import org.efaps.admin.program.esjp.EFapsRevision;
+import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
+import org.efaps.api.annotation.EFapsSysConfAttribute;
+import org.efaps.api.annotation.EFapsSystemConfiguration;
+import org.efaps.esjp.admin.common.systemconfiguration.BooleanSysConfAttribute;
 import org.efaps.util.cache.CacheReloadException;
 
 /**
  * TODO comment!
  *
  * @author The eFaps Team
- * @version $Id$
  */
 @EFapsUUID("96b4a9bc-bfcf-41fa-9c03-4dbc6279cf63")
-@EFapsRevision("$Rev$")
+@EFapsApplication("eFapsApp-Products")
+@EFapsSystemConfiguration("e53cd705-e463-47dc-a400-4ace4ed72071")
 public final class Products
 {
+    /** The base. */
+    public static final String BASE = "org.efaps.products.";
+
+    /** Products-Configuration. */
+    public static final UUID SYSCONFUUID = UUID.fromString("e53cd705-e463-47dc-a400-4ace4ed72071");
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute ACTIVATEINDIVIDUAL = new BooleanSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "ActivateIndividual")
+                    .description(" Activate the individual management menu.");
+
     /**
      * Singelton.
      */
@@ -45,10 +58,22 @@ public final class Products
     {
     }
 
+    /**
+     * The Enum ProductIndividual.
+     *
+     */
     public enum ProductIndividual
         implements IEnum
     {
-        NONE, INDIVIDUAL, BATCH;
+
+        /** The none. */
+        NONE,
+
+        /** The individual. */
+        INDIVIDUAL,
+
+        /** The batch. */
+        BATCH;
 
         @Override
         public int getInt()
@@ -64,7 +89,6 @@ public final class Products
     public static SystemConfiguration getSysConfig()
         throws CacheReloadException
     {
-        // Products-Configuration
-        return SystemConfiguration.get(UUID.fromString("e53cd705-e463-47dc-a400-4ace4ed72071"));
+        return SystemConfiguration.get(SYSCONFUUID);
     }
 }

@@ -14,74 +14,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-
 -->
 <ui-form xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>2a38e809-d8f1-4a05-ac42-8a0e0e059444</uuid>
-    <file-application>eFapsApp-Commons</file-application>
+    <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_IndividualVsProductReportFilterForm</name>
-        <field name="date">
-            <property name="ModeEdit">EDITABLE</property>
-            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.DateUI</property>
-            <property name="Label">org.efaps.esjp.products.reports.IndividualVsProductReport.date</property>
-            <trigger event="UI_FIELD_VALUE" method="getDateFromFieldValue" name="ERP_ReportFilterForm4DateFromToType.dateFrom.UI_FIELD_VALUE"
-                program="org.efaps.esjp.erp.FilteredReport" />
-        </field>
-        <field name="storageGroup">
-            <property name="ModeEdit">EDITABLE</property>
-            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
-            <property name="Label">org.efaps.esjp.products.reports.IndividualVsProductReport.storageGroup</property>
-            <trigger event="UI_FIELD_VALUE" method="getInstanceFieldValue"
-                name="Products_IndividualVsProductReportFilterForm.storageGroup.UI_FIELD_VALUE" program="org.efaps.esjp.erp.FilteredReport">
-                <property name="Products_WarehouseGroup_Select">attribute[Name]</property>
-            </trigger>
-            <trigger event="UI_FIELD_AUTOCOMPLETE" method="autoComplete4StorageGroup"
-                name="Products_IndividualVsProductReportFilterForm.storageGroup.UI_FIELD_AUTOCOMPLETE" program="org.efaps.esjp.products.StorageGroup">
-                <property name="Type">Products_StorageGroupAbstract</property>
-            </trigger>
-        </field>
-        <field name="storage">
-            <property name="ModeEdit">EDITABLE</property>
-            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
-            <property name="Label">org.efaps.esjp.products.reports.IndividualVsProductReport.storage</property>
-            <trigger event="UI_FIELD_VALUE" method="getInstanceFieldValue"
-                name="Products_IndividualVsProductReportFilterForm.storageGroup.UI_FIELD_VALUE" program="org.efaps.esjp.erp.FilteredReport">
-                <property name="Products_Warehouse_Select">attribute[Name]</property>
-            </trigger>
-            <trigger event="UI_FIELD_AUTOCOMPLETE" method="autoComplete4Storage"
-                name="Products_IndividualVsProductReportFilterForm.storageGroup.UI_FIELD_AUTOCOMPLETE" program="org.efaps.esjp.products.Storage">
-                <property name="Type">Products_DynamicStorage</property>
-            </trigger>
-        </field>
-        <field name="storageDisplay">
-            <property name="ModeEdit">EDITABLE</property>
-            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
-            <property name="Label">org.efaps.esjp.products.reports.IndividualVsProductReport.storageDisplay</property>
-            <trigger event="UI_FIELD_VALUE" method="getEnumFieldValue"
-                name="Products_IndividualVsProductReportFilterForm.storageDisplay.UI_FIELD_VALUE" program="org.efaps.esjp.products.reports.IndividualVsProductReport">
-                <property name="Enum">org.efaps.esjp.products.reports.IndividualVsProductReport_Base$StorageDisplay</property>
-            </trigger>
-        </field>
-        <field name="typeDisplay">
-            <property name="ModeEdit">EDITABLE</property>
-            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
-            <property name="Label">org.efaps.esjp.products.reports.IndividualVsProductReport.typeDisplay</property>
-            <trigger event="UI_FIELD_VALUE" method="getEnumFieldValue"
-                name="Products_IndividualVsProductReportFilterForm.typeDisplay.UI_FIELD_VALUE" program="org.efaps.esjp.products.reports.IndividualVsProductReport">
-                <property name="Enum">org.efaps.esjp.products.reports.IndividualVsProductReport_Base$TypeDisplay</property>
-            </trigger>
-        </field>
-        <field name="classDisplay">
-            <property name="ModeEdit">EDITABLE</property>
-            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
-            <property name="Label">org.efaps.esjp.products.reports.IndividualVsProductReport.classDisplay</property>
-            <trigger event="UI_FIELD_VALUE" method="getEnumFieldValue"
-                name="Products_IndividualVsProductReportFilterForm.classDisplay.UI_FIELD_VALUE" program="org.efaps.esjp.products.reports.IndividualVsProductReport">
-                <property name="Enum">org.efaps.esjp.products.reports.IndividualVsProductReport_Base$ClassDisplay</property>
-            </trigger>
-        </field>
     </definition>
 </ui-form>

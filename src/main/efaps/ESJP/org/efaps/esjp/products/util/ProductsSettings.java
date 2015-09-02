@@ -45,12 +45,6 @@ public interface ProductsSettings
 
     /**
      * Boolean(true/false).<br/>
-     * Activate the individual management menu.
-     */
-    String ACTIVATEINDIVIDUAL = ProductsSettings.BASE + "ActivateIndividual";
-
-    /**
-     * Boolean(true/false).<br/>
      * Activate the menu for updating Product Prices on mass.
      */
     String ACTIVATEPRICEMASSUPDATE = ProductsSettings.BASE + "ActivatePriceMassUpdate";
