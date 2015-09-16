@@ -31,6 +31,12 @@
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
         </field>
+        <field name="generic">
+            <property name="Label">Products_ProductGeneric.Label</property>
+            <property name="SelectAlternateOID">linkfrom[Products_ProductGeneric2Product#ToLink].linkto[FromLink].oid</property>
+            <property name="Select">linkfrom[Products_ProductGeneric2Product#ToLink].linkto[FromLink].attribute[Name]</property>
+            <property name="HRef">TREE</property>
+        </field>
         <field name="image">
             <property name="Label">Products_ProductForm.image.Label</property>
             <property name="ModeEdit">NONE</property>
@@ -269,6 +275,20 @@
                 <!-- Products-Configuration -->
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.ActivateFamilies</property>
+            </trigger>
+        </field>
+        <field name="generic">
+            <property name="Label">Products_ProductGeneric.Label</property>
+            <property name="SelectAlternateOID">linkfrom[Products_ProductGeneric2Product#ToLink].linkto[FromLink].oid</property>
+            <property name="Select">linkfrom[Products_ProductGeneric2Product#ToLink].linkto[FromLink].attribute[Name]</property>
+            <property name="HRef">TREE</property>
+            <property name="ModeEdit">NONE</property>
+            <trigger event="UI_ACCESSCHECK" method="configCheck"
+                name="Products_ProductMaterialForm.generic.UI_ACCESSCHECK"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.Material.IsGeneric</property>
             </trigger>
         </field>
         <field name="image">

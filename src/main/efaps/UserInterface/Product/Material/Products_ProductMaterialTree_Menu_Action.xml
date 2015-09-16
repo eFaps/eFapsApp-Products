@@ -14,22 +14,17 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
- Author:          The eFaps Team
- Revision:        $Rev$
- Last Changed:    $Date$
- Last Changed By: $Author$
-
 -->
 <ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>d2e91413-69c7-4dd1-b365-342d09821d7f</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductMaterialTree_Menu_Action</name>
         <childs>
             <child>Products_ProductMaterialTree_Menu_Action_Edit</child>
+            <child>Products_ProductMaterialTree_Menu_Action_AssignGeneric</child>
         </childs>
     </definition>
 </ui-menu>

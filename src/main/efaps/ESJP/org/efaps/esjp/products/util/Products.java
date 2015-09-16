@@ -51,6 +51,21 @@ public final class Products
                     .key(BASE + "ActivateIndividual")
                     .description(" Activate the individual management menu.");
 
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute ACTIVATEGENERIC = new BooleanSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "Generic.Activate")
+                    .description(" Activate the generic product management in general.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute MATERIALISGENERIC = new BooleanSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "Material.IsGeneric")
+                    .description(" Activate the generic product management fro materials");
+
+
     /**
      * Singelton.
      */

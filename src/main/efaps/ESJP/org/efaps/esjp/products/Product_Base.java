@@ -61,6 +61,7 @@ import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
 import org.efaps.db.AttributeQuery;
 import org.efaps.db.CachedPrintQuery;
 import org.efaps.db.Context;
+import org.efaps.db.Delete;
 import org.efaps.db.Insert;
 import org.efaps.db.Instance;
 import org.efaps.db.MultiPrintQuery;
@@ -1216,6 +1217,32 @@ public abstract class Product_Base
         return ret == null ? Instance.get("") : ret;
     }
 
+    /**
+     * Assign generic.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException
+     */
+    public Return assignGeneric(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Instance genericInst = Instance.get(_parameter.getParameterValue(
+                        CIFormProducts.Products_ProductGenericAssignForm.generic.name));
+        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductGeneric2Product);
+        queryBldr.addWhereAttrEqValue(CIProducts.ProductGeneric2Product.ToLink, _parameter.getInstance());
+        for (final Instance inst : queryBldr.getQuery().execute()) {
+            new Delete(inst).execute();
+        }
+
+        if (genericInst != null && genericInst.isValid()) {
+            final Insert insert = new Insert(CIProducts.ProductGeneric2Product);
+            insert.add(CIProducts.ProductGeneric2Product.ToLink, _parameter.getInstance());
+            insert.add(CIProducts.ProductGeneric2Product.FromLink, genericInst);
+            insert.execute();
+        }
+        return new Return();
+    }
 
     /**
      * Warning for invalid name.
