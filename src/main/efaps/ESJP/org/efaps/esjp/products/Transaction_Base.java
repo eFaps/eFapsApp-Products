@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2009 The eFaps Team
+ * Copyright 2003 - 2015 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Revision:        $Rev$
- * Last Changed:    $Date$
- * Last Changed By: $Author$
  */
 
 package org.efaps.esjp.products;
@@ -184,6 +181,13 @@ public abstract class Transaction_Base
         return new Return();
     }
 
+    /**
+     * Creates the document transaction.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _createDoc the _create doc
+     * @throws EFapsException on error
+     */
     protected void createDocumentTransaction(final Parameter _parameter,
                                              final CreatedDoc _createDoc)
         throws EFapsException
@@ -195,7 +199,7 @@ public abstract class Transaction_Base
                 final CreatedDoc docTransactionCreate = new TransactionDocument().createDoc(_parameter, _createDoc);
                 if (docTransactionCreate.getInstance().isValid()
                                 && (CIProducts.TransactionInbound.getType().equals(_createDoc.getInstance().getType())
-                                || CIProducts.TransactionOutbound.getType().equals(_createDoc.getInstance().getType()))) {
+                            || CIProducts.TransactionOutbound.getType().equals(_createDoc.getInstance().getType()))) {
                     // Sales_Document2ProductDocumentType
                     final Insert insert = new Insert(UUID.fromString("29438fb0-8b1f-4e4e-a409-812b2f9efdc0"));
                     insert.add("DocumentLink", docTransactionCreate.getInstance().getId());
@@ -210,6 +214,13 @@ public abstract class Transaction_Base
         }
     }
 
+    /**
+     * Creates the doc.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the created doc
+     * @throws EFapsException on error
+     */
     protected CreatedDoc createDoc(final Parameter _parameter)
         throws EFapsException
     {
@@ -282,6 +293,13 @@ public abstract class Transaction_Base
         return type;
     }
 
+    /**
+     * Move position number.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
     public Return movePositionNumber(final Parameter _parameter)
         throws EFapsException
     {
@@ -292,7 +310,8 @@ public abstract class Transaction_Base
         if (oids != null) {
             final Instance transInst = Instance.get(oids[0]);
             // manuall access check because operation is executed withou triggers!
-            if (transInst.isValid() && transInst.getType().hasAccess(transInst, AccessTypeEnums.MODIFY.getAccessType())) {
+            if (transInst.isValid() && transInst.getType().hasAccess(transInst,
+                            AccessTypeEnums.MODIFY.getAccessType())) {
                 final PrintQuery print = new PrintQuery(transInst);
                 print.addAttribute(CIProducts.TransactionAbstract.Product, CIProducts.TransactionAbstract.Date,
                                 CIProducts.TransactionAbstract.Position);
@@ -357,6 +376,13 @@ public abstract class Transaction_Base
         return new Return();
     }
 
+    /**
+     * Inbound update post trigger.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
     public Return inboundUpdatePostTrigger(final Parameter _parameter)
         throws EFapsException
     {
@@ -364,6 +390,13 @@ public abstract class Transaction_Base
         return new Return();
     }
 
+    /**
+     * Inbound delete pre trigger.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
     public Return inboundDeletePreTrigger(final Parameter _parameter)
         throws EFapsException
     {
@@ -371,6 +404,13 @@ public abstract class Transaction_Base
         return new Return();
     }
 
+    /**
+     * Inbound delete post trigger.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
     public Return inboundDeletePostTrigger(final Parameter _parameter)
         throws EFapsException
     {
@@ -409,6 +449,13 @@ public abstract class Transaction_Base
         return new Return();
     }
 
+    /**
+     * Outbound update post trigger.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
     public Return outboundUpdatePostTrigger(final Parameter _parameter)
         throws EFapsException
     {
@@ -416,6 +463,13 @@ public abstract class Transaction_Base
         return new Return();
     }
 
+    /**
+     * Outbound delete pre trigger.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
     public Return outboundDeletePreTrigger(final Parameter _parameter)
         throws EFapsException
     {
@@ -423,6 +477,13 @@ public abstract class Transaction_Base
         return new Return();
     }
 
+    /**
+     * Outbound delete post trigger.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
     public Return outboundDeletePostTrigger(final Parameter _parameter)
         throws EFapsException
     {
@@ -455,6 +516,12 @@ public abstract class Transaction_Base
     }
 
 
+    /**
+     * Store date product4 trigger.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @throws EFapsException on error
+     */
     protected void storeDateProduct4Trigger(final Parameter _parameter)
         throws EFapsException
     {
@@ -471,7 +538,10 @@ public abstract class Transaction_Base
     }
 
     /**
-     *@param _parameter    Parameter as passed by the eFaps API
+     * Sets the position number.
+     *
+     * @param _parameter    Parameter as passed by the eFaps API
+     * @throws EFapsException on error
      */
     protected void setPositionNumber(final Parameter _parameter)
         throws EFapsException
@@ -488,8 +558,11 @@ public abstract class Transaction_Base
     }
 
     /**
+     * Update position numbers.
+     *
      * @param _parameter    Parameter as passed by the eFaps API
      * @param _current      update current instance also
+     * @throws EFapsException on error
      */
     protected void updatePositionNumbers(final Parameter _parameter,
                                          final boolean _current)
@@ -575,7 +648,6 @@ public abstract class Transaction_Base
      * Add or subtract from the Inventory.
      *
      * @param _parameter Parameters as passed from eFaps
-     * @param _add if true the quantity will be added else subtracted
      * @throws EFapsException on error
      */
     protected void addRemoveFromInventory(final Parameter _parameter)
@@ -590,7 +662,7 @@ public abstract class Transaction_Base
         if (print.execute()) {
             BigDecimal transQuantity = print.<BigDecimal>getAttribute(CIProducts.TransactionAbstract.Quantity);
             final Long storage = print.<Long>getAttribute(CIProducts.TransactionAbstract.Storage);
-            final Long product = print.<Long>getAttribute( CIProducts.TransactionAbstract.Product);
+            final Long product = print.<Long>getAttribute(CIProducts.TransactionAbstract.Product);
             final Long uomId = print.<Long>getAttribute(CIProducts.TransactionAbstract.UoM);
 
             final UoM uom = Dimension.getUoM(uomId);
@@ -660,7 +732,7 @@ public abstract class Transaction_Base
                 final Delete del = new Delete(update.getInstance());
                 del.executeWithoutAccessCheck();
             } else {
-                update.executeWithoutAccessCheck();;
+                update.executeWithoutAccessCheck();
             }
         }
     }
@@ -782,32 +854,38 @@ public abstract class Transaction_Base
         return ret;
     }
 
-
-
+    /**
+     * Adds the transaction product.
+     *
+     * @param _ciType the _ci type
+     * @param _values the _values
+     * @return the created doc
+     * @throws EFapsException on error
+     */
     protected CreatedDoc addTransactionProduct(final CIType _ciType,
-                                               final Object... values)
+                                               final Object... _values)
         throws EFapsException
     {
         final CreatedDoc createDoc = new CreatedDoc();
 
         final Insert insert = new Insert(_ciType);
-        insert.add(CIProducts.TransactionAbstract.Quantity, values[0]);
-        createDoc.getValues().put(CIProducts.TransactionAbstract.Quantity.name, values[0]);
+        insert.add(CIProducts.TransactionAbstract.Quantity, _values[0]);
+        createDoc.getValues().put(CIProducts.TransactionAbstract.Quantity.name, _values[0]);
 
-        insert.add(CIProducts.TransactionInOutAbstract.Storage, values[1]);
-        createDoc.getValues().put(CIProducts.TransactionAbstract.Storage.name, values[1]);
+        insert.add(CIProducts.TransactionInOutAbstract.Storage, _values[1]);
+        createDoc.getValues().put(CIProducts.TransactionAbstract.Storage.name, _values[1]);
 
-        insert.add(CIProducts.TransactionInOutAbstract.UoM, values[2]);
-        createDoc.getValues().put(CIProducts.TransactionAbstract.UoM.name, values[2]);
+        insert.add(CIProducts.TransactionInOutAbstract.UoM, _values[2]);
+        createDoc.getValues().put(CIProducts.TransactionAbstract.UoM.name, _values[2]);
 
-        insert.add(CIProducts.TransactionAbstract.Date, values[3]);
-        createDoc.getValues().put(CIProducts.TransactionAbstract.Date.name, values[3]);
+        insert.add(CIProducts.TransactionAbstract.Date, _values[3]);
+        createDoc.getValues().put(CIProducts.TransactionAbstract.Date.name, _values[3]);
 
-        insert.add(CIProducts.TransactionAbstract.Product, values[4]);
-        createDoc.getValues().put(CIProducts.TransactionAbstract.Product.name, values[4]);
+        insert.add(CIProducts.TransactionAbstract.Product, _values[4]);
+        createDoc.getValues().put(CIProducts.TransactionAbstract.Product.name, _values[4]);
 
-        insert.add(CIProducts.TransactionAbstract.Description, values[5]);
-        createDoc.getValues().put(CIProducts.TransactionAbstract.Description.name, values[5]);
+        insert.add(CIProducts.TransactionAbstract.Description, _values[5]);
+        createDoc.getValues().put(CIProducts.TransactionAbstract.Description.name, _values[5]);
 
         insert.execute();
         createDoc.setInstance(insert.getInstance());
@@ -1126,6 +1204,13 @@ public abstract class Transaction_Base
         return ret;
     }
 
+    /**
+     * Validate quantity.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
     public Return validateQuantity(final Parameter _parameter)
         throws EFapsException
     {
@@ -1232,39 +1317,45 @@ public abstract class Transaction_Base
         throws EFapsException
     {
         final Instance storageInst = _parameter.getInstance();
-        final SelectBuilder selProd = new SelectBuilder().linkto(CIProducts.TransactionInOutAbstract.Product).instance();
+        final SelectBuilder selProdInst = new SelectBuilder().linkto(CIProducts.TransactionAbstract.Product)
+                        .instance();
 
-        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.TransactionInOutAbstract);
-        queryBldr.addWhereAttrEqValue(CIProducts.TransactionInOutAbstract.Storage, storageInst.getId());
+        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.TransactionInbound);
+        queryBldr.addType(CIProducts.TransactionOutbound);
+        queryBldr.addType(CIProducts.TransactionIndividualInbound);
+        queryBldr.addType(CIProducts.TransactionIndividualOutbound);
+        queryBldr.addType(CIProducts.TransactionInbound4StaticStorage);
+        queryBldr.addWhereAttrEqValue(CIProducts.TransactionAbstract.Storage, storageInst);
         final MultiPrintQuery multi = queryBldr.getPrint();
-        multi.addAttribute(CIProducts.TransactionInOutAbstract.Quantity,
-                        CIProducts.TransactionInOutAbstract.UoM,
-                        CIProducts.TransactionInOutAbstract.Type);
-        multi.addSelect(selProd);
+        multi.addAttribute(CIProducts.TransactionAbstract.Quantity,
+                        CIProducts.TransactionAbstract.UoM,
+                        CIProducts.TransactionAbstract.Type);
+        multi.addSelect(selProdInst);
         multi.execute();
 
         final Map<Instance, Map<CIAttribute, Object>> map4Inventory = new HashMap<Instance, Map<CIAttribute, Object>>();
         while (multi.next()) {
-            final Instance product = multi.<Instance>getSelect(selProd);
-            BigDecimal quantity = multi.<BigDecimal>getAttribute(CIProducts.TransactionInOutAbstract.Quantity);
-            final Long uomId = multi.<Long>getAttribute(CIProducts.TransactionInOutAbstract.UoM);
-            final Type transType = multi.<Type>getAttribute(CIProducts.TransactionInOutAbstract.Type);
+            final Instance prodInst = multi.<Instance>getSelect(selProdInst);
+            BigDecimal quantity = multi.<BigDecimal>getAttribute(CIProducts.TransactionAbstract.Quantity);
+            final Long uomId = multi.<Long>getAttribute(CIProducts.TransactionAbstract.UoM);
+            final Type transType = multi.<Type>getAttribute(CIProducts.TransactionAbstract.Type);
             final UoM uom = Dimension.getUoM(uomId);
             quantity = quantity.multiply(new BigDecimal(uom.getNumerator()))
                             .divide(new BigDecimal(uom.getDenominator()), BigDecimal.ROUND_HALF_UP);
-            if (transType.equals(CIProducts.TransactionOutbound.getType())) {
+            if (transType.isCIType(CIProducts.TransactionOutbound)
+                            || transType.isCIType(CIProducts.TransactionIndividualOutbound)) {
                 quantity = quantity.negate();
             }
-            if (map4Inventory.containsKey(product)) {
-                final Map<CIAttribute, Object> map4Product = map4Inventory.get(product);
-                final BigDecimal oldQua = (BigDecimal) map4Product.get(CIProducts.TransactionInOutAbstract.Quantity);
-                map4Product.put(CIProducts.TransactionInOutAbstract.Quantity, oldQua.add(quantity));
-                map4Inventory.put(product, map4Product);
+            if (map4Inventory.containsKey(prodInst)) {
+                final Map<CIAttribute, Object> map4Product = map4Inventory.get(prodInst);
+                final BigDecimal oldQua = (BigDecimal) map4Product.get(CIProducts.TransactionAbstract.Quantity);
+                map4Product.put(CIProducts.TransactionAbstract.Quantity, oldQua.add(quantity));
+                map4Inventory.put(prodInst, map4Product);
             } else {
-                final Map<CIAttribute, Object> map4Product = new HashMap<CIAttribute, Object>();
-                map4Product.put(CIProducts.TransactionInOutAbstract.UoM, uom.getDimension().getBaseUoM().getId());
-                map4Product.put(CIProducts.TransactionInOutAbstract.Quantity, quantity);
-                map4Inventory.put(product, map4Product);
+                final Map<CIAttribute, Object> map4Product = new HashMap<>();
+                map4Product.put(CIProducts.TransactionAbstract.UoM, uom.getDimension().getBaseUoM().getId());
+                map4Product.put(CIProducts.TransactionAbstract.Quantity, quantity);
+                map4Inventory.put(prodInst, map4Product);
             }
         }
 
@@ -1272,22 +1363,26 @@ public abstract class Transaction_Base
         if (!map4Inventory.isEmpty()) {
             for (final Entry<Instance, Map<CIAttribute, Object>> entry : map4Inventory.entrySet()) {
                 final QueryBuilder queryBldr2 = new QueryBuilder(CIProducts.Inventory);
-                queryBldr2.addWhereAttrEqValue(CIProducts.Inventory.Storage, storageInst.getId());
-                queryBldr2.addWhereAttrEqValue(CIProducts.Inventory.Product, entry.getKey().getId());
+                queryBldr2.addType(CIProducts.InventoryIndividual);
+                queryBldr2.addWhereAttrEqValue(CIProducts.InventoryAbstract.Storage, storageInst);
+                queryBldr2.addWhereAttrEqValue(CIProducts.InventoryAbstract.Product, entry.getKey());
                 final MultiPrintQuery inventoryMulti = queryBldr2.getPrint();
-                inventoryMulti.addAttribute(CIProducts.Inventory.Reserved);
+                inventoryMulti.addAttribute(CIProducts.InventoryAbstract.Reserved);
                 inventoryMulti.execute();
                 Update update;
                 BigDecimal value2 = BigDecimal.ZERO;
-                final BigDecimal value = (BigDecimal) entry.getValue().get(CIProducts.TransactionInOutAbstract.Quantity);
+                final BigDecimal value = (BigDecimal) entry.getValue().get(CIProducts.TransactionAbstract.Quantity);
                 if (inventoryMulti.next()) {
-                    value2 = multi.<BigDecimal>getAttribute(CIProducts.Inventory.Reserved);
+                    value2 = multi.<BigDecimal>getAttribute(CIProducts.InventoryAbstract.Reserved);
                     update = new Update(inventoryMulti.getCurrentInstance());
                 } else {
-                    update = new Insert(CIProducts.Inventory);
-                    update.add(CIProducts.Inventory.Product, entry.getKey().getId());
-                    update.add(CIProducts.Inventory.UoM, entry.getValue().get(CIProducts.TransactionInOutAbstract.UoM));
-                    update.add(CIProducts.Inventory.Storage, storageInst.getId());
+                    update = new Insert(entry.getKey().getType().isKindOf(CIProducts.ProductIndividualAbstract)
+                                    ? CIProducts.InventoryIndividual
+                                    : CIProducts.Inventory);
+                    update.add(CIProducts.InventoryAbstract.Product, entry.getKey());
+                    update.add(CIProducts.InventoryAbstract.UoM,
+                                    entry.getValue().get(CIProducts.TransactionAbstract.UoM));
+                    update.add(CIProducts.InventoryAbstract.Storage, storageInst);
                 }
 
                 if (value2 == null) {
@@ -1295,23 +1390,30 @@ public abstract class Transaction_Base
                 }
 
                 if (value.compareTo(BigDecimal.ZERO) != 0 || value2.compareTo(BigDecimal.ZERO) != 0) {
-                    update.add(CIProducts.Inventory.Quantity, value);
+                    update.add(CIProducts.InventoryAbstract.Quantity, value);
                     update.execute();
                     validate.add(update.getInstance().getId());
                 }
             }
         }
-        DeleteFromInventory(storageInst, validate);
-
+        deleteFromInventory(storageInst, validate);
         return new Return();
     }
 
-    protected void DeleteFromInventory(final Instance _storageInst,
+    /**
+     * Delete from inventory.
+     *
+     * @param _storageInst the _storage inst
+     * @param _notDelete the _not delete
+     * @throws EFapsException on error
+     */
+    protected void deleteFromInventory(final Instance _storageInst,
                                        final List<Long> _notDelete)
         throws EFapsException
     {
         final QueryBuilder queryBldr = new QueryBuilder(CIProducts.Inventory);
-        queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, _storageInst.getId());
+        queryBldr.addType(CIProducts.InventoryIndividual);
+        queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, _storageInst);
         if (!_notDelete.isEmpty()) {
             queryBldr.addWhereAttrNotEqValue(CIProducts.Inventory.ID, _notDelete.toArray());
         }
@@ -1323,6 +1425,13 @@ public abstract class Transaction_Base
         }
     }
 
+    /**
+     * Sets the default storage inst.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
     public Return setDefaultStorageInst(final Parameter _parameter)
         throws EFapsException
     {
@@ -1333,6 +1442,9 @@ public abstract class Transaction_Base
         return new Return();
     }
 
+    /**
+     * The Class TransDateProd.
+     */
     public static class TransDateProd
         implements Serializable
     {
@@ -1341,10 +1453,18 @@ public abstract class Transaction_Base
          */
         private static final long serialVersionUID = 1L;
 
+        /** The date. */
         private final DateTime date;
 
+        /** The prod id. */
         private final Long prodId;
 
+        /**
+         * Instantiates a new trans date prod.
+         *
+         * @param _date the _date
+         * @param _prodId the _prod id
+         */
         public TransDateProd(final DateTime _date,
                              final Long _prodId)
         {
@@ -1373,15 +1493,28 @@ public abstract class Transaction_Base
         }
     }
 
-
-
+    /**
+     * The Class TransactionDocument.
+     */
     public class TransactionDocument
         extends CommonDocument
     {
-        public TransactionDocument() {
 
+        /**
+         * Instantiates a new transaction document.
+         */
+        public TransactionDocument()
+        {
         }
 
+        /**
+         * Creates the doc.
+         *
+         * @param _parameter Parameter as passed by the eFaps API
+         * @param _createDoc the _create doc
+         * @return the created doc
+         * @throws EFapsException on error
+         */
         public CreatedDoc createDoc(final Parameter _parameter,
                                      final CreatedDoc _createDoc)
             throws EFapsException
@@ -1458,9 +1591,7 @@ public abstract class Transaction_Base
          */
         public TransactionVerify()
         {
-
         }
     }
-
 }
 
