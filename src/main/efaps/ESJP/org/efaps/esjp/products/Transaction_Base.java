@@ -44,7 +44,6 @@ import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
-import org.efaps.admin.ui.field.Field.Display;
 import org.efaps.ci.CIAttribute;
 import org.efaps.ci.CIType;
 import org.efaps.db.Context;
@@ -115,8 +114,11 @@ public abstract class Transaction_Base
         final Return ret = new Return();
         final IUIValue fieldvalue = (IUIValue) _parameter.get(ParameterValues.UIOBJECT);
         final BigDecimal value = (BigDecimal) fieldvalue.getObject();
-        if (value != null && !Display.NONE.equals(fieldvalue.getDisplay())) {
-            if (fieldvalue.getInstance().getType().isKindOf(CIProducts.TransactionOutbound.getType())) {
+        if (value != null) {
+            if (fieldvalue.getInstance().getType().isKindOf(CIProducts.TransactionOutbound.getType()) || fieldvalue
+                            .getInstance().getType().isKindOf(CIProducts.TransactionIndividualOutbound.getType())
+                            || fieldvalue.getInstance().getType().isKindOf(CIProducts.TransactionReservationOutbound
+                                            .getType())) {
                 final BigDecimal retValue = value.negate();
                 ret.put(ReturnValues.VALUES, retValue);
             }
@@ -1219,6 +1221,13 @@ public abstract class Transaction_Base
         return ret;
     }
 
+    /**
+     * Re calculate inventory.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
     public Return reCalculateInventory(final Parameter _parameter)
         throws EFapsException
     {
