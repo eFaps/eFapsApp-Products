@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
 
   Copyright 2003 - 2015 The eFaps Team
 
@@ -15,13 +16,28 @@
   limitations under the License.
 
 -->
+
 <ui-form xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>49607c97-513a-4244-941b-8f79b6c4d468</uuid>
+    <uuid>fef68067-b102-4184-9c8a-12e6fc272440</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_TransactionAbstractForm</name>
+        <name>Products_TransactionInOutForm</name>
+        <field name="type">
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">NONE</property>
+            <property name="ModeView">NONE</property>
+            <property name="Required">true</property>
+            <property name="Label">Products_TransactionAbstractForm.type.Label</property>
+            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+            <trigger program="org.efaps.esjp.common.uiform.Field"
+                method="getTypeDropDownFieldValue"
+                name="Products_TransactionAbstractForm.type.UI_FIELD_VALUE"
+                event="UI_FIELD_VALUE">
+                <property name="Type">Products_TransactionInOutAbstract</property>
+            </trigger>
+        </field>
         <field name="date">
             <property name="Columns">12</property>
             <property name="ModeCreate">EDITABLE</property>
@@ -29,6 +45,26 @@
             <property name="ModeSearch">EDITABLE</property>
             <property name="Attribute">Date</property>
             <property name="Required">true</property>
+        </field>
+        <field name="product">
+            <property name="Attribute">Product</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">NONE</property>
+            <property name="ModeSearch">EDITABLE</property>
+            <property name="ModeView">NONE</property>
+            <property name="Required">true</property>
+            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+            <trigger program="org.efaps.esjp.products.Product"
+                method="autoComplete4Product"
+                name="Products_TransactionAbstractForm.product.UI_FIELD_AUTOCOMPLETE"
+                event="UI_FIELD_AUTOCOMPLETE" >
+                <property name="Type01">Products_StockProductAbstract</property>
+                <property name="Type02">!Products_ProductIndividualAbstract</property>
+            </trigger>
+            <trigger program="org.efaps.esjp.products.Product"
+                method="updateFields4Product"
+                name="Products_TransactionAbstractForm.product.UI_FIELD_UPDATE"
+                event="UI_FIELD_UPDATE" />
         </field>
         <field name="product4View">
             <property name="SelectAlternateOID">linkto[Product].oid</property>
@@ -56,6 +92,25 @@
             <property name="Select">linkto[UoM].attribute[Name]</property>
             <property name="Label">Products_TransactionAbstract/UoM.Label</property>
         </field>
+        <field name="storage">
+            <property name="Attribute">Storage</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">NONE</property>
+            <property name="ModeSearch">EDITABLE</property>
+            <property name="ModeView">NONE</property>
+            <property name="Required">true</property>
+            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+            <trigger program="org.efaps.esjp.common.uiform.Field"
+                method="dropDownFieldValue"
+                name="Products_TransactionAbstractForm.storage.UI_FIELD_VALUE"
+                event="UI_FIELD_VALUE">
+                <property name="Type">Products_DynamicStorage</property>
+                <property name="StatusGroup">Products_StorageAbstractStatus</property>
+                <property name="Status">Active</property>
+                <property name="Select">attribute[Name]</property>
+                <property name="SetSelected">true</property>
+            </trigger>
+        </field>
         <field name="storage4View">
             <property name="ModeEdit">NONE</property>
             <property name="SelectAlternateOID">linkto[Storage].oid</property>
@@ -79,9 +134,12 @@
             <property name="ModeSearch">NONE</property>
             <property name="Label">Products_TransactionAbstract/Document.Label</property>
             <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
-            <trigger event="UI_ACCESSCHECK" method="documentAccessCheck" name="Products_TransactionAbstractForm.document.UI_ACCESSCHECK" program="org.efaps.esjp.products.Transaction"/>
+            <trigger program="org.efaps.esjp.products.Transaction"
+                method="documentAccessCheck"
+                name="Products_TransactionAbstractForm.document.UI_ACCESSCHECK"
+                event="UI_ACCESSCHECK" />
         </field>
-        <field character="Group" name="createGroup">
+        <field name="createGroup" character="Group">
             <property name="GroupCount">2</property>
         </field>
         <field name="creator">
@@ -95,7 +153,7 @@
             <property name="Attribute">Created</property>
             <property name="ModeSearch">EDITABLE</property>
         </field>
-        <field character="Group" name="modifyGroup">
+        <field name="modifyGroup" character="Group">
             <property name="GroupCount">2</property>
         </field>
         <field name="modifier">
@@ -116,7 +174,8 @@
             <property name="ModeView">NONE</property>
             <property name="Label">Products_TransactionAbstractForm.productDocumentType.Label</property>
             <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
-            <trigger event="UI_FIELD_VALUE" method="dropDownFieldValue" name="Products_TransactionAbstractForm.productDocumentType.UI_FIELD_VALUE" program="org.efaps.esjp.common.uiform.Field">
+            <trigger program="org.efaps.esjp.common.uiform.Field" method="dropDownFieldValue"
+                name="Products_TransactionAbstractForm.productDocumentType.UI_FIELD_VALUE" event="UI_FIELD_VALUE">
                 <property name="Type">Sales_ProductDocumentType</property>
                 <property name="ValueSelect">attribute[OID]</property>
                 <property name="Phrase">$&lt;attribute[Name]&gt; - $&lt;attribute[Description]&gt;</property>

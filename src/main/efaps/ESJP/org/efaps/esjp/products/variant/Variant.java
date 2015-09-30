@@ -32,9 +32,10 @@ import org.efaps.admin.program.esjp.EFapsUUID;
 public class Variant
     extends Variant_Base
 {
+    /** The Constant FIELDPREFIX. */
+    public static final String FIELDPREFIX = Variant_Base.FIELDPREFIX;
 
-    public final static String FIELDPREFIX = Variant_Base.FIELDPREFIX;
-
-    public final static String CONTEXTKEY = Variant_Base.CONTEXTKEY;
+    /** The Constant CONTEXTKEY. */
+    public static final String CONTEXTKEY = Variant_Base.CONTEXTKEY;
 
 }

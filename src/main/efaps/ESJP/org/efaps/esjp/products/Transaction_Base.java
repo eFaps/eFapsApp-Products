@@ -57,6 +57,7 @@ import org.efaps.esjp.ci.CIERP;
 import org.efaps.esjp.ci.CIFormProducts;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.ci.CITableProducts;
+import org.efaps.esjp.common.parameter.ParameterUtil;
 import org.efaps.esjp.erp.AbstractWarning;
 import org.efaps.esjp.erp.CommonDocument;
 import org.efaps.esjp.erp.IWarning;
@@ -176,8 +177,42 @@ public abstract class Transaction_Base
     public Return create(final Parameter _parameter)
         throws EFapsException
     {
-        final CreatedDoc createDoc = createDoc(_parameter);
-        createDocumentTransaction(_parameter, createDoc);
+        final Type docType = getType4DocCreate(_parameter);
+        if (docType.isKindOf(CIProducts.TransactionIndividualAbstract)
+                        && Boolean.parseBoolean(_parameter.getParameterValue(
+                                        CIFormProducts.Products_TransactionIndividualForm.inout.name))) {
+
+            final Instance productInst = Instance.get(_parameter.getParameterValue(getFieldName4Attribute(_parameter,
+                            CIFormProducts.Products_TransactionInOutForm.product.name)));
+            final PrintQuery print = new PrintQuery(productInst);
+            final SelectBuilder selProdInst = SelectBuilder.get()
+                            .linkfrom(CIProducts.StockProductAbstract2IndividualAbstract.ToAbstract)
+                            .linkto(CIProducts.StockProductAbstract2IndividualAbstract.FromAbstract).instance();
+            print.addSelect(selProdInst);
+            print.executeWithoutAccessCheck();
+            final Instance stockProdIns = print.getSelect(selProdInst);
+            final Parameter parameter = ParameterUtil.clone(_parameter);
+            ParameterUtil.setParmeterValue(parameter, getFieldName4Attribute(_parameter,
+                            CIFormProducts.Products_TransactionInOutForm.product.name), stockProdIns.getOid());
+            final CreatedDoc inoutDoc;
+            if (docType.isCIType(CIProducts.TransactionIndividualInbound)) {
+                inoutDoc = createDoc(parameter, CIProducts.TransactionInbound.getType());
+            } else {
+                inoutDoc = createDoc(parameter,  CIProducts.TransactionOutbound.getType());
+            }
+            final CreatedDoc transDoc = createDocumentTransaction(_parameter, inoutDoc);
+            final CreatedDoc createDoc = createDoc(_parameter, docType);
+
+            if (transDoc.getInstance().isValid()) {
+                final Update update = new Update(createDoc.getInstance());
+                update.add(CIProducts.TransactionAbstract.Document, transDoc.getInstance().getId());
+                update.executeWithoutTrigger();
+            }
+
+        } else {
+            final CreatedDoc createDoc = createDoc(_parameter, docType);
+            createDocumentTransaction(_parameter, createDoc);
+        }
         return new Return();
     }
 
@@ -188,45 +223,48 @@ public abstract class Transaction_Base
      * @param _createDoc the _create doc
      * @throws EFapsException on error
      */
-    protected void createDocumentTransaction(final Parameter _parameter,
+    protected CreatedDoc createDocumentTransaction(final Parameter _parameter,
                                              final CreatedDoc _createDoc)
         throws EFapsException
     {
+        CreatedDoc ret = null;
         final String productDocumentType = _parameter.getParameterValue("productDocumentType");
         if (productDocumentType != null) {
             final Instance prodDocInst = Instance.get(productDocumentType);
-            if (prodDocInst.isValid()) {
-                final CreatedDoc docTransactionCreate = new TransactionDocument().createDoc(_parameter, _createDoc);
-                if (docTransactionCreate.getInstance().isValid()
-                                && (CIProducts.TransactionInbound.getType().equals(_createDoc.getInstance().getType())
-                            || CIProducts.TransactionOutbound.getType().equals(_createDoc.getInstance().getType()))) {
+            if (prodDocInst.isValid() && (_createDoc.getInstance().getType().isCIType(CIProducts.TransactionInbound)
+                            || _createDoc.getInstance().getType().isCIType(CIProducts.TransactionOutbound))) {
+                ret = new TransactionDocument().createDoc(_parameter, _createDoc);
+                if (ret.getInstance().isValid()) {
                     // Sales_Document2ProductDocumentType
                     final Insert insert = new Insert(UUID.fromString("29438fb0-8b1f-4e4e-a409-812b2f9efdc0"));
-                    insert.add("DocumentLink", docTransactionCreate.getInstance().getId());
+                    insert.add("DocumentLink", ret.getInstance().getId());
                     insert.add("DocumentTypeLink", prodDocInst.getId());
                     insert.execute();
 
                     final Update update = new Update(_createDoc.getInstance());
-                    update.add(CIProducts.TransactionAbstract.Document, docTransactionCreate.getInstance().getId());
+                    update.add(CIProducts.TransactionAbstract.Document, ret.getInstance().getId());
                     update.executeWithoutTrigger();
                 }
             }
         }
+        return ret;
     }
 
     /**
      * Creates the doc.
      *
      * @param _parameter Parameter as passed by the eFaps API
+     * @param _docType the _doc type
      * @return the created doc
      * @throws EFapsException on error
      */
-    protected CreatedDoc createDoc(final Parameter _parameter)
+    protected CreatedDoc createDoc(final Parameter _parameter,
+                                   final Type _docType)
         throws EFapsException
     {
         final CreatedDoc createdDoc = new CreatedDoc();
 
-        final Insert insert = new Insert(getType4DocCreate(_parameter));
+        final Insert insert = new Insert(_docType);
 
         final String quantity = _parameter.getParameterValue(getFieldName4Attribute(_parameter,
                         CIFormProducts.Products_TransactionAbstractForm.quantity.name));
@@ -243,14 +281,14 @@ public abstract class Transaction_Base
         }
 
         final String storage = _parameter.getParameterValue(getFieldName4Attribute(_parameter,
-                        CIFormProducts.Products_TransactionAbstractForm.storage.name));
+                        CIFormProducts.Products_TransactionInOutForm.storage.name));
         if (storage != null) {
             insert.add(CIProducts.TransactionAbstract.Storage, storage);
             createdDoc.getValues().put(CIProducts.TransactionAbstract.Storage.name, storage);
         }
 
         final String product = _parameter.getParameterValue(getFieldName4Attribute(_parameter,
-                        CIFormProducts.Products_TransactionAbstractForm.product.name));
+                        CIFormProducts.Products_TransactionInOutForm.product.name));
         if (product != null) {
             final Instance prodInst = Instance.get(product);
             if (prodInst.isValid()) {
@@ -286,7 +324,7 @@ public abstract class Transaction_Base
     {
         Type type = null;
         final String typeStr = _parameter.getParameterValue(getFieldName4Attribute(_parameter,
-                        CIFormProducts.Products_TransactionAbstractForm.type.name));
+                        CIFormProducts.Products_TransactionInOutForm.type.name));
         if (typeStr != null) {
             type = Type.get(Long.parseLong(typeStr));
         }
@@ -343,7 +381,6 @@ public abstract class Transaction_Base
         }
         return new Return();
     }
-
 
     /**
      * Method is executed as trigger after the insert of an
@@ -1218,14 +1255,14 @@ public abstract class Transaction_Base
         final List<IWarning> warnings = new ArrayList<IWarning>();
 
         final Type transType = Type.get(Long.parseLong(_parameter
-                        .getParameterValue(CIFormProducts.Products_TransactionAbstractForm.type.name)));
+                        .getParameterValue(CIFormProducts.Products_TransactionInOutForm.type.name)));
 
         final Instance productInst = Instance.get(_parameter
-                        .getParameterValue(CIFormProducts.Products_TransactionAbstractForm.product.name));
+                        .getParameterValue(CIFormProducts.Products_TransactionInOutForm.product.name));
         final BigDecimal quantity = new BigDecimal(
                         _parameter.getParameterValue(CIFormProducts.Products_TransactionAbstractForm.quantity.name));
         final String storageId = _parameter.getParameterValue(
-                        CIFormProducts.Products_TransactionAbstractForm.storage.name);
+                        CIFormProducts.Products_TransactionInOutForm.storage.name);
 
         BigDecimal quantityInventory = BigDecimal.ZERO;
         BigDecimal quantityReserved = BigDecimal.ZERO;

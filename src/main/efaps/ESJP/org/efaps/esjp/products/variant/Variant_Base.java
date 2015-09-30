@@ -61,10 +61,6 @@ import org.efaps.util.EFapsException;
 import com.google.common.collect.Sets;
 
 /**
- * Select4UI,Attribute,Phrase4Description
- *
- * SortPrefix, Header
- *
  * @author The eFaps Team
  */
 @EFapsUUID("26b08b80-b5d4-4a7a-ad02-6627d686a906")
@@ -73,10 +69,19 @@ public abstract class Variant_Base
     extends AbstractCommon
 {
 
-    protected final static String FIELDPREFIX = "Variant_";
+    /** The Constant FIELDPREFIX. */
+    protected static final String FIELDPREFIX = "Variant_";
 
-    protected final static String CONTEXTKEY = Variant.class.getName() + ".ContextKey";
+    /** The Constant CONTEXTKEY. */
+    protected static final String CONTEXTKEY = Variant.class.getName() + ".ContextKey";
 
+    /**
+     * Creates the.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
     public Return create(final Parameter _parameter)
         throws EFapsException
     {
@@ -95,6 +100,13 @@ public abstract class Variant_Base
         return product.create(_parameter);
     }
 
+    /**
+     * Edits the.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
     public Return edit(final Parameter _parameter)
         throws EFapsException
     {
@@ -113,6 +125,13 @@ public abstract class Variant_Base
         return product.edit(_parameter);
     }
 
+    /**
+     * Creates the variants.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
     public Return createVariants(final Parameter _parameter)
         throws EFapsException
     {
@@ -146,6 +165,14 @@ public abstract class Variant_Base
         return new Return();
     }
 
+    /**
+     * Gets the name4 variant.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _baseInst the _base inst
+     * @return the name4 variant
+     * @throws EFapsException on error
+     */
     protected String getName4Variant(final Parameter _parameter,
                                      final Instance _baseInst)
         throws EFapsException
@@ -176,6 +203,15 @@ public abstract class Variant_Base
         return ret;
     }
 
+    /**
+     * Gets the description4 variant.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _baseInst the _base inst
+     * @param _variant the _variant
+     * @return the description4 variant
+     * @throws EFapsException on error
+     */
     protected String getDescription4Variant(final Parameter _parameter,
                                             final Instance _baseInst,
                                             final VariantWrapper _variant)
@@ -185,7 +221,7 @@ public abstract class Variant_Base
         final PrintQuery print = new PrintQuery(_baseInst);
         print.addAttribute(CIProducts.ProductAbstract.Description);
         print.execute();
-        final String baseDescription= print.<String>getAttribute(CIProducts.ProductAbstract.Description);
+        final String baseDescription = print.<String>getAttribute(CIProducts.ProductAbstract.Description);
         ret.append(baseDescription);
 
         final Properties properties = Products.getSysConfig().getAttributeValueAsProperties(
@@ -193,7 +229,7 @@ public abstract class Variant_Base
 
         for (final ElementWrapper ele : _variant.getElements()) {
             final String phrase = properties.getProperty(ele.getAttrKey() + ".Phrase4Description");
-            final PrintQuery elePrint =new PrintQuery(ele.getObjInst());
+            final PrintQuery elePrint = new PrintQuery(ele.getObjInst());
             elePrint.addPhrase("Phrase", phrase);
             elePrint.execute();
             ret.append(elePrint.getPhrase("Phrase"));
@@ -202,6 +238,13 @@ public abstract class Variant_Base
     }
 
 
+    /**
+     * Gets the variant conf.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the variant conf
+     * @throws EFapsException on error
+     */
     protected VariantConf getVariantConf(final Parameter _parameter)
         throws EFapsException
     {
@@ -221,6 +264,13 @@ public abstract class Variant_Base
         return ret;
     }
 
+    /**
+     * Check access4 attribute.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
     public Return checkAccess4Attribute(final Parameter _parameter)
         throws EFapsException
     {
@@ -255,6 +305,13 @@ public abstract class Variant_Base
         return ret;
     }
 
+    /**
+     * Variant field value.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
     public Return variantFieldValue(final Parameter _parameter)
         throws EFapsException
     {
@@ -295,7 +352,7 @@ public abstract class Variant_Base
             table.addHeaderColumn(ele.getHeader());
         }
         for (final VariantWrapper variation : variations) {
-            if (create && !variation.hasProduct() || !create ) {
+            if (create && !variation.hasProduct() || !create) {
                 table.addRow();
                 if (create) {
                     final String key = RandomStringUtils.randomAlphanumeric(12);
@@ -316,6 +373,13 @@ public abstract class Variant_Base
         return ret;
     }
 
+    /**
+     * Gets the variant config field value.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the variant config field value
+     * @throws EFapsException on error
+     */
     public Return getVariantConfigFieldValue(final Parameter _parameter)
         throws EFapsException
     {
@@ -382,20 +446,33 @@ public abstract class Variant_Base
         return ret;
     }
 
+    /**
+     * The Class VariantWrapper.
+     */
     public static class VariantWrapper
         implements Comparable<VariantWrapper>
     {
 
+        /** The elements. */
         private final Set<ElementWrapper> elements = new TreeSet<>();
 
+        /** The base inst. */
         private Instance baseInst;
 
+        /** The prod inst. */
         private Instance prodInst;
 
+        /** The init. */
         private boolean init;
 
+        /** The prod name. */
         private String prodName;
 
+        /**
+         * Initialize.
+         *
+         * @throws EFapsException on error
+         */
         protected void initialize()
             throws EFapsException
         {
@@ -436,6 +513,12 @@ public abstract class Variant_Base
             return this.elements;
         }
 
+        /**
+         * Checks for product.
+         *
+         * @return true, if successful
+         * @throws EFapsException on error
+         */
         public boolean hasProduct()
             throws EFapsException
         {
@@ -443,6 +526,12 @@ public abstract class Variant_Base
             return this.prodInst != null && this.prodInst.isValid();
         }
 
+        /**
+         * Gets the product name.
+         *
+         * @return the product name
+         * @throws EFapsException on error
+         */
         public String getProductName()
             throws EFapsException
         {
@@ -470,6 +559,7 @@ public abstract class Variant_Base
          * Setter method for instance variable {@link #baseInst}.
          *
          * @param _baseInst value for instance variable {@link #baseInst}
+         * @return the variant wrapper
          */
         public VariantWrapper setBaseInst(final Instance _baseInst)
         {
@@ -478,19 +568,28 @@ public abstract class Variant_Base
         }
     }
 
+    /**
+     * The Class ElementWrapper.
+     */
     public static class ElementWrapper
         extends AbstractCommon
         implements Comparable<ElementWrapper>
     {
 
+        /** The attr key. */
         private String attrKey;
 
+        /** The obj inst. */
         private Instance objInst;
 
+        /** The column. */
         private String column;
 
         /**
-         * @return
+         * Gets the header.
+         *
+         * @return the header
+         * @throws EFapsException on error
          */
         public CharSequence getHeader()
             throws EFapsException
@@ -505,9 +604,14 @@ public abstract class Variant_Base
         }
 
         /**
-         * @return
+         * Gets the column.
+         *
+         * @param _parameter Parameter as passed by the eFaps API
+         * @return the column
+         * @throws EFapsException on error
          */
-        public String getColumn(final Parameter _parameter) throws EFapsException
+        public String getColumn(final Parameter _parameter)
+            throws EFapsException
         {
             if (this.column == null) {
                 final Properties properties = Products.getSysConfig().getAttributeValueAsProperties(
@@ -521,6 +625,11 @@ public abstract class Variant_Base
             return this.column;
         }
 
+        /**
+         * Gets the sort string.
+         *
+         * @return the sort string
+         */
         public String getSortString()
         {
             String sortPrefix = "";
@@ -545,6 +654,12 @@ public abstract class Variant_Base
             return this.attrKey;
         }
 
+        /**
+         * Gets the attribute.
+         *
+         * @return the attribute
+         * @throws EFapsException on error
+         */
         public Attribute getAttribute()
             throws EFapsException
         {
@@ -553,11 +668,11 @@ public abstract class Variant_Base
             return Attribute.get(properties.getProperty(getAttrKey() + ".Attribute"));
         }
 
-
         /**
          * Setter method for instance variable {@link #attrName}.
          *
          * @param _attrName value for instance variable {@link #attrName}
+         * @return the element wrapper
          */
         public ElementWrapper setAttrKey(final String _attrName)
         {
@@ -579,6 +694,7 @@ public abstract class Variant_Base
          * Setter method for instance variable {@link #objInst}.
          *
          * @param _objInst value for instance variable {@link #objInst}
+         * @return the element wrapper
          */
         public ElementWrapper setObjInst(final Instance _objInst)
         {
@@ -591,6 +707,5 @@ public abstract class Variant_Base
         {
             return getSortString().compareTo(_elementWrapper0.getSortString());
         }
-
     }
 }
