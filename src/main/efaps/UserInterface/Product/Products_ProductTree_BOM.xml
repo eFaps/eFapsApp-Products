@@ -2,7 +2,7 @@
 
 <!--
 
-  Copyright 2003 - 2010 The eFaps Team
+  Copyright 2003 - 2015 The eFaps Team
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -16,19 +16,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  Author:          The eFaps Team
-  Revision:        $Rev$
-  Last Changed:    $Date$
-  Last Changed By: $Author$
-
 -->
 
-<ui-menu xmlns="http://www.efaps.org/xsd"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+<ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>4bf945bb-9c70-451e-a6cd-9c8830f291b8</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductTree_BOM</name>
@@ -36,18 +29,18 @@
             <role>Products_Admin</role>
             <role>Products_Modifier</role>
         </access>
-        <!-- target definitions -->
         <target>
             <menu>Products_ProductTree_BOM_Menu</menu>
             <table>Products_BOMTable</table>
             <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
-                <property name="Type">Products_BOMAbstract</property>
-                <property name="LinkFrom">FromAbstract</property>
+                <property name="Type01">Products_BOMAbstract</property>
+                <property name="LinkFrom01">FromAbstract</property>
+                <property name="Type02">Products_BOMAbstract</property>
+                <property name="LinkFrom02">ToAbstract</property>
                 <property name="ExpandChildTypes">true</property>
             </evaluate>
             <help>org.efaps.wiki.products.Showproducts.wiki</help>
         </target>
-        <!-- properties -->
         <property name="Target">content</property>
         <property name="TargetMode">view</property>
         <property name="TargetShowCheckBoxes">true</property>
