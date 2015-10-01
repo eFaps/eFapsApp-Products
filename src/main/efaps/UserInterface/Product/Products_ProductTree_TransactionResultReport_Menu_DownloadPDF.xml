@@ -34,6 +34,7 @@
                 <property name="PageType">A4</property>
                 <property name="PageOrientation">LANDSCAPE</property>
                 <property name="FilterKey">org.efaps.esjp.products.reports.TransactionResultReport.FilterKey</property>
+                <property name="CachedReportAddInstanceCriteria">true</property>
             </execute>
         </target>
         <property name="Target">hidden</property>

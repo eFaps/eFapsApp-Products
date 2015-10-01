@@ -20,22 +20,12 @@ package org.efaps.esjp.products.reports;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
-import net.sf.dynamicreports.report.base.expression.AbstractSimpleExpression;
-import net.sf.dynamicreports.report.builder.DynamicReports;
-import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
-import net.sf.dynamicreports.report.builder.group.ColumnGroupBuilder;
-import net.sf.dynamicreports.report.builder.subtotal.AggregationSubtotalBuilder;
-import net.sf.dynamicreports.report.constant.Calculation;
-import net.sf.dynamicreports.report.definition.ReportParameters;
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import org.apache.commons.collections4.comparators.ComparatorChain;
 import org.apache.commons.collections4.iterators.ReverseListIterator;
@@ -64,6 +54,19 @@ import org.efaps.esjp.products.StorageGroup;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
 
+import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
+import net.sf.dynamicreports.report.base.expression.AbstractSimpleExpression;
+import net.sf.dynamicreports.report.builder.DynamicReports;
+import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
+import net.sf.dynamicreports.report.builder.group.ColumnGroupBuilder;
+import net.sf.dynamicreports.report.builder.subtotal.AggregationSubtotalBuilder;
+import net.sf.dynamicreports.report.constant.Calculation;
+import net.sf.dynamicreports.report.definition.ReportParameters;
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRRewindableDataSource;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+
 /**
  * TODO comment!
  *
@@ -75,9 +78,20 @@ public abstract class TransactionResultReport_Base
     extends FilteredReport
 {
 
+    /**
+     * The Enum StorageDisplay.
+     */
     public enum StorageDisplay
     {
-        NONE, GROUP, ROW;
+
+        /** The none. */
+        NONE,
+
+        /** The group. */
+        GROUP,
+
+        /** The row. */
+        ROW;
     }
 
     /**
@@ -130,17 +144,26 @@ public abstract class TransactionResultReport_Base
         return new DynTransactionResultReport(this);
     }
 
+    /**
+     * The Class DynTransactionResultReport.
+     */
     public static class DynTransactionResultReport
         extends AbstractDynamicReport
     {
 
+        /** The filtered report. */
         private final FilteredReport filteredReport;
+
+        /** The storage group. */
         private ColumnGroupBuilder storageGroup  = null;
 
+        /** The individual. */
         private Boolean individual = null;
 
         /**
-         * @param _transactionResultReport_Base
+         * Instantiates a new dyn transaction result report.
+         *
+         * @param _filteredReport the _filtered report
          */
         public DynTransactionResultReport(final TransactionResultReport_Base _filteredReport)
         {
@@ -151,54 +174,74 @@ public abstract class TransactionResultReport_Base
         protected JRDataSource createDataSource(final Parameter _parameter)
             throws EFapsException
         {
-            final List<DataBean> beans = new ArrayList<>();
-            final Instance prodInst = _parameter.getInstance();
-            final QueryBuilder queryBldr;
-            if (isIndividual(_parameter)) {
-                queryBldr = new QueryBuilder(CIProducts.TransactionIndividualAbstract);
-            } else {
-                queryBldr = new QueryBuilder(CIProducts.TransactionInOutAbstract);
-            }
-            add2QueryBuilder(_parameter, queryBldr);
-            final MultiPrintQuery multi = queryBldr.getPrint();
-            final SelectBuilder selDoc = SelectBuilder.get().linkto(CIProducts.TransactionAbstract.Document);
-            final SelectBuilder selDocStatus = new SelectBuilder(selDoc).status();
-            final SelectBuilder selDocInst = new SelectBuilder(selDoc).instance();
-            final SelectBuilder selDocName = new SelectBuilder(selDoc).attribute(CIERP.DocumentAbstract.Name);
-            final SelectBuilder selDocContactName = new SelectBuilder(selDoc).linkto(CIERP.DocumentAbstract.Contact)
-                                .attribute(CIContacts.ContactAbstract.Name);
-            final SelectBuilder selStorage = SelectBuilder.get().linkto(CIProducts.TransactionInOutAbstract.Storage);
-            final SelectBuilder selStorageInst = new SelectBuilder(selStorage).instance();
-            final SelectBuilder selStorageName = new SelectBuilder(selStorage).attribute(CIProducts.StorageAbstract.Name);
-            final SelectBuilder selProdName =  SelectBuilder.get().linkto(CIProducts.TransactionAbstract.Product)
-                            .attribute(CIProducts.ProductAbstract.Name);
-            multi.addSelect(selDocInst, selDocStatus, selDocName, selDocContactName, selStorageName, selStorageInst,
-                            selProdName);
-            multi.addAttribute(CIProducts.TransactionAbstract.Quantity,
-                            CIProducts.TransactionAbstract.Description,
-                            CIProducts.TransactionAbstract.Date,
-                            CIProducts.TransactionAbstract.Position);
-            multi.execute();
-            while (multi.next()) {
-                if (isValidStatus(_parameter, multi.<Status>getSelect(selDocStatus))) {
-                    final DataBean bean = getDataBean()
-                        .setTransInst(multi.getCurrentInstance())
-                        .setDate(multi.<DateTime>getAttribute(CIProducts.TransactionAbstract.Date))
-                        .setPosition(multi.<Integer>getAttribute(CIProducts.TransactionAbstract.Position))
-                        .setQuantity(multi.<BigDecimal>getAttribute(CIProducts.TransactionAbstract.Quantity))
-                        .setDescription(multi.<String>getAttribute(CIProducts.TransactionAbstract.Description))
-                        .setDocInst(multi.<Instance>getSelect(selDocInst))
-                        .setDocName(multi.<String>getSelect(selDocName))
-                        .setDocContactName(multi.<String>getSelect(selDocContactName))
-                        .setStorageName(multi.<String>getSelect(selStorageName))
-                        .setStorageInst(multi.<Instance>getSelect(selStorageInst))
-                        .setProdName(multi.<String>getSelect(selProdName));
-                    beans.add(bean);
-                    add2Bean(_parameter, bean);
+            JRRewindableDataSource ret;
+            if (getFilteredReport().isCached(_parameter)) {
+                ret = getFilteredReport().getDataSourceFromCache(_parameter);
+                try {
+                    ret.moveFirst();
+                } catch (final JRException e) {
+                    throw new EFapsException("JRException", e);
                 }
-            }
-            final ComparatorChain<DataBean> chain = new ComparatorChain<DataBean>();
-            if (StorageDisplay.GROUP.equals(getStorageDisplay(_parameter))) {
+            } else {
+                final List<DataBean> beans = new ArrayList<>();
+                final Instance prodInst = _parameter.getInstance();
+                final QueryBuilder queryBldr;
+                if (isIndividual(_parameter)) {
+                    queryBldr = new QueryBuilder(CIProducts.TransactionIndividualAbstract);
+                } else {
+                    queryBldr = new QueryBuilder(CIProducts.TransactionInOutAbstract);
+                }
+                add2QueryBuilder(_parameter, queryBldr);
+                final MultiPrintQuery multi = queryBldr.getPrint();
+                final SelectBuilder selDoc = SelectBuilder.get().linkto(CIProducts.TransactionAbstract.Document);
+                final SelectBuilder selDocStatus = new SelectBuilder(selDoc).status();
+                final SelectBuilder selDocInst = new SelectBuilder(selDoc).instance();
+                final SelectBuilder selDocName = new SelectBuilder(selDoc).attribute(CIERP.DocumentAbstract.Name);
+                final SelectBuilder selDocContactName = new SelectBuilder(selDoc).linkto(CIERP.DocumentAbstract.Contact)
+                                .attribute(CIContacts.ContactAbstract.Name);
+                final SelectBuilder selStorage = SelectBuilder.get().linkto(
+                                CIProducts.TransactionInOutAbstract.Storage);
+                final SelectBuilder selStorageInst = new SelectBuilder(selStorage).instance();
+                final SelectBuilder selStorageName = new SelectBuilder(selStorage).attribute(
+                                CIProducts.StorageAbstract.Name);
+                final SelectBuilder selProdName = SelectBuilder.get().linkto(CIProducts.TransactionAbstract.Product)
+                                .attribute(CIProducts.ProductAbstract.Name);
+                multi.addSelect(selDocInst, selDocStatus, selDocName, selDocContactName, selStorageName, selStorageInst,
+                                selProdName);
+                multi.addAttribute(CIProducts.TransactionAbstract.Quantity, CIProducts.TransactionAbstract.Description,
+                                CIProducts.TransactionAbstract.Date, CIProducts.TransactionAbstract.Position);
+                multi.execute();
+                while (multi.next()) {
+                    if (isValidStatus(_parameter, multi.<Status>getSelect(selDocStatus))) {
+                        final DataBean bean = getDataBean()
+                                .setTransInst(multi.getCurrentInstance())
+                                .setDate(multi.<DateTime>getAttribute(CIProducts.TransactionAbstract.Date))
+                                .setPosition(multi.<Integer>getAttribute(CIProducts.TransactionAbstract.Position))
+                                .setQuantity(multi.<BigDecimal>getAttribute(CIProducts.TransactionAbstract.Quantity))
+                                .setDescription(multi.<String>getAttribute(CIProducts.TransactionAbstract.Description))
+                                .setDocInst(multi.<Instance>getSelect(selDocInst))
+                                .setDocName(multi.<String>getSelect(selDocName))
+                                .setDocContactName(multi.<String>getSelect(selDocContactName))
+                                .setStorageName(multi.<String>getSelect(selStorageName))
+                                .setStorageInst(multi.<Instance>getSelect(selStorageInst))
+                                .setProdName(multi.<String>getSelect(selProdName));
+                        beans.add(bean);
+                        add2Bean(_parameter, bean);
+                    }
+                }
+                final ComparatorChain<DataBean> chain = new ComparatorChain<DataBean>();
+                if (StorageDisplay.GROUP.equals(getStorageDisplay(_parameter))) {
+                    chain.addComparator(new Comparator<DataBean>()
+                    {
+
+                        @Override
+                        public int compare(final DataBean _bean0,
+                                           final DataBean _bean1)
+                        {
+                            return _bean0.getStorageName().compareTo(_bean1.getStorageName());
+                        }
+                    });
+                }
                 chain.addComparator(new Comparator<DataBean>()
                 {
 
@@ -206,65 +249,76 @@ public abstract class TransactionResultReport_Base
                     public int compare(final DataBean _bean0,
                                        final DataBean _bean1)
                     {
-                        return _bean0.getStorageName().compareTo(_bean1.getStorageName());
+                        return _bean0.getDate().compareTo(_bean1.getDate());
                     }
                 });
-            }
-            chain.addComparator(new Comparator<DataBean>()
-            {
-
-                @Override
-                public int compare(final DataBean _bean0,
-                                   final DataBean _bean1)
+                chain.addComparator(new Comparator<DataBean>()
                 {
-                    return _bean0.getDate().compareTo(_bean1.getDate());
+
+                    @Override
+                    public int compare(final DataBean _bean0,
+                                       final DataBean _bean1)
+                    {
+                        return _bean0.getPosition().compareTo(_bean1.getPosition());
+                    }
+                });
+
+                Collections.sort(beans, chain);
+
+                final ReverseListIterator<DataBean> iter = new ReverseListIterator<>(beans);
+
+                final Map<Instance, BigDecimal> inventorymap = getInventory(_parameter, prodInst);
+                BigDecimal inventory = BigDecimal.ZERO;
+                for (final BigDecimal inven : inventorymap.values()) {
+                    inventory = inventory.add(inven);
                 }
-            });
-            chain.addComparator(new Comparator<DataBean>()
-            {
-
-                @Override
-                public int compare(final DataBean _bean0,
-                                   final DataBean _bean1)
-                {
-                    return _bean0.getPosition().compareTo(_bean1.getPosition());
+                if (!beans.isEmpty()) {
+                    final DataBean bean = beans.iterator().next();
+                    bean.setInventoryMap(inventorymap);
+                    bean.setInventory(inventory);
                 }
-            });
 
-            Collections.sort(beans, chain);
-
-            final ReverseListIterator<DataBean> iter = new ReverseListIterator<>(beans);
-
-            final Map<Instance, BigDecimal> inventorymap = getInventory(_parameter, prodInst);
-            BigDecimal inventory = BigDecimal.ZERO;
-            for (final BigDecimal inven : inventorymap.values()) {
-                inventory = inventory.add(inven);
+                BigDecimal current = null;
+                if (!StorageDisplay.GROUP.equals(getStorageDisplay(_parameter))) {
+                    current = inventory;
+                }
+                Instance currentStorageInst = null;
+                while (iter.hasNext()) {
+                    final DataBean bean = iter.next();
+                    if (StorageDisplay.GROUP.equals(getStorageDisplay(_parameter))) {
+                        if (!bean.getStorageInst().equals(currentStorageInst)) {
+                            current = inventorymap.get(bean.getStorageInst());
+                            currentStorageInst = bean.getStorageInst();
+                            if (current == null) {
+                                current = BigDecimal.ZERO;
+                            }
+                        }
+                    }
+                    bean.setTotal(current);
+                    current = current.subtract(bean.getQuantity());
+                }
+                ret = new JRBeanCollectionDataSource(beans);
+                getFilteredReport().cache(_parameter, ret);
             }
-            getReport().addParameter("Inventory", inventory);
-            getReport().addParameter("InventoryMap", inventorymap);
-
-            BigDecimal current = null;
-            if (!StorageDisplay.GROUP.equals(getStorageDisplay(_parameter))) {
-                current = inventory;
+            final Collection<?> dataCollection = ((JRBeanCollectionDataSource) ret).getData();
+            if (dataCollection.isEmpty()) {
+                getReport().addParameter("Inventory", BigDecimal.ZERO);
+                getReport().addParameter("InventoryMap", new HashMap<Instance, BigDecimal>());
+            } else {
+                final DataBean bean = (DataBean) dataCollection.iterator().next();
+                getReport().addParameter("Inventory", bean.getInventory());
+                getReport().addParameter("InventoryMap", bean.getInventoryMap());
             }
-            Instance currentStorageInst = null;
-            while (iter.hasNext()) {
-               final DataBean bean = iter.next();
-               if (StorageDisplay.GROUP.equals(getStorageDisplay(_parameter))) {
-                   if (!bean.getStorageInst().equals(currentStorageInst)) {
-                       current = inventorymap.get(bean.getStorageInst());
-                       currentStorageInst = bean.getStorageInst();
-                       if (current == null) {
-                           current = BigDecimal.ZERO;
-                       }
-                   }
-               }
-               bean.setTotal(current);
-               current = current.subtract(bean.getQuantity());
-            }
-            return new JRBeanCollectionDataSource(beans);
+            return ret;
         }
 
+        /**
+         * Checks if is individual.
+         *
+         * @param _parameter the _parameter
+         * @return true, if is individual
+         * @throws EFapsException on error
+         */
         protected boolean isIndividual(final Parameter _parameter)
             throws EFapsException
         {
@@ -277,8 +331,7 @@ public abstract class TransactionResultReport_Base
                     final Map<String, Object> filter = getFilteredReport().getFilterMap(_parameter);
                     if (filter.containsKey("individual")) {
                         this.individual = (Boolean) filter.get("individual");
-                    }
-                    else {
+                    } else {
                         this.individual = false;
                     }
                 } else {
@@ -289,8 +342,11 @@ public abstract class TransactionResultReport_Base
         }
 
         /**
-         * @param _parameter
-         * @param _bean
+         * Add2 bean.
+         *
+         * @param _parameter the _parameter
+         * @param _bean the _bean
+         * @throws EFapsException on error
          */
         protected void add2Bean(final Parameter _parameter,
                                 final DataBean _bean)
@@ -299,11 +355,23 @@ public abstract class TransactionResultReport_Base
             // to be used by implementations
         }
 
+        /**
+         * Gets the data bean.
+         *
+         * @return the data bean
+         */
         protected DataBean getDataBean()
         {
             return new DataBean();
         }
 
+        /**
+         * Checks if is valid status.
+         *
+         * @param _parameter the _parameter
+         * @param _status the _status
+         * @return true, if is valid status
+         */
         protected boolean isValidStatus(final Parameter _parameter,
                                         final Status _status)
         {
@@ -314,6 +382,13 @@ public abstract class TransactionResultReport_Base
             return ret;
         }
 
+        /**
+         * Add2 query builder.
+         *
+         * @param _parameter the _parameter
+         * @param _queryBldr the _query bldr
+         * @throws EFapsException on error
+         */
         protected void add2QueryBuilder(final Parameter _parameter,
                                         final QueryBuilder _queryBldr)
             throws EFapsException
@@ -347,6 +422,13 @@ public abstract class TransactionResultReport_Base
             }
         }
 
+        /**
+         * Gets the storage insts.
+         *
+         * @param _parameter the _parameter
+         * @return the storage insts
+         * @throws EFapsException on error
+         */
         protected List<Instance> getStorageInsts(final Parameter _parameter)
             throws EFapsException
         {
@@ -368,6 +450,14 @@ public abstract class TransactionResultReport_Base
             return ret;
         }
 
+        /**
+         * Gets the inventory.
+         *
+         * @param _parameter the _parameter
+         * @param _prodInst the _prod inst
+         * @return the inventory
+         * @throws EFapsException on error
+         */
         protected Map<Instance, BigDecimal> getInventory(final Parameter _parameter,
                                                          final Instance _prodInst)
             throws EFapsException
@@ -489,6 +579,13 @@ public abstract class TransactionResultReport_Base
             _builder.addField("storageInst", Instance.class);
         }
 
+        /**
+         * Gets the storage display.
+         *
+         * @param _parameter the _parameter
+         * @return the storage display
+         * @throws EFapsException on error
+         */
         protected StorageDisplay getStorageDisplay(final Parameter _parameter)
             throws EFapsException
         {
@@ -525,39 +622,72 @@ public abstract class TransactionResultReport_Base
         }
     }
 
+    /**
+     * The Class DataBean.
+     */
     public static class DataBean
     {
 
+        /** The trans inst. */
         private Instance transInst;
 
+        /** The quantity. */
         private BigDecimal quantity;
 
+        /** The total. */
         private BigDecimal total;
 
+        /** The description. */
         private String description;
 
+        /** The date. */
         private DateTime date;
 
+        /** The position. */
         private Integer position;
 
+        /** The doc inst. */
         private Instance docInst;
 
+        /** The doc name. */
         private String docName;
 
+        /** The doc contact name. */
         private String docContactName;
 
+        /** The storage name. */
         private String storageName;
 
+        /** The storage inst. */
         private Instance storageInst;
 
+        /** The prod name. */
         private String prodName;
 
+        // this values will only be used in the first bean
+        /** The inventoryMap. */
+        private Map<Instance, BigDecimal> inventoryMap;
+
+
+        /** The inventory. */
+        private BigDecimal inventory;
+
+        /**
+         * Checks if is trans out.
+         *
+         * @return true, if is trans out
+         */
         public boolean isTransOut()
         {
             return getTransInst().getType().isCIType(CIProducts.TransactionOutbound)
                             || getTransInst().getType().isCIType(CIProducts.TransactionIndividualOutbound);
         }
 
+        /**
+         * Gets the doc type.
+         *
+         * @return the doc type
+         */
         public String getDocType()
         {
             String ret;
@@ -569,6 +699,11 @@ public abstract class TransactionResultReport_Base
             return ret;
         }
 
+        /**
+         * Gets the outgoing.
+         *
+         * @return the outgoing
+         */
         public BigDecimal getOutgoing()
         {
             BigDecimal ret;
@@ -580,6 +715,11 @@ public abstract class TransactionResultReport_Base
             return ret;
         }
 
+        /**
+         * Gets the incoming.
+         *
+         * @return the incoming
+         */
         public BigDecimal getIncoming()
         {
             BigDecimal ret;
@@ -609,6 +749,7 @@ public abstract class TransactionResultReport_Base
          * Setter method for instance variable {@link #quantity}.
          *
          * @param _quantity value for instance variable {@link #quantity}
+         * @return the data bean
          */
         public DataBean setQuantity(final BigDecimal _quantity)
         {
@@ -630,6 +771,7 @@ public abstract class TransactionResultReport_Base
          * Setter method for instance variable {@link #description}.
          *
          * @param _description value for instance variable {@link #description}
+         * @return the data bean
          */
         public DataBean setDescription(final String _description)
         {
@@ -651,6 +793,7 @@ public abstract class TransactionResultReport_Base
          * Setter method for instance variable {@link #date}.
          *
          * @param _date value for instance variable {@link #date}
+         * @return the data bean
          */
         public DataBean setDate(final DateTime _date)
         {
@@ -672,6 +815,7 @@ public abstract class TransactionResultReport_Base
          * Setter method for instance variable {@link #transInst}.
          *
          * @param _transInst value for instance variable {@link #transInst}
+         * @return the data bean
          */
         public DataBean setTransInst(final Instance _transInst)
         {
@@ -693,6 +837,7 @@ public abstract class TransactionResultReport_Base
          * Setter method for instance variable {@link #total}.
          *
          * @param _total value for instance variable {@link #total}
+         * @return the data bean
          */
         public DataBean setTotal(final BigDecimal _total)
         {
@@ -714,6 +859,7 @@ public abstract class TransactionResultReport_Base
          * Setter method for instance variable {@link #position}.
          *
          * @param _position value for instance variable {@link #position}
+         * @return the data bean
          */
         public DataBean setPosition(final Integer _position)
         {
@@ -735,6 +881,7 @@ public abstract class TransactionResultReport_Base
          * Setter method for instance variable {@link #docName}.
          *
          * @param _docName value for instance variable {@link #docName}
+         * @return the data bean
          */
         public DataBean setDocName(final String _docName)
         {
@@ -756,6 +903,7 @@ public abstract class TransactionResultReport_Base
          * Setter method for instance variable {@link #docInst}.
          *
          * @param _docInst value for instance variable {@link #docInst}
+         * @return the data bean
          */
         public DataBean setDocInst(final Instance _docInst)
         {
@@ -777,6 +925,7 @@ public abstract class TransactionResultReport_Base
          * Setter method for instance variable {@link #docContactName}.
          *
          * @param _docContactName value for instance variable {@link #docContactName}
+         * @return the data bean
          */
         public DataBean setDocContactName(final String _docContactName)
         {
@@ -798,6 +947,7 @@ public abstract class TransactionResultReport_Base
          * Setter method for instance variable {@link #storage}.
          *
          * @param _storage value for instance variable {@link #storage}
+         * @return the data bean
          */
         public DataBean setStorageName(final String _storage)
         {
@@ -819,13 +969,13 @@ public abstract class TransactionResultReport_Base
          * Setter method for instance variable {@link #storageInst}.
          *
          * @param _storageInst value for instance variable {@link #storageInst}
+         * @return the data bean
          */
         public DataBean setStorageInst(final Instance _storageInst)
         {
             this.storageInst = _storageInst;
             return this;
         }
-
 
         /**
          * Getter method for the instance variable {@link #prodName}.
@@ -837,29 +987,75 @@ public abstract class TransactionResultReport_Base
             return this.prodName;
         }
 
-
         /**
          * Setter method for instance variable {@link #prodName}.
          *
          * @param _prodName value for instance variable {@link #prodName}
+         * @return the data bean
          */
         public DataBean setProdName(final String _prodName)
         {
             this.prodName = _prodName;
             return this;
         }
+
+        /**
+         * Gets the inventorymap.
+         *
+         * @return the inventorymap
+         */
+        public Map<Instance, BigDecimal> getInventoryMap()
+        {
+            return this.inventoryMap;
+        }
+
+        /**
+         * Sets the inventorymap.
+         *
+         * @param _inventoryMap the _inventory map
+         */
+        public void setInventoryMap(final Map<Instance, BigDecimal> _inventoryMap)
+        {
+            this.inventoryMap = _inventoryMap;
+        }
+
+        /**
+         * Gets the inventory.
+         *
+         * @return the inventory
+         */
+        public BigDecimal getInventory()
+        {
+            return this.inventory;
+        }
+
+        /**
+         * Sets the inventory.
+         *
+         * @param _inventory the new inventory
+         */
+        public void setInventory(final BigDecimal _inventory)
+        {
+            this.inventory = _inventory;
+        }
     }
 
+    /**
+     * The Class TotalExpression.
+     */
     public static class TotalExpression
         extends AbstractSimpleExpression<BigDecimal>
     {
-
-        private final boolean group;
-
+        /** The Constant serialVersionUID. */
         private static final long serialVersionUID = 1L;
 
+        /** The group. */
+        private final boolean group;
+
         /**
-         * @param _b
+         * Instantiates a new total expression.
+         *
+         * @param _group the _group
          */
         public TotalExpression(final boolean _group)
         {

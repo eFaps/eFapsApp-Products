@@ -14,8 +14,6 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  Author:          The eFaps Team
-
 -->
 <ui-form xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
@@ -28,7 +26,8 @@
             <property name="HideLabel">true</property>
             <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
             <trigger event="UI_FIELD_VALUE" index="1" method="setDefaultFilter"
-                name="Products_TransactionResultReportForm.filter.UI_FIELD_VALUE.1" program="org.efaps.esjp.products.reports.TransactionResultReport">
+                name="Products_TransactionResultReportForm.filter.UI_FIELD_VALUE.1"
+                program="org.efaps.esjp.products.reports.TransactionResultReport">
                 <property name="FilterKey">org.efaps.esjp.products.reports.TransactionResultReport.FilterKey</property>
                <property name="Field01">dateFrom</property>
                 <property name="Field02">dateTo</property>
@@ -62,6 +61,7 @@
                 <property name="DBProperty05">org.efaps.esjp.products.reports.TransactionResultReport.storageDisplay</property>
                 <property name="Products_WarehouseGroup_Select">attribute[Name]</property>
                 <property name="Products_Warehouse_Select">attribute[Name]</property>
+                <property name="CachedReportAddInstanceCriteria">true</property>
             </trigger>
             <trigger program="org.efaps.esjp.products.Product"
                 method="individualAccessCheck"
@@ -73,7 +73,8 @@
             <property name="HideLabel">true</property>
             <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
             <trigger event="UI_FIELD_VALUE" index="1" method="setDefaultFilter"
-                name="Products_TransactionResultReportForm.filter.UI_FIELD_VALUE.1" program="org.efaps.esjp.products.reports.TransactionResultReport">
+                name="Products_TransactionResultReportForm.filter.UI_FIELD_VALUE.1"
+                program="org.efaps.esjp.products.reports.TransactionResultReport">
                 <property name="FilterKey">org.efaps.esjp.products.reports.TransactionResultReport.FilterKey</property>
                <property name="Field01">dateFrom</property>
                 <property name="Field02">dateTo</property>
@@ -112,10 +113,12 @@
                 <property name="DBProperty06">org.efaps.esjp.products.reports.TransactionResultReport.individual</property>
                 <property name="Products_WarehouseGroup_Select">attribute[Name]</property>
                 <property name="Products_Warehouse_Select">attribute[Name]</property>
+                <property name="CachedReportAddInstanceCriteria">true</property>
             </trigger>
             <trigger program="org.efaps.esjp.products.Product"
                 method="individualAccessCheck"
-                name="Products_TransactionResultReportForm.filter.UI_ACCESSCHECK" event="UI_ACCESSCHECK">
+                name="Products_TransactionResultReportForm.filter.UI_ACCESSCHECK"
+                event="UI_ACCESSCHECK">
                 <property name="Individual01">INDIVIDUAL</property>
                 <property name="Individual02">BATCH</property>
             </trigger>
@@ -127,6 +130,7 @@
                 name="Products_TransactionResultReportForm.report.UI_FIELD_VALUE"
                     program="org.efaps.esjp.products.reports.TransactionResultReport">
                 <property name="FilterKey">org.efaps.esjp.products.reports.TransactionResultReport.FilterKey</property>
+                <property name="CachedReportAddInstanceCriteria">true</property>
             </trigger>
         </field>
     </definition>
