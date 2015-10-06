@@ -66,6 +66,8 @@ import org.efaps.esjp.erp.WarningUtil;
 import org.efaps.ui.wicket.models.cell.UIFormCell;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * TODO comment!
@@ -98,6 +100,10 @@ public abstract class Transaction_Base
      */
     public static final String NAMEKEY = Transaction.class.getName() + ".NameKey";
 
+    /**
+     * Logger for this class.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(Transaction.class);
 
     /**
      * Method to assign the signum for the quantity value.
@@ -1194,8 +1200,7 @@ public abstract class Transaction_Base
                 try {
                     quantity = (BigDecimal) NumberFormatter.get().getFormatter().parse(quantities[i]);
                 } catch (final ParseException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    LOG.error("Catched ParserException", e);
                 }
                 final Long uoMId = Long.parseLong(uoMs[i]);
 
