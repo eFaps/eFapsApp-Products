@@ -19,6 +19,7 @@ package org.efaps.esjp.products;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,6 +50,8 @@ import org.efaps.esjp.products.Cost_Base.CostBean;
 import org.efaps.util.EFapsException;
 import org.efaps.util.cache.CacheReloadException;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * TODO comment!
@@ -60,6 +63,11 @@ import org.joda.time.DateTime;
 public abstract class Inventory_Base
     extends AbstractCommon
 {
+
+    /**
+     * Logger for this class.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(Inventory.class);
 
     /**
      * Show storage information. used as a Tristate.
@@ -403,7 +411,7 @@ public abstract class Inventory_Base
     /**
      * Setter method for instance variable {@link #currencyInst}.
      *
-     * @param _evaluateCost value for instance variable {@link #currencyInst}
+     * @param _currencyInst the new currency inst
      */
     public void setCurrencyInst(final Instance _currencyInst)
     {
@@ -468,6 +476,115 @@ public abstract class Inventory_Base
         this.date = _date;
     }
 
+    /**
+     * Gets the inventory for product.
+     *
+     * @param _parameter the _parameter
+     * @param _storageInst the _storage inst
+     * @param _prodInstance the _prod instance
+     * @return the inventory4 product
+     * @throws EFapsException on error
+     */
+    protected static InventoryBean getInventory4Product(final Parameter _parameter,
+                                                        final Instance _storageInst,
+                                                        final Instance _prodInstance)
+        throws EFapsException
+    {
+        return Inventory_Base.getInventory4Product(_parameter, _storageInst, new DateTime(), _prodInstance);
+    }
+
+    /**
+     * Gets the inventory for product.
+     *
+     * @param _parameter the _parameter
+     * @param _storageInst the _storage inst
+     * @param _date the _date
+     * @param _prodInstance the _prod instance
+     * @return the inventory4 product
+     * @throws EFapsException on error
+     */
+    protected static InventoryBean getInventory4Product(final Parameter _parameter,
+                                                        final Instance _storageInst,
+                                                        final DateTime _date,
+                                                        final Instance _prodInstance)
+        throws EFapsException
+    {
+        final Map<Instance, InventoryBean> map = Inventory.getInventory4Products(_parameter, _storageInst, _date,
+                        _prodInstance);
+        return map.get(_prodInstance);
+    }
+
+    /**
+     * Gets the inventory 4 products.
+     *
+     * @param _parameter the _parameter
+     * @param _storageInst the _storage inst
+     * @param _prodInstances the _prod instances
+     * @return the inventory4 products
+     * @throws EFapsException on error
+     */
+    protected static Map<Instance, InventoryBean> getInventory4Products(final Parameter _parameter,
+                                                                        final Instance _storageInst,
+                                                                        final Instance... _prodInstances)
+        throws EFapsException
+    {
+        return Inventory.getInventory4Products(_parameter, _storageInst, new DateTime(), _prodInstances);
+    }
+
+    /**
+     * Gets the inventory 4 products.
+     *
+     * @param _parameter the _parameter
+     * @param _storageInst the _storage inst
+     * @param _date the _date
+     * @param _prodInstances the _prod instances
+     * @return the inventory4 products
+     * @throws EFapsException on error
+     */
+    protected static Map<Instance, InventoryBean> getInventory4Products(final Parameter _parameter,
+                                                                        final Instance _storageInst,
+                                                                        final DateTime _date,
+                                                                        final Instance... _prodInstances)
+        throws EFapsException
+    {
+        final Map<Instance, InventoryBean> ret = new HashMap<>();
+
+        final Inventory inventory = new Inventory()
+        {
+            @Override
+            protected void add2QueryBuilder(final Parameter _parameter,
+                                            final QueryBuilder _queryBldr)
+                throws EFapsException
+            {
+                super.add2QueryBuilder(_parameter, _queryBldr);
+                _queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Product, (Object[]) _prodInstances);
+            }
+
+            @Override
+            protected void add2QueryBuilder4Transaction(final Parameter _parameter,
+                                                        final QueryBuilder _queryBldr)
+                throws EFapsException
+            {
+                super.add2QueryBuilder4Transaction(_parameter, _queryBldr);
+                _queryBldr.addWhereAttrEqValue(CIProducts.TransactionAbstract.Product, (Object[]) _prodInstances);
+            }
+        };
+        inventory.setDate(_date.withTimeAtStartOfDay());
+        inventory.setShowStorage(false);
+        inventory.setStorageInsts(Arrays.asList(_storageInst));
+
+        final List<? extends InventoryBean> list = inventory.getInventory(_parameter);
+        for (final InventoryBean bean : list) {
+            ret.put(bean.getProdInstance(), bean);
+        }
+        return ret;
+    }
+
+
+    /**
+     * The Class EmptyPredicate.
+     *
+     */
     public static class EmptyPredicate
         implements Predicate<InventoryBean>
     {
@@ -480,14 +597,22 @@ public abstract class Inventory_Base
         }
     }
 
+    /**
+     * The Class ProductPredicate.
+     *
+     * @author The eFaps Team
+     */
     public static class ProductPredicate
         implements Predicate<InventoryBean>
     {
 
+        /** The product instance. */
         private final Instance productInstance;
 
         /**
-         * @param _key
+         * Instantiates a new product predicate.
+         *
+         * @param _productInstance the _product instance
          */
         public ProductPredicate(final Instance _productInstance)
         {
@@ -501,14 +626,20 @@ public abstract class Inventory_Base
         }
     }
 
+    /**
+     * The Class StoragePredicate.
+     */
     public static class StoragePredicate
         implements Predicate<InventoryBean>
     {
 
+        /** The storage instance. */
         private final Instance storageInstance;
 
         /**
-         * @param _key
+         * Instantiates a new storage predicate.
+         *
+         * @param _storageInstance the _storage instance
          */
         public StoragePredicate(final Instance _storageInstance)
         {
@@ -523,15 +654,25 @@ public abstract class Inventory_Base
     }
 
 
+    /**
+     * The Class TransactionBean.
+     */
     public static class TransactionBean
     {
 
+        /** The instance. */
         private Instance instance;
+
+        /** The quantity. */
         private BigDecimal quantity = BigDecimal.ZERO;
+
+        /** The uo m. */
         private UoM uoM;
 
+        /** The prod instance. */
         private Instance prodInstance;
 
+        /** The storage instance. */
         private Instance storageInstance;
 
         /**
@@ -548,6 +689,7 @@ public abstract class Inventory_Base
          * Setter method for instance variable {@link #instance}.
          *
          * @param _instance value for instance variable {@link #instance}
+         * @return the transaction bean
          */
         public TransactionBean setInstance(final Instance _instance)
         {
@@ -569,6 +711,7 @@ public abstract class Inventory_Base
          * Setter method for instance variable {@link #quantity}.
          *
          * @param _quantity value for instance variable {@link #quantity}
+         * @return the transaction bean
          */
         public TransactionBean setQuantity(final BigDecimal _quantity)
         {
@@ -590,6 +733,7 @@ public abstract class Inventory_Base
          * Setter method for instance variable {@link #uoM}.
          *
          * @param _uoM value for instance variable {@link #uoM}
+         * @return the transaction bean
          */
         public TransactionBean setUoM(final UoM _uoM)
         {
@@ -612,6 +756,7 @@ public abstract class Inventory_Base
          *
          * @param _prodInstance value for instance variable
          *            {@link #prodInstance}
+         * @return the transaction bean
          */
         public TransactionBean setProdInstance(final Instance _prodInstance)
         {
@@ -634,6 +779,7 @@ public abstract class Inventory_Base
          *
          * @param _storageInstance value for instance variable
          *            {@link #storageInstance}
+         * @return the transaction bean
          */
         public TransactionBean setStorageInstance(final Instance _storageInstance)
         {
@@ -642,28 +788,51 @@ public abstract class Inventory_Base
         }
     }
 
+    /**
+     * The Class InventoryBean.
+     */
     public static class InventoryBean
     {
 
+        /** The quantity. */
         private BigDecimal quantity = BigDecimal.ZERO;
+
+        /** The reserved. */
         private BigDecimal reserved = BigDecimal.ZERO;
+
+        /** The uo m. */
         private UoM uoM;
 
+        /** The prod instance. */
         private Instance prodInstance;
+
+        /** The prod name. */
         private String prodName;
+
+        /** The prod descr. */
         private String prodDescr;
 
+        /** The storage instance. */
         private Instance storageInstance;
 
+        /** The storage. */
         private String storage;
 
+        /** The cost. */
         private BigDecimal cost = BigDecimal.ZERO;
+
+        /** The currency. */
         private String currency = "";
 
+        /** The cost bean. */
         private CostBean costBean;
 
+        /** The prod classlist. */
         private List<Classification> prodClasslist;
 
+        /**
+         * Initialize.
+         */
         protected void initialize()
         {
             try {
@@ -683,8 +852,8 @@ public abstract class Inventory_Base
                     print.execute();
                     setStorage(print.<String>getAttribute(CIProducts.StorageAbstract.Name));
                 }
-            } catch (final Exception e) {
-                // TODO: handle exception
+            } catch (final EFapsException e) {
+                LOG.error("EFapsException", e);
             }
         }
 
@@ -699,7 +868,12 @@ public abstract class Inventory_Base
         }
 
         /**
-         * @param _costBean
+         * Sets the cost bean.
+         *
+         * @param _parameter the _parameter
+         * @param _costBean the _cost bean
+         * @param _currencyInst the _currency inst
+         * @throws EFapsException on error
          */
         public void setCostBean(final Parameter _parameter,
                                 final CostBean _costBean,
@@ -729,7 +903,9 @@ public abstract class Inventory_Base
         }
 
         /**
-         * @param _attribute
+         * Adds the reserved.
+         *
+         * @param _reserved the _reserved
          */
         public void addReserved(final BigDecimal _reserved)
         {
@@ -738,7 +914,9 @@ public abstract class Inventory_Base
         }
 
         /**
-         * @param _attribute
+         * Adds the quantity.
+         *
+         * @param _quantity the _quantity
          */
         public void addQuantity(final BigDecimal _quantity)
         {
@@ -746,7 +924,9 @@ public abstract class Inventory_Base
         }
 
         /**
-         * @param _bean
+         * Adds the transaction.
+         *
+         * @param _bean the _bean
          */
         public void addTransaction(final TransactionBean _bean)
         {
@@ -925,6 +1105,11 @@ public abstract class Inventory_Base
             return this.prodInstance;
         }
 
+        /**
+         * Gets the prod type.
+         *
+         * @return the prod type
+         */
         public String getProdType()
         {
             return getProdInstance().getType().getLabel();
@@ -962,7 +1147,10 @@ public abstract class Inventory_Base
         }
 
         /**
-         * @return
+         * Gets the prod class.
+         *
+         * @return the prod class
+         * @throws CacheReloadException the cache reload exception
          */
         public String getProdClass()
             throws CacheReloadException

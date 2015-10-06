@@ -63,6 +63,7 @@ import org.efaps.esjp.erp.CommonDocument;
 import org.efaps.esjp.erp.IWarning;
 import org.efaps.esjp.erp.NumberFormatter;
 import org.efaps.esjp.erp.WarningUtil;
+import org.efaps.esjp.products.Inventory_Base.InventoryBean;
 import org.efaps.ui.wicket.models.cell.UIFormCell;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
@@ -1180,7 +1181,8 @@ public abstract class Transaction_Base
         throws EFapsException
     {
         final Return ret = new Return();
-        final String date = _parameter.getParameterValue(CIFormProducts.Products_InventorySet4ProductsForm.date.name);
+        final String dateStr = _parameter.getParameterValue(CIFormProducts.Products_InventorySet4ProductsForm.date.name);
+        final DateTime date = new DateTime(dateStr);
         final String descr = _parameter
                         .getParameterValue(CIFormProducts.Products_InventorySet4ProductsForm.description.name);
 
@@ -1205,29 +1207,27 @@ public abstract class Transaction_Base
                 final Long uoMId = Long.parseLong(uoMs[i]);
 
                 if (productInst != null && productInst.isValid() && quantity != null && uoMId != null) {
-
-                    final QueryBuilder queryBldr = new QueryBuilder(CIProducts.Inventory);
-                    queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, storageInst);
-                    queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Product, productInst);
-                    final MultiPrintQuery multi = queryBldr.getPrint();
-                    multi.addAttribute(CIProducts.Inventory.Quantity);
-                    multi.execute();
-                    while (multi.next()) {
-                        final BigDecimal currQuantity = multi.<BigDecimal>getAttribute(CIProducts.Inventory.Quantity);
-                        BigDecimal moveQty;
-                        CIType type;
-                        if (quantity.compareTo(currQuantity) != 0) {
-                            if (quantity.compareTo(currQuantity) > 0) {
-                                moveQty = quantity.subtract(currQuantity);
-                                type = CIProducts.TransactionInbound;
-                            } else {
-                                moveQty = currQuantity.subtract(quantity);
-                                type = CIProducts.TransactionOutbound;
-                            }
-                            final CreatedDoc trans = addTransactionProduct(type,
-                                            moveQty, storageInst, uoMId, date, productInst, descr);
-                            transLists.add(trans);
+                    final InventoryBean inventoryBean = Inventory.getInventory4Product(_parameter,
+                                    storageInst, date, productInst);
+                    final BigDecimal currQuantity;
+                    if (inventoryBean == null) {
+                        currQuantity = BigDecimal.ZERO;
+                    } else {
+                        currQuantity = inventoryBean.getQuantity();
+                    }
+                    BigDecimal moveQty;
+                    CIType type;
+                    if (quantity.compareTo(currQuantity) != 0) {
+                        if (quantity.compareTo(currQuantity) > 0) {
+                            moveQty = quantity.subtract(currQuantity);
+                            type = CIProducts.TransactionInbound;
+                        } else {
+                            moveQty = currQuantity.subtract(quantity);
+                            type = CIProducts.TransactionOutbound;
                         }
+                        final CreatedDoc trans = addTransactionProduct(type,
+                                        moveQty, storageInst, uoMId, date, productInst, descr);
+                        transLists.add(trans);
                     }
                 }
             }
@@ -1570,7 +1570,7 @@ public abstract class Transaction_Base
                 createdDoc.getValues().put(CIERP.DocumentAbstract.Name.name, name);
             }
 
-            final String date = (String) _createDoc.getValues().get(CIProducts.TransactionAbstract.Date.name);
+            final Object date = _createDoc.getValues().get(CIProducts.TransactionAbstract.Date.name);
             if (date != null) {
                 insert.add(CIERP.DocumentAbstract.Date, date);
                 createdDoc.getValues().put(CIERP.DocumentAbstract.Date.name, date);

@@ -15,12 +15,16 @@
  *
  */
 
-
 package org.efaps.esjp.products;
 
+import java.util.Map;
+
+import org.efaps.admin.event.Parameter;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
-
+import org.efaps.db.Instance;
+import org.efaps.util.EFapsException;
+import org.joda.time.DateTime;
 
 /**
  * This class must be replaced for customization, therefore it is left empty.
@@ -35,4 +39,75 @@ public class Inventory
     extends Inventory_Base
 {
 
+    /**
+     * Gets the inventory for product.
+     *
+     * @param _parameter the _parameter
+     * @param _storageInst the _storage inst
+     * @param _prodInstance the _prod instance
+     * @return the inventory4 product
+     * @throws EFapsException on error
+     */
+    public static InventoryBean getInventory4Product(final Parameter _parameter,
+                                                     final Instance _storageInst,
+                                                     final Instance _prodInstance)
+        throws EFapsException
+    {
+        return Inventory_Base.getInventory4Product(_parameter, _storageInst, _prodInstance);
+    }
+
+    /**
+     * Gets the inventory4 product.
+     *
+     * @param _parameter the _parameter
+     * @param _storageInst the _storage inst
+     * @param _date the _date
+     * @param _prodInstance the _prod instance
+     * @return the inventory4 product
+     * @throws EFapsException on error
+     */
+    public static InventoryBean getInventory4Product(final Parameter _parameter,
+                                                     final Instance _storageInst,
+                                                     final DateTime _date,
+                                                     final Instance _prodInstance)
+        throws EFapsException
+    {
+        return Inventory_Base.getInventory4Product(_parameter, _storageInst, _date, _prodInstance);
+    }
+
+    /**
+     * Gets the inventory 4 products.
+     *
+     * @param _parameter the _parameter
+     * @param _storageInst the _storage inst
+     * @param _prodInstances the _prod instances
+     * @return the inventory4 products
+     * @throws EFapsException on error
+     */
+    public static Map<Instance, InventoryBean> getInventory4Products(final Parameter _parameter,
+                                                                     final Instance _storageInst,
+                                                                     final Instance... _prodInstances)
+        throws EFapsException
+    {
+        return Inventory_Base.getInventory4Products(_parameter, _storageInst, _prodInstances);
+    }
+
+    /**
+     * Gets the inventory 4 products.
+     *
+     * @param _parameter the _parameter
+     * @param _storageInst the _storage inst
+     * @param _date the _date
+     * @param _prodInstances the _prod instances
+     * @return the inventory4 products
+     * @throws EFapsException on error
+     */
+    public static Map<Instance, InventoryBean> getInventory4Products(final Parameter _parameter,
+                                                                     final Instance _storageInst,
+                                                                     final DateTime _date,
+                                                                     final Instance... _prodInstances)
+        throws EFapsException
+    {
+        return Inventory_Base.getInventory4Products(_parameter, _storageInst, _date, _prodInstances);
+    }
 }
