@@ -57,7 +57,7 @@ public final class Products
     @EFapsSysConfAttribute
     public static final BooleanSysConfAttribute ACTIVATEFAMILY = new BooleanSysConfAttribute()
                     .sysConfUUID(SYSCONFUUID)
-                    .key(BASE + "Familiy.Activate")
+                    .key(BASE + "Family.Activate")
                     .description(" Activate the individual management menu in general.");
 
     /** See description. */

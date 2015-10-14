@@ -19,7 +19,6 @@
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>bb0c8375-c0a2-4302-9f42-d00d7bb44425</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductFamilyMyDesk</name>
@@ -41,7 +40,7 @@
                 event="UI_ACCESSCHECK">
                 <!-- Products-Configuration -->
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
-                <property name="Attribute">org.efaps.products.Family,Activate</property>
+                <property name="Attribute">org.efaps.products.Family.Activate</property>
             </trigger>
         </target>
         <property name="Target">content</property>
