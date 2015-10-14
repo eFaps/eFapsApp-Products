@@ -53,12 +53,6 @@ public interface ProductsSettings
      * Boolean(true/false).<br/>
      * Activate the menu for updating Product Prices on mass.
      */
-    String ACTIVATEFAMILIES = ProductsSettings.BASE + "ActivateFamilies";
-
-    /**
-     * Boolean(true/false).<br/>
-     * Activate the menu for updating Product Prices on mass.
-     */
     String ACTIVATEVARIANT = ProductsSettings.BASE + "ActivateVariant";
 
     /**
@@ -93,11 +87,6 @@ public interface ProductsSettings
      * Properties for the LastMovementReport.
      */
     String LASTMOVEREP = ProductsSettings.BASE + "LastMovementReport";
-
-    /**
-     * Length of the Suffix for families.
-     */
-    String FAMILYSUFFIXLENGTH = ProductsSettings.BASE + "FamilySuffixRegex";
 
     /**
      * Properties. Can be concatenated. Setting for Variant Attributes.

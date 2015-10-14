@@ -19,7 +19,6 @@
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>82dd22bc-8f05-46bb-8e00-8d72673e9458</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
         <profiles>
@@ -172,7 +171,7 @@
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
                 <!-- Products-Configuration -->
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
-                <property name="Attribute">org.efaps.products.ActivateFamilies</property>
+                <property name="Attribute">org.efaps.products.Material.ActivateFamilies</property>
             </trigger>
         </field>
         <field name="productFamilyLink">
@@ -185,7 +184,7 @@
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
                 <!-- Products-Configuration -->
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
-                <property name="Attribute">org.efaps.products.ActivateFamilies</property>
+                <property name="Attribute">org.efaps.products.Material.ActivateFamilies</property>
             </trigger>
         </field>
         <field name="namePrefix">
@@ -199,7 +198,7 @@
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
                 <!-- Products-Configuration -->
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
-                <property name="Attribute">org.efaps.products.ActivateFamilies</property>
+                <property name="Attribute">org.efaps.products.Material.ActivateFamilies</property>
             </trigger>
         </field>
         <field name="nameSuffix">
@@ -214,7 +213,7 @@
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
                 <!-- Products-Configuration -->
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
-                <property name="Attribute">org.efaps.products.ActivateFamilies</property>
+                <property name="Attribute">org.efaps.products.Material.ActivateFamilies</property>
             </trigger>
         </field>
         <field name="namePrefix4Edit">
@@ -234,7 +233,7 @@
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
                 <!-- Products-Configuration -->
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
-                <property name="Attribute">org.efaps.products.ActivateFamilies</property>
+                <property name="Attribute">org.efaps.products.Material.ActivateFamilies</property>
             </trigger>
         </field>
         <field name="nameSuffix4Edit">
@@ -257,7 +256,7 @@
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
                 <!-- Products-Configuration -->
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
-                <property name="Attribute">org.efaps.products.ActivateFamilies</property>
+                <property name="Attribute">org.efaps.products.Material.ActivateFamilies</property>
             </trigger>
         </field>
         <field character="Picker" name="updateButton">
@@ -274,7 +273,7 @@
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
                 <!-- Products-Configuration -->
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
-                <property name="Attribute">org.efaps.products.ActivateFamilies</property>
+                <property name="Attribute">org.efaps.products.Material.ActivateFamilies</property>
             </trigger>
         </field>
         <field name="generic">
@@ -319,7 +318,7 @@
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
                 <!-- Products-Configuration -->
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
-                <property name="Attribute">org.efaps.products.ActivateFamilies</property>
+                <property name="Attribute">org.efaps.products.Material.ActivateFamilies</property>
             </trigger>
         </field>
         <field name="name">
@@ -335,7 +334,7 @@
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
                 <!-- Products-Configuration -->
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
-                <property name="Attribute">org.efaps.products.ActivateFamilies</property>
+                <property name="Attribute">org.efaps.products.Material.ActivateFamilies</property>
                 <property name="Inverse">true</property>
             </trigger>
         </field>
@@ -393,7 +392,7 @@
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
                 <!-- Products-Configuration -->
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
-                <property name="Attribute">org.efaps.products.ActivateIndividual</property>
+                <property name="Attribute">org.efaps.products.Material.ActivateIndividual</property>
             </trigger>
         </field>
         <field name="salesUnit">

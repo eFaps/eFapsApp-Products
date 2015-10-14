@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
  Copyright 2003 - 2015 The eFaps Team
 
@@ -18,12 +17,12 @@
 -->
 <ui-table xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>35cda088-0868-4288-b0e7-8dc202722d39</uuid>
+    <uuid>96b6baae-6b9f-48a7-9b07-f4d83a2d3753</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductGenericTable</name>
-       <field name="type">
+        <name>Products_ProductMaterialTable</name>
+        <field name="type">
             <property name="Attribute">Type</property>
             <property name="Label">Products_ProductAbstract/Type.Label</property>
             <property name="ShowTypeIcon">true</property>
@@ -44,10 +43,9 @@
         <field name="classification">
             <property name="Select">class.type</property>
             <property name="Label">Products_ProductTable.classification.Label</property>
-            <trigger program="org.efaps.esjp.common.uiform.Field"
-                method="classificationFieldFormat"
-                name="Products_ProductTable.classification"
-                event="UI_FIELD_FORMAT" />
+            <trigger event="UI_FIELD_FORMAT" method="classificationFieldFormat"
+                name="Contacts_ContactTable.classification"
+                program="org.efaps.esjp.common.uiform.Field" />
         </field>
         <field name="productFamilyLink">
             <property name="Select">linkto[ProductFamilyLink].instance</property>
@@ -56,17 +54,15 @@
             <property name="FilterCmd">Products_ProductFamilyFilterCmd</property>
             <property name="FilterRequired">true</property>
             <property name="FilterBase">DATABASE</property>
-            <trigger program="org.efaps.esjp.products.ProductFamily"
-                method="productFamilyFieldFormat"
+            <trigger event="UI_FIELD_FORMAT" method="productFamilyFieldFormat"
                 name="Products_ProductTable.productFamilyLink."
-                event="UI_FIELD_FORMAT" />
-            <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                program="org.efaps.esjp.products.ProductFamily" />
+            <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductForm.namePrefix.UI_ACCESSCHECK"
-                method="configCheck"
-                event="UI_ACCESSCHECK">
-                <!-- Products-Configuration -->
+                program="org.efaps.esjp.admin.access.AccessCheck4UI">
+                    <!-- Products-Configuration -->
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
-                <property name="Attribute">org.efaps.products.Generic.ActivateFamilies</property>
+                <property name="Attribute">org.efaps.products.Material.ActivateFamilies</property>
             </trigger>
         </field>
         <field name="active">

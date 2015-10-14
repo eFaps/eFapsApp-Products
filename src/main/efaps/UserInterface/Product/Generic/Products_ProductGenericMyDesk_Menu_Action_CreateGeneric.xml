@@ -15,14 +15,11 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
- Author:          The eFaps Team
-
 -->
 <ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>5f164758-05b3-480a-b567-0b2f6003aab7</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductGenericMyDesk_Menu_Action_CreateGeneric</name>
@@ -31,13 +28,13 @@
         </access>
         <target>
             <form>Products_ProductGenericForm</form>
-            <execute program="org.efaps.esjp.common.uiform.Create" />
+            <execute program="org.efaps.esjp.products.Product" method="create" />
             <validate program="org.efaps.esjp.products.Product" method="validate" />
         </target>
         <property name="Target">modal</property>
         <property name="TargetCreateType">Products_ProductGeneric</property>
         <property name="TargetMode">create</property>
-        <property name="WindowHeight">460</property>
-        <property name="WindowWidth">515</property>
+        <property name="WindowHeight">600</property>
+        <property name="WindowWidth">1000</property>
     </definition>
 </ui-command>

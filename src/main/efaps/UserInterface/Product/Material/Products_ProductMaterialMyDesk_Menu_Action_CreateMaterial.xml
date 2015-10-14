@@ -17,22 +17,23 @@
 -->
 <ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>0c90c461-611a-4d7b-917f-584c6a92ba42</uuid>
+    <uuid>c0968e2a-c64b-4f0b-9cee-f2f8994d3593</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductMaterialTree_Menu_Action_Edit</name>
+        <name>Products_ProductMaterialMyDesk_Menu_Action_CreateMaterial</name>
         <access>
             <role>Products_Admin</role>
             <role>Products_Modifier</role>
         </access>
         <target>
             <form>Products_ProductMaterialForm</form>
-            <execute method="edit" program="org.efaps.esjp.products.Product"/>
-            <validate program="org.efaps.esjp.products.Product" method="validate" />
+            <execute method="create" program="org.efaps.esjp.products.Product" />
+            <validate method="validate" program="org.efaps.esjp.products.Product" />
         </target>
         <property name="Target">modal</property>
-        <property name="TargetMode">edit</property>
+        <property name="TargetCreateType">Products_ProductMaterial</property>
+        <property name="TargetMode">create</property>
         <property name="WindowHeight">600</property>
         <property name="WindowWidth">1000</property>
     </definition>

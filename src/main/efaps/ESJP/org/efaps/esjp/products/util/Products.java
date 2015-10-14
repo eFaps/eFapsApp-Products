@@ -26,6 +26,8 @@ import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.api.annotation.EFapsSysConfAttribute;
 import org.efaps.api.annotation.EFapsSystemConfiguration;
 import org.efaps.esjp.admin.common.systemconfiguration.BooleanSysConfAttribute;
+import org.efaps.esjp.admin.common.systemconfiguration.IntegerSysConfAttribute;
+import org.efaps.esjp.admin.common.systemconfiguration.StringSysConfAttribute;
 import org.efaps.util.cache.CacheReloadException;
 
 /**
@@ -49,7 +51,22 @@ public final class Products
     public static final BooleanSysConfAttribute ACTIVATEINDIVIDUAL = new BooleanSysConfAttribute()
                     .sysConfUUID(SYSCONFUUID)
                     .key(BASE + "ActivateIndividual")
-                    .description(" Activate the individual management menu.");
+                    .description(" Activate the individual management menu in general.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute ACTIVATEFAMILY = new BooleanSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "Familiy.Activate")
+                    .description(" Activate the individual management menu in general.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final IntegerSysConfAttribute FAMILYSUFFIXLENGTH = new IntegerSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "Family.SuffixLength")
+                    .description("Activate the family management for materials.");
+
 
     /** See description. */
     @EFapsSysConfAttribute
@@ -60,10 +77,45 @@ public final class Products
 
     /** See description. */
     @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute GENERICACTFAM = new BooleanSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "Generic.ActivateFamilies")
+                    .description("Activate the family management for generics.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final StringSysConfAttribute GENERICFAMPRE = new StringSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "Generic.FamiliesPrefix")
+                    .description("Activate the family management for materials.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
     public static final BooleanSysConfAttribute MATERIALISGENERIC = new BooleanSysConfAttribute()
                     .sysConfUUID(SYSCONFUUID)
                     .key(BASE + "Material.IsGeneric")
-                    .description(" Activate the generic product management fro materials");
+                    .description("Activate the generic product management for materials.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute MATERIALACTFAM = new BooleanSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "Material.ActivateFamilies")
+                    .description("Activate the family management for materials.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute MATERIALACTIND = new BooleanSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "Material.ActivateIndividual")
+                    .description("Activate the family management for materials.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final StringSysConfAttribute MATERIALFAMPRE = new StringSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "Material.FamiliesPrefix")
+                    .description("Activate the family management for materials.");
 
 
     /**

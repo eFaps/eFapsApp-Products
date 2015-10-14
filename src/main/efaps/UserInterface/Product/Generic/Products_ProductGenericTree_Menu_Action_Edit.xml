@@ -17,19 +17,19 @@
 -->
 <ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>0c90c461-611a-4d7b-917f-584c6a92ba42</uuid>
+    <uuid>311293e9-7d7a-48f3-85d2-e6e20a7e5404</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductMaterialTree_Menu_Action_Edit</name>
+        <name>Products_ProductGenericTree_Menu_Action_Edit</name>
         <access>
             <role>Products_Admin</role>
             <role>Products_Modifier</role>
         </access>
         <target>
-            <form>Products_ProductMaterialForm</form>
-            <execute method="edit" program="org.efaps.esjp.products.Product"/>
-            <validate program="org.efaps.esjp.products.Product" method="validate" />
+            <form>Products_ProductGenericForm</form>
+            <execute method="edit" program="org.efaps.esjp.products.Product" />
+            <validate method="validate" program="org.efaps.esjp.products.Product" />
         </target>
         <property name="Target">modal</property>
         <property name="TargetMode">edit</property>

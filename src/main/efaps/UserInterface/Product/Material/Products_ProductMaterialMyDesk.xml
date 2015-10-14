@@ -14,14 +14,11 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
- Author:          The eFaps Team
-
 -->
 <ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>ab98ed18-f467-4f9a-8a1c-b1aebee1ac8e</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductMaterialMyDesk</name>
@@ -32,7 +29,7 @@
         </access>
         <target>
             <menu>Products_ProductMaterialMyDesk_Menu</menu>
-            <table>Products_ProductFilteredTable</table>
+            <table>Products_ProductMaterialTable</table>
             <evaluate method="productMultiPrint" program="org.efaps.esjp.products.Product">
                 <property name="Type">Products_ProductMaterial</property>
             </evaluate>

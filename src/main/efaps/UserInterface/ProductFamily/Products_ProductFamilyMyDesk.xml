@@ -41,7 +41,7 @@
                 event="UI_ACCESSCHECK">
                 <!-- Products-Configuration -->
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
-                <property name="Attribute">org.efaps.products.ActivateFamilies</property>
+                <property name="Attribute">org.efaps.products.Family,Activate</property>
             </trigger>
         </target>
         <property name="Target">content</property>

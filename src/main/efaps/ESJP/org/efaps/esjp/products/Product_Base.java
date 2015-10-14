@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2013 The eFaps Team
+ * Copyright 2003 - 2015 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Revision:        $Rev$
- * Last Changed:    $Date$
- * Last Changed By: $Author$
  */
 
 package org.efaps.esjp.products;
@@ -57,6 +54,7 @@ import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
+import org.efaps.admin.ui.AbstractCommand;
 import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
 import org.efaps.db.AttributeQuery;
 import org.efaps.db.CachedPrintQuery;
@@ -96,7 +94,6 @@ import org.joda.time.DateTime;
  * TODO comment!
  *
  * @author The eFaps Team
- * @version $Id$
  */
 @EFapsUUID("5c2c078f-852d-49d9-af34-4ff5022b6f82")
 @EFapsApplication("eFapsApp-Products")
@@ -209,20 +206,66 @@ public abstract class Product_Base
         return create.execute(_parameter);
     }
 
+    /**
+     * Add to create.
+     *
+     * @param _parameter the _parameter
+     * @param _insert the _insert
+     * @throws EFapsException on error
+     */
     protected void add2Create(final Parameter _parameter,
                               final Insert _insert)
         throws EFapsException
     {
-        if (Products.getSysConfig().getAttributeValueAsBoolean(ProductsSettings.ACTIVATEFAMILIES)) {
+        if (isFamilyActivated(_parameter, _insert.getInstance())) {
             final Instance famInst = Instance.get(_parameter
                             .getParameterValue(CIFormProducts.Products_ProductForm.productFamilyLink.name));
             if (famInst.isValid()) {
                 _insert.add(CIProducts.ProductAbstract.ProductFamilyLink, famInst);
-                _insert.add(CIProducts.ProductAbstract.Name, getNameFromUI(_parameter));
+                _insert.add(CIProducts.ProductAbstract.Name, getNameFromUI(_parameter, _insert.getInstance()));
             }
         }
     }
 
+    /**
+     * Checks if is family activated.
+     *
+     * @param _parameter the _parameter
+     * @param _instance the _instance
+     * @return true, if is family activated
+     * @throws EFapsException on error
+     */
+    protected boolean isFamilyActivated(final Parameter _parameter,
+                                        final Instance _instance)
+        throws EFapsException
+    {
+        boolean ret = false;
+        Instance instance = _instance;
+        if (instance == null) {
+            final Object obj = _parameter.get(ParameterValues.UIOBJECT);
+            if (obj instanceof AbstractCommand) {
+                final Type type = ((AbstractCommand) obj).getTargetCreateType();
+                instance = Instance.get(type, 0);
+            }
+        }
+
+        if (instance != null && instance.getType() != null) {
+            if (instance.getType().isCIType(CIProducts.ProductMaterial)) {
+                ret = Products.MATERIALACTFAM.get();
+            } else if (instance.getType().isCIType(CIProducts.ProductGeneric)) {
+                ret = Products.GENERICACTFAM.get();
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * Edits the.
+     *
+     * @param _parameter the _parameter
+     * @return the return
+     * @throws EFapsException on error
+     */
     public Return edit(final Parameter _parameter)
         throws EFapsException
     {
@@ -240,17 +283,24 @@ public abstract class Product_Base
         return create.execute(_parameter);
     }
 
+    /**
+     * Add to edit.
+     *
+     * @param _parameter the _parameter
+     * @param _update the _update
+     * @throws EFapsException on error
+     */
     protected void add2Edit(final Parameter _parameter,
                             final Update _update)
         throws EFapsException
     {
-        if (Products.getSysConfig().getAttributeValueAsBoolean(ProductsSettings.ACTIVATEFAMILIES)) {
+        if (isFamilyActivated(_parameter, _update.getInstance())) {
             final Instance famInst = Instance.get(_parameter
                             .getParameterValue(CIFormProducts.Products_ProductForm.productFamilyLink.name));
             if (famInst.isValid()) {
                 _update.add(CIProducts.ProductAbstract.ProductFamilyLink, famInst);
             }
-            _update.add(CIProducts.ProductAbstract.Name, getNameFromUI(_parameter));
+            _update.add(CIProducts.ProductAbstract.Name, getNameFromUI(_parameter, _update.getInstance()));
         }
     }
 
@@ -275,6 +325,13 @@ public abstract class Product_Base
         return batchInst;
     }
 
+    /**
+     * Gets the name for a batch.
+     *
+     * @param _parameter the _parameter
+     * @return the name4 batch
+     * @throws EFapsException on error
+     */
     protected String getName4Batch(final Parameter _parameter)
         throws EFapsException
     {
@@ -489,6 +546,13 @@ public abstract class Product_Base
         return retVal;
     }
 
+    /**
+     * Product multi print.
+     *
+     * @param _parameter the _parameter
+     * @return the return
+     * @throws EFapsException on error
+     */
     public Return productMultiPrint(final Parameter _parameter)
         throws EFapsException
     {
@@ -510,7 +574,7 @@ public abstract class Product_Base
                                         CIProducts.ProductBatch.getType().getId());
                     }
                 }
-                if (Products.getSysConfig().getAttributeValueAsBoolean(ProductsSettings.ACTIVATEFAMILIES)) {
+                if (Products.ACTIVATEFAMILY.get()) {
                     @SuppressWarnings("unchecked")
                     final Map<String, Object> filterMap = (Map<String, Object>) _parameter.get(ParameterValues.OTHERS);
                     if (filterMap != null && filterMap.containsKey("productFamilyLink")) {
@@ -987,8 +1051,8 @@ public abstract class Product_Base
         multi.addAttribute(CIProducts.StorageAbstract.ID, CIProducts.StorageAbstract.Name);
         multi.execute();
         while (multi.next()) {
-            map.put(multi.<String>getAttribute(CIProducts.StorageAbstract.Name)
-                            , multi.<Long>getAttribute(CIProducts.StorageAbstract.ID));
+            map.put(multi.<String>getAttribute(CIProducts.StorageAbstract.Name),
+                            multi.<Long>getAttribute(CIProducts.StorageAbstract.ID));
         }
 
         final StringBuilder ret = new StringBuilder();
@@ -1019,7 +1083,7 @@ public abstract class Product_Base
     {
         final Return ret = new Return();
         final List<IWarning> warnings = new ArrayList<IWarning>();
-        final String name =  getNameFromUI(_parameter);
+        final String name =  getNameFromUI(_parameter, _parameter.getInstance());
         final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductAbstract);
         queryBldr.addWhereAttrEqValue(CIProducts.ProductAbstract.Name, name);
         if (_parameter.getInstance() != null && _parameter.getInstance().isValid()
@@ -1041,23 +1105,28 @@ public abstract class Product_Base
     }
 
     /**
-     * @param _parameter
-     * @return
+     * Gets the name from ui.
+     *
+     * @param _parameter the _parameter
+     * @param _instance the _instance
+     * @return the name from ui
+     * @throws EFapsException on error
      */
-    protected String getNameFromUI(final Parameter _parameter)
-        throws EFapsException
+    protected String getNameFromUI(final Parameter _parameter,
+                                   final Instance _instance)
+                                       throws EFapsException
     {
         String ret = null;
         if (_parameter.getParameterValue(CIFormProducts.Products_ProductForm.name.name) != null) {
             ret = _parameter.getParameterValue(CIFormProducts.Products_ProductForm.name.name);
-        } else if (Products.getSysConfig().getAttributeValueAsBoolean(ProductsSettings.ACTIVATEFAMILIES)) {
-            final Instance famInst = Instance.get(_parameter
-                            .getParameterValue(CIFormProducts.Products_ProductForm.productFamilyLink.name));
+        } else if (isFamilyActivated(_parameter, _instance)) {
+            final Instance famInst = Instance.get(_parameter.getParameterValue(
+                            CIFormProducts.Products_ProductForm.productFamilyLink.name));
             String codePartFam = null;
             if (famInst.isValid()) {
                 codePartFam = new ProductFamily().getCode(_parameter, famInst);
-            } else if (_parameter.getInstance() != null && _parameter.getInstance().isValid() &&
-                            _parameter.getInstance().getType().isKindOf(CIProducts.ProductAbstract)) {
+            } else if (_parameter.getInstance() != null && _parameter.getInstance().isValid() && _parameter
+                            .getInstance().getType().isKindOf(CIProducts.ProductAbstract)) {
                 codePartFam = new ProductFamily().getCode(_parameter, _parameter.getInstance());
             }
             if (codePartFam != null) {
@@ -1066,6 +1135,21 @@ public abstract class Product_Base
                     suffix = _parameter.getParameterValue(CIFormProducts.Products_ProductForm.nameSuffix4Edit.name);
                 }
                 ret = codePartFam + "." + suffix;
+            }
+
+            Instance instance = _instance;
+            if (instance == null) {
+                final Object obj = _parameter.get(ParameterValues.UIOBJECT);
+                if (obj instanceof AbstractCommand) {
+                    final Type type = ((AbstractCommand) obj).getTargetCreateType();
+                    instance = Instance.get(type, 0);
+                }
+            }
+
+            if (instance.getType().isCIType(CIProducts.ProductMaterial)) {
+                ret = Products.MATERIALFAMPRE.get() == null ? ret : Products.MATERIALFAMPRE.get() + ret;
+            } else if (instance.getType().isCIType(CIProducts.ProductGeneric)) {
+                ret = Products.GENERICFAMPRE.get() == null ? ret : Products.GENERICFAMPRE.get() + ret;
             }
         }
         return ret;
@@ -1094,6 +1178,13 @@ public abstract class Product_Base
         return multi.execute(_parameter);
     }
 
+    /**
+     * Check4 individual.
+     *
+     * @param _parameter the _parameter
+     * @return the return
+     * @throws EFapsException on error
+     */
     public Return check4Individual(final Parameter _parameter)
         throws EFapsException
     {
@@ -1104,14 +1195,21 @@ public abstract class Product_Base
             print.addAttribute(CIProducts.ProductAbstract.Individual);
             print.execute();
             final Object indi = print.getAttribute(CIProducts.ProductAbstract.Individual);
-            if (indi != null && indi instanceof ProductIndividual &&
-                            (ProductIndividual.INDIVIDUAL.equals(indi) || ProductIndividual.BATCH.equals(indi))) {
+            if (indi != null && indi instanceof ProductIndividual
+                            && (ProductIndividual.INDIVIDUAL.equals(indi) || ProductIndividual.BATCH.equals(indi))) {
                 ret.put(ReturnValues.TRUE, true);
             }
         }
         return ret;
     }
 
+    /**
+     * Gets the field format field value ui.
+     *
+     * @param _parameter the _parameter
+     * @return the field format field value ui
+     * @throws EFapsException on error
+     */
     public Return getFieldFormatFieldValueUI(final Parameter _parameter)
         throws EFapsException
     {
@@ -1128,19 +1226,25 @@ public abstract class Product_Base
         return ret;
     }
 
+    /**
+     * Gets the suffix4 family.
+     *
+     * @param _parameter the _parameter
+     * @param _famInst the _fam inst
+     * @return the suffix4 family
+     * @throws EFapsException on error
+     */
     public String getSuffix4Family(final Parameter _parameter,
                                    final Instance _famInst)
         throws EFapsException
     {
-        Integer length = Products.getSysConfig().getAttributeValueAsInteger(ProductsSettings.FAMILYSUFFIXLENGTH);
+        Integer length = Products.FAMILYSUFFIXLENGTH.get();
         if (length == null || length < 1) {
             length = 3;
         }
         Integer val = 1;
-        final ProductFamily fam = new ProductFamily();
-        final String code = fam.getCode(_parameter, _famInst);
         final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductAbstract);
-        queryBldr.addWhereAttrMatchValue(CIProducts.ProductAbstract.Name, code + ".*");
+        queryBldr.addWhereAttrEqValue(CIProducts.ProductAbstract.ProductFamilyLink, _famInst);
         queryBldr.addOrderByAttributeDesc(CIProducts.ProductAbstract.Name);
         queryBldr.setLimit(1);
         final MultiPrintQuery multi = queryBldr.getPrint();
@@ -1222,7 +1326,7 @@ public abstract class Product_Base
      *
      * @param _parameter Parameter as passed by the eFaps API
      * @return the return
-     * @throws EFapsException
+     * @throws EFapsException on error
      */
     public Return assignGeneric(final Parameter _parameter)
         throws EFapsException
