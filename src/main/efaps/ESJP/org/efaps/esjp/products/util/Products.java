@@ -117,6 +117,12 @@ public final class Products
                     .key(BASE + "Material.FamiliesPrefix")
                     .description("Activate the family management for materials.");
 
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute ACTIVATEPRICEGRP = new BooleanSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "PriceGroup.Activate")
+                    .description("Activate the price group management.");
 
     /**
      * Singelton.

@@ -54,9 +54,15 @@
         <type>Products_ProductBatch</type>
         <type>Products_ProductCostTextPosition</type>
         <type>Products_ProductVariantBase</type>
+        <type>Products_PriceGroupContact</type>
 
         <status group="Products_StorageAbstractStatus">
             <key>Active</key>
+        </status>
+
+         <status group="Products_PriceGroupStatus">
+            <key>Active</key>
+            <key>Inactive</key>
         </status>
 
         <role>Products_Reader</role>
