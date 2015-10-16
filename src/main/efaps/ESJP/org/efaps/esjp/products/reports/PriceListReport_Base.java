@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2014 The eFaps Team
+ * Copyright 2003 - 2015 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Revision:        $Rev$
- * Last Changed:    $Date$
- * Last Changed By: $Author$
  */
-
 
 package org.efaps.esjp.products.reports;
 
@@ -27,22 +23,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.UUID;
-
-import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
-import net.sf.dynamicreports.report.builder.DynamicReports;
-import net.sf.dynamicreports.report.builder.column.ComponentColumnBuilder;
-import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
-import net.sf.dynamicreports.report.builder.component.GenericElementBuilder;
-import net.sf.dynamicreports.report.builder.expression.AbstractComplexExpression;
-import net.sf.dynamicreports.report.builder.grid.ColumnGridComponentBuilder;
-import net.sf.dynamicreports.report.builder.grid.ColumnTitleGroupBuilder;
-import net.sf.dynamicreports.report.datasource.DRDataSource;
-import net.sf.dynamicreports.report.definition.ReportParameters;
-import net.sf.jasperreports.engine.JRDataSource;
 
 import org.efaps.admin.datamodel.Classification;
 import org.efaps.admin.datamodel.Dimension;
@@ -52,30 +38,45 @@ import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
 import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
-import org.efaps.admin.program.esjp.EFapsRevision;
+import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.AttributeQuery;
 import org.efaps.db.Instance;
 import org.efaps.db.MultiPrintQuery;
+import org.efaps.db.PrintQuery;
 import org.efaps.db.QueryBuilder;
 import org.efaps.db.SelectBuilder;
 import org.efaps.esjp.ci.CIERP;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.jasperreport.AbstractDynamicReport;
 import org.efaps.esjp.erp.FilteredReport;
+import org.efaps.esjp.products.util.Products;
 import org.efaps.ui.wicket.models.EmbeddedLink;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
+
+import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
+import net.sf.dynamicreports.report.builder.DynamicReports;
+import net.sf.dynamicreports.report.builder.column.ComponentColumnBuilder;
+import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
+import net.sf.dynamicreports.report.builder.component.GenericElementBuilder;
+import net.sf.dynamicreports.report.builder.expression.AbstractComplexExpression;
+import net.sf.dynamicreports.report.builder.grid.ColumnGridComponentBuilder;
+import net.sf.dynamicreports.report.builder.grid.ColumnTitleGroupBuilder;
+import net.sf.dynamicreports.report.definition.ReportParameters;
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRRewindableDataSource;
+import net.sf.jasperreports.engine.data.JRMapCollectionDataSource;
 
 
 /**
  * TODO comment!
  *
  * @author The eFaps Team
- * @version $Id$
  */
 @EFapsUUID("d7679319-39ed-4b12-a7c2-97a6c6ad8954")
-@EFapsRevision("$Rev$")
+@EFapsApplication("eFapsApp-Products")
 public abstract class PriceListReport_Base
     extends FilteredReport
 {
@@ -116,7 +117,6 @@ public abstract class PriceListReport_Base
         }
         ret.put(ReturnValues.VALUES, file);
         ret.put(ReturnValues.TRUE, true);
-
         return ret;
     }
 
@@ -128,13 +128,13 @@ public abstract class PriceListReport_Base
     protected AbstractDynamicReport getReport(final Parameter _parameter)
         throws EFapsException
     {
-        return new PLReport(_parameter, this);
+        return new DynPriceListReport(_parameter, this);
     }
 
     /**
      * Report.
      */
-    public static class PLReport
+    public static class DynPriceListReport
         extends AbstractDynamicReport
     {
 
@@ -142,6 +142,7 @@ public abstract class PriceListReport_Base
          * Report class.
          */
         private final PriceListReport_Base filteredReport;
+
 
         /**
          * List of PriceList type shown in the report.
@@ -163,8 +164,8 @@ public abstract class PriceListReport_Base
          * @param _report       Report this class is used in
          * @throws EFapsException on error
          */
-        public PLReport(final Parameter _parameter,
-                        final PriceListReport_Base _report)
+        public DynPriceListReport(final Parameter _parameter,
+                                  final PriceListReport_Base _report)
             throws EFapsException
         {
             this.filteredReport = _report;
@@ -212,124 +213,114 @@ public abstract class PriceListReport_Base
 
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         protected JRDataSource createDataSource(final Parameter _parameter)
             throws EFapsException
         {
-            final List<String> cols = new ArrayList<String>();
-            if (getExType().equals(ExportType.HTML)) {
-                cols.add("productOID");
-            }
-            cols.add("productName");
-            cols.add("productDescr");
-            if (isShowClass()) {
-                cols.add("productClass");
-            }
-            cols.add("productDim");
+            JRRewindableDataSource ret;
+            if (getFilteredReport().isCached(_parameter)) {
+                ret = getFilteredReport().getDataSourceFromCache(_parameter);
+                try {
+                    ret.moveFirst();
+                } catch (final JRException e) {
+                    LOG.error("Catched error", e);
+                }
+            } else {
+                final Map<Instance, Map<String, ?>> values = new HashMap<>();
 
-            for (final Type type : this.types) {
-                cols.add("price" + type.getId());
-                cols.add("currency" + type.getId());
-            }
+                final QueryBuilder priceListQueryBuilder = getQueryBldrFromProperties(_parameter);
+                add2PriceListQueryBuilder(_parameter, priceListQueryBuilder);
 
-            final DRDataSource dataSource = new DRDataSource(cols.toArray(new String[cols.size()]));
+                if (isActiveProductsOnly()) {
+                    final QueryBuilder attrQueryBldr = new QueryBuilder(CIProducts.ProductAbstract);
+                    attrQueryBldr.addWhereAttrEqValue(CIProducts.ProductAbstract.Active, true);
+                    final AttributeQuery attrQuery = attrQueryBldr.getAttributeQuery(CIProducts.ProductAbstract.ID);
+                    priceListQueryBuilder.addWhereAttrInQuery(CIProducts.ProductPricelistAbstract.ProductAbstractLink,
+                                    attrQuery);
+                }
 
-            final Map<Instance, Map<String, Object>> values = new HashMap<Instance, Map<String, Object>>();
+                final AttributeQuery priceListQuery = priceListQueryBuilder.getAttributeQuery(
+                                CIProducts.ProductPricelistAbstract.ID);
 
-            final QueryBuilder priceListQueryBuilder = getQueryBldrFromProperties(_parameter);
-            add2PriceListQueryBuilder(_parameter, priceListQueryBuilder);
+                final QueryBuilder posQueryBuilder = new QueryBuilder(CIProducts.ProductPricelistPosition);
+                posQueryBuilder.addWhereAttrInQuery(CIProducts.ProductPricelistPosition.ProductPricelist,
+                                priceListQuery);
+                add2PosQueryBuilder(_parameter, posQueryBuilder);
+                final MultiPrintQuery multi = posQueryBuilder.getPrint();
+                final SelectBuilder selProd = SelectBuilder.get().linkto(
+                                CIProducts.ProductPricelistPosition.ProductPricelist).linkto(
+                                                CIProducts.ProductPricelistAbstract.ProductAbstractLink);
+                final SelectBuilder selProdInst = new SelectBuilder(selProd).instance();
+                final SelectBuilder selProdName = new SelectBuilder(selProd).attribute(CIProducts.ProductAbstract.Name);
+                final SelectBuilder selProdDescr = new SelectBuilder(selProd).attribute(
+                                CIProducts.ProductAbstract.Description);
+                final SelectBuilder selProdDim = new SelectBuilder(selProd).attribute(
+                                CIProducts.ProductAbstract.Dimension);
+                final SelectBuilder selProdClass = new SelectBuilder(selProd).clazz().type();
+                final SelectBuilder selCurrency = SelectBuilder.get().linkto(
+                                CIProducts.ProductPricelistPosition.CurrencyId).attribute(CIERP.Currency.Symbol);
+                final SelectBuilder selTypeInst = SelectBuilder.get().linkto(
+                                CIProducts.ProductPricelistPosition.ProductPricelist).instance();
 
-            if (isActiveProductsOnly()) {
-                final QueryBuilder attrQueryBldr = new QueryBuilder(CIProducts.ProductAbstract);
-                attrQueryBldr.addWhereAttrEqValue(CIProducts.ProductAbstract.Active, true);
-                final AttributeQuery attrQuery = attrQueryBldr.getAttributeQuery(CIProducts.ProductAbstract.ID);
-                priceListQueryBuilder.addWhereAttrInQuery(CIProducts.ProductPricelistAbstract.ProductAbstractLink,
-                                attrQuery);
-            }
+                final SelectBuilder selPricGrpInst = SelectBuilder.get()
+                                .linkto(CIProducts.ProductPricelistPosition.PriceGroupLink).instance();
+                if (Products.ACTIVATEPRICEGRP.get()) {
+                    multi.addSelect(selPricGrpInst);
+                }
+                multi.addSelect(selProdInst, selProdName, selProdDescr, selProdDim, selCurrency, selTypeInst);
+                if (isShowClass()) {
+                    multi.addSelect(selProdClass);
+                }
+                multi.addAttribute(CIProducts.ProductPricelistPosition.Price);
+                multi.execute();
+                while (multi.next()) {
+                    final Instance prodInst = multi.<Instance>getSelect(selProdInst);
+                    final Map<String, Object> map;
+                    if (values.containsKey(prodInst)) {
+                        map = (Map<String, Object>) values.get(prodInst);
+                    } else {
+                        map = new HashMap<String, Object>();
+                        values.put(prodInst, map);
+                        map.put("productOID", prodInst.getOid());
+                        map.put("productName", multi.getSelect(selProdName));
+                        map.put("productDescr", multi.getSelect(selProdDescr));
+                        map.put("productDim", Dimension.get(multi.<Long>getSelect(selProdDim)).getName());
 
-            final AttributeQuery priceListQuery = priceListQueryBuilder
-                            .getAttributeQuery(CIProducts.ProductPricelistAbstract.ID);
-
-            final QueryBuilder posQueryBuilder = new QueryBuilder(CIProducts.ProductPricelistPosition);
-            posQueryBuilder.addWhereAttrInQuery(CIProducts.ProductPricelistPosition.ProductPricelist, priceListQuery);
-            add2PosQueryBuilder(_parameter, posQueryBuilder);
-            final MultiPrintQuery multi = posQueryBuilder.getPrint();
-            final SelectBuilder selProd = SelectBuilder.get()
-                            .linkto(CIProducts.ProductPricelistPosition.ProductPricelist)
-                            .linkto(CIProducts.ProductPricelistAbstract.ProductAbstractLink);
-            final SelectBuilder selProdInst = new SelectBuilder(selProd).instance();
-            final SelectBuilder selProdName = new SelectBuilder(selProd).attribute(CIProducts.ProductAbstract.Name);
-            final SelectBuilder selProdDescr = new SelectBuilder(selProd)
-                            .attribute(CIProducts.ProductAbstract.Description);
-            final SelectBuilder selProdDim = new SelectBuilder(selProd).attribute(CIProducts.ProductAbstract.Dimension);
-            final SelectBuilder selProdClass = new SelectBuilder(selProd).clazz().type();
-            final SelectBuilder selCurrency = SelectBuilder.get()
-                            .linkto(CIProducts.ProductPricelistPosition.CurrencyId).attribute(CIERP.Currency.ISOCode);
-            final SelectBuilder selTypeInst = SelectBuilder.get()
-                            .linkto(CIProducts.ProductPricelistPosition.ProductPricelist).instance();
-            multi.addSelect(selProdInst, selProdName, selProdDescr, selProdDim, selCurrency, selTypeInst);
-            if (isShowClass()) {
-                multi.addSelect(selProdClass);
-            }
-            multi.addAttribute(CIProducts.ProductPricelistPosition.Price);
-            multi.execute();
-            while (multi.next()) {
-                final Instance prodInst = multi.<Instance>getSelect(selProdInst);
-                final Map<String, Object> map;
-                if (values.containsKey(prodInst)) {
-                    map = values.get(prodInst);
-                } else {
-                    map = new HashMap<String, Object>();
-                    values.put(prodInst, map);
-                    map.put("productOID", prodInst.getOid());
-                    map.put("productName", multi.getSelect(selProdName));
-                    map.put("productDescr", multi.getSelect(selProdDescr));
-                    map.put("productDim", Dimension.get(multi.<Long>getSelect(selProdDim)).getName());
-
-                    if (isShowClass()) {
-                        final List<Classification> clazzes = multi.<List<Classification>>getSelect(selProdClass);
-                        if (clazzes != null && !clazzes.isEmpty()) {
-                            map.put("productClass", clazzes.get(0).getLabel());
-                        } else {
-                            map.put("productClass", "-");
+                        if (isShowClass()) {
+                            final List<Classification> clazzes = multi.<List<Classification>>getSelect(selProdClass);
+                            if (clazzes != null && !clazzes.isEmpty()) {
+                                map.put("productClass", clazzes.get(0).getLabel());
+                            } else {
+                                map.put("productClass", "-");
+                            }
                         }
                     }
+                    String key = "";
+                    if (Products.ACTIVATEPRICEGRP.get()) {
+                        final Instance priceGrpInst = multi.getSelect(selPricGrpInst);
+                        key = priceGrpInst.isValid() ? priceGrpInst.getOid() : "";
+                    }
+                    final Instance listTypeInst = multi.<Instance>getSelect(selTypeInst);
+                    map.put("price-" + listTypeInst.getType().getId() + "-" + key, multi.getAttribute(
+                                    CIProducts.ProductPricelistPosition.Price));
+                    map.put("currency-" + listTypeInst.getType().getId() + "-" + key, multi.getSelect(selCurrency));
                 }
-                final Instance listTypeInst = multi.<Instance>getSelect(selTypeInst);
-                map.put("price" + listTypeInst.getType().getId(),
-                                multi.getAttribute(CIProducts.ProductPricelistPosition.Price));
-                map.put("currency" + listTypeInst.getType().getId(), multi.getSelect(selCurrency));
-            }
 
-            final ArrayList<Map<String, Object>> lstVal = new ArrayList<Map<String, Object>>(values.values());
-            Collections.sort(lstVal, new Comparator<Map<String, Object>>() {
-
-                @Override
-                public int compare(final Map<String, Object> _o1,
-                                   final Map<String, Object> _o2)
+                final List<Map<String, ?>> lstVal = new ArrayList<>(values.values());
+                Collections.sort(lstVal, new Comparator<Map<String, ?>>()
                 {
-                    return _o1.get("productName").toString().compareTo(_o2.get("productName").toString());
-                }
-            });
-
-            for (final Map<String, Object> map : lstVal) {
-                final List<Object> tmpList = new ArrayList<Object>();
-                if (getExType().equals(ExportType.HTML)) {
-                    tmpList.add(map.get("productOID"));
-                }
-                tmpList.add(map.get("productName"));
-                tmpList.add(map.get("productDescr"));
-                if (isShowClass()) {
-                    tmpList.add(map.get("productClass"));
-                }
-                tmpList.add(map.get("productDim"));
-                for (final Type type : this.types) {
-                    tmpList.add(map.get("price" + type.getId()));
-                    tmpList.add(map.get("currency" + type.getId()));
-                }
-                dataSource.add(tmpList.toArray());
+                    @Override
+                    public int compare(final Map<String, ?> _o1,
+                                       final Map<String, ?> _o2)
+                    {
+                        return _o1.get("productName").toString().compareTo(_o2.get("productName").toString());
+                    }
+                });
+                ret = new JRMapCollectionDataSource(lstVal);
+                getFilteredReport().cache(_parameter, ret);
             }
-            return dataSource;
+            return ret;
         }
 
         @Override
@@ -348,7 +339,7 @@ public abstract class PriceListReport_Base
                             DynamicReports.type.stringType()).setWidth(200);
             final TextColumnBuilder<String> productDim = DynamicReports.col.column(DBProperties
                             .getProperty(PriceListReport.class.getName() + ".productDim"), "productDim",
-                            DynamicReports.type.stringType());
+                            DynamicReports.type.stringType()).setWidth(50);
 
             final GenericElementBuilder linkElement = DynamicReports.cmp.genericElement(
                             "http://www.efaps.org", "efapslink")
@@ -372,18 +363,68 @@ public abstract class PriceListReport_Base
             grid.add(productDim);
             _builder.addColumn(productClass);
 
+            final Map<Long, Set<Instance>> priceGrpMap = new HashMap<>();
+            final Instance fakeInst = Instance.get("");
+            if (Products.ACTIVATEPRICEGRP.get()) {
+                final JRMapCollectionDataSource datasource = (JRMapCollectionDataSource) createDataSource(_parameter);
+                for (final Map<String, ?> map : datasource.getData()) {
+                   for (final Entry<String, ?> entry : map.entrySet()) {
+                       if (entry.getKey().startsWith("price-")) {
+                           final String[] val = entry.getKey().split("-");
+                           final Long typeId = Long.valueOf(val[1]);
+                           Set<Instance> priceGrpSet;
+                           if (priceGrpMap.containsKey(typeId)) {
+                               priceGrpSet = priceGrpMap.get(typeId);
+                           } else{
+                               priceGrpSet = new HashSet<>();
+                               priceGrpMap.put(typeId, priceGrpSet);
+                           }
+                           priceGrpSet.add(val.length == 3 ? Instance.get(val[2]) : fakeInst);
+                       }
+                   }
+                }
+            }
+
             for (final Type type : this.types) {
-                final String title = DBProperties.getProperty(PriceListReport.class.getName() + "ColumnGroup."
-                                + type.getName());
-                final TextColumnBuilder<BigDecimal> price = DynamicReports.col.column(DBProperties
-                                .getProperty(PriceListReport.class.getName() + ".price"), "price" + type.getId(),
-                                DynamicReports.type.bigDecimalType());
-                final TextColumnBuilder<String> currency = DynamicReports.col.column(DBProperties
-                                .getProperty(PriceListReport.class.getName() + ".currency"), "currency" + type.getId(),
-                                DynamicReports.type.stringType());
-                final ColumnTitleGroupBuilder titleGroup = DynamicReports.grid.titleGroup(title, price, currency);
-                grid.add(titleGroup);
-                _builder.addColumn(price, currency);
+                final String title = DBProperties.getProperty(PriceListReport.class.getName() + "ColumnGroup." + type
+                                .getName());
+                final Set<Instance> priceGrpSet = priceGrpMap.get(type.getId());
+                if (Products.ACTIVATEPRICEGRP.get() && priceGrpSet.size() > 1) {
+                    final ColumnTitleGroupBuilder titleGroup = DynamicReports.grid.titleGroup(title);
+                    grid.add(titleGroup);
+                    for (final Instance priceGrpInst : priceGrpSet) {
+                        String key = "";
+                        String subTitle = "";
+                        if (priceGrpInst.isValid()) {
+                            key = priceGrpInst.getOid();
+                            final PrintQuery print = new PrintQuery(priceGrpInst);
+                            print.addAttribute(CIProducts.PriceGroupAbstract.Name);
+                            print.execute();
+                            subTitle= print.getAttribute(CIProducts.PriceGroupAbstract.Name);
+                        }
+
+                        final TextColumnBuilder<BigDecimal> price = DynamicReports.col.column(DBProperties.getProperty(
+                                        PriceListReport.class.getName() + ".price"), "price-" + type.getId() + "-"
+                                                        + key, DynamicReports.type.bigDecimalType());
+                        final TextColumnBuilder<String> currency = DynamicReports.col.column(DBProperties.getProperty(
+                                        PriceListReport.class.getName() + ".currency"), "currency-" + type.getId() + "-"
+                                                        + key, DynamicReports.type.stringType()).setWidth(50);
+                        _builder.addColumn(price, currency);
+                        final ColumnTitleGroupBuilder subTitleGroup = DynamicReports.grid.titleGroup(subTitle, price,
+                                        currency);
+                        titleGroup.add(subTitleGroup);
+                    }
+                } else {
+                    final TextColumnBuilder<BigDecimal> price = DynamicReports.col.column(DBProperties.getProperty(
+                                    PriceListReport.class.getName() + ".price"), "price-" + type.getId() + "-",
+                                    DynamicReports.type.bigDecimalType());
+                    final TextColumnBuilder<String> currency = DynamicReports.col.column(DBProperties.getProperty(
+                                    PriceListReport.class.getName() + ".currency"), "currency-" + type.getId() + "-",
+                                    DynamicReports.type.stringType()).setWidth(50);
+                    final ColumnTitleGroupBuilder titleGroup = DynamicReports.grid.titleGroup(title, price, currency);
+                    grid.add(titleGroup);
+                    _builder.addColumn(price, currency);
+                }
             }
             _builder.columnGrid(grid.toArray(new ColumnGridComponentBuilder[grid.size()]));
         }
@@ -426,6 +467,11 @@ public abstract class PriceListReport_Base
         public void setActiveProductsOnly(final boolean _activeProductsOnly)
         {
             this.activeProductsOnly = _activeProductsOnly;
+        }
+
+        public PriceListReport_Base getFilteredReport()
+        {
+            return this.filteredReport;
         }
     }
 
