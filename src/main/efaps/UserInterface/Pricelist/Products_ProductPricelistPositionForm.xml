@@ -2,7 +2,7 @@
 
 <!--
 
-  Copyright 2003 - 2013 The eFaps Team
+  Copyright 2003 - 2015 The eFaps Team
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -16,24 +16,15 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  Author:          The eFaps Team
-  Revision:        $Rev$
-  Last Changed:    $Date$
-  Last Changed By: $Author$
-
 -->
 
 <ui-form xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-
     <uuid>6b4cb0ab-8be5-41aa-b1fa-f8887575ce21</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
-
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductPricelistPositionForm</name>
-        <!-- fields -->
         <field name="price">
             <property name="Columns">40</property>
             <property name="ModeCreate">EDITABLE</property>
@@ -51,6 +42,47 @@
                 event="UI_FIELD_VALUE" >
                 <property name="Type">ERP_Currency</property>
                 <property name="Select">attribute[Symbol]</property>
+            </trigger>
+        </field>
+        <field name="priceGroupLink">
+            <property name="Attribute">PriceGroupLink</property>
+            <property name="Label">Products_ProductPricelistPosition/PriceGroupLink.Label</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ModeView">NONE</property>
+            <trigger program="org.efaps.esjp.common.uiform.Field"
+                method="dropDownFieldValue"
+                name="Products_ProductPricelistPositionForm.priceGroupLink.UI_FIELD_VALUE"
+                event="UI_FIELD_VALUE" >
+                <property name="Type">Products_PriceGroupAbstract</property>
+                <property name="Select">attribute[Name]</property>
+                <property name="OrderSelect">attribute[Name]</property>
+                <property name="SetSelected">true</property>
+                <property name="emptyValue">org.efaps.esjp.common.uiform.Field.EmptyValue</property>
+            </trigger>
+            <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                name="Products_ProductPricelistPositionTable.priceGroupLink.UI_ACCESSCHECK"
+                method="configCheck"
+                event="UI_ACCESSCHECK">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.PriceGroup.Activate</property>
+            </trigger>
+        </field>
+        <field name="priceGroupLink4View">
+            <property name="SelectAlternateOID">linkto[PriceGroupLink].oid</property>
+            <property name="Select">linkto[PriceGroupLink].attribute[Name]</property>
+            <property name="Label">Products_ProductPricelistPosition/PriceGroupLink.Label</property>
+            <property name="ModeCreate">NONE</property>
+            <property name="ModeEdit">NONE</property>
+            <property name="HRef">TREE</property>
+            <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                name="Products_ProductPricelistPositionTable.priceGroupLink.UI_ACCESSCHECK"
+                method="configCheck"
+                event="UI_ACCESSCHECK">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.PriceGroup.Activate</property>
             </trigger>
         </field>
         <field name="fromUoM">

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
 
- Copyright 2003 - 2009 The eFaps Team
+ Copyright 2003 - 2015 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -16,31 +15,23 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
- Author:          The eFaps Team
- Revision:        $Rev$
- Last Changed:    $Date$
- Last Changed By: $Author$
-
 -->
 
-<datamodel-sqltable  xmlns="http://www.efaps.org/xsd"
-                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+<datamodel-sqltable  xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>330eb22f-56a4-4130-866c-a68e93504a80</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
-
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductPricelistPositionSQLTable</name>
         <database>
             <table-name>T_PRODPRODPRICEPOS</table-name>
-            <!-- columns -->
             <column name="PRODPRICEID"  type="INTEGER"  not-null="true" />
-            <column name="FROMUOM"      type="DECIMAL"                  length="14" scale="4" />
-            <column name="TOUOM"        type="DECIMAL"                  length="14" scale="4" />
             <column name="PRICE"        type="DECIMAL"  not-null="true" length="14" scale="4" />
             <column name="CURRENCYID"   type="INTEGER"  not-null="true" />
+            <column name="PRICEGRPID"   type="INTEGER" />
+            <column name="FROMUOM"      type="DECIMAL"                  length="14" scale="4" />
+            <column name="TOUOM"        type="DECIMAL"                  length="14" scale="4" />
             <column name="CREATOR"      type="INTEGER"  not-null="true" />
             <column name="CREATED"      type="DATETIME" not-null="true" />
             <column name="MODIFIER"     type="INTEGER"  not-null="true" />
@@ -49,5 +40,4 @@
             <foreign name="T_PRODPRODPRICEPOS_FK_MDFR"  key="MODIFIER"  reference="T_USERPERSON(ID)" />
         </database>
     </definition>
-
 </datamodel-sqltable>
