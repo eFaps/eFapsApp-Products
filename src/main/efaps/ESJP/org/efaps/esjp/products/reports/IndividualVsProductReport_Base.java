@@ -155,8 +155,8 @@ public abstract class IndividualVsProductReport_Base
                     LOG.error("Catched error", e);
                 }
             } else {
-
                 final Map<Instance, ProductBean> beans = new HashMap<>();
+                // get individuals with its products that are in stock
                 final QueryBuilder attrQueryBldr = new QueryBuilder(CIProducts.InventoryAbstract);
 
                 final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductIndividualAbstract);
@@ -190,15 +190,40 @@ public abstract class IndividualVsProductReport_Base
                                     .setName(multi.<String>getAttribute(CIProducts.ProductIndividual.Name));
                     prodBean.getIndividuals().add(dataBean);
                 }
+                // get stock products that have no individual stock
+                final QueryBuilder attQeryBldr = new QueryBuilder(CIProducts.StockProductAbstract2IndividualAbstract);
+
+                final QueryBuilder prodQueryBldr = new QueryBuilder(CIProducts.StockProductAbstract);
+                prodQueryBldr.addWhereAttrInQuery(CIProducts.StockProductAbstract.ID, attrQueryBldr.getAttributeQuery(
+                                CIProducts.InventoryAbstract.Product));
+                prodQueryBldr.addWhereAttrInQuery(CIProducts.StockProductAbstract.ID, attQeryBldr.getAttributeQuery(
+                                CIProducts.StockProductAbstract2IndividualAbstract.FromAbstract));
+                prodQueryBldr.addWhereAttrNotEqValue(CIProducts.StockProductAbstract.ID, beans.keySet().toArray());
+                final MultiPrintQuery multi2 = prodQueryBldr.getPrint();
+                multi2.addAttribute(CIProducts.StockProductAbstract.Name, CIProducts.StockProductAbstract.Description);
+                multi2.execute();
+                while (multi2.next()) {
+                    final Instance prodInst = multi2.getCurrentInstance();
+                    if (!beans.containsKey(prodInst)) {
+                        final ProductBean prodBean = new ProductBean();
+                        prodBean.setOID(prodInst.getOid())
+                            .setName(multi2.<String>getAttribute(CIProducts.StockProductAbstract.Name))
+                            .setDescr(multi2.<String>getAttribute(CIProducts.StockProductAbstract.Description));
+                        beans.put(prodInst, prodBean);
+                    }
+                }
+
                 final List<ProductBean> values = new ArrayList<>(beans.values());
-                Collections.sort(values, new Comparator<ProductBean>() {
+                Collections.sort(values, new Comparator<ProductBean>()
+                {
 
                     @Override
                     public int compare(final ProductBean _arg0,
                                        final ProductBean _arg1)
                     {
                         return _arg0.getName().compareTo(_arg1.getName());
-                    }});
+                    }
+                });
                 ret = new JRBeanCollectionDataSource(values);
                 this.filteredReport.cache(_parameter, ret);
             }
