@@ -189,6 +189,13 @@ public abstract class Product_Base
         return ret;
     }
 
+    /**
+     * Creates the Product.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
     public Return create(final Parameter _parameter)
         throws EFapsException
     {
@@ -254,6 +261,8 @@ public abstract class Product_Base
                 ret = Products.MATERIALACTFAM.get();
             } else if (instance.getType().isCIType(CIProducts.ProductGeneric)) {
                 ret = Products.GENERICACTFAM.get();
+            }  else if (instance.getType().isCIType(CIProducts.ProductService)) {
+                ret = Products.SERVACTFAM.get();
             }
         }
         return ret;
@@ -608,6 +617,13 @@ public abstract class Product_Base
         return multi.execute(_parameter);
     }
 
+    /**
+     * Gets the sets the filtered families ui value.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the sets the filtered families ui value
+     * @throws EFapsException on error
+     */
     public Return getSetFilteredFamiliesUIValue(final Parameter _parameter)
         throws EFapsException
     {
@@ -661,7 +677,13 @@ public abstract class Product_Base
         return ret;
     }
 
-
+    /**
+     * Individual access check.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
     public Return individualAccessCheck(final Parameter _parameter)
         throws EFapsException
     {
@@ -698,7 +720,13 @@ public abstract class Product_Base
         return ret;
     }
 
-
+    /**
+     * Update fields4 product.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
     public Return updateFields4Product(final Parameter _parameter)
         throws EFapsException
     {
@@ -780,6 +808,13 @@ public abstract class Product_Base
         return ret;
     }
 
+    /**
+     * Auto complete4 massive products in storage.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
     public Return autoComplete4MassiveProductsInStorage(final Parameter _parameter)
         throws EFapsException
     {
@@ -879,10 +914,12 @@ public abstract class Product_Base
      * Method is used to make a clone of a product into another product. e.g.
      * from a standard product into a unique product.
      *
+     * @param _parameter Parameter as passed by the eFaps API
      * @param _instance instance to be cloned
      * @param _cloneType type of the cloned product
      * @param _attrMap map of attributes that will be set instead of the value
      *            from the original
+     * @param _addClassifications the add classifications
      * @return instance of the new product
      * @throws EFapsException on error
      */
@@ -977,6 +1014,14 @@ public abstract class Product_Base
         return ret;
     }
 
+    /**
+     * Creates the relation.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _parent the parent
+     * @param _child the child
+     * @throws EFapsException on error
+     */
     protected void createRelation(final Parameter _parameter,
                                   final Instance _parent,
                                   final Instance _child)
@@ -1150,11 +1195,20 @@ public abstract class Product_Base
                 ret = Products.MATERIALFAMPRE.get() == null ? ret : Products.MATERIALFAMPRE.get() + ret;
             } else if (instance.getType().isCIType(CIProducts.ProductGeneric)) {
                 ret = Products.GENERICFAMPRE.get() == null ? ret : Products.GENERICFAMPRE.get() + ret;
+            } else if (instance.getType().isCIType(CIProducts.ProductService)) {
+                ret = Products.SERVFAMPRE.get() == null ? ret : Products.SERVFAMPRE.get() + ret;
             }
         }
         return ret;
     }
 
+    /**
+     * Gets the costing for a  product.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the costing4 product
+     * @throws EFapsException on error
+     */
     public Return getCosting4Product(final Parameter _parameter)
         throws EFapsException
     {

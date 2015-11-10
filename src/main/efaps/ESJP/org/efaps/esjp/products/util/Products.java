@@ -124,6 +124,20 @@ public final class Products
                     .key(BASE + "PriceGroup.Activate")
                     .description("Activate the price group management.");
 
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute SERVACTFAM = new BooleanSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "Service.ActivateFamilies")
+                    .description("Activate the family management for materials.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final StringSysConfAttribute SERVFAMPRE = new StringSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "Service.FamiliesPrefix")
+                    .description("Activate the family management for materials.");
+
     /**
      * Singelton.
      */

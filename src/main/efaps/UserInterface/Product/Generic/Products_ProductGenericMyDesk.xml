@@ -29,7 +29,7 @@
         <target>
             <menu>Products_ProductGenericMyDesk_Menu</menu>
             <table>Products_ProductGenericTable</table>
-            <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
+            <evaluate method="productMultiPrint" program="org.efaps.esjp.products.Product">
                 <property name="Type">Products_ProductGeneric</property>
             </evaluate>
              <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"

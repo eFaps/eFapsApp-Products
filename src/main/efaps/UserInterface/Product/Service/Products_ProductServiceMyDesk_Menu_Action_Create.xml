@@ -1,8 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
-<!--
-
- Copyright 2003 - 2010 The eFaps Team
+ Copyright 2003 - 2015 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -16,39 +14,28 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
- Author:          The eFaps Team
- Revision:        $Rev$
- Last Changed:    $Date$
- Last Changed By: $Author$
-
 -->
-
-<ui-command xmlns="http://www.efaps.org/xsd"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>1a2d1c7a-2936-47a5-a9a7-e3e13631c629</uuid>
+<ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>b8227a2b-738d-42a0-91b2-f0340d1c2992</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductNonStockMyDesk_Menu_Action_CreateService</name>
+        <name>Products_ProductServiceMyDesk_Menu_Action_Create</name>
         <access>
             <role>Products_Admin</role>
             <role>Products_Modifier</role>
         </access>
-
-        <!-- target definitions -->
         <target>
-            <form>Products_ProductNonStockForm</form>
-           <execute program="org.efaps.esjp.common.uiform.Create" />
-           <validate program="org.efaps.esjp.products.Product" method="validate" />
+            <form>Products_ProductServiceForm</form>
+            <execute method="create" program="org.efaps.esjp.products.Product" />
+            <validate method="validate" program="org.efaps.esjp.products.Product" />
         </target>
-
-        <!-- properties -->
         <property name="Target">modal</property>
         <property name="TargetCreateType">Products_ProductService</property>
+        <property name="HRef">TREE</property>
         <property name="TargetMode">create</property>
-        <property name="WindowHeight">460</property>
-        <property name="WindowWidth">515</property>
+        <property name="WindowHeight">600</property>
+        <property name="WindowWidth">1000</property>
     </definition>
 </ui-command>

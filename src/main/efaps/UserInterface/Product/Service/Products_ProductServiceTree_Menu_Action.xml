@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
  Copyright 2003 - 2015 The eFaps Team
 
@@ -17,22 +15,15 @@
  limitations under the License.
 
 -->
-
 <ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>dd896254-e32a-4512-b43f-b5dad52e146e</uuid>
+    <uuid>783eb38a-e5a5-4636-aba4-cdeb6434d542</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductNonStockMyDesk_Menu_Action</name>
+        <name>Products_ProductServiceTree_Menu_Action</name>
         <childs>
-            <child>Products_ProductNonStockMyDesk_Menu_Action_CreateSalesPartList</child>
-            <child>Products_ProductServiceMyDesk_Menu_Action_Create</child>
-            <child>Products_ProductNonStockMyDesk_Menu_Action_CreateTextPosition</child>
-            <child>Products_ProductGenericMyDesk_Menu_Action_CreateGeneric</child>
-            <child>Products_ProductNonStockMyDesk_Menu_Action_CreateProductCostTextPosition</child>
-            <child>Products_PriceMassUpdate</child>
-            <child>Products_ProductInStockMyDesk_Menu_Action_Delete</child>
+            <child>Products_ProductServiceTree_Menu_Action_Edit</child>
         </childs>
     </definition>
 </ui-menu>
