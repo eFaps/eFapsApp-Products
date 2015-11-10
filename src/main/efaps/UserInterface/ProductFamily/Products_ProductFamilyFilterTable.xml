@@ -19,7 +19,6 @@
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>f177d90d-bc2d-470e-a6a9-b09cc0e3d40b</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductFamilyFilterTable</name>
@@ -32,7 +31,6 @@
         </field>
         <field name="name">
             <property name="Attribute">Name</property>
-            <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
             <property name="Label">Products_ProductFamilyAbstract/Name.Label</property>
             <property name="ShowTypeIcon">true</property>
             <property name="ModeSearch">READONLY</property>
