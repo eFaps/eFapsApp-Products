@@ -23,9 +23,11 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.UUID;
 
 import org.efaps.admin.access.AccessTypeEnums;
@@ -58,6 +60,7 @@ import org.efaps.esjp.ci.CIFormProducts;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.ci.CITableProducts;
 import org.efaps.esjp.common.parameter.ParameterUtil;
+import org.efaps.esjp.common.util.InterfaceUtils;
 import org.efaps.esjp.erp.AbstractWarning;
 import org.efaps.esjp.erp.CommonDocument;
 import org.efaps.esjp.erp.IWarning;
@@ -228,10 +231,11 @@ public abstract class Transaction_Base
      *
      * @param _parameter Parameter as passed by the eFaps API
      * @param _createDoc the _create doc
+     * @return the created doc
      * @throws EFapsException on error
      */
     protected CreatedDoc createDocumentTransaction(final Parameter _parameter,
-                                             final CreatedDoc _createDoc)
+                                                   final CreatedDoc _createDoc)
         throws EFapsException
     {
         CreatedDoc ret = null;
@@ -1181,7 +1185,8 @@ public abstract class Transaction_Base
         throws EFapsException
     {
         final Return ret = new Return();
-        final String dateStr = _parameter.getParameterValue(CIFormProducts.Products_InventorySet4ProductsForm.date.name);
+        final String dateStr = _parameter.getParameterValue(
+                        CIFormProducts.Products_InventorySet4ProductsForm.date.name);
         final DateTime date = new DateTime(dateStr);
         final String descr = _parameter
                         .getParameterValue(CIFormProducts.Products_InventorySet4ProductsForm.description.name);
@@ -1242,6 +1247,50 @@ public abstract class Transaction_Base
                 ret.put(ReturnValues.VALUES, file);
                 ret.put(ReturnValues.TRUE, true);
             }
+        }
+        return ret;
+    }
+
+    /**
+     * Gets the java script4 set inventory.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the java script4 set inventory
+     * @throws EFapsException
+     */
+    public Return getJavaScript4SetInventory(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        final List<Instance> instances = getSelectedInstances(_parameter);
+        if (!instances.isEmpty()) {
+            final StringBuilder js = new StringBuilder();
+            final Set<String> noEscape = new HashSet<String>();
+            noEscape.add("uoM");
+            final List<Map<String, Object>> strValues = new ArrayList<>();
+            final MultiPrintQuery multi = new MultiPrintQuery(instances);
+            final SelectBuilder selProd = SelectBuilder.get().linkto(CIProducts.InventoryAbstract.Product);
+            final SelectBuilder selProdInst = new SelectBuilder(selProd).instance();
+            final SelectBuilder selProdDecr = new SelectBuilder(selProd).attribute(
+                            CIProducts.ProductAbstract.Description);
+            final SelectBuilder selProdName = new SelectBuilder(selProd).attribute(CIProducts.ProductAbstract.Name);
+            multi.addAttribute(CIProducts.InventoryAbstract.Quantity, CIProducts.InventoryAbstract.UoM);
+            multi.addSelect(selProdInst, selProdDecr, selProdName);
+            multi.setEnforceSorted(true);
+            multi.execute();
+            while (multi.next()) {
+                final Map<String, Object> map = new HashMap<>();
+                strValues.add(map);
+                map.put("quantity", multi.getAttribute(CIProducts.InventoryAbstract.Quantity));
+                map.put("product", new String[] { multi.<Instance>getSelect(selProdInst).getOid(),
+                                multi.<String>getSelect(selProdName)});
+                map.put("productDesc", multi.getSelect(selProdDecr));
+                map.put("uoM", getUoMFieldStrByUoM(multi.<Long>getAttribute(CIProducts.InventoryAbstract.UoM)));
+            }
+            js.append(getTableRemoveScript(_parameter, "inventoryTable", false, false))
+                .append(getTableAddNewRowsScript(_parameter, "inventoryTable", strValues,
+                               null, false, false, noEscape));
+            ret.put(ReturnValues.SNIPLETT, InterfaceUtils.wrappInScriptTag(_parameter, js, true, 1500));
         }
         return ret;
     }
