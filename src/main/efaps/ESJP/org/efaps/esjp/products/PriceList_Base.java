@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2013 The eFaps Team
+ * Copyright 2003 - 2015 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Revision:        $Rev$
- * Last Changed:    $Date$
- * Last Changed By: $Author$
  */
 
 package org.efaps.esjp.products;
@@ -34,7 +31,7 @@ import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
 import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
-import org.efaps.admin.program.esjp.EFapsRevision;
+import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
 import org.efaps.db.AttributeQuery;
@@ -48,6 +45,7 @@ import org.efaps.db.SelectBuilder;
 import org.efaps.db.Update;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.uitable.MultiPrint;
+import org.efaps.esjp.products.util.Products;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -56,10 +54,9 @@ import org.joda.time.format.DateTimeFormat;
  * TODO comment!
  *
  * @author The eFaps Team
- * @version $Id$
  */
 @EFapsUUID("ccbcbc48-1c82-42f4-8e31-2eb496e862c1")
-@EFapsRevision("$Rev$")
+@EFapsApplication("eFapsApp-Products")
 public abstract class PriceList_Base
     extends MultiPrint
 {
@@ -200,6 +197,13 @@ public abstract class PriceList_Base
         return ret;
     }
 
+    /**
+     * Gets the date from product pricelist retail.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the date from product pricelist retail
+     * @throws EFapsException on error
+     */
     @SuppressWarnings("unchecked")
     public Return getDateFromProductPricelistRetail(final Parameter _parameter)
         throws EFapsException
@@ -259,6 +263,13 @@ public abstract class PriceList_Base
         return ret;
     }
 
+    /**
+     * Gets the price from product pricelist.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the price from product pricelist
+     * @throws EFapsException on error
+     */
     @SuppressWarnings("unchecked")
     public Return getPriceFromProductPricelist(final Parameter _parameter)
         throws EFapsException
@@ -320,5 +331,44 @@ public abstract class PriceList_Base
 
         ret.put(ReturnValues.VALUES, listProducts2Price.get(_parameter.getInstance()));
         return ret;
+    }
+
+    /**
+     * Check if a given group applies.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _priceGroupInstance the price group instance
+     * @return true, if successful
+     * @throws EFapsException on error
+     */
+    public boolean groupApplies(final Parameter _parameter,
+                                   final Instance _priceGroupInstance)
+        throws EFapsException
+    {
+        boolean ret = false;
+        if (Products.ACTIVATEPRICEGRP.get() && _priceGroupInstance != null && _priceGroupInstance.isValid()) {
+            final QueryBuilder queryBldr = new QueryBuilder(CIProducts.PriceGroupContact2Contact);
+            queryBldr.addWhereAttrEqValue(CIProducts.PriceGroupContact2Contact.FromLink, _priceGroupInstance);
+            final Instance contactInst = getContactInstance(_parameter);
+            if (contactInst.isValid()) {
+                queryBldr.addWhereAttrEqValue(CIProducts.PriceGroupContact2Contact.ToLink, contactInst);
+                ret = !queryBldr.getQuery().execute().isEmpty();
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * Gets the contact instance.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the contact instance
+     * @throws EFapsException on error
+     */
+    protected Instance getContactInstance(final Parameter _parameter)
+        throws EFapsException
+    {
+        final String contactStr = _parameter.getParameterValue("contact");
+        return Instance.get(contactStr);
     }
 }
