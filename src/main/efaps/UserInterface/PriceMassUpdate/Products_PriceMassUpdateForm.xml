@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
 
-  Copyright 2003 - 2012 The eFaps Team
+  Copyright 2003 - 2015 The eFaps Team
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -14,24 +15,46 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  Author:          The eFaps Team
-  Revision:        $Rev$
-  Last Changed:    $Date$
-  Last Changed By: $Author$
-
---><ui-form xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-
+-->
+<ui-form xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>d7d1f42f-0034-498f-bb4d-69520a1a2007</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
-
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_PriceMassUpdateForm</name>
-        <!-- fields -->
+        <field name="priceGroupLink">
+            <property name="Label">Products_ProductPricelistPosition/PriceGroupLink.Label</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="UIType">DROPDOWN</property>
+            <trigger program="org.efaps.esjp.common.uiform.Field"
+                method="getOptionListFieldValue"
+                name="Products_PriceMassUpdateForm.priceGroupLink.UI_FIELD_VALUE"
+                event="UI_FIELD_VALUE" >
+                <property name="Type">Products_PriceGroupAbstract</property>
+                <property name="Select">attribute[Name]</property>
+                <property name="OrderSelect">attribute[Name]</property>
+                <property name="ValueSelect">oid</property>
+                <property name="EmptyValue">org.efaps.esjp.common.uiform.Field.EmptyValue</property>
+            </trigger>
+            <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                name="Products_PriceMassUpdateForm.priceGroupLink.UI_ACCESSCHECK"
+                method="configCheck"
+                event="UI_ACCESSCHECK">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.PriceGroup.Activate</property>
+            </trigger>
+            <trigger program="org.efaps.esjp.products.PriceMassUpdate"
+                method="fieldUpdate4PriceGroup"
+                name="Products_PriceMassUpdateForm.priceGroupLink.UI_FIELD_UPDATE"
+                event="UI_FIELD_UPDATE" >
+                <property name="PriceListType">Products_ProductPricelistRetail</property>
+            </trigger>
+        </field>
         <field name="table" character="Target">
             <table>Products_PriceMassUpdateTable</table>
-            <evaluate program="org.efaps.esjp.products.PriceMassUpdate" method="getProductInstances"/>
+            <evaluate program="org.efaps.esjp.products.PriceMassUpdate" method="getProductInstances" />
         </field>
     </definition>
 </ui-form>
