@@ -43,6 +43,10 @@
         <field name="classification">
             <property name="Select">class.type</property>
             <property name="Label">Products_ProductTable.classification.Label</property>
+            <property name="FilterType">CLASSIFICATION</property>
+            <property name="FilterRequired">true</property>
+            <property name="FilterBase">DATABASE</property>
+            <property name="Classification">Products_MaterialClass</property>
             <trigger event="UI_FIELD_FORMAT" method="classificationFieldFormat"
                 name="Contacts_ContactTable.classification"
                 program="org.efaps.esjp.common.uiform.Field" />
