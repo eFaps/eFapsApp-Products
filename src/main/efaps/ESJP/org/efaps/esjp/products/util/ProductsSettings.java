@@ -47,12 +47,6 @@ public interface ProductsSettings
      * Boolean(true/false).<br/>
      * Activate the menu for updating Product Prices on mass.
      */
-    String ACTIVATEPRICEMASSUPDATE = ProductsSettings.BASE + "ActivatePriceMassUpdate";
-
-    /**
-     * Boolean(true/false).<br/>
-     * Activate the menu for updating Product Prices on mass.
-     */
     String ACTIVATEVARIANT = ProductsSettings.BASE + "ActivateVariant";
 
     /**
@@ -77,11 +71,6 @@ public interface ProductsSettings
      * Link to a default warehouse instance.
      */
     String DEFAULTSTORAGEGROUP = ProductsSettings.BASE + "StorageGroup4ProductBOM";
-
-    /**
-     * Link to a default dimension.
-     */
-    String DEFAULTDIMENSION = ProductsSettings.BASE + "DefaultDimension";
 
     /**
      * Properties for the LastMovementReport.

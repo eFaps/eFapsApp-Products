@@ -82,7 +82,6 @@ import org.efaps.esjp.erp.IWarning;
 import org.efaps.esjp.erp.WarningUtil;
 import org.efaps.esjp.products.util.Products;
 import org.efaps.esjp.products.util.Products.ProductIndividual;
-import org.efaps.esjp.products.util.ProductsSettings;
 import org.efaps.ui.wicket.models.objects.UIForm;
 import org.efaps.ui.wicket.models.objects.UITable;
 import org.efaps.ui.wicket.models.objects.UITable.TableFilter;
@@ -123,7 +122,7 @@ public abstract class Product_Base
                 throws EFapsException
             {
                 final FieldValue fieldValue = (FieldValue) _parameter.get(ParameterValues.UIOBJECT);
-                final Instance dimInst = Products.getSysConfig().getLink(ProductsSettings.DEFAULTDIMENSION);
+                final Instance dimInst = Products.DefaultDimension.get();
                 if (_parameter.get(ParameterValues.ACCESSMODE).equals(TargetMode.CREATE)
                                 && dimInst != null && dimInst.isValid()) {
                     for (final Entry<?, ?> entry : _valueMap.entrySet()) {
@@ -147,7 +146,7 @@ public abstract class Product_Base
         throws EFapsException
     {
         final Field field = new Field();
-        final Instance dimInst = Products.getSysConfig().getLink(ProductsSettings.DEFAULTDIMENSION);
+        final Instance dimInst = Products.DefaultDimension.get();
         final Return ret;
         if (_parameter.get(ParameterValues.ACCESSMODE).equals(TargetMode.CREATE) && dimInst != null
                         && dimInst.isValid()) {

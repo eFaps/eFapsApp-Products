@@ -24,10 +24,12 @@ import org.efaps.admin.datamodel.IEnum;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.api.annotation.EFapsSysConfAttribute;
+import org.efaps.api.annotation.EFapsSysConfLink;
 import org.efaps.api.annotation.EFapsSystemConfiguration;
 import org.efaps.esjp.admin.common.systemconfiguration.BooleanSysConfAttribute;
 import org.efaps.esjp.admin.common.systemconfiguration.IntegerSysConfAttribute;
 import org.efaps.esjp.admin.common.systemconfiguration.StringSysConfAttribute;
+import org.efaps.esjp.admin.common.systemconfiguration.SysConfLink;
 import org.efaps.util.cache.CacheReloadException;
 
 /**
@@ -52,6 +54,13 @@ public final class Products
                     .sysConfUUID(SYSCONFUUID)
                     .key(BASE + "ActivateIndividual")
                     .description(" Activate the individual management menu in general.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute ACTIVATEPRICEMASSUP = new BooleanSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "ActivatePriceMassUpdate")
+                    .description(" Activate the menu for updating Product Prices on mass.");
 
     /** See description. */
     @EFapsSysConfAttribute
@@ -136,6 +145,13 @@ public final class Products
     public static final StringSysConfAttribute SERVFAMPRE = new StringSysConfAttribute()
                     .sysConfUUID(SYSCONFUUID)
                     .key(BASE + "Service.FamiliesPrefix")
+                    .description("Activate the family management for materials.");
+
+    /** See description. */
+    @EFapsSysConfLink
+    public static final SysConfLink DefaultDimension = new SysConfLink()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "DefaultDimension")
                     .description("Activate the family management for materials.");
 
     /**
