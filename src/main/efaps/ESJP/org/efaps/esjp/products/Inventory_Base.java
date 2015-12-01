@@ -108,17 +108,17 @@ public abstract class Inventory_Base
 
         final Map<Instance, InventoryBean> map = new HashMap<>();
 
-        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.Inventory);
+        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.InventoryAbstract);
         add2QueryBuilder(_parameter, queryBldr);
         final MultiPrintQuery multi = queryBldr.getPrint();
 
-        final SelectBuilder selStorage = SelectBuilder.get().linkto(CIProducts.Inventory.Storage);
+        final SelectBuilder selStorage = SelectBuilder.get().linkto(CIProducts.InventoryAbstract.Storage);
         final SelectBuilder selStorageInst = new SelectBuilder(selStorage).instance();
         final SelectBuilder selStorageName = new SelectBuilder(selStorage).attribute(CIProducts.StorageAbstract.Name);
         if (isShowStorage()) {
             multi.addSelect(selStorageInst, selStorageName);
         }
-        final SelectBuilder selProd = SelectBuilder.get().linkto(CIProducts.Inventory.Product);
+        final SelectBuilder selProd = SelectBuilder.get().linkto(CIProducts.InventoryAbstract.Product);
         final SelectBuilder selProdInst = new SelectBuilder(selProd).instance();
         final SelectBuilder selProdClass = new SelectBuilder(selProd).clazz().type();
         final SelectBuilder selProdName = new SelectBuilder(selProd).attribute(CIProducts.ProductAbstract.Name);
@@ -127,7 +127,8 @@ public abstract class Inventory_Base
             multi.addSelect(selProdClass);
         }
         multi.addSelect(selProdClass, selProdInst, selProdName, selProdDescr);
-        multi.addAttribute(CIProducts.Inventory.Quantity, CIProducts.Inventory.UoM, CIProducts.Inventory.Reserved);
+        multi.addAttribute(CIProducts.InventoryAbstract.Quantity, CIProducts.InventoryAbstract.UoM,
+                        CIProducts.InventoryAbstract.Reserved);
         multi.execute();
         while (multi.next()) {
             final InventoryBean bean;
@@ -138,7 +139,7 @@ public abstract class Inventory_Base
                 bean.setProdInstance(multi.<Instance>getSelect(selProdInst));
                 bean.setProdDescr(multi.<String>getSelect(selProdDescr));
                 bean.setProdName(multi.<String>getSelect(selProdName));
-                bean.setUoM(Dimension.getUoM(multi.<Long>getAttribute(CIProducts.Inventory.UoM)));
+                bean.setUoM(Dimension.getUoM(multi.<Long>getAttribute(CIProducts.InventoryAbstract.UoM)));
                 if (isShowProdClass()) {
                     bean.setProdClasslist(multi.<List<Classification>>getSelect(selProdClass));
                 }
@@ -152,15 +153,15 @@ public abstract class Inventory_Base
                     bean.setProdInstance(multi.<Instance>getSelect(selProdInst));
                     bean.setProdDescr(multi.<String>getSelect(selProdDescr));
                     bean.setProdName(multi.<String>getSelect(selProdName));
-                    bean.setUoM(Dimension.getUoM(multi.<Long>getAttribute(CIProducts.Inventory.UoM)));
+                    bean.setUoM(Dimension.getUoM(multi.<Long>getAttribute(CIProducts.InventoryAbstract.UoM)));
                     if (isShowProdClass()) {
                         bean.setProdClasslist(multi.<List<Classification>>getSelect(selProdClass));
                     }
                     map.put(prodInst, bean);
                 }
             }
-            bean.addQuantity(multi.<BigDecimal>getAttribute(CIProducts.Inventory.Quantity));
-            bean.addReserved(multi.<BigDecimal>getAttribute(CIProducts.Inventory.Reserved));
+            bean.addQuantity(multi.<BigDecimal>getAttribute(CIProducts.InventoryAbstract.Quantity));
+            bean.addReserved(multi.<BigDecimal>getAttribute(CIProducts.InventoryAbstract.Reserved));
             prodInsts.add(multi.<Instance>getSelect(selProdInst));
         }
 
@@ -325,11 +326,11 @@ public abstract class Inventory_Base
         final QueryBuilder queryBldr = new QueryBuilder(CIProducts.StorageAbstract);
         queryBldr.addWhereAttrEqValue(CIProducts.StorageAbstract.StatusAbstract,
                         Status.find(CIProducts.StorageAbstractStatus.Active));
-        _queryBldr.addWhereAttrInQuery(CIProducts.Inventory.Storage,
+        _queryBldr.addWhereAttrInQuery(CIProducts.InventoryAbstract.Storage,
                         queryBldr.getAttributeQuery(CIProducts.StorageAbstract.ID));
 
         if (!getStorageInsts().isEmpty()) {
-            _queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, getStorageInsts().toArray());
+            _queryBldr.addWhereAttrEqValue(CIProducts.InventoryAbstract.Storage, getStorageInsts().toArray());
         }
     }
 
@@ -557,7 +558,7 @@ public abstract class Inventory_Base
                 throws EFapsException
             {
                 super.add2QueryBuilder(_parameter, _queryBldr);
-                _queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Product, (Object[]) _prodInstances);
+                _queryBldr.addWhereAttrEqValue(CIProducts.InventoryAbstract.Product, (Object[]) _prodInstances);
             }
 
             @Override

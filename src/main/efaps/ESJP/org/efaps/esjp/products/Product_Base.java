@@ -1353,6 +1353,37 @@ public abstract class Product_Base
      * @return the generic4 replacment
      * @throws EFapsException on error
      */
+    public Instance getProduct4Individual(final Parameter _parameter,
+                                          final Instance _individualProdInst)
+         throws EFapsException
+    {
+        Instance ret = null;
+        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.StockProductAbstract2IndividualAbstract);
+        queryBldr.addWhereAttrEqValue(CIProducts.StockProductAbstract2IndividualAbstract.ToAbstract,
+                        _individualProdInst);
+
+        final MultiPrintQuery multi = queryBldr.getPrint();
+        final SelectBuilder selInst = SelectBuilder.get().linkto(
+                        CIProducts.StockProductAbstract2IndividualAbstract.FromAbstract).instance();
+        multi.addSelect(selInst);
+        multi.execute();
+        while (multi.next()) {
+            final Instance prodInst = multi.getSelect(selInst);
+            if (prodInst != null) {
+                ret = prodInst;
+            }
+        }
+        return ret == null ? Instance.get("") : ret;
+    }
+
+    /**
+     * Gets the instance for the generic product of a replacement.
+     *
+     * @param _parameter the _parameter
+     * @param _replInst the _generic inst
+     * @return the generic4 replacment
+     * @throws EFapsException on error
+     */
     public Instance getGeneric4Replacment(final Parameter _parameter,
                                           final Instance _replInst)
          throws EFapsException

@@ -67,6 +67,8 @@ import org.efaps.esjp.erp.IWarning;
 import org.efaps.esjp.erp.NumberFormatter;
 import org.efaps.esjp.erp.WarningUtil;
 import org.efaps.esjp.products.Inventory_Base.InventoryBean;
+import org.efaps.esjp.products.util.Products;
+import org.efaps.esjp.products.util.Products.ProductIndividual;
 import org.efaps.ui.wicket.models.cell.UIFormCell;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
@@ -1202,7 +1204,7 @@ public abstract class Transaction_Base
         final List<CreatedDoc> transLists = new ArrayList<CreatedDoc>();
         if (products != null) {
             for (int i = 0; i < products.length; i++) {
-                final Instance productInst = Instance.get(products[i]);
+                Instance productInst = Instance.get(products[i]);
                 BigDecimal quantity = null;
                 try {
                     quantity = (BigDecimal) NumberFormatter.get().getFormatter().parse(quantities[i]);
@@ -1214,6 +1216,9 @@ public abstract class Transaction_Base
                 if (productInst != null && productInst.isValid() && quantity != null && uoMId != null) {
                     final InventoryBean inventoryBean = Inventory.getInventory4Product(_parameter,
                                     storageInst, date, productInst);
+                    final boolean individual = productInst.getType().isKindOf(
+                                    CIProducts.ProductIndividualAbstract.getType());
+
                     final BigDecimal currQuantity;
                     if (inventoryBean == null) {
                         currQuantity = BigDecimal.ZERO;
@@ -1226,9 +1231,21 @@ public abstract class Transaction_Base
                         if (quantity.compareTo(currQuantity) > 0) {
                             moveQty = quantity.subtract(currQuantity);
                             type = CIProducts.TransactionInbound;
+                            if (individual) {
+                                final CreatedDoc trans = addTransactionProduct(CIProducts.TransactionIndividualInbound,
+                                            moveQty, storageInst, uoMId, date, productInst, descr);
+                                transLists.add(trans);
+                                productInst = new Product().getProduct4Individual(_parameter, productInst);
+                            }
                         } else {
                             moveQty = currQuantity.subtract(quantity);
                             type = CIProducts.TransactionOutbound;
+                            if (individual) {
+                                final CreatedDoc trans = addTransactionProduct(CIProducts.TransactionIndividualOutbound,
+                                            moveQty, storageInst, uoMId, date, productInst, descr);
+                                transLists.add(trans);
+                                productInst = new Product().getProduct4Individual(_parameter, productInst);
+                            }
                         }
                         final CreatedDoc trans = addTransactionProduct(type,
                                         moveQty, storageInst, uoMId, date, productInst, descr);
@@ -1274,18 +1291,50 @@ public abstract class Transaction_Base
             final SelectBuilder selProdDecr = new SelectBuilder(selProd).attribute(
                             CIProducts.ProductAbstract.Description);
             final SelectBuilder selProdName = new SelectBuilder(selProd).attribute(CIProducts.ProductAbstract.Name);
+            final SelectBuilder selProdInd = new SelectBuilder(selProd).attribute(
+                            CIProducts.ProductAbstract.Individual);
             multi.addAttribute(CIProducts.InventoryAbstract.Quantity, CIProducts.InventoryAbstract.UoM);
-            multi.addSelect(selProdInst, selProdDecr, selProdName);
+            multi.addSelect(selProdInst, selProdDecr, selProdName, selProdInd);
             multi.setEnforceSorted(true);
             multi.execute();
             while (multi.next()) {
-                final Map<String, Object> map = new HashMap<>();
-                strValues.add(map);
-                map.put("quantity", multi.getAttribute(CIProducts.InventoryAbstract.Quantity));
-                map.put("product", new String[] { multi.<Instance>getSelect(selProdInst).getOid(),
-                                multi.<String>getSelect(selProdName)});
-                map.put("productDesc", multi.getSelect(selProdDecr));
-                map.put("uoM", getUoMFieldStrByUoM(multi.<Long>getAttribute(CIProducts.InventoryAbstract.UoM)));
+                final Instance prodInst = multi.<Instance>getSelect(selProdInst);
+                if (Products.ACTIVATEINDIVIDUAL.get()) {
+                   if (!ProductIndividual.NONE.equals(multi.getSelect(selProdInd))) {
+                       final QueryBuilder attrQueryBldr = new QueryBuilder(
+                                       CIProducts.StockProductAbstract2IndividualAbstract);
+                       attrQueryBldr.addWhereAttrEqValue(
+                                       CIProducts.StockProductAbstract2IndividualAbstract.FromAbstract, prodInst);
+
+                       final QueryBuilder queryBldr = new QueryBuilder(CIProducts.InventoryIndividual);
+                       queryBldr.addWhereAttrEqValue(CIProducts.InventoryIndividual.Storage, _parameter.getInstance());
+                       queryBldr.addWhereAttrInQuery(CIProducts.InventoryIndividual.Product,
+                                       attrQueryBldr.getAttributeQuery(
+                                                       CIProducts.StockProductAbstract2IndividualAbstract.ToAbstract));
+                       final MultiPrintQuery indMulti = queryBldr.getPrint();
+                       indMulti.addSelect(selProdInst, selProdDecr, selProdName, selProdInd);
+                       indMulti.addAttribute(CIProducts.InventoryIndividual.Quantity, CIProducts.InventoryAbstract.UoM);
+                       indMulti.execute();
+                       while (indMulti.next()) {
+                           final Map<String, Object> map = new HashMap<>();
+                           strValues.add(map);
+                           map.put("quantity", indMulti.getAttribute(CIProducts.InventoryAbstract.Quantity));
+                           map.put("product", new String[] { indMulti.<Instance>getSelect(selProdInst).getOid(),
+                                           indMulti.<String>getSelect(selProdName)});
+                           map.put("productDesc", indMulti.getSelect(selProdDecr));
+                           map.put("uoM", getUoMFieldStrByUoM(
+                                           indMulti.<Long>getAttribute(CIProducts.InventoryAbstract.UoM)));
+                       }
+                   }
+                } else {
+                    final Map<String, Object> map = new HashMap<>();
+                    strValues.add(map);
+                    map.put("quantity", multi.getAttribute(CIProducts.InventoryAbstract.Quantity));
+                    map.put("product", new String[] { prodInst.getOid(),
+                                    multi.<String>getSelect(selProdName)});
+                    map.put("productDesc", multi.getSelect(selProdDecr));
+                    map.put("uoM", getUoMFieldStrByUoM(multi.<Long>getAttribute(CIProducts.InventoryAbstract.UoM)));
+                }
             }
             js.append(getTableRemoveScript(_parameter, "inventoryTable", false, false))
                 .append(getTableAddNewRowsScript(_parameter, "inventoryTable", strValues,
