@@ -20,6 +20,7 @@ package org.efaps.esjp.products;
 import java.io.File;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,6 +31,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.efaps.admin.access.AccessTypeEnums;
 import org.efaps.admin.datamodel.Dimension;
 import org.efaps.admin.datamodel.Dimension.UoM;
@@ -70,6 +72,7 @@ import org.efaps.esjp.products.Inventory_Base.InventoryBean;
 import org.efaps.esjp.products.util.Products;
 import org.efaps.esjp.products.util.Products.ProductIndividual;
 import org.efaps.ui.wicket.models.cell.UIFormCell;
+import org.efaps.ui.wicket.util.DateUtil;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -1297,39 +1300,43 @@ public abstract class Transaction_Base
             multi.addSelect(selProdInst, selProdDecr, selProdName, selProdInd);
             multi.setEnforceSorted(true);
             multi.execute();
+            final DecimalFormat formater = NumberFormatter.get().getFormatter();
             while (multi.next()) {
                 final Instance prodInst = multi.<Instance>getSelect(selProdInst);
-                if (Products.ACTIVATEINDIVIDUAL.get()) {
-                   if (!ProductIndividual.NONE.equals(multi.getSelect(selProdInd))) {
-                       final QueryBuilder attrQueryBldr = new QueryBuilder(
-                                       CIProducts.StockProductAbstract2IndividualAbstract);
-                       attrQueryBldr.addWhereAttrEqValue(
-                                       CIProducts.StockProductAbstract2IndividualAbstract.FromAbstract, prodInst);
+                if (Products.ACTIVATEINDIVIDUAL.get() && !ProductIndividual.NONE.equals(multi.getSelect(selProdInd))) {
+                   final QueryBuilder attrQueryBldr = new QueryBuilder(
+                                   CIProducts.StockProductAbstract2IndividualAbstract);
+                   attrQueryBldr.addWhereAttrEqValue(
+                                   CIProducts.StockProductAbstract2IndividualAbstract.FromAbstract, prodInst);
 
-                       final QueryBuilder queryBldr = new QueryBuilder(CIProducts.InventoryIndividual);
-                       queryBldr.addWhereAttrEqValue(CIProducts.InventoryIndividual.Storage, _parameter.getInstance());
-                       queryBldr.addWhereAttrInQuery(CIProducts.InventoryIndividual.Product,
-                                       attrQueryBldr.getAttributeQuery(
-                                                       CIProducts.StockProductAbstract2IndividualAbstract.ToAbstract));
-                       final MultiPrintQuery indMulti = queryBldr.getPrint();
-                       indMulti.addSelect(selProdInst, selProdDecr, selProdName, selProdInd);
-                       indMulti.addAttribute(CIProducts.InventoryIndividual.Quantity, CIProducts.InventoryAbstract.UoM);
-                       indMulti.execute();
-                       while (indMulti.next()) {
-                           final Map<String, Object> map = new HashMap<>();
-                           strValues.add(map);
-                           map.put("quantity", indMulti.getAttribute(CIProducts.InventoryAbstract.Quantity));
-                           map.put("product", new String[] { indMulti.<Instance>getSelect(selProdInst).getOid(),
-                                           indMulti.<String>getSelect(selProdName)});
-                           map.put("productDesc", indMulti.getSelect(selProdDecr));
-                           map.put("uoM", getUoMFieldStrByUoM(
-                                           indMulti.<Long>getAttribute(CIProducts.InventoryAbstract.UoM)));
-                       }
+                   final QueryBuilder queryBldr = new QueryBuilder(CIProducts.InventoryIndividual);
+                   queryBldr.addWhereAttrEqValue(CIProducts.InventoryIndividual.Storage, _parameter.getInstance());
+                   queryBldr.addWhereAttrInQuery(CIProducts.InventoryIndividual.Product,
+                                   attrQueryBldr.getAttributeQuery(
+                                                   CIProducts.StockProductAbstract2IndividualAbstract.ToAbstract));
+                   final MultiPrintQuery indMulti = queryBldr.getPrint();
+                   indMulti.addSelect(selProdInst, selProdDecr, selProdName, selProdInd);
+                   indMulti.addAttribute(CIProducts.InventoryIndividual.Quantity, CIProducts.InventoryAbstract.UoM);
+                   indMulti.execute();
+                   while (indMulti.next()) {
+                       final Map<String, Object> map = new HashMap<>();
+                       strValues.add(map);
+                       map.put("quantity", formater.format(
+                                       indMulti.getAttribute(CIProducts.InventoryAbstract.Quantity)));
+                       map.put("quantityInStock", formater.format(
+                                       indMulti.getAttribute(CIProducts.InventoryAbstract.Quantity)));
+                       map.put("product", new String[] { indMulti.<Instance>getSelect(selProdInst).getOid(),
+                                       indMulti.<String>getSelect(selProdName)});
+                       map.put("productDesc", indMulti.getSelect(selProdDecr));
+                       map.put("uoM", getUoMFieldStrByUoM(
+                                       indMulti.<Long>getAttribute(CIProducts.InventoryAbstract.UoM)));
                    }
                 } else {
                     final Map<String, Object> map = new HashMap<>();
                     strValues.add(map);
-                    map.put("quantity", multi.getAttribute(CIProducts.InventoryAbstract.Quantity));
+                    map.put("quantity", formater.format(multi.getAttribute(CIProducts.InventoryAbstract.Quantity)));
+                    map.put("quantityInStock", formater.format(
+                                    multi.getAttribute(CIProducts.InventoryAbstract.Quantity)));
                     map.put("product", new String[] { prodInst.getOid(),
                                     multi.<String>getSelect(selProdName)});
                     map.put("productDesc", multi.getSelect(selProdDecr));
@@ -1342,6 +1349,104 @@ public abstract class Transaction_Base
             ret.put(ReturnValues.SNIPLETT, InterfaceUtils.wrappInScriptTag(_parameter, js, true, 1500));
         }
         return ret;
+    }
+
+    /**
+     * Update fields for quantity for set inventory.
+     *
+     * @param _parameter the _parameter
+     * @return the return
+     * @throws EFapsException the e faps exception
+     */
+    public Return updateFields4Quantity4SetInventory(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        final String[] quantities = _parameter.getParameterValues(
+                        CITableProducts.Products_InventorySet4ProductsTable.quantity.name);
+        final String[] products = _parameter.getParameterValues(
+                        CITableProducts.Products_InventorySet4ProductsTable.product.name);
+        final String[] uoMs = _parameter.getParameterValues(
+                        CITableProducts.Products_InventorySet4ProductsTable.uoM.name);
+        final String dateStr = _parameter.getParameterValue(
+                        CIFormProducts.Products_InventorySet4ProductsForm.date.name + "_eFapsDate");
+        final DateTime date = DateUtil.getDateFromParameter(dateStr);
+
+        if (!ArrayUtils.isEmpty(quantities)) {
+            final int i = getSelectedRow(_parameter);
+            final String quantityStr = quantities[i];
+            final Instance productInst = Instance.get(products[i]);
+            BigDecimal quantity = null;
+            try {
+                quantity = (BigDecimal) NumberFormatter.get().getFormatter().parse(quantityStr);
+            } catch (final ParseException e) {
+                LOG.error("Catched ParserException", e);
+            }
+            final Long uoMId = Long.parseLong(uoMs[i]);
+
+            if (productInst != null && productInst.isValid() && quantity != null && uoMId != null) {
+                final InventoryBean inventoryBean = Inventory.getInventory4Product(_parameter,
+                                _parameter.getCallInstance(), date, productInst);
+                BigDecimal currQuantity;
+                if (inventoryBean == null) {
+                    currQuantity = BigDecimal.ZERO;
+                } else {
+                    currQuantity = inventoryBean.getQuantity();
+                }
+                final BigDecimal moveQty = quantity.subtract(currQuantity);
+                final List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+                final Map<String, Object> map = new HashMap<String, Object>();
+                list.add(map);
+                ret.put(ReturnValues.VALUES, list);
+                map.put(CITableProducts.Products_InventorySet4ProductsTable.alteration.name,
+                                NumberFormatter.get().getFormatter().format(moveQty));
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * Update fields for product for set inventory.
+     *
+     * @param _parameter the _parameter
+     * @return the return
+     * @throws EFapsException the e faps exception
+     */
+    public Return updateFields4Product4SetInventory(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Product product = new Product() {
+
+            @Override
+            protected void add2updateFields4Product(final Parameter _parameter,
+                                                    final Map<String, Object> _map)
+                throws EFapsException
+            {
+                super.add2updateFields4Product(_parameter, _map);
+                final int selected = getSelectedRow(_parameter);
+                final Instance prodInst = Instance.get(_parameter.getParameterValues("product")[selected]);
+                final String dateStr = _parameter.getParameterValue(
+                                CIFormProducts.Products_InventorySet4ProductsForm.date.name + "_eFapsDate");
+                final DateTime date = DateUtil.getDateFromParameter(dateStr);
+
+                // validate that a product was selected
+                if (prodInst.isValid()) {
+                    final InventoryBean inventoryBean = Inventory.getInventory4Product(_parameter,
+                                    _parameter.getCallInstance(), date, prodInst);
+                    BigDecimal currQuantity;
+                    if (inventoryBean == null) {
+                        currQuantity = BigDecimal.ZERO;
+                    } else {
+                        currQuantity = inventoryBean.getQuantity();
+                    }
+                    _map.put(CITableProducts.Products_InventorySet4ProductsTable.quantityInStock.name,
+                                    NumberFormatter.get().getFormatter().format(currQuantity));
+                    _map.put(CITableProducts.Products_InventorySet4ProductsTable.quantity.name,
+                                    NumberFormatter.get().getFormatter().format(currQuantity));
+                }
+            }
+        };
+        return product.updateFields4Product(_parameter);
     }
 
     /**

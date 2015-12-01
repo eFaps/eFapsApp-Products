@@ -756,7 +756,8 @@ public abstract class Product_Base
                 }
             }
             map.put("uoM", getUoMFieldStr(selectedUoM, dimId));
-            list.add(map);
+            add2updateFields4Product(_parameter, map);
+            list.add(map);;
             retVal.put(ReturnValues.VALUES, list);
         } else {
             map.put("productAutoComplete", "");
@@ -767,6 +768,20 @@ public abstract class Product_Base
             map.put(EFapsKey.FIELDUPDATE_JAVASCRIPT.getKey(), js.toString());
         }
         return retVal;
+    }
+
+    /**
+     * Add to update fields for product.
+     *
+     * @param _parameter the _parameter
+     * @param _map the _map
+     * @throws EFapsException the eFaps exception
+     */
+    protected void add2updateFields4Product(final Parameter _parameter,
+                                            final Map<String, Object> _map)
+        throws EFapsException
+    {
+        //to be used by implementations
     }
 
     /**
