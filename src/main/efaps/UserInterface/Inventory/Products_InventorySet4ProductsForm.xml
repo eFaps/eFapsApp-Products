@@ -31,6 +31,9 @@
             <property name="ModeSearch">EDITABLE</property>
             <property name="Attribute">Date</property>
             <property name="Required">true</property>
+            <trigger event="UI_FIELD_UPDATE" method="updateFields4Date4SetInventory"
+                name="Products_InventorySet4ProductsForm.date.UI_FIELD_UPDATE"
+                program="org.efaps.esjp.products.Transaction" />
         </field>
          <field name="productDocumentType">
             <property name="ModeCreate">EDITABLE</property>

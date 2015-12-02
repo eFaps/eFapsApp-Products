@@ -1276,7 +1276,7 @@ public abstract class Transaction_Base
      *
      * @param _parameter Parameter as passed by the eFaps API
      * @return the java script4 set inventory
-     * @throws EFapsException
+     * @throws EFapsException on error
      */
     public Return getJavaScript4SetInventory(final Parameter _parameter)
         throws EFapsException
@@ -1304,52 +1304,86 @@ public abstract class Transaction_Base
             while (multi.next()) {
                 final Instance prodInst = multi.<Instance>getSelect(selProdInst);
                 if (Products.ACTIVATEINDIVIDUAL.get() && !ProductIndividual.NONE.equals(multi.getSelect(selProdInd))) {
-                   final QueryBuilder attrQueryBldr = new QueryBuilder(
-                                   CIProducts.StockProductAbstract2IndividualAbstract);
-                   attrQueryBldr.addWhereAttrEqValue(
-                                   CIProducts.StockProductAbstract2IndividualAbstract.FromAbstract, prodInst);
+                    final QueryBuilder attrQueryBldr = new QueryBuilder(
+                                    CIProducts.StockProductAbstract2IndividualAbstract);
+                    attrQueryBldr.addWhereAttrEqValue(CIProducts.StockProductAbstract2IndividualAbstract.FromAbstract,
+                                    prodInst);
 
-                   final QueryBuilder queryBldr = new QueryBuilder(CIProducts.InventoryIndividual);
-                   queryBldr.addWhereAttrEqValue(CIProducts.InventoryIndividual.Storage, _parameter.getInstance());
-                   queryBldr.addWhereAttrInQuery(CIProducts.InventoryIndividual.Product,
-                                   attrQueryBldr.getAttributeQuery(
-                                                   CIProducts.StockProductAbstract2IndividualAbstract.ToAbstract));
-                   final MultiPrintQuery indMulti = queryBldr.getPrint();
-                   indMulti.addSelect(selProdInst, selProdDecr, selProdName, selProdInd);
-                   indMulti.addAttribute(CIProducts.InventoryIndividual.Quantity, CIProducts.InventoryAbstract.UoM);
-                   indMulti.execute();
-                   while (indMulti.next()) {
-                       final Map<String, Object> map = new HashMap<>();
-                       strValues.add(map);
-                       map.put("quantity", formater.format(
-                                       indMulti.getAttribute(CIProducts.InventoryAbstract.Quantity)));
-                       map.put("quantityInStock", formater.format(
-                                       indMulti.getAttribute(CIProducts.InventoryAbstract.Quantity)));
-                       map.put("product", new String[] { indMulti.<Instance>getSelect(selProdInst).getOid(),
-                                       indMulti.<String>getSelect(selProdName)});
-                       map.put("productDesc", indMulti.getSelect(selProdDecr));
-                       map.put("uoM", getUoMFieldStrByUoM(
-                                       indMulti.<Long>getAttribute(CIProducts.InventoryAbstract.UoM)));
-                   }
+                    final QueryBuilder queryBldr = new QueryBuilder(CIProducts.InventoryIndividual);
+                    queryBldr.addWhereAttrEqValue(CIProducts.InventoryIndividual.Storage, _parameter.getInstance());
+                    queryBldr.addWhereAttrInQuery(CIProducts.InventoryIndividual.Product, attrQueryBldr
+                                    .getAttributeQuery(CIProducts.StockProductAbstract2IndividualAbstract.ToAbstract));
+                    final MultiPrintQuery indMulti = queryBldr.getPrint();
+                    indMulti.addSelect(selProdInst, selProdDecr, selProdName, selProdInd);
+                    indMulti.addAttribute(CIProducts.InventoryIndividual.Quantity, CIProducts.InventoryAbstract.UoM);
+                    indMulti.execute();
+                    while (indMulti.next()) {
+                        final Map<String, Object> map = new HashMap<>();
+                        strValues.add(map);
+                        map.put("quantity", formater.format(indMulti.getAttribute(
+                                        CIProducts.InventoryAbstract.Quantity)));
+                        map.put("quantityInStock", formater.format(indMulti.getAttribute(
+                                        CIProducts.InventoryAbstract.Quantity)));
+                        map.put("product", new String[] { indMulti.<Instance>getSelect(selProdInst).getOid(), indMulti
+                                        .<String>getSelect(selProdName) });
+                        map.put("productDesc", indMulti.getSelect(selProdDecr));
+                        map.put("uoM", getUoMFieldStrByUoM(indMulti.<Long>getAttribute(
+                                        CIProducts.InventoryAbstract.UoM)));
+                    }
                 } else {
                     final Map<String, Object> map = new HashMap<>();
                     strValues.add(map);
                     map.put("quantity", formater.format(multi.getAttribute(CIProducts.InventoryAbstract.Quantity)));
-                    map.put("quantityInStock", formater.format(
-                                    multi.getAttribute(CIProducts.InventoryAbstract.Quantity)));
-                    map.put("product", new String[] { prodInst.getOid(),
-                                    multi.<String>getSelect(selProdName)});
+                    map.put("quantityInStock", formater.format(multi.getAttribute(
+                                    CIProducts.InventoryAbstract.Quantity)));
+                    map.put("product", new String[] { prodInst.getOid(), multi.<String>getSelect(selProdName) });
                     map.put("productDesc", multi.getSelect(selProdDecr));
                     map.put("uoM", getUoMFieldStrByUoM(multi.<Long>getAttribute(CIProducts.InventoryAbstract.UoM)));
                 }
             }
-            js.append(getTableRemoveScript(_parameter, "inventoryTable", false, false))
-                .append(getTableAddNewRowsScript(_parameter, "inventoryTable", strValues,
-                               null, false, false, noEscape));
+            js.append(getTableRemoveScript(_parameter, "inventoryTable", false, false)).append(getTableAddNewRowsScript(
+                            _parameter, "inventoryTable", strValues, null, false, false, noEscape));
             ret.put(ReturnValues.SNIPLETT, InterfaceUtils.wrappInScriptTag(_parameter, js, true, 1500));
         }
         return ret;
     }
+
+    /**
+     * Update fields for quantity for set inventory.
+     *
+     * @param _parameter the _parameter
+     * @return the return
+     * @throws EFapsException the e faps exception
+     */
+    public Return updateFields4Date4SetInventory(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        final String[] products = _parameter.getParameterValues(
+                        CITableProducts.Products_InventorySet4ProductsTable.product.name);
+        final String dateStr = _parameter.getParameterValue(
+                        CIFormProducts.Products_InventorySet4ProductsForm.date.name + "_eFapsDate");
+        final DateTime date = DateUtil.getDateFromParameter(dateStr);
+
+        if (!ArrayUtils.isEmpty(products)) {
+            final List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+            for (int j = 0; j < products.length; j++) {
+                final Map<String, Object> map = new HashMap<String, Object>();
+                list.add(map);
+                final Instance productInst = Instance.get(products[j]);
+                if (productInst != null && productInst.isValid()) {
+                    final InventoryBean inventoryBean = Inventory.getInventory4Product(_parameter,
+                                _parameter.getInstance(), date, productInst);
+                    final BigDecimal quantity = inventoryBean == null ? BigDecimal.ZERO : inventoryBean.getQuantity();
+                    map.put(CITableProducts.Products_InventorySet4ProductsTable.quantityInStock.name,
+                                NumberFormatter.get().getFormatter().format(quantity));
+                }
+            }
+            ret.put(ReturnValues.VALUES, list);
+        }
+        return ret;
+    }
+
 
     /**
      * Update fields for quantity for set inventory.

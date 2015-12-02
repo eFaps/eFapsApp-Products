@@ -931,9 +931,11 @@ public abstract class Inventory_Base
          */
         public void addTransaction(final TransactionBean _bean)
         {
-            if (_bean.getInstance().getType().isCIType(CIProducts.TransactionInbound)) {
+            if (_bean.getInstance().getType().isCIType(CIProducts.TransactionInbound)
+                            || _bean.getInstance().getType().isCIType(CIProducts.TransactionIndividualInbound)) {
                 addQuantity(_bean.getQuantity().negate());
-            } else if (_bean.getInstance().getType().isCIType(CIProducts.TransactionOutbound)) {
+            } else if (_bean.getInstance().getType().isCIType(CIProducts.TransactionOutbound)
+                            || _bean.getInstance().getType().isCIType(CIProducts.TransactionIndividualOutbound)) {
                 addQuantity(_bean.getQuantity());
             } else if (_bean.getInstance().getType().isCIType(CIProducts.TransactionReservationInbound)) {
                 addReserved(_bean.getQuantity().negate());
