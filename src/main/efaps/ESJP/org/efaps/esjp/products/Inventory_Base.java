@@ -278,7 +278,8 @@ public abstract class Inventory_Base
         if (!getStorageInsts().isEmpty()) {
             _queryBldr.addWhereAttrEqValue(CIProducts.TransactionAbstract.Storage, getStorageInsts().toArray());
         }
-        _queryBldr.addWhereAttrGreaterValue(CIProducts.TransactionAbstract.Date, getDate().minusMinutes(1));
+        //transaction are for a given time on a date ==> all transaction up to this date must be included
+        _queryBldr.addWhereAttrGreaterValue(CIProducts.TransactionAbstract.Date, getDate().plusDays(1));
     }
 
     /**
