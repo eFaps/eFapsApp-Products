@@ -47,8 +47,9 @@ import org.efaps.esjp.erp.IWarning;
 import org.efaps.esjp.erp.WarningUtil;
 import org.efaps.util.EFapsException;
 
+// TODO: Auto-generated Javadoc
 /**
- * TODO comment!
+ * TODO comment!.
  *
  * @author The eFaps Team
  */
@@ -58,8 +59,16 @@ public abstract class ProductFamily_Base
     extends AbstractCommon
 {
 
-    public static String CACHEKEY = ProductFamily.class.getName() + ".CacheKey";
+    /** The cachekey. */
+    protected static final String CACHEKEY = ProductFamily.class.getName() + ".CacheKey";
 
+    /**
+     * Check4 sub families.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
     public Return check4SubFamilies(final Parameter _parameter)
         throws EFapsException
     {
@@ -76,6 +85,13 @@ public abstract class ProductFamily_Base
     }
 
 
+    /**
+     * Creates the.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
     public Return create(final Parameter _parameter)
         throws EFapsException
     {
@@ -94,6 +110,13 @@ public abstract class ProductFamily_Base
         return create.execute(_parameter);
     }
 
+    /**
+     * Add to create.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _insert the insert
+     * @throws EFapsException on error
+     */
     protected void add2create(final Parameter _parameter,
                               final Insert _insert)
         throws EFapsException
@@ -108,9 +131,15 @@ public abstract class ProductFamily_Base
         _insert.add(CIProducts.ProductFamilyStandart.ParentLink, parentInst);
         _insert.add(CIProducts.ProductFamilyStandart.ProductLineLink,
                         print.getAttribute(CIProducts.ProductFamilyAbstract.ProductLineLink));
-
     }
 
+    /**
+     * Gets the code ui field value.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the code ui field value
+     * @throws EFapsException on error
+     */
     public Return getCodeUIFieldValue(final Parameter _parameter)
         throws EFapsException
     {
@@ -119,6 +148,14 @@ public abstract class ProductFamily_Base
         return ret;
     }
 
+    /**
+     * Gets the code.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _inst the inst
+     * @return the code
+     * @throws EFapsException on error
+     */
     public String getCode(final Parameter _parameter,
                           final Instance _inst)
         throws EFapsException
@@ -161,6 +198,13 @@ public abstract class ProductFamily_Base
         return strBldr.toString();
     }
 
+    /**
+     * Picker for family.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
     public Return picker4Family(final Parameter _parameter)
         throws EFapsException
     {
@@ -180,6 +224,13 @@ public abstract class ProductFamily_Base
         return ret;
     }
 
+    /**
+     * Product family field format.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
     public Return productFamilyFieldFormat(final Parameter _parameter)
         throws EFapsException
     {
@@ -196,6 +247,14 @@ public abstract class ProductFamily_Base
         return ret;
     }
 
+    /**
+     * Gets the descendants.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _famInst the fam inst
+     * @return the descendants
+     * @throws EFapsException on error
+     */
     protected static List<Instance> getDescendants(final Parameter _parameter,
                                                    final Instance _famInst)
         throws EFapsException
@@ -214,6 +273,14 @@ public abstract class ProductFamily_Base
     }
 
 
+    /**
+     * Gets the name.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _inst the inst
+     * @return the name
+     * @throws EFapsException on error
+     */
     public String getName(final Parameter _parameter,
                           final Instance _inst)
         throws EFapsException
@@ -260,6 +327,13 @@ public abstract class ProductFamily_Base
         return strBldr.toString();
     }
 
+    /**
+     * Validate.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
     public Return validate(final Parameter _parameter)
         throws EFapsException
     {
@@ -269,8 +343,11 @@ public abstract class ProductFamily_Base
         final AbstractCommand cmd = (AbstractCommand) _parameter.get(ParameterValues.UIOBJECT);
         // CreateMode and FamilyRoot
         if (cmd.getTargetCreateType() != null && cmd.getTargetCreateType().isCIType(CIProducts.ProductFamilyRoot)) {
+            final String prodLineId = _parameter.getParameterValue(
+                            CIFormProducts.Products_ProductFamilyRootForm.productLineLink.name);
             final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductFamilyRoot);
             queryBldr.addWhereAttrEqValue(CIProducts.ProductFamilyRoot.CodePart, codePart);
+            queryBldr.addWhereAttrEqValue(CIProducts.ProductFamilyRoot.ProductLineLink, prodLineId);
             if (!queryBldr.getQuery().execute().isEmpty()) {
                 warnings.add(new FamilyCodeInvalidWarning());
             }
@@ -284,7 +361,7 @@ public abstract class ProductFamily_Base
             if (!queryBldr.getQuery().execute().isEmpty()) {
                 warnings.add(new FamilyCodeInvalidWarning());
             }
-            // check if the selected family has allready products assigned
+            // check if the selected family has already products assigned
             final QueryBuilder prodQueryBldr = new QueryBuilder(CIProducts.ProductAbstract);
             prodQueryBldr.addWhereAttrEqValue(CIProducts.ProductAbstract.ProductFamilyLink, parentInst);
             if (!prodQueryBldr.getQuery().execute().isEmpty()) {
@@ -293,8 +370,13 @@ public abstract class ProductFamily_Base
 
          // EditMode and FamilyRoot
         } else if (_parameter.getInstance().getType().isCIType(CIProducts.ProductFamilyRoot)) {
+            final PrintQuery print = new PrintQuery(_parameter.getInstance());
+            print.addAttribute(CIProducts.ProductFamilyRoot.ProductLineLink);
+            print.execute();
             final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductFamilyRoot);
             queryBldr.addWhereAttrEqValue(CIProducts.ProductFamilyRoot.CodePart, codePart);
+            queryBldr.addWhereAttrEqValue(CIProducts.ProductFamilyRoot.ProductLineLink,
+                            print.getAttribute(CIProducts.ProductFamilyRoot.ProductLineLink));
             queryBldr.addWhereAttrNotEqValue(CIProducts.ProductFamilyRoot.ID, _parameter.getInstance());
             if (!queryBldr.getQuery().execute().isEmpty()) {
                 warnings.add(new FamilyCodeInvalidWarning());
@@ -327,6 +409,8 @@ public abstract class ProductFamily_Base
 
     /**
      * Warning for invalid name.
+     *
+     * @author The eFaps Team
      */
     public static class FamilyCodeInvalidWarning
         extends AbstractWarning
@@ -342,6 +426,8 @@ public abstract class ProductFamily_Base
 
     /**
      * Warning for invalid name.
+     *
+     * @author The eFaps Team
      */
     public static class FamilyHasProductsWarning
         extends AbstractWarning

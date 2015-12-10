@@ -35,7 +35,17 @@ import org.efaps.util.EFapsException;
 public class ProductFamily
     extends ProductFamily_Base
 {
+    /** The cachekey. */
+    public static final String CACHEKEY = ProductFamily_Base.CACHEKEY;
 
+    /**
+     * Gets the descendants.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _famInst the fam inst
+     * @return the descendants
+     * @throws EFapsException on error
+     */
     public static List<Instance> getDescendants(final Parameter _parameter,
                                                 final Instance _famInst)
         throws EFapsException
