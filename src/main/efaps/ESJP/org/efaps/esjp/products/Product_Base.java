@@ -122,7 +122,7 @@ public abstract class Product_Base
                 throws EFapsException
             {
                 final FieldValue fieldValue = (FieldValue) _parameter.get(ParameterValues.UIOBJECT);
-                final Instance dimInst = Products.DefaultDimension.get();
+                final Instance dimInst = Products.DEFAULTDIMENSION.get();
                 if (_parameter.get(ParameterValues.ACCESSMODE).equals(TargetMode.CREATE)
                                 && dimInst != null && dimInst.isValid()) {
                     for (final Entry<?, ?> entry : _valueMap.entrySet()) {
@@ -146,7 +146,7 @@ public abstract class Product_Base
         throws EFapsException
     {
         final Field field = new Field();
-        final Instance dimInst = Products.DefaultDimension.get();
+        final Instance dimInst = Products.DEFAULTDIMENSION.get();
         final Return ret;
         if (_parameter.get(ParameterValues.ACCESSMODE).equals(TargetMode.CREATE) && dimInst != null
                         && dimInst.isValid()) {
@@ -258,6 +258,8 @@ public abstract class Product_Base
         if (instance != null && instance.getType() != null) {
             if (instance.getType().isCIType(CIProducts.ProductMaterial)) {
                 ret = Products.MATERIALACTFAM.get();
+            } else if (instance.getType().isCIType(CIProducts.ProductStandart)) {
+                ret = Products.STANDARTACTFAM.get();
             } else if (instance.getType().isCIType(CIProducts.ProductGeneric)) {
                 ret = Products.GENERICACTFAM.get();
             }  else if (instance.getType().isCIType(CIProducts.ProductService)) {
@@ -757,7 +759,7 @@ public abstract class Product_Base
             }
             map.put("uoM", getUoMFieldStr(selectedUoM, dimId));
             add2updateFields4Product(_parameter, map);
-            list.add(map);;
+            list.add(map);
             retVal.put(ReturnValues.VALUES, list);
         } else {
             map.put("productAutoComplete", "");
@@ -1207,6 +1209,8 @@ public abstract class Product_Base
 
             if (instance.getType().isCIType(CIProducts.ProductMaterial)) {
                 ret = Products.MATERIALFAMPRE.get() == null ? ret : Products.MATERIALFAMPRE.get() + ret;
+            } else if (instance.getType().isCIType(CIProducts.ProductStandart)) {
+                ret = Products.STANDARTFAMPRE.get() == null ? ret : Products.STANDARTFAMPRE.get() + ret;
             } else if (instance.getType().isCIType(CIProducts.ProductGeneric)) {
                 ret = Products.GENERICFAMPRE.get() == null ? ret : Products.GENERICFAMPRE.get() + ret;
             } else if (instance.getType().isCIType(CIProducts.ProductService)) {
@@ -1364,7 +1368,7 @@ public abstract class Product_Base
      * Gets the instance for the generic product of a replacement.
      *
      * @param _parameter the _parameter
-     * @param _replInst the _generic inst
+     * @param _individualProdInst the individual prod inst
      * @return the generic4 replacment
      * @throws EFapsException on error
      */

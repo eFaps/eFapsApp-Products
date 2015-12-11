@@ -64,6 +64,13 @@ public final class Products
 
     /** See description. */
     @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute ACTIVATEPRICEGRP = new BooleanSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "PriceGroup.Activate")
+                    .description("Activate the price group management.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
     public static final BooleanSysConfAttribute ACTIVATEFAMILY = new BooleanSysConfAttribute()
                     .sysConfUUID(SYSCONFUUID)
                     .key(BASE + "Family.Activate")
@@ -128,10 +135,17 @@ public final class Products
 
     /** See description. */
     @EFapsSysConfAttribute
-    public static final BooleanSysConfAttribute ACTIVATEPRICEGRP = new BooleanSysConfAttribute()
+    public static final BooleanSysConfAttribute STANDARTACTFAM = new BooleanSysConfAttribute()
                     .sysConfUUID(SYSCONFUUID)
-                    .key(BASE + "PriceGroup.Activate")
-                    .description("Activate the price group management.");
+                    .key(BASE + "Standart.ActivateFamilies")
+                    .description("Activate the family management for materials.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final StringSysConfAttribute STANDARTFAMPRE = new StringSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "Standart.FamiliesPrefix")
+                    .description("Activate the family management for materials.");
 
     /** See description. */
     @EFapsSysConfAttribute
@@ -149,7 +163,7 @@ public final class Products
 
     /** See description. */
     @EFapsSysConfLink
-    public static final SysConfLink DefaultDimension = new SysConfLink()
+    public static final SysConfLink DEFAULTDIMENSION = new SysConfLink()
                     .sysConfUUID(SYSCONFUUID)
                     .key(BASE + "DefaultDimension")
                     .description("Activate the family management for materials.");
