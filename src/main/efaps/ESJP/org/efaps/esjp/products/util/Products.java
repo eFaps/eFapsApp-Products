@@ -138,14 +138,21 @@ public final class Products
     public static final BooleanSysConfAttribute STANDARTACTFAM = new BooleanSysConfAttribute()
                     .sysConfUUID(SYSCONFUUID)
                     .key(BASE + "Standart.ActivateFamilies")
-                    .description("Activate the family management for materials.");
+                    .description("Activate the family management for standart products.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute STANDARTACTCLASS = new BooleanSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "Standart.ActivateClassification")
+                    .description("Activate the classifcation for standart products.");
 
     /** See description. */
     @EFapsSysConfAttribute
     public static final StringSysConfAttribute STANDARTFAMPRE = new StringSysConfAttribute()
                     .sysConfUUID(SYSCONFUUID)
                     .key(BASE + "Standart.FamiliesPrefix")
-                    .description("Activate the family management for materials.");
+                    .description("Activate the family management for standart products.");
 
     /** See description. */
     @EFapsSysConfAttribute

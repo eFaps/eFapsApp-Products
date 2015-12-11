@@ -61,7 +61,7 @@
         import org.efaps.db.QueryBuilder;
         import org.efaps.db.InstanceQuery;
         import org.efaps.esjp.admin.ui.UIUpdate;
-        
+
         EFAPS_LOGGER.info("Importing Data for eFapsApp-Products");
 
         RunLevel.init("shell");
@@ -76,10 +76,6 @@
 
         <!-- Products_Products, Admin_Help_MainMenu -->
         update.add2Help("8e74046b-28cd-4079-bac4-5cf0a04f47e5", "dead549e-5cc6-49f9-9a79-8e33aa139f6d",-1);
-
-        <!-- Products_AttributeDefinition_Menu_Action, ERP_AttributeDefinitionMyDesk_Menu-->
-        <!--  to be used later update.add2Menu("c915f110-9aab-4726-bef5-9565004135fd", "69e0b34a-2483-4662-9a45-1ce5d4e420e6", -1); -->
-
 
      </script>
     </version>
