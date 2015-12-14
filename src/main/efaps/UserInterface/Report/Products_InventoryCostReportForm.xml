@@ -29,7 +29,7 @@
             <trigger event="UI_FIELD_VALUE" index="1" method="setDefaultFilter"
                 name="Products_InventoryCostReportForm.filter.UI_FIELD_VALUE.1"
                 program="org.efaps.esjp.products.reports.InventoryReport">
-                <property name="FilterKey">org.efaps.esjp.products.reports.InventoryReport.FilterKey</property>
+                <property name="FilterKey">org.efaps.esjp.products.reports.InventoryCostReport.FilterKey</property>
                 <property name="ReportField">report4Account</property>
                 <property name="Field01">date</property>
                 <property name="Field02">storageGroup</property>
@@ -56,7 +56,7 @@
             <trigger event="UI_FIELD_VALUE" index="2" method="getFilterFieldValue"
                 name="Products_InventoryCostReportForm.filter.UI_FIELD_VALUE.2"
                 program="org.efaps.esjp.products.reports.InventoryReport">
-                <property name="FilterKey">org.efaps.esjp.products.reports.InventoryReport.FilterKey</property>
+                <property name="FilterKey">org.efaps.esjp.products.reports.InventoryCostReport.FilterKey</property>
                 <property name="Field01">date</property>
                 <property name="Field02">storageGroup</property>
                 <property name="Field03">storage</property>
@@ -81,7 +81,7 @@
             <trigger event="UI_FIELD_VALUE" method="generateReport"
                 name="Products_InventoryCostReportForm.report.UI_FIELD_VALUE"
                 program="org.efaps.esjp.products.reports.InventoryReport">
-                <property name="FilterKey">org.efaps.esjp.products.reports.InventoryReport.FilterKey</property>
+                <property name="FilterKey">org.efaps.esjp.products.reports.InventoryCostReport.FilterKey</property>
                 <property name="EvaluateCost">true</property>
             </trigger>
         </field>

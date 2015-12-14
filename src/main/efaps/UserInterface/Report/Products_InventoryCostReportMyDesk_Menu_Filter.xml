@@ -29,14 +29,14 @@
         <target>
             <form>Products_InventoryCostReportFilterForm</form>
             <execute method="setFilter" program="org.efaps.esjp.products.reports.InventoryReport">
-                <property name="FilterKey">org.efaps.esjp.products.reports.InventoryReport.FilterKey</property>
+                <property name="FilterKey">org.efaps.esjp.products.reports.InventoryCostReport.FilterKey</property>
             </execute>
         </target>
         <property name="Target">modal</property>
         <property name="TargetMode">edit</property>
         <property name="Label">report.Filter</property>
         <property name="TargetTitle">report.Filter</property>
-        <property name="FilterKey">org.efaps.esjp.products.reports.InventoryReport.FilterKey</property>
+        <property name="FilterKey">org.efaps.esjp.products.reports.InventoryCostReport.FilterKey</property>
         <property name="FilterTargetForm">Products_InventoryReportForm</property>
         <property name="FilterTargetField">report</property>
     </definition>

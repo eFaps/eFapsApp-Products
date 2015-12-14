@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections4.comparators.ComparatorChain;
+import org.efaps.admin.datamodel.Type;
 import org.efaps.admin.dbproperty.DBProperties;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
@@ -35,11 +36,13 @@ import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Instance;
+import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.jasperreport.AbstractDynamicReport;
 import org.efaps.esjp.erp.FilteredReport;
 import org.efaps.esjp.products.Inventory;
 import org.efaps.esjp.products.Inventory_Base.InventoryBean;
 import org.efaps.esjp.products.StorageGroup;
+import org.efaps.esjp.products.util.Products;
 import org.efaps.ui.wicket.models.EmbeddedLink;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
@@ -107,6 +110,19 @@ public abstract class InventoryReport_Base
         COLUMN,
         /** Show as group. */
         GROUP;
+    }
+
+    /**
+     * The Enum TypeDisplay.
+     */
+    public enum IndividualDisplay
+    {
+        /** Show only products. */
+        PRODUCT,
+        /** Show only individual products. */
+        INDIVIDUAL,
+        /** Show both. */
+        BOTH;
     }
 
     /**
@@ -252,7 +268,55 @@ public abstract class InventoryReport_Base
          */
         protected Inventory getInventoryObject(final Parameter _parameter)
         {
-            return new Inventory();
+            return new Inventory()
+            {
+
+                @Override
+                protected Type getInventoryType(final Parameter _parameter)
+                    throws EFapsException
+                {
+                    Type ret;
+                    if (Products.ACTIVATEINDIVIDUAL.get()) {
+                        switch (getIndividualDisplay(_parameter)) {
+                            case PRODUCT:
+                                ret = CIProducts.Inventory.getType();
+                                break;
+                            case INDIVIDUAL:
+                                ret = CIProducts.InventoryIndividual.getType();
+                                break;
+                            default:
+                                ret = super.getInventoryType(_parameter);
+                                break;
+                        }
+                    } else {
+                        ret = super.getInventoryType(_parameter);
+                    }
+                    return ret;
+                }
+
+                @Override
+                protected Type getTransactionType(final Parameter _parameter)
+                    throws EFapsException
+                {
+                    Type ret;
+                    if (Products.ACTIVATEINDIVIDUAL.get()) {
+                        switch (getIndividualDisplay(_parameter)) {
+                            case PRODUCT:
+                                ret = CIProducts.TransactionInOutAbstract.getType();
+                                break;
+                            case INDIVIDUAL:
+                                ret = CIProducts.TransactionIndividualAbstract.getType();
+                                break;
+                            default:
+                                ret = super.getInventoryType(_parameter);
+                                break;
+                        }
+                    } else {
+                        ret = super.getInventoryType(_parameter);
+                    }
+                    return ret;
+                }
+            };
         }
 
         /**
@@ -347,6 +411,26 @@ public abstract class InventoryReport_Base
                 ret = (ClassDisplay) filter.getObject();
             } else {
                 ret = ClassDisplay.NONE;
+            }
+            return ret;
+        }
+
+        /**
+         * Gets the storage display.
+         *
+         * @param _parameter the _parameter
+         * @return the storage display
+         * @throws EFapsException the e faps exception
+         */
+        protected IndividualDisplay getIndividualDisplay(final Parameter _parameter)
+            throws EFapsException
+        {
+            final EnumFilterValue filter = (EnumFilterValue) getFilterMap(_parameter).get("individualDisplay");
+            IndividualDisplay ret;
+            if (filter != null) {
+                ret = (IndividualDisplay) filter.getObject();
+            } else {
+                ret = IndividualDisplay.PRODUCT;
             }
             return ret;
         }

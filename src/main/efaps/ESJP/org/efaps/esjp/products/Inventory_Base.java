@@ -34,6 +34,7 @@ import org.efaps.admin.datamodel.Classification;
 import org.efaps.admin.datamodel.Dimension;
 import org.efaps.admin.datamodel.Dimension.UoM;
 import org.efaps.admin.datamodel.Status;
+import org.efaps.admin.datamodel.Type;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
@@ -108,7 +109,7 @@ public abstract class Inventory_Base
 
         final Map<Instance, InventoryBean> map = new HashMap<>();
 
-        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.InventoryAbstract);
+        final QueryBuilder queryBldr = new QueryBuilder(getInventoryType(_parameter));
         add2QueryBuilder(_parameter, queryBldr);
         final MultiPrintQuery multi = queryBldr.getPrint();
 
@@ -190,7 +191,7 @@ public abstract class Inventory_Base
     {
         if (isCalculateInventory()) {
 
-            final QueryBuilder queryBldr = new QueryBuilder(CIProducts.TransactionAbstract);
+            final QueryBuilder queryBldr = new QueryBuilder(getTransactionType(_parameter));
             add2QueryBuilder4Transaction(_parameter, queryBldr);
             final MultiPrintQuery multi = queryBldr.getPrint();
 
@@ -355,6 +356,32 @@ public abstract class Inventory_Base
         throws EFapsException
     {
         return new TransactionBean();
+    }
+
+    /**
+     * Gets the type for storage.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the type4 storage
+     * @throws EFapsException on error
+     */
+    protected Type getInventoryType(final Parameter _parameter)
+        throws EFapsException
+    {
+        return CIProducts.InventoryAbstract.getType();
+    }
+
+    /**
+     * Gets the type for storage.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the type4 storage
+     * @throws EFapsException on error
+     */
+    protected Type getTransactionType(final Parameter _parameter)
+        throws EFapsException
+    {
+        return CIProducts.TransactionAbstract.getType();
     }
 
     /**
