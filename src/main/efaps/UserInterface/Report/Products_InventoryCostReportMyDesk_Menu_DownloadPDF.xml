@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
- Copyright 2003 - 2014 The eFaps Team
+ Copyright 2003 - 2015 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -14,17 +14,11 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
- Author:          The eFaps Team
- Revision:        $Rev$
- Last Changed:    $Date$
- Last Changed By: $Author$
-
 -->
 <ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>7f2624db-3af7-4160-921f-72951d58c13c</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_InventoryCostReportMyDesk_Menu_DownloadPDF</name>
@@ -38,7 +32,7 @@
                 <property name="PageType">A4</property>
                 <property name="PageOrientation">LANDSCAPE</property>
                 <property name="EvaluateCost">true</property>
-                <property name="FilterKey">org.efaps.esjp.products.reports.InventoryReport.FilterKey</property>
+                <property name="FilterKey">org.efaps.esjp.products.reports.InventoryCostReport.FilterKey</property>
             </execute>
         </target>
         <property name="Target">hidden</property>

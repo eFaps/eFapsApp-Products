@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
- Copyright 2003 - 2009 The eFaps Team
+ Copyright 2003 - 2015 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -14,17 +14,11 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
- Author:          The eFaps Team
- Revision:        $Rev$
- Last Changed:    $Date$
- Last Changed By: $Author$
-
 -->
 <ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>14e2c5af-cdd1-4473-b62d-b068752c17db</uuid>
     <file-application>eFapsApp-Sales</file-application>
-    <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_InventoryCostReportMyDesk_Menu_DownloadExcel</name>
@@ -36,7 +30,7 @@
             <execute method="exportReport" program="org.efaps.esjp.products.reports.InventoryReport">
                 <property name="Mime">xls</property>
                 <property name="EvaluateCost">true</property>
-                <property name="FilterKey">org.efaps.esjp.products.reports.InventoryReport.FilterKey</property>
+                <property name="FilterKey">org.efaps.esjp.products.reports.InventoryCostReport.FilterKey</property>
             </execute>
         </target>
         <property name="Target">hidden</property>
