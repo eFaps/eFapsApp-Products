@@ -182,7 +182,7 @@ public abstract class ProductFamily_Base
                     print.addAttribute(CIProducts.ProductFamilyAbstract.CodePart);
                     print.execute();
                     inst = print.getSelect(selParentInst);
-                    strBldr.insert(0, print.getAttribute(CIProducts.ProductFamilyAbstract.CodePart));
+                    strBldr.insert(0, print.<String>getAttribute(CIProducts.ProductFamilyAbstract.CodePart));
                 }
                 final PrintQuery print = new CachedPrintQuery(inst, CACHEKEY);
                 final SelectBuilder selLineCode = SelectBuilder.get()
@@ -191,8 +191,8 @@ public abstract class ProductFamily_Base
                 print.addSelect(selLineCode);
                 print.addAttribute(CIProducts.ProductFamilyAbstract.CodePart);
                 print.execute();
-                strBldr.insert(0, print.getAttribute(CIProducts.ProductFamilyAbstract.CodePart));
-                strBldr.insert(0, print.getSelect(selLineCode));
+                strBldr.insert(0, print.<String>getAttribute(CIProducts.ProductFamilyAbstract.CodePart));
+                strBldr.insert(0, print.<String>getSelect(selLineCode));
             }
         }
         return strBldr.toString();
@@ -309,7 +309,7 @@ public abstract class ProductFamily_Base
             } else {
                 strBldr.insert(0, " - ");
             }
-            strBldr.insert(0, print.getAttribute(CIProducts.ProductFamilyAbstract.Name));
+            strBldr.insert(0, print.<String>getAttribute(CIProducts.ProductFamilyAbstract.Name));
         }
         final PrintQuery print = new CachedPrintQuery(inst, CACHEKEY);
         final SelectBuilder selLineCode = SelectBuilder.get().linkto(CIProducts.ProductFamilyAbstract.ProductLineLink)
@@ -322,7 +322,7 @@ public abstract class ProductFamily_Base
         } else {
             strBldr.insert(0, " - ");
         }
-        strBldr.insert(0, print.getAttribute(CIProducts.ProductFamilyAbstract.Name));
+        strBldr.insert(0, print.<String>getAttribute(CIProducts.ProductFamilyAbstract.Name));
         strBldr.insert(0, print.getSelect(selLineCode) + " - ");
         return strBldr.toString();
     }

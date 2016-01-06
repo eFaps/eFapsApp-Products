@@ -199,7 +199,7 @@ public abstract class PriceMassUpdate_Base
             multi2.execute();
             while (multi2.next()) {
                 valBldr.append(formatter.format(multi2.getAttribute(CIProducts.ProductPricelistPosition.Price)))
-                    .append(" ").append(multi2.getSelect(selCurrSym));
+                    .append(" ").append(multi2.<String>getSelect(selCurrSym));
             }
             ret.put(prodInst, valBldr.toString());
         }

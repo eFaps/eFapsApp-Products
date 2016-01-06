@@ -1025,7 +1025,7 @@ public abstract class Transaction_Base
                             heading = true;
                         }
                         html.append(DBProperties.getProperty("esjp.Products_Transaction.validateMove.Prod"))
-                            .append(" ").append(multi.getSelect(selDescr)).append(" - ")
+                            .append(" ").append(multi.<String>getSelect(selDescr)).append(" - ")
                             .append(DBProperties.getProperty("esjp.Products_Transaction.validateMove.Stock"))
                             .append(stock).append("<br>");
                         check = false;
