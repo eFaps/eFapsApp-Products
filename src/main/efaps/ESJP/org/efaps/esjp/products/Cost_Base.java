@@ -117,7 +117,7 @@ public abstract class Cost_Base
         final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductCost);
         queryBldr.addWhereAttrGreaterValue(CIProducts.ProductCost.ValidUntil, date);
         queryBldr.addWhereAttrEqValue(CIProducts.ProductCost.ProductLink,
-                        print.getAttribute(CIProducts.ProductCost.ProductLink));
+                        print.<Long>getAttribute(CIProducts.ProductCost.ProductLink));
         final InstanceQuery query = queryBldr.getQuery();
         query.executeWithoutAccessCheck();
         while (query.next()) {

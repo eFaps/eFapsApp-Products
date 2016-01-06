@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2014 The eFaps Team
+ * Copyright 2003 - 2015 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Revision:        $Rev$
- * Last Changed:    $Date$
- * Last Changed By: $Author$
  */
 
 package org.efaps.esjp.products;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +25,7 @@ import org.efaps.admin.dbproperty.DBProperties;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
-import org.efaps.admin.program.esjp.EFapsRevision;
+import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Context;
 import org.efaps.db.Insert;
@@ -44,13 +42,13 @@ import org.joda.time.DateTime;
  * TODO comment!
  *
  * @author The eFaps Team
- * @version $Id$
  */
 @EFapsUUID("7c76bfdd-d827-4398-a843-b72299d621f0")
-@EFapsRevision("$Rev$")
+@EFapsApplication("eFapsApp-Products")
 public abstract class Batch_Base
 {
 
+    /** The sessionkey. */
     protected static String SESSIONKEY = Batch.class.getName() + ".SessionKey";
 
     /**
@@ -100,7 +98,7 @@ public abstract class Batch_Base
         if (Context.getThreadContext().containsSessionAttribute(SESSIONKEY)) {
             @SuppressWarnings("unchecked")
             final List<Instance> insts = (List<Instance>) Context.getThreadContext().getSessionAttribute(SESSIONKEY);
-            if (insts != null && insts.size() ==2) {
+            if (insts != null && insts.size() == 2) {
                 final PrintQuery print = new PrintQuery(insts.get(0));
                 print.addAttribute(CIProducts.InventoryIndividual.Quantity, CIProducts.InventoryIndividual.Storage,
                                 CIProducts.InventoryIndividual.UoM, CIProducts.InventoryIndividual.Product);
@@ -109,13 +107,13 @@ public abstract class Batch_Base
                 final Insert insert = new Insert(CIProducts.TransactionIndividualOutbound);
                 insert.add(CIProducts.TransactionIndividualOutbound.Date, new DateTime());
                 insert.add(CIProducts.TransactionIndividualOutbound.Quantity,
-                                print.getAttribute(CIProducts.InventoryIndividual.Quantity));
+                                print.<BigDecimal>getAttribute(CIProducts.InventoryIndividual.Quantity));
                 insert.add(CIProducts.TransactionIndividualOutbound.Storage,
-                                print.getAttribute(CIProducts.InventoryIndividual.Storage));
+                                print.<Long>getAttribute(CIProducts.InventoryIndividual.Storage));
                 insert.add(CIProducts.TransactionIndividualOutbound.UoM,
-                                print.getAttribute(CIProducts.InventoryIndividual.UoM));
+                                print.<Object>getAttribute(CIProducts.InventoryIndividual.UoM));
                 insert.add(CIProducts.TransactionIndividualOutbound.Product,
-                                print.getAttribute(CIProducts.InventoryIndividual.Product));
+                                print.<Long>getAttribute(CIProducts.InventoryIndividual.Product));
                 insert.execute();
 
                 final PrintQuery print2 = new PrintQuery(insts.get(1));
@@ -125,13 +123,13 @@ public abstract class Batch_Base
                 final Insert insert2 = new Insert(CIProducts.TransactionIndividualInbound);
                 insert2.add(CIProducts.TransactionIndividualOutbound.Date, new DateTime());
                 insert2.add(CIProducts.TransactionIndividualInbound.Quantity,
-                                print.getAttribute(CIProducts.InventoryIndividual.Quantity));
+                                print.<BigDecimal>getAttribute(CIProducts.InventoryIndividual.Quantity));
                 insert2.add(CIProducts.TransactionIndividualInbound.Storage,
-                                print2.getAttribute(CIProducts.InventoryIndividual.Storage));
+                                print2.<Long>getAttribute(CIProducts.InventoryIndividual.Storage));
                 insert2.add(CIProducts.TransactionIndividualInbound.UoM,
-                                print.getAttribute(CIProducts.InventoryIndividual.UoM));
+                                print.<Object>getAttribute(CIProducts.InventoryIndividual.UoM));
                 insert2.add(CIProducts.TransactionIndividualOutbound.Product,
-                                print2.getAttribute(CIProducts.InventoryIndividual.Product));
+                                print2.<Long>getAttribute(CIProducts.InventoryIndividual.Product));
                 insert2.execute();
             }
             Context.getThreadContext().removeSessionAttribute(SESSIONKEY);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2015 The eFaps Team
+ * Copyright 2003 - 2016 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,6 @@ import org.efaps.esjp.erp.IWarning;
 import org.efaps.esjp.erp.WarningUtil;
 import org.efaps.util.EFapsException;
 
-// TODO: Auto-generated Javadoc
 /**
  * TODO comment!.
  *
@@ -130,7 +129,7 @@ public abstract class ProductFamily_Base
 
         _insert.add(CIProducts.ProductFamilyStandart.ParentLink, parentInst);
         _insert.add(CIProducts.ProductFamilyStandart.ProductLineLink,
-                        print.getAttribute(CIProducts.ProductFamilyAbstract.ProductLineLink));
+                        print.<Long>getAttribute(CIProducts.ProductFamilyAbstract.ProductLineLink));
     }
 
     /**
@@ -376,7 +375,7 @@ public abstract class ProductFamily_Base
             final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductFamilyRoot);
             queryBldr.addWhereAttrEqValue(CIProducts.ProductFamilyRoot.CodePart, codePart);
             queryBldr.addWhereAttrEqValue(CIProducts.ProductFamilyRoot.ProductLineLink,
-                            print.getAttribute(CIProducts.ProductFamilyRoot.ProductLineLink));
+                            print.<Long>getAttribute(CIProducts.ProductFamilyRoot.ProductLineLink));
             queryBldr.addWhereAttrNotEqValue(CIProducts.ProductFamilyRoot.ID, _parameter.getInstance());
             if (!queryBldr.getQuery().execute().isEmpty()) {
                 warnings.add(new FamilyCodeInvalidWarning());
@@ -390,7 +389,7 @@ public abstract class ProductFamily_Base
             queryBldr.addWhereAttrEqValue(CIProducts.ProductFamilyStandart.CodePart, codePart);
             queryBldr.addWhereAttrNotEqValue(CIProducts.ProductFamilyStandart.ID, _parameter.getInstance());
             queryBldr.addWhereAttrEqValue(CIProducts.ProductFamilyStandart.ParentLink,
-                            print.getAttribute(CIProducts.ProductFamilyStandart.ParentLink));
+                            print.<Long>getAttribute(CIProducts.ProductFamilyStandart.ParentLink));
             if (!queryBldr.getQuery().execute().isEmpty()) {
                 warnings.add(new FamilyCodeInvalidWarning());
             }
