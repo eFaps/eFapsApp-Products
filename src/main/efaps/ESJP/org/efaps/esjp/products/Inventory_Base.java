@@ -46,10 +46,10 @@ import org.efaps.db.QueryBuilder;
 import org.efaps.db.SelectBuilder;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.AbstractCommon;
+import org.efaps.esjp.common.eql.ClassSelect;
 import org.efaps.esjp.erp.CurrencyInst;
 import org.efaps.esjp.products.Cost_Base.CostBean;
 import org.efaps.util.EFapsException;
-import org.efaps.util.cache.CacheReloadException;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1181,31 +1181,44 @@ public abstract class Inventory_Base
          * Gets the prod class.
          *
          * @return the prod class
-         * @throws CacheReloadException the cache reload exception
+         * @throws EFapsException on error
          */
         public String getProdClass()
-            throws CacheReloadException
+            throws EFapsException
         {
-            final StringBuilder ret = new StringBuilder();
-            if (getProdClasslist() != null && !getProdClasslist().isEmpty()) {
-                for (final Classification clazz : getProdClasslist()) {
-                    Classification clazzTmp = clazz;
-                    while (!clazzTmp.isRoot()) {
-                        if (ret.length() == 0) {
-                            ret.append(clazz.getLabel());
-                        } else {
-                            ret.insert(0, clazzTmp.getLabel() + " - ");
-                        }
-                        clazzTmp = clazzTmp.getParentClassification();
-                    }
-                    if (ret.length() == 0) {
-                        ret.append(clazz.getLabel());
-                    }
-                }
+            return getProdClass(null);
+        }
+
+        /**
+         * Gets the prod class.
+         *
+         * @param _level the level
+         * @return the prod class
+         * @throws EFapsException on error
+         */
+        public String getProdClass(final Integer _level)
+            throws EFapsException
+        {
+            final String ret;
+            if (getProdClasslist() == null) {
+                ret= "-";
             } else {
-                ret.append("-");
+                final ClassSelect classSel =  new ClassSelect() {
+                    @Override
+                    protected int getLevel()
+                    {
+                        int ret;
+                        if (_level == null) {
+                            ret = super.getLevel();
+                        } else {
+                            ret = _level;
+                        }
+                        return ret;
+                    }
+                };
+                ret = (String) classSel.evalValue(getProdClasslist());
             }
-            return ret.toString();
+            return ret;
         }
 
         /**

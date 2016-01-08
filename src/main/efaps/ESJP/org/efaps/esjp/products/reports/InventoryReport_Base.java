@@ -243,7 +243,7 @@ public abstract class InventoryReport_Base
                     quantity = BigDecimal.ZERO;
                     ret.add(map);
                     map.put("prodType", bean.getProdType());
-                    map.put("prodClass", bean.getProdClass());
+                    map.put("prodClass", bean.getProdClass(Products.REPINVENTORYCLASSLEVEL.get()));
                     map.put("prodName", bean.getProdName());
                     map.put("prodDescr", bean.getProdDescr());
                     map.put("prodOID", bean.getProdOID());
@@ -315,6 +315,21 @@ public abstract class InventoryReport_Base
                         ret = super.getInventoryType(_parameter);
                     }
                     return ret;
+                }
+
+                @Override
+                protected InventoryBean getBean(final Parameter _parameter)
+                    throws EFapsException
+                {
+                    return new InventoryBean() {
+
+                        @Override
+                        public String getProdClass()
+                            throws EFapsException
+                        {
+                            return super.getProdClass(Products.REPINVENTORYCLASSLEVEL.get());
+                        }
+                    };
                 }
             };
         }
@@ -671,7 +686,7 @@ public abstract class InventoryReport_Base
         @SuppressWarnings("unchecked")
         public List<InventoryBean> getBeans(final Parameter _parameter,
                                             final Inventory _inventory)
-                                                throws EFapsException
+            throws EFapsException
         {
             if (this.beans == null) {
                 final Inventory inventory;

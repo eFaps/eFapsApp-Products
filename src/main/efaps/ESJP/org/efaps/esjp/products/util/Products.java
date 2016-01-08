@@ -176,6 +176,13 @@ public final class Products
                     .description("Activate the family management for materials.");
 
     /** See description. */
+    @EFapsSysConfAttribute
+    public static final IntegerSysConfAttribute REPINVENTORYCLASSLEVEL = new IntegerSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "report.InventoryReport.ClassificationLevel")
+                    .description("Level of Classification to present.");
+
+    /** See description. */
     @EFapsSysConfLink
     public static final SysConfLink DEFAULTDIMENSION = new SysConfLink()
                     .sysConfUUID(SYSCONFUUID)
