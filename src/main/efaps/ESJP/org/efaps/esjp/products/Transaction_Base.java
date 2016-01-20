@@ -791,6 +791,33 @@ public abstract class Transaction_Base
     }
 
     /**
+     * Gets the java script for move inventory.
+     *
+     * @param _parameter the _parameter
+     * @return the java script4 move inventory
+     * @throws EFapsException the e faps exception
+     */
+    public Return getJavaScript4MoveInventory(final Parameter _parameter)
+        throws EFapsException
+    {
+        return getJavaScript4SetInventory(_parameter);
+    }
+
+    /**
+     * Update fields for product for move inventory.
+     *
+     * @param _parameter the _parameter
+     * @return the return
+     * @throws EFapsException the e faps exception
+     */
+    public Return updateFields4Product4MoveInventory(final Parameter _parameter)
+        throws EFapsException
+    {
+        return updateFields4Product4SetInventory(_parameter);
+    }
+
+
+    /**
      * Method is used as the execute event on moving products from one Storage
      * to another.
      *
@@ -811,7 +838,7 @@ public abstract class Transaction_Base
                         CIFormProducts.Products_InventoryMoveMassiveForm.storage.name);
         final String[] product = _parameter.getParameterValues(
                         CITableProducts.Products_InventoryMoveMassiveTable.product.name);
-        final String[] quantity = _parameter.getParameterValues(
+        final String[] quantityAr = _parameter.getParameterValues(
                         CITableProducts.Products_InventoryMoveMassiveTable.quantity.name);
         final String[] uoM = _parameter.getParameterValues(
                         CITableProducts.Products_InventoryMoveMassiveTable.uoM.name);
@@ -846,27 +873,34 @@ public abstract class Transaction_Base
                 prodPrint.executeWithoutAccessCheck();
                 final String productDesc = prodPrint.getAttribute(CIProducts.ProductAbstract.Description);
 
+                BigDecimal quantity = null;
+                try {
+                    quantity = (BigDecimal) NumberFormatter.get().getFormatter().parse(quantityAr[x]);
+                } catch (final ParseException e) {
+                    LOG.error("Catched ParserException", e);
+                }
+
                 final String newDesc = DBProperties.getFormatedDBProperty(Transaction.class.getName()
-                        + ".moveInventory.Description", new Object[] { desc, quantity[x],
+                        + ".moveInventory.Description", new Object[] { desc, quantityAr[x],
                             Dimension.getUoM(Long.parseLong(uoM[x])).getName(), productDesc, storageFrom, storateTo });
                 Instance prodInstTmp;
                 if (individual) {
                     prodInstTmp = prodPrint.getSelect(selProdInst);
                     final CreatedDoc inbound = addTransactionProduct(CIProducts.TransactionIndividualInbound,
-                                    quantity[x], storageToId, uoM[x], date, prodInst, newDesc);
+                                    quantity, storageToId, uoM[x], date, prodInst, newDesc);
 
                     final CreatedDoc outbound = addTransactionProduct(CIProducts.TransactionIndividualOutbound,
-                                    quantity[x], storageFromInst.getId(), uoM[x], date, prodInst, newDesc);
+                                    quantity, storageFromInst.getId(), uoM[x], date, prodInst, newDesc);
                     transLists.add(inbound);
                     transLists.add(outbound);
                 } else {
                     prodInstTmp = prodInst;
                 }
                 final CreatedDoc inbound = addTransactionProduct(CIProducts.TransactionInbound,
-                                quantity[x], storageToId, uoM[x], date, prodInstTmp, newDesc);
+                                quantity, storageToId, uoM[x], date, prodInstTmp, newDesc);
 
                 final CreatedDoc outbound = addTransactionProduct(CIProducts.TransactionOutbound,
-                                quantity[x], storageFromInst.getId(), uoM[x], date, prodInstTmp, newDesc);
+                                quantity, storageFromInst.getId(), uoM[x], date, prodInstTmp, newDesc);
                 if (inbound.getInstance().isValid() && outbound.getInstance().isValid()) {
                     transLists.add(inbound);
                     transLists.add(outbound);
@@ -1017,7 +1051,12 @@ public abstract class Transaction_Base
 
                 if (multi.next()) {
                     final BigDecimal stock = multi.<BigDecimal>getAttribute(CIProducts.Inventory.Quantity);
-                    final BigDecimal newStock = stock.subtract(new BigDecimal(quantities[y]));
+                    BigDecimal newStock = BigDecimal.ONE.negate();
+                    try {
+                        newStock = (BigDecimal) NumberFormatter.get().getFormatter().parse(quantities[y]);
+                    } catch (final ParseException e) {
+                        LOG.error("Catched ParserException", e);
+                    }
                     if (newStock.compareTo(BigDecimal.ZERO) == -1) {
                         if (!heading) {
                             html.append(DBProperties.getProperty("esjp.Products_Transaction.validateMove.Text"))
