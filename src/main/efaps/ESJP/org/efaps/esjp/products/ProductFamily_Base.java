@@ -407,6 +407,79 @@ public abstract class ProductFamily_Base
     }
 
     /**
+     * Gets the family instance for code.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _code the code
+     * @return the family instance4 code
+     * @throws EFapsException on error
+     */
+    protected static Instance getFamilyInstance4Code(final Parameter _parameter,
+                                                     final String _code)
+        throws EFapsException
+    {
+        Instance ret = null;
+        final String code = _code.contains(".") ? _code.split(".")[0] : _code;
+        int startIdx = 0;
+        int curIdx = 1;
+        String codePart = "";
+        // search the ProductLine
+        Instance lineInst = null;
+        while (lineInst == null && curIdx < code.length() + 1) {
+            codePart = code.substring(startIdx, curIdx);
+            final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductLineStandart);
+            queryBldr.addWhereAttrEqValue(CIProducts.ProductLineStandart.CodePart, codePart);
+            final List<Instance> insts = queryBldr.getQuery().execute();
+            if (!insts.isEmpty() && insts.size() == 1) {
+                lineInst = insts.get(0);
+            } else {
+                curIdx++;
+            }
+        }
+
+        if (lineInst != null && lineInst.isValid()) {
+            Instance rootInst = null;
+            startIdx = curIdx;
+            curIdx++;
+            // search the root family
+            while (rootInst == null && curIdx < code.length() + 1) {
+                codePart = code.substring(startIdx, curIdx);
+                final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductFamilyRoot);
+                queryBldr.addWhereAttrEqValue(CIProducts.ProductFamilyRoot.ProductLineLink, lineInst);
+                queryBldr.addWhereAttrEqValue(CIProducts.ProductFamilyRoot.CodePart, codePart);
+                final List<Instance> insts = queryBldr.getQuery().execute();
+                if (!insts.isEmpty() && insts.size() == 1) {
+                    rootInst = insts.get(0);
+                } else {
+                    curIdx++;
+                }
+            }
+            if (rootInst != null && rootInst.isValid()) {
+                startIdx = curIdx;
+                curIdx++;
+                Instance currentInst = rootInst;
+                // search the sub family
+                while (curIdx < code.length() + 1) {
+                    codePart = code.substring(startIdx, curIdx);
+                    final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductFamilyStandart);
+                    queryBldr.addWhereAttrEqValue(CIProducts.ProductFamilyStandart.ParentLink, currentInst);
+                    queryBldr.addWhereAttrEqValue(CIProducts.ProductFamilyStandart.CodePart, codePart);
+                    final List<Instance> insts = queryBldr.getQuery().execute();
+                    if (!insts.isEmpty() && insts.size() == 1) {
+                        currentInst = insts.get(0);
+                        startIdx = curIdx;
+                        curIdx++;
+                    } else {
+                        curIdx++;
+                    }
+                }
+                ret = currentInst;
+            }
+        }
+        return ret;
+    }
+
+    /**
      * Warning for invalid name.
      *
      * @author The eFaps Team

@@ -52,4 +52,19 @@ public class ProductFamily
     {
         return ProductFamily_Base.getDescendants(_parameter, _famInst);
     }
+
+    /**
+     * Gets the family instance for code.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _code the code
+     * @return the family instance4 code
+     * @throws EFapsException on error
+     */
+    public static Instance getFamilyInstance4Code(final Parameter _parameter,
+                                                  final String _code)
+        throws EFapsException
+    {
+        return ProductFamily_Base.getFamilyInstance4Code(_parameter, _code);
+    }
 }
