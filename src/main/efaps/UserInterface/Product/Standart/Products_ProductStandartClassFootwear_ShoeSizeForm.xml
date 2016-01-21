@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+
+  Copyright 2003 - 2016 The eFaps Team
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<ui-form xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>b1b61ed1-9e95-445e-8e44-fa21faaa4b70</uuid>
+    <file-application>eFapsApp-Products</file-application>
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <profiles>
+            <profile name="textil"/>
+        </profiles>
+        <name>Products_ProductStandartClassFootwear_ShoeSizeForm</name>
+        <type>Products_ProductStandartClassFootwear_ShoeSize</type>
+        <field name="shoeSizeLink">
+            <property name="Attribute">ShoeSizeLink</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <trigger event="UI_ACCESSCHECK" method="checkAccess4Attribute"
+                name="Products_ProductStandartClassFootwear_ShoeSizeForm.xml.shoeSizeLink.UI_ACCESSCHECK"
+                program="org.efaps.esjp.products.variant.Variant">
+                <property name="Inverse">true</property>
+            </trigger>
+        </field>
+        <field name="simpleSizeLinkConfig">
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="UIType">SNIPPLET</property>
+            <property name="Label">Products_ProductStandartClassFootwear_ShoeSize/ShoeSizeLink.Label</property>
+            <trigger event="UI_ACCESSCHECK" method="checkAccess4Attribute"
+                name="Products_ProductStandartClassFootwear_ShoeSizeForm.xml.simpleSizeLink.UI_ACCESSCHECK"
+                program="org.efaps.esjp.products.variant.Variant">
+                <property name="Key">Products_Footwear_ShoeSize</property>
+            </trigger>
+            <trigger event="UI_FIELD_VALUE" method="getVariantConfigFieldValue"
+                name="Products_ProductStandartClassFootwear_ShoeSizeForm.xml.simpleSizeLinkConfig.UI_FIELD_VALUE"
+                program="org.efaps.esjp.products.variant.Variant">
+                <property name="Key">Products_Footwear_ShoeSize</property>
+            </trigger>
+        </field>
+    </definition>
+</ui-form>
