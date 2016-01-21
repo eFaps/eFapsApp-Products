@@ -45,12 +45,6 @@ public interface ProductsSettings
 
     /**
      * Boolean(true/false).<br/>
-     * Activate the menu for updating Product Prices on mass.
-     */
-    String ACTIVATEVARIANT = ProductsSettings.BASE + "ActivateVariant";
-
-    /**
-     * Boolean(true/false).<br/>
      * Activate the barcode column etc..
      */
     String ACTIVATEBARCODE = ProductsSettings.BASE + "ActivateBarcode";
@@ -77,8 +71,4 @@ public interface ProductsSettings
      */
     String LASTMOVEREP = ProductsSettings.BASE + "LastMovementReport";
 
-    /**
-     * Properties. Can be concatenated. Setting for Variant Attributes.
-     */
-    String VARIANTCONFIG = ProductsSettings.BASE + "VariantConfiguration";
 }

@@ -262,8 +262,10 @@ public abstract class Product_Base
                 ret = Products.STANDARTACTFAM.get();
             } else if (instance.getType().isCIType(CIProducts.ProductGeneric)) {
                 ret = Products.GENERICACTFAM.get();
-            }  else if (instance.getType().isCIType(CIProducts.ProductService)) {
+            } else if (instance.getType().isCIType(CIProducts.ProductService)) {
                 ret = Products.SERVACTFAM.get();
+            }  else if (instance.getType().isCIType(CIProducts.ProductVariantBase)) {
+                ret = Products.VARIANTACTFAM.get();
             }
         }
         return ret;

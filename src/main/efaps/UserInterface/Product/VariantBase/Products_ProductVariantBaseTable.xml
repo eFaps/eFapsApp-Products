@@ -51,11 +51,18 @@
                 name="Products_ProductVariantBaseTable.classification"
                 program="org.efaps.esjp.common.uiform.Field" />
             <trigger event="UI_ACCESSCHECK" method="configCheck"
-                name="Products_ProductVariantBaseTable.classification.UI_ACCESSCHECK"
-                program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                    <!-- Products-Configuration -->
+                name="Products_ProductVariantBaseTable.classification.UI_ACCESSCHECK.0"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI" index="0">
+                <!-- Products-Configuration -->
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
-                <property name="Attribute">org.efaps.products.ActivateFamilies</property>
+                <property name="Attribute">org.efaps.products.Variant.ActivateClassification</property>
+            </trigger>
+            <trigger event="UI_ACCESSCHECK" method="configCheck"
+                name="Products_ProductVariantBaseTable.classificationWithFamily.UI_ACCESSCHECK.1"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI" index="1">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.Variant.ActivateFamilies</property>
                 <property name="Inverse">true</property>
             </trigger>
         </field>
@@ -70,11 +77,18 @@
                 name="Products_ProductTable.classificationWithFamily"
                 program="org.efaps.esjp.common.uiform.Field" />
             <trigger event="UI_ACCESSCHECK" method="configCheck"
-                name="Products_ProductVariantBaseTable.classificationWithFamily.UI_ACCESSCHECK"
-                program="org.efaps.esjp.admin.access.AccessCheck4UI">
+                name="Products_ProductVariantBaseTable.classificationWithFamily.UI_ACCESSCHECK.0"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI" index="0">
                     <!-- Products-Configuration -->
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
-                <property name="Attribute">org.efaps.products.ActivateFamilies</property>
+                <property name="Attribute">org.efaps.products.Variant.ActivateClassification</property>
+            </trigger>
+            <trigger event="UI_ACCESSCHECK" method="configCheck"
+                name="Products_ProductVariantBaseTable.classificationWithFamily.UI_ACCESSCHECK.1"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI" index="1">
+                    <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.Variant.ActivateFamilies</property>
             </trigger>
         </field>
         <field name="productFamilyLink">
@@ -92,7 +106,7 @@
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
                     <!-- Products-Configuration -->
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
-                <property name="Attribute">org.efaps.products.ActivateFamilies</property>
+                <property name="Attribute">org.efaps.products.Variant.ActivateFamilies</property>
             </trigger>
         </field>
         <field name="active">

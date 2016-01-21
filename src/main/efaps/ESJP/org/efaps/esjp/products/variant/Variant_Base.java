@@ -54,7 +54,6 @@ import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.AbstractCommon;
 import org.efaps.esjp.products.Product;
 import org.efaps.esjp.products.util.Products;
-import org.efaps.esjp.products.util.ProductsSettings;
 import org.efaps.esjp.ui.html.Table;
 import org.efaps.util.EFapsException;
 
@@ -166,7 +165,7 @@ public abstract class Variant_Base
     }
 
     /**
-     * Gets the name4 variant.
+     * Gets the name for variant.
      *
      * @param _parameter Parameter as passed by the eFaps API
      * @param _baseInst the _base inst
@@ -195,16 +194,16 @@ public abstract class Variant_Base
             names.add(multi.<String>getSelect(sel));
         }
         Integer idx = 1;
-        ret = baseName + String.format(".%02d", idx);
+        ret = baseName + String.format("-%02d", idx);
         while (names.contains(ret)) {
             idx++;
-            ret = baseName + String.format(".%02d", idx);
+            ret = baseName + String.format("-%02d", idx);
         }
         return ret;
     }
 
     /**
-     * Gets the description4 variant.
+     * Gets the description for variant.
      *
      * @param _parameter Parameter as passed by the eFaps API
      * @param _baseInst the _base inst
@@ -224,8 +223,7 @@ public abstract class Variant_Base
         final String baseDescription = print.<String>getAttribute(CIProducts.ProductAbstract.Description);
         ret.append(baseDescription);
 
-        final Properties properties = Products.getSysConfig().getAttributeValueAsProperties(
-                        ProductsSettings.VARIANTCONFIG, true);
+        final Properties properties = Products.VARIANTCONFIG.get();
 
         for (final ElementWrapper ele : _variant.getElements()) {
             final String phrase = properties.getProperty(ele.getAttrKey() + ".Phrase4Description");
@@ -385,8 +383,7 @@ public abstract class Variant_Base
     {
         final Return ret = new Return();
         final StringBuilder html = new StringBuilder();
-        final Properties properties = Products.getSysConfig().getAttributeValueAsProperties(
-                        ProductsSettings.VARIANTCONFIG, true);
+        final Properties properties = Products.VARIANTCONFIG.get();
         final String key = getProperty(_parameter, "Key");
         final String select = properties.getProperty(key + ".Select4UI");
         final QueryBuilder queryBldr = getQueryBldrFromProperties(_parameter, properties, key);
@@ -595,8 +592,7 @@ public abstract class Variant_Base
             throws EFapsException
         {
             String ret = "";
-            final Properties properties = Products.getSysConfig().getAttributeValueAsProperties(
-                            ProductsSettings.VARIANTCONFIG, true);
+            final Properties properties = Products.VARIANTCONFIG.get();
             if (properties.containsKey(getAttrKey() + ".Header")) {
                 ret = DBProperties.getProperty(properties.getProperty(getAttrKey() + ".Header"));
             }
@@ -614,8 +610,7 @@ public abstract class Variant_Base
             throws EFapsException
         {
             if (this.column == null) {
-                final Properties properties = Products.getSysConfig().getAttributeValueAsProperties(
-                                ProductsSettings.VARIANTCONFIG, true);
+                final Properties properties = Products.VARIANTCONFIG.get();
                 final String select = properties.getProperty(getAttrKey() + ".Select4UI");
                 final PrintQuery print =  CachedPrintQuery.get4Request(getObjInst());
                 print.addSelect(select);
@@ -634,8 +629,7 @@ public abstract class Variant_Base
         {
             String sortPrefix = "";
             try {
-                final Properties properties = Products.getSysConfig().getAttributeValueAsProperties(
-                                    ProductsSettings.VARIANTCONFIG, true);
+                final Properties properties = Products.VARIANTCONFIG.get();
                 sortPrefix = properties.getProperty(this.attrKey + ".SortPrefix", "");
             } catch (final EFapsException e) {
                 // TODO Auto-generated catch block
@@ -663,8 +657,7 @@ public abstract class Variant_Base
         public Attribute getAttribute()
             throws EFapsException
         {
-            final Properties properties = Products.getSysConfig().getAttributeValueAsProperties(
-                            ProductsSettings.VARIANTCONFIG, true);
+            final Properties properties = Products.VARIANTCONFIG.get();
             return Attribute.get(properties.getProperty(getAttrKey() + ".Attribute"));
         }
 
