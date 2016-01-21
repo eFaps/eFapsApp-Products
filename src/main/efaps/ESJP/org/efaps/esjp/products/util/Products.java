@@ -143,6 +143,14 @@ public final class Products
 
     /** See description. */
     @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute ACTIVATEMATERIAL = new BooleanSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "Material.Activate")
+                    .description("Activate the generic product management for materials.")
+                    .defaultValue(true);
+
+    /** See description. */
+    @EFapsSysConfAttribute
     public static final BooleanSysConfAttribute MATERIALISGENERIC = new BooleanSysConfAttribute()
                     .sysConfUUID(SYSCONFUUID)
                     .key(BASE + "Material.IsGeneric")
