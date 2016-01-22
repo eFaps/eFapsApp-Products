@@ -279,14 +279,19 @@ public abstract class Cost_Base
             final SelectBuilder selCurInst = SelectBuilder.get().linkto(CIProducts.ProductCost.CurrencyLink).instance();
             final SelectBuilder selProdInst = SelectBuilder.get().linkto(CIProducts.ProductCost.ProductLink).instance();
             multi.addSelect(selCurInst, selProdInst);
-            multi.addAttribute(CIProducts.ProductCost.Price);
+            multi.addAttribute(CIProducts.ProductCost.Price, CIProducts.ProductCost.ValidFrom,
+                            CIProducts.ProductCost.ValidUntil, CIProducts.ProductCost.Created);
             multi.execute();
             while (multi.next()) {
-                final Instance curInst = multi.getSelect(selCurInst);
                 final Instance prodInst = multi.getSelect(selProdInst);
-                final BigDecimal cost = multi.getAttribute(CIProducts.ProductCost.Price);
-                final CostBean bean = new CostBean().setProductInstance(prodInst).setCurrencyInstance(curInst)
-                                .setCost(cost).setDate(_date);
+                final CostBean bean = new CostBean()
+                                .setDate(_date)
+                                .setProductInstance(prodInst)
+                                .setCurrencyInstance(multi.<Instance>getSelect(selCurInst))
+                                .setCost(multi.<BigDecimal>getAttribute(CIProducts.ProductCost.Price))
+                                .setValidFrom( multi.<DateTime>getAttribute(CIProducts.ProductCost.ValidFrom))
+                                .setValidUntil( multi.<DateTime>getAttribute(CIProducts.ProductCost.ValidUntil))
+                                .setCreated( multi.<DateTime>getAttribute(CIProducts.ProductCost.Created));
                 ret.put(prodInst, bean);
             }
         }
@@ -323,9 +328,26 @@ public abstract class Cost_Base
 
     public static class CostBean
     {
+
+        /** The date. */
+        private DateTime validFrom;
+
+        /** The date. */
+        private DateTime validUntil;
+
+        /** The date. */
+        private DateTime created;
+
+        /** The date. */
         private DateTime date;
+
+        /** The currency instance. */
         private Instance currencyInstance;
+
+        /** The product instance. */
         private Instance productInstance;
+
+        /** The cost. */
         private BigDecimal cost;
 
         /**
@@ -382,8 +404,17 @@ public abstract class Cost_Base
             return this.cost;
         }
 
+        /**
+         * Gets the cost4 currency.
+         *
+         * @param _parameter the _parameter
+         * @param _currencyInst the _currency inst
+         * @return the cost4 currency
+         * @throws EFapsException the e faps exception
+         */
         public BigDecimal getCost4Currency(final Parameter _parameter,
-                                           final Instance _currencyInst) throws EFapsException
+                                           final Instance _currencyInst)
+            throws EFapsException
         {
             BigDecimal ret = BigDecimal.ZERO;
             if (getCurrencyInstance().equals(_currencyInst)) {
@@ -427,6 +458,72 @@ public abstract class Cost_Base
         public CostBean setDate(final DateTime _date)
         {
             this.date = _date;
+            return this;
+        }
+
+        /**
+         * Getter method for the instance variable {@link #validFrom}.
+         *
+         * @return value of instance variable {@link #validFrom}
+         */
+        public DateTime getValidFrom()
+        {
+            return this.validFrom;
+        }
+
+        /**
+         * Setter method for instance variable {@link #validFrom}.
+         *
+         * @param _validFrom value for instance variable {@link #validFrom}
+         * @return the cost bean
+         */
+        public CostBean setValidFrom(final DateTime _validFrom)
+        {
+            this.validFrom = _validFrom;
+            return this;
+        }
+
+        /**
+         * Getter method for the instance variable {@link #validUntil}.
+         *
+         * @return value of instance variable {@link #validUntil}
+         */
+        public DateTime getValidUntil()
+        {
+            return this.validUntil;
+        }
+
+        /**
+         * Setter method for instance variable {@link #validUntil}.
+         *
+         * @param _validUntil value for instance variable {@link #validUntil}
+         * @return the cost bean
+         */
+        public CostBean setValidUntil(final DateTime _validUntil)
+        {
+            this.validUntil = _validUntil;
+            return this;
+        }
+
+        /**
+         * Getter method for the instance variable {@link #created}.
+         *
+         * @return value of instance variable {@link #created}
+         */
+        public DateTime getCreated()
+        {
+            return this.created;
+        }
+
+        /**
+         * Setter method for instance variable {@link #created}.
+         *
+         * @param _created value for instance variable {@link #created}
+         * @return the cost bean
+         */
+        public CostBean setCreated(final DateTime _created)
+        {
+            this.created = _created;
             return this;
         }
     }

@@ -67,5 +67,11 @@ smaller03=181
 color04=#DA3131
 greater04=180]]></value>
         </attribute>
+        <attribute>
+            <key>org.efaps.products.report.CostReport</key>
+            <value><![CDATA[Type01=Products_ProductStandart
+Type02=Products_ProductService
+Type03=Products_ProductMaterial]]></value>
+        </attribute>
     </definition>
 </common-systemconfiguration>

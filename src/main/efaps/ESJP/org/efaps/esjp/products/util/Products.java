@@ -227,6 +227,13 @@ public final class Products
                     .description("Level of Classification to present.");
 
     /** See description. */
+    @EFapsSysConfAttribute
+    public static final PropertiesSysConfAttribute REPCOSTCONFIG = new PropertiesSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "report.CostReport")
+                    .description("Configuration for CostReport.");
+
+    /** See description. */
     @EFapsSysConfLink
     public static final SysConfLink DEFAULTDIMENSION = new SysConfLink()
                     .sysConfUUID(SYSCONFUUID)
