@@ -21,8 +21,12 @@ package org.efaps.esjp.products.reports;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections4.comparators.ComparatorChain;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
@@ -146,6 +150,7 @@ public abstract class CostReport_Base
                 final MultiPrintQuery multi = queryBldr.getPrint();
                 multi.addAttribute(CIProducts.ProductAbstract.Name, CIProducts.ProductAbstract.Description);
                 multi.execute();
+
                 while (multi.next()) {
                     final DataBean bean = getDataBean(_parameter)
                         .setProductInst(multi.getCurrentInstance())
@@ -153,6 +158,17 @@ public abstract class CostReport_Base
                         .setProductDescr(multi.<String>getAttribute(CIProducts.ProductAbstract.Description));
                     beans.add(bean);
                 }
+                final ComparatorChain<DataBean> chain = new ComparatorChain<>();
+                chain.addComparator(new Comparator<DataBean>()
+                {
+                    @Override
+                    public int compare(final DataBean _o1,
+                                       final DataBean _o2)
+                    {
+                        return _o1.getProductName().compareTo(_o2.getProductName());
+                    }
+                });
+                Collections.sort(beans, chain);
                 ret = new JRBeanCollectionDataSource(beans);
                 this.filteredReport.cache(_parameter, ret);
             }
@@ -169,7 +185,7 @@ public abstract class CostReport_Base
                             "productName", DynamicReports.type.stringType());
             final TextColumnBuilder<String> productDescrColumn = DynamicReports.col.column(
                             getFilteredReport().getDBProperty("Column.productDescr"),
-                            "productDescr", DynamicReports.type.stringType()).setFixedWidth(150);
+                            "productDescr", DynamicReports.type.stringType()).setFixedWidth(250);
 
             final TextColumnBuilder<BigDecimal> origCostColumn = DynamicReports.col.column(
                             getFilteredReport().getDBProperty("Column.origCost"),
@@ -192,10 +208,36 @@ public abstract class CostReport_Base
                             getFilteredReport().getDBProperty("Group.origGroup"), origCostColumn, origCurrencyColumn,
                                 createdColumn, validFromColumn, validUntilColumn);
 
+            final TextColumnBuilder<BigDecimal> costColumn = DynamicReports.col.column(
+                            getFilteredReport().getDBProperty("Column.cost"),
+                            "cost", DynamicReports.type.bigDecimalType());
+            final TextColumnBuilder<String> currencyColumn = DynamicReports.col.column(
+                            getFilteredReport().getDBProperty("Column.currency"),
+                            "currency", DynamicReports.type.stringType());
+
             _builder
-                .columnGrid(prodNameColumn, productDescrColumn, origGroup)
+                .columnGrid(prodNameColumn, productDescrColumn, origGroup, costColumn, currencyColumn)
                 .addColumn(prodNameColumn, productDescrColumn, origCostColumn, origCurrencyColumn, createdColumn,
-                            validFromColumn, validUntilColumn);
+                            validFromColumn, validUntilColumn, costColumn, currencyColumn);
+        }
+
+        /**
+         * Gets the currency inst.
+         *
+         * @param _parameter the _parameter
+         * @return the currency inst
+         * @throws EFapsException the e faps exception
+         */
+        protected Instance getCurrencyInst(final Parameter _parameter)
+            throws EFapsException
+        {
+            Instance ret = null;
+            final Map<String, Object> map = getFilteredReport().getFilterMap(_parameter);
+            if (map.containsKey("currency")) {
+                final CurrencyFilterValue filter = (CurrencyFilterValue) map.get("currency");
+                ret = filter.getObject();
+            }
+            return ret;
         }
 
         /**
@@ -219,7 +261,8 @@ public abstract class CostReport_Base
             throws EFapsException
         {
             final DateTime date = (DateTime) getFilteredReport().getFilterMap(_parameter).get("date");
-            return new DataBean(_parameter).setDate(date);
+            final Instance currencyInst = getCurrencyInst(_parameter);
+            return new DataBean(_parameter).setDate(date).setCurrencyInstance(currencyInst);
         }
     }
 
@@ -246,6 +289,9 @@ public abstract class CostReport_Base
 
         /** The date. */
         private DateTime date;
+
+        /** The currency instance. */
+        private Instance currencyInstance;
 
         /**
          * Instantiates a new data bean.
@@ -347,6 +393,28 @@ public abstract class CostReport_Base
         }
 
         /**
+         * Getter method for the instance variable {@link #currencyInstance}.
+         *
+         * @return value of instance variable {@link #currencyInstance}
+         */
+        public Instance getCurrencyInstance()
+        {
+            return this.currencyInstance;
+        }
+
+        /**
+         * Setter method for instance variable {@link #currencyInstance}.
+         *
+         * @param _currencyInstance value for instance variable {@link #currencyInstance}
+         * @return the data bean
+         */
+        public DataBean setCurrencyInstance(final Instance _currencyInstance)
+        {
+            this.currencyInstance = _currencyInstance;
+            return this;
+        }
+
+        /**
          * Getter method for the instance variable {@link #costBean}.
          *
          * @return value of instance variable {@link #costBean}
@@ -434,6 +502,30 @@ public abstract class CostReport_Base
             throws EFapsException
         {
             return getCostBean().getValidUntil();
+        }
+
+        /**
+         * Gets the cost.
+         *
+         * @return the cost
+         * @throws EFapsException the e faps exception
+         */
+        public BigDecimal getCost()
+            throws EFapsException
+        {
+            return getOrigCost() == null ? null : getCostBean().getCost4Currency(this.parameter, getCurrencyInstance());
+        }
+
+        /**
+         * Gets the currency.
+         *
+         * @return the  currency
+         * @throws EFapsException the e faps exception
+         */
+        public String getCurrency()
+            throws EFapsException
+        {
+            return CurrencyInst.get(getCurrencyInstance()).getSymbol();
         }
     }
 }

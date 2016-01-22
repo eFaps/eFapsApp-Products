@@ -32,14 +32,20 @@
                 <property name="FilterKey">org.efaps.esjp.products.reports.CostReport.FilterKey</property>
                 <property name="ReportField">report4Account</property>
                 <property name="Field01">date</property>
+                <property name="Field02">currency</property>
                 <property name="FilterType01">DateTime</property>
+                <property name="FilterType02">Currency</property>
                 <property name="FilterDefault01">TODAY</property>
+                <property name="FilterDefault02">BASECURRENCY</property>
             </trigger>
-            <trigger event="UI_FIELD_VALUE" index="2" method="getFilterFieldValue" name="Products_CostReportForm.filter.UI_FIELD_VALUE.2"
+            <trigger event="UI_FIELD_VALUE" index="2" method="getFilterFieldValue"
+                name="Products_CostReportForm.filter.UI_FIELD_VALUE.2"
                 program="org.efaps.esjp.products.reports.CostReport">
                 <property name="FilterKey">org.efaps.esjp.products.reports.CostReport.FilterKey</property>
                 <property name="Field01">date</property>
+                <property name="Field02">currency</property>
                 <property name="DBProperty01">org.efaps.esjp.products.reports.CostReport.date</property>
+                <property name="DBProperty02">org.efaps.esjp.products.reports.CostReport.currency</property>
             </trigger>
         </field>
         <field name="report">
