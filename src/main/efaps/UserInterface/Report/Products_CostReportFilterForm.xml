@@ -54,5 +54,15 @@
                 <property name="QueryBldrConfigAttribute">org.efaps.products.report.CostReport</property>
             </trigger>
         </field>
+        <field name="stock">
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="Label">org.efaps.esjp.products.reports.TransactionReport.typeDisplay</property>
+            <trigger event="UI_FIELD_VALUE" method="getEnumFieldValue"
+                name="Products_CostReportFilterForm.stock.UI_FIELD_VALUE"
+                program="org.efaps.esjp.products.reports.CostReport">
+                <property name="Enum">org.efaps.esjp.products.reports.CostReport_Base$StockFilter</property>
+            </trigger>
+        </field>
     </definition>
 </ui-form>

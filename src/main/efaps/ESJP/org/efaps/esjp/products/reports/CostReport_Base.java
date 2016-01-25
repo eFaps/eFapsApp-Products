@@ -61,8 +61,9 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRRewindableDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
+// TODO: Auto-generated Javadoc
 /**
- * TODO comment!
+ * TODO comment!.
  *
  * @author The eFaps Team
  */
@@ -71,7 +72,23 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 public abstract class CostReport_Base
     extends FilteredReport
 {
+
     /**
+     * The Enum SrockFilter.
+     */
+    public enum StockFilter
+    {
+        /** Deactivate the FIlter. */
+        NONE,
+        /** Products that vae Stock. */
+        HASSTOCK,
+        /** Products that do not have Stock. */
+        NOSTOCK;
+    }
+
+    /**
+     * Generate report.
+     *
      * @param _parameter Parameter as passed by the eFasp API
      * @return Return containing html snipplet
      * @throws EFapsException on error
@@ -87,6 +104,8 @@ public abstract class CostReport_Base
     }
 
     /**
+     * Export report.
+     *
      * @param _parameter Parameter as passed by the eFasp API
      * @return Return containing the file
      * @throws EFapsException on error
@@ -110,6 +129,8 @@ public abstract class CostReport_Base
     }
 
     /**
+     * Gets the report.
+     *
      * @param _parameter Parameter as passed by the eFasp API
      * @return the report class
      * @throws EFapsException on error
@@ -140,6 +161,9 @@ public abstract class CostReport_Base
             this.filteredReport = _filteredReport;
         }
 
+        /* (non-Javadoc)
+         * @see org.efaps.esjp.common.jasperreport.AbstractDynamicReport_Base#createDataSource(org.efaps.admin.event.Parameter)
+         */
         @Override
         protected JRDataSource createDataSource(final Parameter _parameter)
             throws EFapsException
@@ -201,8 +225,25 @@ public abstract class CostReport_Base
                 final TypeFilterValue typeFilter = (TypeFilterValue) filter.get("type");
                 _queryBldr.addWhereAttrEqValue(CIProducts.ProductAbstract.Type, typeFilter.getObject().toArray());
             }
+            switch (getStockFilter(_parameter)) {
+                case HASSTOCK:
+                    final QueryBuilder queryBldr = new QueryBuilder(CIProducts.InventoryAbstract);
+                    _queryBldr.addWhereAttrInQuery(CIProducts.ProductAbstract.ID,
+                                    queryBldr.getAttributeQuery(CIProducts.InventoryAbstract.Product));
+                    break;
+                case NOSTOCK:
+                    final QueryBuilder queryBldr2 = new QueryBuilder(CIProducts.InventoryAbstract);
+                    _queryBldr.addWhereAttrNotInQuery(CIProducts.ProductAbstract.ID,
+                                    queryBldr2.getAttributeQuery(CIProducts.InventoryAbstract.Product));
+                    break;
+                default:
+                    break;
+            }
         }
 
+        /* (non-Javadoc)
+         * @see org.efaps.esjp.common.jasperreport.AbstractDynamicReport_Base#addColumnDefintion(org.efaps.admin.event.Parameter, net.sf.dynamicreports.jasper.builder.JasperReportBuilder)
+         */
         @Override
         protected void addColumnDefintion(final Parameter _parameter,
                                           final JasperReportBuilder _builder)
@@ -279,6 +320,27 @@ public abstract class CostReport_Base
             }
             return ret;
         }
+
+        /**
+         * Gets the stock filter.
+         *
+         * @param _parameter the _parameter
+         * @return the stock filter
+         * @throws EFapsException the eFaps exception
+         */
+        protected StockFilter getStockFilter(final Parameter _parameter)
+            throws EFapsException
+        {
+            final EnumFilterValue filter = (EnumFilterValue)getFilteredReport().getFilterMap(_parameter).get("stock");
+            StockFilter ret;
+            if (filter != null) {
+                ret = (StockFilter) filter.getObject();
+            } else {
+                ret = StockFilter.NONE;
+            }
+            return ret;
+        }
+
 
         /**
          * Getter method for the instance variable {@link #filteredReport}.
@@ -599,6 +661,9 @@ public abstract class CostReport_Base
             addExpression(DynamicReports.field("productOID", String.class));
         }
 
+        /* (non-Javadoc)
+         * @see net.sf.dynamicreports.report.builder.expression.AbstractComplexExpression#evaluate(java.util.List, net.sf.dynamicreports.report.definition.ReportParameters)
+         */
         @Override
         public EmbeddedLink evaluate(final List<?> _values,
                                      final ReportParameters _reportParameters)

@@ -34,12 +34,15 @@
                 <property name="Field01">date</property>
                 <property name="Field02">currency</property>
                 <property name="Field03">type</property>
+                <property name="Field04">stock</property>
                 <property name="FilterType01">DateTime</property>
                 <property name="FilterType02">Currency</property>
                 <property name="FilterType03">Type</property>
+                <property name="FilterType04">Enum</property>
                 <property name="FilterDefault01">TODAY</property>
                 <property name="FilterDefault02">BASECURRENCY</property>
                 <property name="FilterDefault03">ALL</property>
+                <property name="FilterDefault04">org.efaps.esjp.products.reports.CostReport_Base$StockFilter</property>
                 <!-- Products-Configuration -->
                 <property name="QueryBldrConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="QueryBldrConfigAttribute">org.efaps.products.report.CostReport</property>
@@ -51,9 +54,11 @@
                 <property name="Field01">date</property>
                 <property name="Field02">currency</property>
                 <property name="Field03">type</property>
+                <property name="Field04">stock</property>
                 <property name="DBProperty01">org.efaps.esjp.products.reports.CostReport.date</property>
                 <property name="DBProperty02">org.efaps.esjp.products.reports.CostReport.currency</property>
                 <property name="DBProperty03">org.efaps.esjp.products.reports.CostReport.type</property>
+                <property name="DBProperty04">org.efaps.esjp.products.reports.CostReport.stock</property>
             </trigger>
         </field>
         <field name="report">
