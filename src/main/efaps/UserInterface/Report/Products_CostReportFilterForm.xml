@@ -37,8 +37,21 @@
             <property name="Label">org.efaps.esjp.products.reports.CostReport.currency</property>
             <trigger event="UI_FIELD_VALUE" method="getCurrencyFieldValue"
                 name="Products_CostReportFilterForm.currency.UI_FIELD_VALUE"
-                program="org.efaps.esjp.products.reports.InventoryReport">
+                program="org.efaps.esjp.products.reports.CostReport">
                 <property name="ShowEmptyValue">false</property>
+            </trigger>
+        </field>
+        <field name="type">
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="UIType">SNIPPLET</property>
+            <property name="Label">org.efaps.esjp.products.reports.CostReport.type</property>
+            <trigger event="UI_FIELD_VALUE" method="getTypeFieldValue"
+                name="Products_CostReportFilterForm.type.UI_FIELD_VALUE"
+                program="org.efaps.esjp.products.reports.CostReport">
+                <property name="ListType">CHECKBOX</property>
+                <!-- Products-Configuration -->
+                <property name="QueryBldrConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="QueryBldrConfigAttribute">org.efaps.products.report.CostReport</property>
             </trigger>
         </field>
     </definition>

@@ -21,6 +21,7 @@ package org.efaps.esjp.products.reports;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -42,13 +43,19 @@ import org.efaps.esjp.erp.CurrencyInst;
 import org.efaps.esjp.erp.FilteredReport;
 import org.efaps.esjp.products.Cost;
 import org.efaps.esjp.products.Cost_Base.CostBean;
+import org.efaps.ui.wicket.models.EmbeddedLink;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.builder.DynamicReports;
+import net.sf.dynamicreports.report.builder.column.ComponentColumnBuilder;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
+import net.sf.dynamicreports.report.builder.component.GenericElementBuilder;
+import net.sf.dynamicreports.report.builder.expression.AbstractComplexExpression;
+import net.sf.dynamicreports.report.builder.grid.ColumnGridComponentBuilder;
 import net.sf.dynamicreports.report.builder.grid.ColumnTitleGroupBuilder;
+import net.sf.dynamicreports.report.definition.ReportParameters;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRRewindableDataSource;
@@ -124,7 +131,9 @@ public abstract class CostReport_Base
         private final CostReport_Base filteredReport;
 
         /**
-         * @param _costReport_Base
+         * Instantiates a new dyn cost report.
+         *
+         * @param _filteredReport the _filtered report
          */
         public DynCostReport(final CostReport_Base _filteredReport)
         {
@@ -146,6 +155,7 @@ public abstract class CostReport_Base
             } else {
                 final List<DataBean> beans = new ArrayList<>();
                 final QueryBuilder queryBldr = getQueryBldrFromProperties(_parameter);
+                add2QueryBuilder(_parameter, queryBldr);
                 queryBldr.addWhereAttrEqValue(CIProducts.ProductAbstract.Active, true);
                 final MultiPrintQuery multi = queryBldr.getPrint();
                 multi.addAttribute(CIProducts.ProductAbstract.Name, CIProducts.ProductAbstract.Description);
@@ -175,11 +185,41 @@ public abstract class CostReport_Base
             return ret;
         }
 
+        /**
+         * Add to query builder.
+         *
+         * @param _parameter the _parameter
+         * @param _queryBldr the _query bldr
+         * @throws EFapsException on error
+         */
+        protected void add2QueryBuilder(final Parameter _parameter,
+                                        final QueryBuilder _queryBldr)
+            throws EFapsException
+        {
+            final Map<String, Object> filter = getFilteredReport().getFilterMap(_parameter);
+            if (filter.containsKey("type")) {
+                final TypeFilterValue typeFilter = (TypeFilterValue) filter.get("type");
+                _queryBldr.addWhereAttrEqValue(CIProducts.ProductAbstract.Type, typeFilter.getObject().toArray());
+            }
+        }
+
         @Override
         protected void addColumnDefintion(final Parameter _parameter,
                                           final JasperReportBuilder _builder)
             throws EFapsException
         {
+            final List<ColumnGridComponentBuilder> grid = new ArrayList<ColumnGridComponentBuilder>();
+
+            final GenericElementBuilder linkElement = DynamicReports.cmp.genericElement(
+                            "http://www.efaps.org", "efapslink")
+                            .addParameter(EmbeddedLink.JASPER_PARAMETERKEY, new LinkExpression())
+                            .setHeight(12).setWidth(25);
+            final ComponentColumnBuilder linkColumn = DynamicReports.col.componentColumn(linkElement).setTitle("");
+            if (getExType().equals(ExportType.HTML)) {
+                _builder.addColumn(linkColumn);
+                grid.add(linkColumn);
+            }
+
             final TextColumnBuilder<String> prodNameColumn = DynamicReports.col.column(
                             getFilteredReport().getDBProperty("Column.productName"),
                             "productName", DynamicReports.type.stringType());
@@ -192,7 +232,7 @@ public abstract class CostReport_Base
                             "origCost", DynamicReports.type.bigDecimalType());
             final TextColumnBuilder<String> origCurrencyColumn = DynamicReports.col.column(
                             getFilteredReport().getDBProperty("Column.origCurrency"),
-                            "origCurrency", DynamicReports.type.stringType());
+                            "origCurrency", DynamicReports.type.stringType()).setWidth(50);
 
             final TextColumnBuilder<DateTime> createdColumn = DynamicReports.col.column(
                             getFilteredReport().getDBProperty("Column.created"),
@@ -213,10 +253,10 @@ public abstract class CostReport_Base
                             "cost", DynamicReports.type.bigDecimalType());
             final TextColumnBuilder<String> currencyColumn = DynamicReports.col.column(
                             getFilteredReport().getDBProperty("Column.currency"),
-                            "currency", DynamicReports.type.stringType());
-
+                            "currency", DynamicReports.type.stringType()).setWidth(50);
+            grid.addAll(Arrays.asList(prodNameColumn, productDescrColumn, origGroup, costColumn, currencyColumn));
             _builder
-                .columnGrid(prodNameColumn, productDescrColumn, origGroup, costColumn, currencyColumn)
+                .columnGrid(grid.toArray(new ColumnGridComponentBuilder[grid.size()]))
                 .addColumn(prodNameColumn, productDescrColumn, origCostColumn, origCurrencyColumn, createdColumn,
                             validFromColumn, validUntilColumn, costColumn, currencyColumn);
         }
@@ -347,7 +387,6 @@ public abstract class CostReport_Base
             return this;
         }
 
-
         /**
          * Getter method for the instance variable {@link #productInst}.
          *
@@ -463,9 +502,8 @@ public abstract class CostReport_Base
         public String getOrigCurrency()
             throws EFapsException
         {
-            final Instance currencyInstance = getCostBean().getCurrencyInstance();
-            return currencyInstance != null && currencyInstance.isValid()
-                            ? CurrencyInst.get(currencyInstance).getSymbol() : null;
+            final Instance ret = getCostBean().getCurrencyInstance();
+            return ret != null && ret.isValid() ? CurrencyInst.get(ret).getSymbol() : null;
         }
 
         /**
@@ -526,6 +564,47 @@ public abstract class CostReport_Base
             throws EFapsException
         {
             return CurrencyInst.get(getCurrencyInstance()).getSymbol();
+        }
+
+        /**
+         * Gets the product oid.
+         *
+         * @return the product oid
+         * @throws EFapsException the e faps exception
+         */
+        public String getProductOID()
+            throws EFapsException
+        {
+            return getProductInst().getOid();
+        }
+    }
+
+    /**
+     * Expression used to render a link for the UserInterface.
+     */
+    public static class LinkExpression
+        extends AbstractComplexExpression<EmbeddedLink>
+    {
+
+        /**
+         * Needed for serialization.
+         */
+        private static final long serialVersionUID = 1L;
+
+        /**
+         * Costructor.
+         */
+        public LinkExpression()
+        {
+            addExpression(DynamicReports.field("productOID", String.class));
+        }
+
+        @Override
+        public EmbeddedLink evaluate(final List<?> _values,
+                                     final ReportParameters _reportParameters)
+        {
+            final String oid = (String) _values.get(0);
+            return EmbeddedLink.getJasperLink(oid);
         }
     }
 }
