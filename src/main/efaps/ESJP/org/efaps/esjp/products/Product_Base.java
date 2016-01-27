@@ -481,6 +481,17 @@ public abstract class Product_Base
                 cache = false;
             }
 
+            if (containsProperty(_parameter, "ContactIsSupplierProvider")) {
+                final Instance contactInst = Instance.get(_parameter.getParameterValue(
+                                getProperty(_parameter, "Field4Contact", "contact")));
+                if (contactInst.isValid()) {
+                    final QueryBuilder coQueryBldr = new QueryBuilder(CIProducts.Product2ContactAbstract);
+                    coQueryBldr.addWhereAttrEqValue(CIProducts.Product2ContactAbstract.ToAbstract, contactInst);
+                    queryBldr.addWhereAttrInQuery(CIProducts.ProductAbstract.ID,
+                                    coQueryBldr.getAttributeQuery(CIProducts.Product2ContactAbstract.FromAbstract));
+                }
+            }
+
             InterfaceUtils.addMaxResult2QueryBuilder4AutoComplete(_parameter, queryBldr);
 
             cache = add2QueryBldr4AutoComplete4Product(_parameter, queryBldr) && cache;
