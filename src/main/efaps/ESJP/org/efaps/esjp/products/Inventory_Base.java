@@ -127,7 +127,7 @@ public abstract class Inventory_Base
         if (isShowProdClass()) {
             multi.addSelect(selProdClass);
         }
-        multi.addSelect(selProdClass, selProdInst, selProdName, selProdDescr);
+        multi.addSelect(selProdInst, selProdName, selProdDescr);
         multi.addAttribute(CIProducts.InventoryAbstract.Quantity, CIProducts.InventoryAbstract.UoM,
                         CIProducts.InventoryAbstract.Reserved);
         multi.execute();
