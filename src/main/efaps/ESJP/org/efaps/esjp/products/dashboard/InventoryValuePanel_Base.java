@@ -92,7 +92,8 @@ public abstract class InventoryValuePanel_Base
     /**
      * Gets the currency inst.
      *
-     * @return the currency inst @throws EFapsException on error
+     * @return the currency inst
+     * @throws EFapsException the e faps exception
      */
     protected Instance getCurrencyInst()
         throws EFapsException
@@ -103,7 +104,8 @@ public abstract class InventoryValuePanel_Base
     /**
      * Gets the currency inst.
      *
-     * @return the currency inst @throws EFapsException on error
+     * @return the currency inst
+     * @throws EFapsException the e faps exception
      */
     protected String getDateFormat()
         throws EFapsException
@@ -141,108 +143,138 @@ public abstract class InventoryValuePanel_Base
         return getConfig().getProperty("DurationDate", "LAST");
     }
 
+    /**
+     * Gets the y axis min.
+     *
+     * @return the y axis min
+     */
+    protected Integer getYAxisMin()
+    {
+        return Integer.valueOf(getConfig().getProperty("YAxisMin", "0"));
+    }
+
+    /**
+     * Gets the y axis max.
+     *
+     * @return the y axis max
+     */
+    protected Integer getYAxisMax()
+    {
+        return getConfig().containsKey("YAxisMax") ? Integer.valueOf(getConfig().getProperty("YAxisMax")) : null;
+    }
 
     @Override
     public CharSequence getHtmlSnipplet()
         throws EFapsBaseException
     {
-        final ColumnsChart chart = new ColumnsChart().setPlotLayout(PlotLayout.STACKED)
-                        .setWidth(getWidth()).setHeight(getHeight()).setGap(5);
-        final String title = getTitle();
-        if (title != null && !title.isEmpty()) {
-            chart.setTitle(getTitle());
-        }
-        chart.setOrientation(Orientation.VERTICAL_CHART_LEGEND);
-        final Axis xAxis = new Axis().setName("x");
-        chart.addAxis(xAxis);
-
-        final List<Map<String, Object>> labels = new ArrayList<>();
-        final List<DateTime> dates = new ArrayList<>();
-        final String durationDate = getDurationDate();
-        for (int i = getDurationQuantity(); i > 0 ; i--) {
-            DateTime date;
-            switch (getDuration()) {
-                case "YEAR":
-                    date = new DateTime().withFieldAdded(DurationFieldType.years(), -i);
-                    break;
-                case "HALFYEAR":
-                    date = new DateTime().withFieldAdded(JodaTimeUtils.halfYears(), -i);
-                    break;
-                case "QUARTER":
-                    date = new DateTime().withFieldAdded(JodaTimeUtils.quarters(), -i);
-                    break;
-                case "WEEK":
-                    date = new DateTime().withFieldAdded(DurationFieldType.weeks(), -i);
-                    break;
-                case "DAY":
-                    date = new DateTime().withFieldAdded(DurationFieldType.days(), -i);
-                    break;
-                case "MONTH":
-                default:
-                    date = new DateTime().withFieldAdded(DurationFieldType.months(), -i);
-                    if ("LAST".equalsIgnoreCase(durationDate)) {
-                        date = date.plusMonths(1).withDayOfMonth(1).minusDays(1);
-                    }
-                    break;
+        CharSequence ret;
+        if (isCached()) {
+            ret = getFromCache();
+        } else {
+            final ColumnsChart chart = new ColumnsChart().setPlotLayout(PlotLayout.STACKED)
+                            .setWidth(getWidth()).setHeight(getHeight()).setGap(5);
+            final String title = getTitle();
+            if (title != null && !title.isEmpty()) {
+                chart.setTitle(getTitle());
             }
-            dates.add(date);
-        }
-        dates.add(new DateTime());
+            chart.setOrientation(Orientation.VERTICAL_CHART_LEGEND);
+            final Axis xAxis = new Axis().setName("x");
+            chart.addAxis(xAxis);
+            chart.addAxis(new Axis().setName("y").setVertical(true).setMin(getYAxisMin()).setMax(getYAxisMax()));
 
-        final Map<String, Serie<Data>> series = new HashMap<>();
-        int xValue = 0;
-        for (final DateTime date : dates) {
-            xValue++;
-
-            final Parameter parameter = new Parameter();
-            final Inventory inventory = new Inventory();
-            inventory.setDate(date);
-            inventory.setShowProdClass(getClassificationLevel() > 0);
-            inventory.setCurrencyInst(getCurrencyInst());
-
-            final Map<String, Object> map = new HashMap<>();
-            map.put("value", xValue);
-            map.put("text", Util.wrap4String(date.toString(getDateFormat(), Context.getThreadContext().getLocale())));
-            labels.add(map);
-
-            final List<? extends InventoryBean> beans = inventory.getInventory(parameter);
-
-            final Map<String, BigDecimal> values = new HashMap<>();
-            BigDecimal total = BigDecimal.ZERO;
-            for (final InventoryBean bean : beans) {
-                String serieName;
-                if (getClassificationLevel() > 0) {
-                    serieName = bean.getProdClass(getClassificationLevel());
-                } else {
-                    serieName = bean.getProdType();
+            final List<Map<String, Object>> labels = new ArrayList<>();
+            final List<DateTime> dates = new ArrayList<>();
+            final String durationDate = getDurationDate();
+            for (int i = getDurationQuantity(); i > 0; i--) {
+                DateTime date;
+                switch (getDuration()) {
+                    case "YEAR":
+                        date = new DateTime().withFieldAdded(DurationFieldType.years(), -i);
+                        break;
+                    case "HALFYEAR":
+                        date = new DateTime().withFieldAdded(JodaTimeUtils.halfYears(), -i);
+                        break;
+                    case "QUARTER":
+                        date = new DateTime().withFieldAdded(JodaTimeUtils.quarters(), -i);
+                        break;
+                    case "WEEK":
+                        date = new DateTime().withFieldAdded(DurationFieldType.weeks(), -i);
+                        break;
+                    case "DAY":
+                        date = new DateTime().withFieldAdded(DurationFieldType.days(), -i);
+                        break;
+                    case "MONTH":
+                    default:
+                        date = new DateTime().withFieldAdded(DurationFieldType.months(), -i);
+                        if ("LAST".equalsIgnoreCase(durationDate)) {
+                            date = date.plusMonths(1).withDayOfMonth(1).minusDays(1);
+                        }
+                        break;
                 }
-                if (!values.containsKey(serieName)) {
-                    values.put(serieName, BigDecimal.ZERO);
-                }
-                values.put(serieName, values.get(serieName).add(bean.getTotal()));
-                total = total.add(bean.getTotal());
+                dates.add(date);
             }
+            dates.add(new DateTime());
 
-            final DecimalFormat fmtr = NumberFormatter.get().getFormatter();
-            for (final Entry<String, BigDecimal> value : values.entrySet()) {
-                if (value.getValue().compareTo(BigDecimal.ZERO) > 0) {
-                    final Serie<Data> serie;
-                    if (series.containsKey(value.getKey())) {
-                        serie = series.get(value.getKey());
+            final Map<String, Serie<Data>> series = new HashMap<>();
+            int xValue = 0;
+            for (final DateTime date : dates) {
+                xValue++;
+
+                final Parameter parameter = new Parameter();
+                final Inventory inventory = new Inventory();
+                inventory.setDate(date);
+                inventory.setShowProdClass(getClassificationLevel() > 0);
+                inventory.setCurrencyInst(getCurrencyInst());
+
+                final Map<String, Object> map = new HashMap<>();
+                map.put("value", xValue);
+                map.put("text", Util.wrap4String(date.toString(getDateFormat(),
+                                Context.getThreadContext().getLocale())));
+                labels.add(map);
+
+                final List<? extends InventoryBean> beans = inventory.getInventory(parameter);
+
+                final Map<String, BigDecimal> values = new HashMap<>();
+                BigDecimal total = BigDecimal.ZERO;
+                for (final InventoryBean bean : beans) {
+                    String serieName;
+                    if (getClassificationLevel() > 0) {
+                        serieName = bean.getProdClass(getClassificationLevel());
                     } else {
-                        serie = new Serie<>();
-                        series.put(value.getKey(), serie);
-                        serie.setName(value.getKey());
-                        chart.addSerie(serie);
+                        serieName = bean.getProdType();
                     }
-                    final Data data = new Data().setXValue(xValue).setYValue(value.getValue()).setSimple(false);
-                    data.setTooltip(fmtr.format(value.getValue()) + " / " + fmtr.format(total));
-                    serie.addData(data);
+                    if (!values.containsKey(serieName)) {
+                        values.put(serieName, BigDecimal.ZERO);
+                    }
+                    values.put(serieName, values.get(serieName).add(bean.getTotal()));
+                    total = total.add(bean.getTotal());
+                }
+
+                final DecimalFormat fmtr = NumberFormatter.get().getFormatter();
+                for (final Entry<String, BigDecimal> value : values.entrySet()) {
+                    if (value.getValue().compareTo(BigDecimal.ZERO) > 0) {
+                        final Serie<Data> serie;
+                        if (series.containsKey(value.getKey())) {
+                            serie = series.get(value.getKey());
+                        } else {
+                            serie = new Serie<>();
+                            series.put(value.getKey(), serie);
+                            serie.setName(value.getKey());
+                            chart.addSerie(serie);
+                        }
+                        final Data data = new Data().setXValue(xValue).setYValue(value.getValue()).setSimple(false);
+                        data.setTooltip(serie.getName() + " " + fmtr.format(value.getValue())
+                                + " / " + fmtr.format(total));
+                        serie.addData(data);
+                    }
                 }
             }
+            xAxis.setLabels(Util.mapCollectionToObjectArray(labels));
+
+            ret = chart.getHtmlSnipplet();
+            cache(ret);
         }
-        xAxis.setLabels(Util.mapCollectionToObjectArray(labels));
-        return chart.getHtmlSnipplet();
+        return ret;
     }
 
     @Override
