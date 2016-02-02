@@ -25,6 +25,7 @@
         <childs>
             <child>Products_ProductStandartMyDesk_Menu_Action_Create</child>
             <child>Products_ProductInStockMyDesk_Menu_Action_Delete</child>
+            <child>Products_PriceMassUpdate</child>
         </childs>
     </definition>
 </ui-menu>

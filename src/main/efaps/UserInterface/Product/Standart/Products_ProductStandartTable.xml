@@ -40,18 +40,56 @@
             <property name="Label">Products_ProductNonStockTable/Description.Label</property>
             <property name="ModeSearch">READONLY</property>
         </field>
-        <field name="classification">
+         <field name="classification">
             <property name="Select">class.type</property>
             <property name="Label">Products_ProductNonStockTable.classification.Label</property>
+            <property name="FilterType">CLASSIFICATION</property>
+            <property name="FilterRequired">true</property>
+            <property name="FilterBase">DATABASE</property>
+            <property name="Classification">Products_ProductStandartClass</property>
             <trigger event="UI_FIELD_FORMAT" method="classificationFieldFormat"
                 name="Contacts_ContactTable.classification"
                 program="org.efaps.esjp.common.uiform.Field" />
             <trigger event="UI_ACCESSCHECK" method="configCheck"
-                name="Products_ProductStandartForm.classification.UI_ACCESSCHECK"
-                program="org.efaps.esjp.admin.access.AccessCheck4UI">
+                name="Products_ProductStandartForm.classification.UI_ACCESSCHECK.1"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                index="1">
                 <!-- Products-Configuration -->
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Standart.ActivateClassification</property>
+            </trigger>
+            <trigger event="UI_ACCESSCHECK" method="configCheck"
+                name="Products_ProductStandartTable.classification.UI_ACCESSCHECK.2"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                index="2">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.Standart.ActivateFamilies</property>
+                <property name="Inverse">true</property>
+            </trigger>
+        </field>
+        <field name="classificationWithFamily">
+            <property name="Select">class.type</property>
+            <property name="Label">Products_ProductNonStockTable.classification.Label</property>
+            <property name="FilterType">PICKLIST</property>
+            <trigger event="UI_FIELD_FORMAT" method="classificationFieldFormat"
+                name="Contacts_ContactTable.classification"
+                program="org.efaps.esjp.common.uiform.Field" />
+            <trigger event="UI_ACCESSCHECK" method="configCheck"
+                name="Products_ProductStandartForm.classificationWithFamily.UI_ACCESSCHECK.1"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                index="1">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.Standart.ActivateClassification</property>
+            </trigger>
+            <trigger event="UI_ACCESSCHECK" method="configCheck"
+                name="Products_ProductStandartTable.classificationWithFamily.UI_ACCESSCHECK.2"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                index="2">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.Standart.ActivateFamilies</property>
             </trigger>
         </field>
         <field name="productFamilyLink">
@@ -75,6 +113,7 @@
         <field name="active">
             <property name="Attribute">Active</property>
             <property name="Label">Products_ProductNonStockTable/Active.Label</property>
+            <property name="FilterType">PICKLIST</property>
         </field>
         <field name="buttonOpenInNewWindow">
             <icon>eFapsActionNewWindow</icon>
