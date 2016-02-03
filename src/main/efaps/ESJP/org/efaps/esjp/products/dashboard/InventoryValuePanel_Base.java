@@ -189,23 +189,23 @@ public abstract class InventoryValuePanel_Base
                 DateTime date;
                 switch (getDuration()) {
                     case "YEAR":
-                        date = new DateTime().withFieldAdded(DurationFieldType.years(), -i);
+                        date = new DateTime().withTimeAtStartOfDay().withFieldAdded(DurationFieldType.years(), -i);
                         break;
                     case "HALFYEAR":
-                        date = new DateTime().withFieldAdded(JodaTimeUtils.halfYears(), -i);
+                        date = new DateTime().withTimeAtStartOfDay().withFieldAdded(JodaTimeUtils.halfYears(), -i);
                         break;
                     case "QUARTER":
-                        date = new DateTime().withFieldAdded(JodaTimeUtils.quarters(), -i);
+                        date = new DateTime().withTimeAtStartOfDay().withFieldAdded(JodaTimeUtils.quarters(), -i);
                         break;
                     case "WEEK":
-                        date = new DateTime().withFieldAdded(DurationFieldType.weeks(), -i);
+                        date = new DateTime().withTimeAtStartOfDay().withFieldAdded(DurationFieldType.weeks(), -i);
                         break;
                     case "DAY":
-                        date = new DateTime().withFieldAdded(DurationFieldType.days(), -i);
+                        date = new DateTime().withTimeAtStartOfDay().withFieldAdded(DurationFieldType.days(), -i);
                         break;
                     case "MONTH":
                     default:
-                        date = new DateTime().withFieldAdded(DurationFieldType.months(), -i);
+                        date = new DateTime().withTimeAtStartOfDay().withFieldAdded(DurationFieldType.months(), -i);
                         if ("LAST".equalsIgnoreCase(durationDate)) {
                             date = date.plusMonths(1).withDayOfMonth(1).minusDays(1);
                         }
@@ -213,7 +213,7 @@ public abstract class InventoryValuePanel_Base
                 }
                 dates.add(date);
             }
-            dates.add(new DateTime());
+            dates.add(new DateTime().withTimeAtStartOfDay());
 
             final Map<String, Serie<Data>> series = new HashMap<>();
             int xValue = 0;
