@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2015 The eFaps Team
+ * Copyright 2003 - 2016 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -210,6 +210,7 @@ public abstract class Inventory_Base
             while (multi.next()) {
                 final TransactionBean bean = getTransactionBean(_parameter);
                 final Instance prodInst = multi.<Instance>getSelect(selProdInst);
+                _prodInsts.add(prodInst);
                 bean.setInstance(multi.getCurrentInstance())
                                 .setProdInstance(prodInst)
                                 .setQuantity(multi.<BigDecimal>getAttribute(CIProducts.TransactionAbstract.Quantity))
@@ -1201,7 +1202,7 @@ public abstract class Inventory_Base
         {
             final String ret;
             if (getProdClasslist() == null) {
-                ret= "-";
+                ret = "-";
             } else {
                 final ClassSelect classSel =  new ClassSelect() {
                     @Override
