@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
 
-  Copyright 2003 - 2013 The eFaps Team
+  Copyright 2003 - 2016 The eFaps Team
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -13,11 +14,6 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-
-  Author:          The eFaps Team
-  Revision:        $Rev: 14786 $
-  Last Changed:    $Date: 2015-01-27 19:31:01 -0500 (Tue, 27 Jan 2015) $
-  Last Changed By: $Author: jan@moxter.net $
 
 -->
 <ui-form xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -55,7 +51,8 @@
                 <property name="FilterDefault05">org.efaps.esjp.products.reports.LastMovementReport_Base$TypeDisplay</property>
                 <property name="FilterDefault06">org.efaps.esjp.products.reports.LastMovementReport_Base$ClassDisplay</property>
             </trigger>
-            <trigger event="UI_FIELD_VALUE" index="2" method="getFilterFieldValue" name="Products_LastMovementReportForm.filter.UI_FIELD_VALUE.2"
+            <trigger event="UI_FIELD_VALUE" index="2" method="getFilterFieldValue"
+                name="Products_LastMovementReportForm.filter.UI_FIELD_VALUE.2"
                 program="org.efaps.esjp.products.reports.LastMovementReport">
                 <property name="FilterKey">org.efaps.esjp.products.reports.LastMovementReport.FilterKey</property>
                 <property name="Field01">date</property>
@@ -77,7 +74,8 @@
         <field name="report">
             <property name="HideLabel">true</property>
             <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
-            <trigger event="UI_FIELD_VALUE" method="generateReport" name="Products_LastMovementReportForm.report.UI_FIELD_VALUE"
+            <trigger event="UI_FIELD_VALUE" method="generateReport"
+                name="Products_LastMovementReportForm.report.UI_FIELD_VALUE"
                 program="org.efaps.esjp.products.reports.LastMovementReport">
                 <property name="FilterKey">org.efaps.esjp.products.reports.LastMovementReport.FilterKey</property>
             </trigger>

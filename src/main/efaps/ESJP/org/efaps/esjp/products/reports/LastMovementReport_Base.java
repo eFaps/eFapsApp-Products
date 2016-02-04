@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2015 The eFaps Team
+ * Copyright 2003 - 2016 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import java.awt.Color;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -29,6 +31,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.collections4.comparators.ComparatorChain;
 import org.efaps.admin.dbproperty.DBProperties;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
@@ -40,6 +43,7 @@ import org.efaps.db.Instance;
 import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.QueryBuilder;
 import org.efaps.db.SelectBuilder;
+import org.efaps.esjp.ci.CIERP;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.jasperreport.AbstractDynamicReport;
 import org.efaps.esjp.common.jasperreport.datatype.DateTimeDate;
@@ -48,7 +52,6 @@ import org.efaps.esjp.products.Inventory;
 import org.efaps.esjp.products.Inventory_Base.InventoryBean;
 import org.efaps.esjp.products.StorageGroup;
 import org.efaps.esjp.products.util.Products;
-import org.efaps.esjp.products.util.ProductsSettings;
 import org.efaps.ui.wicket.models.EmbeddedLink;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
@@ -83,19 +86,53 @@ public abstract class LastMovementReport_Base
     extends FilteredReport
 {
 
+    /**
+     * The Enum StorageDisplay.
+     *
+     */
     public enum StorageDisplay
     {
-        NONE, COLUMN, GROUP;
+
+        /** The none. */
+        NONE,
+
+        /** The column. */
+        COLUMN,
+
+        /** The group. */
+        GROUP;
     }
 
+    /**
+     * The Enum TypeDisplay.
+     */
     public enum TypeDisplay
     {
-        NONE, COLUMN, GROUP;
+
+        /** The none. */
+        NONE,
+
+        /** The column. */
+        COLUMN,
+
+        /** The group. */
+        GROUP;
     }
 
+    /**
+     * The Enum ClassDisplay.
+     */
     public enum ClassDisplay
     {
-        NONE, COLUMN, GROUP;
+
+        /** The none. */
+        NONE,
+
+        /** The column. */
+        COLUMN,
+
+        /** The group. */
+        GROUP;
     }
 
     /**
@@ -155,15 +192,20 @@ public abstract class LastMovementReport_Base
         extends AbstractDynamicReport
     {
 
+        /** The filtered report. */
         private final FilteredReport filteredReport;
+
+        /** The beans. */
         private List<DataBean> beans;
 
         /**
-         * @param _lastMovementReport_Base
+         * Instantiates a new dyn last movement report.
+         *
+         * @param _filteredReport the filtered report
          */
-        public DynLastMovementReport(final LastMovementReport_Base _lastMovementReport_Base)
+        public DynLastMovementReport(final LastMovementReport_Base _filteredReport)
         {
-            this.filteredReport = _lastMovementReport_Base;
+            this.filteredReport = _filteredReport;
         }
 
         @Override
@@ -195,16 +237,19 @@ public abstract class LastMovementReport_Base
                 }
                 final Set<Instance> done = new HashSet<>();
                 final QueryBuilder queryBldr = new QueryBuilder(CIProducts.TransactionInOutAbstract);
+                add2QueryBldr(_parameter, queryBldr);
                 queryBldr.addWhereAttrLessValue(CIProducts.TransactionInOutAbstract.Date, date.plusMinutes(1));
                 queryBldr.addWhereAttrGreaterValue(CIProducts.TransactionInOutAbstract.Date, mindate.minusMinutes(1));
-                queryBldr.addWhereAttrEqValue(CIProducts.TransactionInOutAbstract.Product, prod2beans.keySet().toArray());
+                queryBldr.addWhereAttrEqValue(CIProducts.TransactionInOutAbstract.Product, prod2beans.keySet()
+                                .toArray());
                 queryBldr.addOrderByAttributeDesc(CIProducts.TransactionInOutAbstract.Date);
                 final MultiPrintQuery multi = queryBldr.getPrint();
                 multi.setEnforceSorted(true);
-                final SelectBuilder selProdInst = SelectBuilder.get().linkto(CIProducts.TransactionInOutAbstract.Product)
-                                .instance();
+                final SelectBuilder selProdInst = SelectBuilder.get().linkto(
+                                CIProducts.TransactionInOutAbstract.Product).instance();
                 multi.addSelect(selProdInst);
-                multi.addAttribute(CIProducts.TransactionInOutAbstract.Date, CIProducts.TransactionInOutAbstract.Quantity);
+                multi.addAttribute(CIProducts.TransactionInOutAbstract.Date,
+                                CIProducts.TransactionInOutAbstract.Quantity);
                 multi.execute();
 
                 while (multi.next() && done.size() < tmpBeans.size()) {
@@ -223,16 +268,58 @@ public abstract class LastMovementReport_Base
                             done.add(prodInst);
                         }
                         while (beanIter.hasNext()) {
-                            beanIter.next().setLastDate(bean.getLastDate()).setDate(bean.getDate());
+                            beanIter.next().setLastOutDate(bean.getLastOutDate()).setDate(bean.getDate())
+                                .setLastOutAmount(quantity);
                         }
                     }
                 }
+                final ComparatorChain<DataBean> chain = new ComparatorChain<DataBean>();
+                if (!StorageDisplay.NONE.equals(getStorageDisplay(_parameter))) {
+                    chain.addComparator(new Comparator<DataBean>()
+                    {
+                        @Override
+                        public int compare(final DataBean _bean0,
+                                           final DataBean _bean1)
+                        {
+                            return _bean0.getStorage().compareTo(_bean1.getStorage());
+                        }
+                    });
+                }
+                if (!TypeDisplay.NONE.equals(getTypeDisplay(_parameter))) {
+                    chain.addComparator(new Comparator<DataBean>()
+                    {
+                        @Override
+                        public int compare(final DataBean _bean0,
+                                           final DataBean _bean1)
+                        {
+                            return _bean0.getProdType().compareTo(_bean1.getProdType());
+                        }
+                    });
+                }
+                chain.addComparator(new Comparator<DataBean>()
+                {
+                    @Override
+                    public int compare(final DataBean _bean0,
+                                       final DataBean _bean1)
+                    {
+                        return _bean0.getProdName().compareTo(_bean1.getProdName());
+                    }
+                });
+                Collections.sort(tmpBeans, chain);
+
                 ret =  new JRBeanCollectionDataSource(tmpBeans);
                 this.filteredReport.cache(_parameter, ret);
             }
             return ret;
         }
 
+        /**
+         * Gets the storage display.
+         *
+         * @param _parameter Parameter as passed by the eFaps API
+         * @return the storage display
+         * @throws EFapsException on error
+         */
         protected StorageDisplay getStorageDisplay(final Parameter _parameter)
             throws EFapsException
         {
@@ -246,6 +333,14 @@ public abstract class LastMovementReport_Base
             return ret;
         }
 
+        /**
+         * Gets the beans.
+         *
+         * @param _parameter Parameter as passed by the eFaps API
+         * @param _inventory the inventory
+         * @return the beans
+         * @throws EFapsException on error
+         */
         @SuppressWarnings("unchecked")
         public List<DataBean> getBeans(final Parameter _parameter,
                                        final Inventory _inventory)
@@ -268,12 +363,45 @@ public abstract class LastMovementReport_Base
             return this.beans;
         }
 
+        /**
+         * Add to query bldr.
+         *
+         * @param _parameter Parameter as passed by the eFaps API
+         * @param _queryBldr the query bldr
+         * @throws EFapsException on error
+         */
+        protected void add2QueryBldr(final Parameter _parameter,
+                                     final QueryBuilder _queryBldr)
+            throws EFapsException
+        {
+            // only transactions belonging to offical Documents
+            final QueryBuilder queryBldr = getQueryBldrFromProperties(_parameter, Products.REPLASTMOVE.get());
+            if (queryBldr != null) {
+                _queryBldr.addWhereAttrInQuery(CIProducts.TransactionAbstract.Document,
+                                queryBldr.getAttributeQuery(CIERP.DocumentAbstract.ID));
+            }
+        }
+
+        /**
+         * Gets the filter map.
+         *
+         * @param _parameter Parameter as passed by the eFaps API
+         * @return the filter map
+         * @throws EFapsException on error
+         */
         protected Map<String, Object> getFilterMap(final Parameter _parameter)
             throws EFapsException
         {
             return getFilteredReport().getFilterMap(_parameter);
         }
 
+        /**
+         * Gets the storage insts.
+         *
+         * @param _parameter Parameter as passed by the eFaps API
+         * @return the storage insts
+         * @throws EFapsException on error
+         */
         protected List<Instance> getStorageInsts(final Parameter _parameter)
             throws EFapsException
         {
@@ -295,6 +423,13 @@ public abstract class LastMovementReport_Base
             return ret;
         }
 
+        /**
+         * Gets the currency inst.
+         *
+         * @param _parameter Parameter as passed by the eFaps API
+         * @return the currency inst
+         * @throws EFapsException on error
+         */
         protected Instance getCurrencyInst(final Parameter _parameter)
             throws EFapsException
         {
@@ -309,7 +444,13 @@ public abstract class LastMovementReport_Base
             return ret;
         }
 
-
+        /**
+         * Gets the type display.
+         *
+         * @param _parameter Parameter as passed by the eFaps API
+         * @return the type display
+         * @throws EFapsException on error
+         */
         protected TypeDisplay getTypeDisplay(final Parameter _parameter)
             throws EFapsException
         {
@@ -323,6 +464,13 @@ public abstract class LastMovementReport_Base
             return ret;
         }
 
+        /**
+         * Gets the class display.
+         *
+         * @param _parameter Parameter as passed by the eFaps API
+         * @return the class display
+         * @throws EFapsException on error
+         */
         protected ClassDisplay getClassDisplay(final Parameter _parameter)
             throws EFapsException
         {
@@ -336,11 +484,16 @@ public abstract class LastMovementReport_Base
             return ret;
         }
 
+        /**
+         * Adds the conditional style.
+         *
+         * @param _styleBldr the style bldr
+         * @throws EFapsException on error
+         */
         protected void addConditionalStyle(final StyleBuilder _styleBldr)
             throws EFapsException
         {
-            final Properties properties = Products.getSysConfig().getAttributeValueAsProperties(
-                            ProductsSettings.LASTMOVEREP, true);
+            final Properties properties = Products.REPLASTMOVE.get();
             int j = 1;
             while (properties.containsKey("color" + String.format("%02d", j))) {
                 final ConditionExpression condition = new ConditionExpression();
@@ -358,11 +511,17 @@ public abstract class LastMovementReport_Base
             }
         }
 
+        /**
+         * Gets the max days.
+         *
+         * @param _parameter Parameter as passed by the eFaps API
+         * @return the max days
+         * @throws EFapsException on error
+         */
         public Integer getMaxDays(final Parameter _parameter)
             throws EFapsException
         {
-            final Properties properties = Products.getSysConfig().getAttributeValueAsProperties(
-                            ProductsSettings.LASTMOVEREP, true);
+            final Properties properties = Products.REPLASTMOVE.get();
             return Integer.parseInt(properties.getProperty("maxDays", "180"));
         }
 
@@ -376,6 +535,12 @@ public abstract class LastMovementReport_Base
             return this.filteredReport;
         }
 
+        /**
+         * Gets the inventory object.
+         *
+         * @param _parameter Parameter as passed by the eFaps API
+         * @return the inventory object
+         */
         protected Inventory getInventoryObject(final Parameter _parameter)
         {
             return new Inventory()
@@ -398,8 +563,8 @@ public abstract class LastMovementReport_Base
 
             ColumnGroupBuilder storageGroup = null;
             if (!StorageDisplay.NONE.equals(getStorageDisplay(_parameter))) {
-                final TextColumnBuilder<String> storageColumn = DynamicReports.col.column(getLabel("Column.storage"),
-                                "storage", DynamicReports.type.stringType());
+                final TextColumnBuilder<String> storageColumn = DynamicReports.col.column(getFilteredReport()
+                                .getDBProperty("Column.storage"), "storage", DynamicReports.type.stringType());
                 _builder.addColumn(storageColumn);
 
                 if (StorageDisplay.GROUP.equals(getStorageDisplay(_parameter))) {
@@ -410,12 +575,14 @@ public abstract class LastMovementReport_Base
                 }
             }
 
-            final ColumnTitleGroupBuilder prodGroup = DynamicReports.grid.titleGroup(getLabel("TitleGroup.product"));
+            final ColumnTitleGroupBuilder prodGroup = DynamicReports.grid.titleGroup(getFilteredReport().getDBProperty(
+                            "TitleGroup.product"));
 
             ColumnGroupBuilder typeGroup = null;
             if (!TypeDisplay.NONE.equals(getTypeDisplay(_parameter))) {
-                final TextColumnBuilder<String> typeColumn = DynamicReports.col.column(getLabel("Column.prodType"),
-                                "prodType", DynamicReports.type.stringType()).setWidth(150);
+                final TextColumnBuilder<String> typeColumn = DynamicReports.col.column(getFilteredReport()
+                                .getDBProperty("Column.prodType"), "prodType", DynamicReports.type.stringType())
+                                .setWidth(150);
                 _builder.addColumn(typeColumn);
 
                 if (TypeDisplay.GROUP.equals(getTypeDisplay(_parameter))) {
@@ -427,8 +594,9 @@ public abstract class LastMovementReport_Base
             }
             ColumnGroupBuilder classGroup = null;
             if (!ClassDisplay.NONE.equals(getClassDisplay(_parameter))) {
-                final TextColumnBuilder<String> classColumn = DynamicReports.col.column(getLabel("Column.prodClass"),
-                                "prodClass", DynamicReports.type.stringType()).setWidth(250);
+                final TextColumnBuilder<String> classColumn = DynamicReports.col.column(getFilteredReport()
+                                .getDBProperty("Column.prodClass"), "prodClass", DynamicReports.type.stringType())
+                                .setWidth(250);
                 _builder.addColumn(classColumn);
 
                 if (ClassDisplay.GROUP.equals(getClassDisplay(_parameter))) {
@@ -439,27 +607,27 @@ public abstract class LastMovementReport_Base
                 }
             }
             if (getExType().equals(ExportType.HTML)) {
-                final GenericElementBuilder linkElement = DynamicReports.cmp.genericElement(
-                                "http://www.efaps.org", "efapslink")
-                                .addParameter(EmbeddedLink.JASPER_PARAMETERKEY, new ProductLinkExpression())
+                final GenericElementBuilder linkElement = DynamicReports.cmp.genericElement("http://www.efaps.org",
+                                "efapslink").addParameter(EmbeddedLink.JASPER_PARAMETERKEY, new ProductLinkExpression())
                                 .setHeight(12).setWidth(25);
                 final ComponentColumnBuilder linkColumn = DynamicReports.col.componentColumn(linkElement).setTitle("");
                 _builder.addColumn(linkColumn);
                 prodGroup.add(linkColumn);
             }
 
-            final TextColumnBuilder<String> prodNameColumn = DynamicReports.col.column(getLabel("Column.prodName"),
-                            "prodName", DynamicReports.type.stringType());
-            final TextColumnBuilder<String> prodDescrColumn = DynamicReports.col.column(getLabel("Column.prodDescr"),
-                            "prodDescr", DynamicReports.type.stringType()).setWidth(200);
-            final TextColumnBuilder<String> uoMColumn = DynamicReports.col.column(getLabel("Column.uoM"),
-                            "uoM", DynamicReports.type.stringType());
+            final TextColumnBuilder<String> prodNameColumn = DynamicReports.col.column(getFilteredReport()
+                            .getDBProperty("Column.prodName"), "prodName", DynamicReports.type.stringType());
+            final TextColumnBuilder<String> prodDescrColumn = DynamicReports.col.column(getFilteredReport()
+                            .getDBProperty("Column.prodDescr"), "prodDescr", DynamicReports.type.stringType()).setWidth(
+                                            200);
+            final TextColumnBuilder<String> uoMColumn = DynamicReports.col.column(getFilteredReport().getDBProperty(
+                            "Column.uoM"), "uoM", DynamicReports.type.stringType());
             _builder.addColumn(prodNameColumn, prodDescrColumn, uoMColumn);
 
-            final TextColumnBuilder<BigDecimal> quantityColumn = DynamicReports.col.column(getLabel("Column.quantity"),
-                            "quantity", DynamicReports.type.bigDecimalType());
-            final TextColumnBuilder<BigDecimal> reservedColumn = DynamicReports.col.column(getLabel("Column.reserved"),
-                            "reserved", DynamicReports.type.bigDecimalType());
+            final TextColumnBuilder<BigDecimal> quantityColumn = DynamicReports.col.column(getFilteredReport()
+                            .getDBProperty("Column.quantity"), "quantity", DynamicReports.type.bigDecimalType());
+            final TextColumnBuilder<BigDecimal> reservedColumn = DynamicReports.col.column(getFilteredReport()
+                            .getDBProperty("Column.reserved"), "reserved", DynamicReports.type.bigDecimalType());
             _builder.addColumn(quantityColumn, reservedColumn);
 
             final StyleBuilder styleBldr = DynamicReports.stl.style().setBold(true);
@@ -468,35 +636,42 @@ public abstract class LastMovementReport_Base
             }
             addConditionalStyle(styleBldr);
 
-            final TextColumnBuilder<DateTime> lastDateColumn = DynamicReports.col.column(getLabel("Column.lastDate"),
-                            "lastDate", DateTimeDate.get());
+            final TextColumnBuilder<DateTime> lastOutDateColumn = DynamicReports.col.column(getFilteredReport()
+                            .getDBProperty("Column.lastOutDate"), "lastOutDate", DateTimeDate.get());
 
-            final TextColumnBuilder<Integer> daysColumn = DynamicReports.col.column(getLabel("Column.days"),
-                            "days", DynamicReports.type.integerType());
+            final TextColumnBuilder<BigDecimal> lastOutAmountColumn = DynamicReports.col.column(getFilteredReport()
+                            .getDBProperty("Column.lastOutAmount"), "lastOutAmount",
+                            DynamicReports.type.bigDecimalType());
+
+
+            final TextColumnBuilder<DateTime> lastInDateColumn = DynamicReports.col.column(getFilteredReport()
+                            .getDBProperty("Column.lastInDate"), "lastInDate", DateTimeDate.get());
+
+            final TextColumnBuilder<BigDecimal> lastInAmountColumn = DynamicReports.col.column(getFilteredReport()
+                            .getDBProperty("Column.lastInAmount"), "lastInAmount",
+                            DynamicReports.type.bigDecimalType());
+
+            final TextColumnBuilder<Integer> daysColumn = DynamicReports.col.column(getFilteredReport().getDBProperty(
+                            "Column.days"), "days", DynamicReports.type.integerType());
             daysColumn.setStyle(styleBldr);
 
-            _builder.addColumn(lastDateColumn, daysColumn);
+            _builder.addColumn(lastOutDateColumn, lastOutAmountColumn, daysColumn, lastInDateColumn,
+                            lastInAmountColumn);
 
-            final TextColumnBuilder<BigDecimal> costColumn = DynamicReports.col.column(getLabel("Column.cost"),
-                            "cost", DynamicReports.type.bigDecimalType());
+            final TextColumnBuilder<BigDecimal> costColumn = DynamicReports.col.column(getFilteredReport()
+                            .getDBProperty("Column.cost"), "cost", DynamicReports.type.bigDecimalType());
 
-            final TextColumnBuilder<BigDecimal> totalColumn = DynamicReports.col.column(getLabel("Column.total"),
-                            "total", DynamicReports.type.bigDecimalType());
+            final TextColumnBuilder<BigDecimal> totalColumn = DynamicReports.col.column(getFilteredReport()
+                            .getDBProperty("Column.total"), "total", DynamicReports.type.bigDecimalType());
 
-            final TextColumnBuilder<String> currencyColumn = DynamicReports.col.column(getLabel("Column.currency"),
-                            "currency", DynamicReports.type.stringType());
+            final TextColumnBuilder<String> currencyColumn = DynamicReports.col.column(getFilteredReport()
+                            .getDBProperty("Column.currency"), "currency", DynamicReports.type.stringType());
 
             if (getCurrencyInst(_parameter) != null) {
                 _builder.addColumn(costColumn, totalColumn, currencyColumn);
                 _builder.addSubtotalAtColumnFooter(DynamicReports.sbt.sum(totalColumn));
             }
         }
-
-        protected String getLabel(final String _key)
-        {
-            return DBProperties.getProperty(LastMovementReport.class.getName() + "." + _key);
-        }
-
     }
 
     /**
@@ -528,14 +703,30 @@ public abstract class LastMovementReport_Base
         }
     }
 
+    /**
+     * The Class DataBean.
+     *
+     */
     public static class DataBean
         extends InventoryBean
     {
 
-        private DateTime lastDate;
+        /** The last date. */
+        private DateTime lastOutDate;
 
+        /** The last amount. */
+        private BigDecimal lastOutAmount;
+
+        /** The last date. */
+        private DateTime lastInDate;
+
+        /** The last amount. */
+        private BigDecimal lastInAmount;
+
+        /** The date. */
         private DateTime date;
 
+        /** The check quantity. */
         private BigDecimal checkQuantity = BigDecimal.ZERO;
 
         /**
@@ -543,31 +734,36 @@ public abstract class LastMovementReport_Base
          *
          * @return value of instance variable {@link #lastDate}
          */
-        public DateTime getLastDate()
+        public DateTime getLastOutDate()
         {
-            return this.lastDate;
+            return this.lastOutDate;
         }
 
         /**
-         * @param _transDate
-         * @param _quantity
+         * Adds the movement.
+         *
+         * @param _transDate the trans date
+         * @param _quantity the quantity
+         * @return true, if successful
          */
         public boolean addMovement(final DateTime _transDate,
                                    final BigDecimal _quantity)
         {
             boolean ret = false;
             // first register
-            if (this.lastDate == null) {
-                setLastDate(_transDate);
+            if (this.lastOutDate == null) {
+                setLastOutDate(_transDate);
+                setLastOutAmount(_quantity);
                 this.checkQuantity = _quantity;
             } else {
                 // new register on the same day
-                if (Days.daysBetween(getLastDate(), _transDate).getDays() == 0) {
+                if (Days.daysBetween(getLastOutDate(), _transDate).getDays() == 0) {
                     this.checkQuantity = this.checkQuantity.add(_quantity);
                 } else {
                     // the movements on one day equal ZERO ==> internal movement
                     if (this.checkQuantity.compareTo(BigDecimal.ZERO) == 0) {
-                        setLastDate(_transDate);
+                        setLastOutDate(_transDate);
+                        setLastOutAmount(_quantity);
                         this.checkQuantity = _quantity;
                     } else {
                         ret = true;
@@ -581,10 +777,11 @@ public abstract class LastMovementReport_Base
          * Setter method for instance variable {@link #lastDate}.
          *
          * @param _lastDate value for instance variable {@link #lastDate}
+         * @return the data bean
          */
-        public DataBean setLastDate(final DateTime _lastDate)
+        public DataBean setLastOutDate(final DateTime _lastDate)
         {
-            this.lastDate = _lastDate;
+            this.lastOutDate = _lastDate;
             return this;
         }
 
@@ -596,8 +793,8 @@ public abstract class LastMovementReport_Base
         public Integer getDays()
         {
             Integer ret = -1;
-            if (getLastDate() != null && getDate() != null) {
-                ret = Days.daysBetween(getLastDate(), getDate()).getDays();
+            if (getLastOutDate() != null && getDate() != null) {
+                ret = Days.daysBetween(getLastOutDate(), getDate()).getDays();
             }
             return ret;
         }
@@ -616,29 +813,103 @@ public abstract class LastMovementReport_Base
          * Setter method for instance variable {@link #date}.
          *
          * @param _date value for instance variable {@link #date}
+         * @return the data bean
          */
         public DataBean setDate(final DateTime _date)
         {
             this.date = _date;
             return this;
         }
+
+        /**
+         * Gets the last amount.
+         *
+         * @return the last amount
+         */
+        public BigDecimal getLastOutAmount()
+        {
+            return this.lastOutAmount;
+        }
+
+        /**
+         * Sets the last amount.
+         *
+         * @param _lastAmount the last amount
+         * @return the data bean
+         */
+        public DataBean setLastOutAmount(final BigDecimal _lastAmount)
+        {
+            this.lastOutAmount = _lastAmount;
+            return this;
+        }
+
+        /**
+         * Gets the last date.
+         *
+         * @return the last date
+         */
+        public DateTime getLastInDate()
+        {
+            return this.lastInDate;
+        }
+
+        /**
+         * Sets the last in date.
+         *
+         * @param _lastInDate the last in date
+         * @return the data bean
+         */
+        public DataBean setLastInDate(final DateTime _lastInDate)
+        {
+            this.lastInDate = _lastInDate;
+            return this;
+        }
+
+        /**
+         * Gets the last amount.
+         *
+         * @return the last amount
+         */
+        public BigDecimal getLastInAmount()
+        {
+            return this.lastInAmount;
+        }
+
+        /**
+         * Sets the last in amount.
+         *
+         * @param _lastInAmount the last in amount
+         * @return the data bean
+         */
+        public DataBean setLastInAmount(final BigDecimal _lastInAmount)
+        {
+            this.lastInAmount = _lastInAmount;
+            return this;
+        }
     }
 
+    /**
+     * The Class ConditionExpression.
+     *
+     */
     public static class ConditionExpression
         extends AbstractSimpleExpression<Boolean>
     {
 
-        private String greater;
-
-        private String smaller;
-
+        /** The Constant serialVersionUID. */
         private static final long serialVersionUID = 1L;
 
+        /** The greater. */
+        private String greater;
+
+        /** The smaller. */
+        private String smaller;
+
         @Override
-        public Boolean evaluate(final ReportParameters reportParameters)
+        public Boolean evaluate(final ReportParameters _reportParameters)
         {
             boolean ret = true;
-            final Integer days = reportParameters.getValue("days");
+            final Integer days = _reportParameters.getValue("days");
 
             if (getSmaller() != null) {
                 ret = ret && Integer.parseInt(getSmaller()) > days;
