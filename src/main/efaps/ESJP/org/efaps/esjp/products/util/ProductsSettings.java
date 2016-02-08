@@ -65,10 +65,4 @@ public interface ProductsSettings
      * Link to a default warehouse instance.
      */
     String DEFAULTSTORAGEGROUP = ProductsSettings.BASE + "StorageGroup4ProductBOM";
-
-    /**
-     * Properties for the LastMovementReport.
-     */
-    String LASTMOVEREP = ProductsSettings.BASE + "LastMovementReport";
-
 }

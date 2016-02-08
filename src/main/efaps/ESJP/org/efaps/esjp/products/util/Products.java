@@ -233,6 +233,14 @@ public final class Products
                     .key(BASE + "report.CostReport")
                     .description("Configuration for CostReport.");
 
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final PropertiesSysConfAttribute REPLASTMOVE = new PropertiesSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "report.LastMovementReport")
+                    .description("Configuration for LastMovementReport.");
+
     /** See description. */
     @EFapsSysConfLink
     public static final SysConfLink DEFAULTDIMENSION = new SysConfLink()
