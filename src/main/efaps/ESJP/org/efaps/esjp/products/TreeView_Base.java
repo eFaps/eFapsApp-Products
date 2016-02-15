@@ -124,8 +124,11 @@ public abstract class TreeView_Base
     public Return createMultipleProducts(final Parameter _parameter)
         throws EFapsException
     {
-        final Instance parentInst = Instance.get(((String[]) Context.getThreadContext().getSessionAttribute(
+        Instance parentInst = _parameter.getInstance();
+        if (parentInst == null || parentInst != null && !parentInst.getType().isKindOf(CIProducts.TreeViewAbstract)) {
+            parentInst = Instance.get(((String[]) Context.getThreadContext().getSessionAttribute(
                         CIFormProducts.Products_ProductSearch4TreeViewForm.parentOID.name))[0]);
+        }
         final List<Instance> prodInstances = getSelectedInstances(_parameter);
         for (final Instance prodInst : prodInstances) {
             final PrintQuery print = new PrintQuery(prodInst);

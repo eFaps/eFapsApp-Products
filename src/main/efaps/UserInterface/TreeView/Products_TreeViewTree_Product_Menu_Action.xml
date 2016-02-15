@@ -25,6 +25,7 @@
         <name>Products_TreeViewTree_Product_Menu_Action</name>
         <childs>
             <child>Products_TreeViewTree_Product_Menu_Action_CreateProduct</child>
+            <child>Products_TreeViewTree_Product_Menu_Action_CreateProductMultiple</child>
             <child>Products_TreeViewTree_Product_Menu_Action_Delete</child>
         </childs>
     </definition>
