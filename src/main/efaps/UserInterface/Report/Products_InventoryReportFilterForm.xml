@@ -95,6 +95,30 @@
                 <property name="Enum">org.efaps.esjp.products.reports.InventoryReport_Base$ClassDisplay</property>
             </trigger>
         </field>
+        <field name="productTreeView">
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="Label">org.efaps.esjp.products.reports.InventoryReport.productTreeView</property>
+            <trigger program="org.efaps.esjp.erp.FilteredReport"
+                method="getInstanceFieldValue"
+                name="Products_InventoryReportFilterForm.productTreeView.UI_FIELD_VALUE"
+                event="UI_FIELD_VALUE" >
+                 <property name="Products_TreeViewRoot_Select">attribute[Label]</property>
+            </trigger>
+            <trigger event="UI_FIELD_AUTOCOMPLETE"
+                 method="autoComplete4TreeView"
+                 name="Products_InventoryReportFilterForm.productTreeView.UI_FIELD_AUTOCOMPLETE"
+                 program="org.efaps.esjp.products.TreeView">
+                <property name="Type">Products_TreeViewRoot</property>
+            </trigger>
+             <trigger event="UI_ACCESSCHECK" method="configCheck"
+                name="Products_InventoryReportFilterForm.productTreeView.UI_ACCESSCHECK"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.TreeView.Activate</property>
+            </trigger>
+        </field>
         <field name="individualDisplay">
             <property name="ModeEdit">EDITABLE</property>
             <property name="Label">org.efaps.esjp.products.reports.InventoryReport.individualDisplay</property>

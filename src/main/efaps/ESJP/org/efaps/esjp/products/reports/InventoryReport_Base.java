@@ -42,6 +42,7 @@ import org.efaps.esjp.erp.FilteredReport;
 import org.efaps.esjp.products.Inventory;
 import org.efaps.esjp.products.Inventory_Base.InventoryBean;
 import org.efaps.esjp.products.StorageGroup;
+import org.efaps.esjp.products.TreeView;
 import org.efaps.esjp.products.util.Products;
 import org.efaps.ui.wicket.models.EmbeddedLink;
 import org.efaps.util.EFapsException;
@@ -265,9 +266,13 @@ public abstract class InventoryReport_Base
          *
          * @param _parameter the _parameter
          * @return the inventory object
+         * @throws EFapsException the e faps exception
          */
         protected Inventory getInventoryObject(final Parameter _parameter)
+            throws EFapsException
         {
+            final Instance treeViewInst = getTreeViewInst(_parameter);
+
             return new Inventory()
             {
 
@@ -321,15 +326,7 @@ public abstract class InventoryReport_Base
                 protected InventoryBean getBean(final Parameter _parameter)
                     throws EFapsException
                 {
-                    return new InventoryBean() {
-
-                        @Override
-                        public String getProdClass()
-                            throws EFapsException
-                        {
-                            return super.getProdClass(Products.REPINVENTORYCLASSLEVEL.get());
-                        }
-                    };
+                    return new ReportInventoryBean(treeViewInst);
                 }
             };
         }
@@ -472,6 +469,25 @@ public abstract class InventoryReport_Base
         }
 
         /**
+         * Gets the currency inst.
+         *
+         * @param _parameter the _parameter
+         * @return the currency inst
+         * @throws EFapsException the e faps exception
+         */
+        protected Instance getTreeViewInst(final Parameter _parameter)
+            throws EFapsException
+        {
+            Instance ret = null;
+            final Map<String, Object> map = getFilterMap(_parameter);
+            if (map.containsKey("productTreeView")) {
+                final InstanceFilterValue filter = (InstanceFilterValue) map.get("productTreeView");
+                ret = filter.getObject();
+            }
+            return ret;
+        }
+
+        /**
          * Gets the storage insts.
          *
          * @param _parameter the _parameter
@@ -515,7 +531,7 @@ public abstract class InventoryReport_Base
         @Override
         protected void addColumnDefintion(final Parameter _parameter,
                                           final JasperReportBuilder _builder)
-                                              throws EFapsException
+            throws EFapsException
         {
             final List<ColumnTitleGroupBuilder> groupBuilders = new ArrayList<>();
             ColumnGroupBuilder storageSumGroup = null;
@@ -558,6 +574,14 @@ public abstract class InventoryReport_Base
                 } else if (StorageDisplay.COLUMN.equals(getStorageDisplay(_parameter))) {
                     prodGroup.add(classColumn);
                 }
+            }
+
+            final Instance treeViewInst = getTreeViewInst(_parameter);
+            if (treeViewInst != null && treeViewInst.isValid()) {
+                final TextColumnBuilder<String> treeViewColumn = DynamicReports.col.column(DBProperties
+                                .getProperty(InventoryReport.class.getName() + ".Column.treeView"),
+                                "treeView", DynamicReports.type.stringType());
+                _builder.addColumn(treeViewColumn);
             }
 
             if (getExType().equals(ExportType.HTML)) {
@@ -745,4 +769,58 @@ public abstract class InventoryReport_Base
         }
     }
 
+
+    /**
+     * The Class ReportInventoryBean.
+     */
+    public static class ReportInventoryBean
+        extends InventoryBean
+    {
+
+        /** The tree view inst. */
+        private final Instance treeViewInst;
+
+        /**
+         * Instantiates a new report inventory bean.
+         *
+         * @param _treeViewInst the _tree view inst
+         */
+        public ReportInventoryBean(final Instance _treeViewInst)
+        {
+            this.treeViewInst = _treeViewInst;
+        }
+
+        @Override
+        public String getProdClass()
+            throws EFapsException
+        {
+            return super.getProdClass(Products.REPINVENTORYCLASSLEVEL.get());
+        }
+
+        /**
+         * Gets the tree view.
+         *
+         * @return the tree view
+         * @throws EFapsException the e faps exception
+         */
+        public String getTreeView()
+            throws EFapsException
+        {
+            String ret = null;
+            if (getTreeViewInst() != null && getTreeViewInst().isValid()) {
+                ret = TreeView.getTreeViewLabel(new Parameter(), getTreeViewInst(), getProdInstance(), true, true);
+            }
+            return ret;
+        }
+
+        /**
+         * Getter method for the instance variable {@link #treeViewInst}.
+         *
+         * @return value of instance variable {@link #treeViewInst}
+         */
+        public Instance getTreeViewInst()
+        {
+            return this.treeViewInst;
+        }
+    }
 }

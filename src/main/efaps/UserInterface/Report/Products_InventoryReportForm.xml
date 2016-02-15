@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
-  Copyright 2003 - 2015 The eFaps Team
+  Copyright 2003 - 2016 The eFaps Team
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -36,18 +36,34 @@
                 <property name="Field04">storageDisplay</property>
                 <property name="Field05">typeDisplay</property>
                 <property name="Field06">classDisplay</property>
+                <property name="Field07">productTreeView</property>
+                <property name="Field08">individualDisplay</property>
                 <property name="FilterType01">DateTime</property>
                 <property name="FilterType02">Instance</property>
                 <property name="FilterType03">Instance</property>
                 <property name="FilterType04">Enum</property>
                 <property name="FilterType05">Enum</property>
                 <property name="FilterType06">Enum</property>
+                <property name="FilterType07">Instance</property>
+                <property name="FilterType08">Enum</property>
                 <property name="FilterDefault01">TODAY</property>
                 <property name="FilterDefault02">-</property>
                 <property name="FilterDefault03">-</property>
                 <property name="FilterDefault04">org.efaps.esjp.products.reports.InventoryReport_Base$StorageDisplay</property>
                 <property name="FilterDefault05">org.efaps.esjp.products.reports.InventoryReport_Base$TypeDisplay</property>
                 <property name="FilterDefault06">org.efaps.esjp.products.reports.InventoryReport_Base$ClassDisplay</property>
+                <property name="FilterDefault07">-</property>
+                <property name="FilterDefault08">org.efaps.esjp.products.reports.InventoryReport_Base$IndividualDisplay</property>
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="AccessAttribute01"></property>
+                <property name="AccessAttribute02"></property>
+                <property name="AccessAttribute03"></property>
+                <property name="AccessAttribute04"></property>
+                <property name="AccessAttribute05"></property>
+                <property name="AccessAttribute06"></property>
+                <property name="AccessAttribute07">org.efaps.products.TreeView.Activate</property>
+                <property name="AccessAttribute08">org.efaps.products.ActivateIndividual</property>
             </trigger>
             <trigger event="UI_FIELD_VALUE" index="2" method="getFilterFieldValue"
                 name="Products_InventoryReportForm.filter.UI_FIELD_VALUE.2"
@@ -59,81 +75,29 @@
                 <property name="Field04">storageDisplay</property>
                 <property name="Field05">typeDisplay</property>
                 <property name="Field06">classDisplay</property>
+                <property name="Field07">productTreeView</property>
+                <property name="Field08">individualDisplay</property>
                 <property name="DBProperty01">org.efaps.esjp.products.reports.InventoryReport.date</property>
                 <property name="DBProperty02">org.efaps.esjp.products.reports.InventoryReport.storageGroup</property>
                 <property name="DBProperty03">org.efaps.esjp.products.reports.InventoryReport.storage</property>
                 <property name="DBProperty04">org.efaps.esjp.products.reports.InventoryReport.storageDisplay</property>
                 <property name="DBProperty05">org.efaps.esjp.products.reports.InventoryReport.typeDisplay</property>
                 <property name="DBProperty06">org.efaps.esjp.products.reports.InventoryReport.classDisplay</property>
+                <property name="DBProperty07">org.efaps.esjp.products.reports.InventoryReport.productTreeView</property>
+                <property name="DBProperty08">org.efaps.esjp.products.reports.InventoryReport.individualDisplay</property>
                 <property name="Products_WarehouseGroup_Select">attribute[Name]</property>
                 <property name="Products_Warehouse_Select">attribute[Name]</property>
-            </trigger>
-             <trigger event="UI_ACCESSCHECK" method="configCheck"
-                name="Products_InventoryReportForm.filter.UI_ACCESSCHECK"
-                program="org.efaps.esjp.admin.access.AccessCheck4UI">
+                <property name="Products_TreeViewRoot_Select">attribute[Label]</property>
                 <!-- Products-Configuration -->
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
-                <property name="Attribute">org.efaps.products.ActivateIndividual</property>
-                <property name="Inverse">true</property>
-            </trigger>
-        </field>
-        <field name="filterIndividual">
-            <property name="HideLabel">true</property>
-            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
-            <trigger event="UI_FIELD_VALUE" index="1" method="setDefaultFilter"
-                name="Products_InventoryReportForm.filterIndividualr.UI_FIELD_VALUE.1"
-                program="org.efaps.esjp.products.reports.InventoryReport">
-                <property name="FilterKey">org.efaps.esjp.products.reports.InventoryReport.FilterKey</property>
-                <property name="ReportField">report4Account</property>
-                <property name="Field01">date</property>
-                <property name="Field02">storageGroup</property>
-                <property name="Field03">storage</property>
-                <property name="Field04">storageDisplay</property>
-                <property name="Field05">typeDisplay</property>
-                <property name="Field06">classDisplay</property>
-                <property name="Field07">individualDisplay</property>
-                <property name="FilterType01">DateTime</property>
-                <property name="FilterType02">Instance</property>
-                <property name="FilterType03">Instance</property>
-                <property name="FilterType04">Enum</property>
-                <property name="FilterType05">Enum</property>
-                <property name="FilterType06">Enum</property>
-                <property name="FilterType07">Enum</property>
-                <property name="FilterDefault01">TODAY</property>
-                <property name="FilterDefault02">-</property>
-                <property name="FilterDefault03">-</property>
-                <property name="FilterDefault04">org.efaps.esjp.products.reports.InventoryReport_Base$StorageDisplay</property>
-                <property name="FilterDefault05">org.efaps.esjp.products.reports.InventoryReport_Base$TypeDisplay</property>
-                <property name="FilterDefault06">org.efaps.esjp.products.reports.InventoryReport_Base$ClassDisplay</property>
-                <property name="FilterDefault07">org.efaps.esjp.products.reports.InventoryReport_Base$IndividualDisplay</property>
-            </trigger>
-            <trigger event="UI_FIELD_VALUE" index="2" method="getFilterFieldValue"
-                name="Products_InventoryReportForm.filterIndividual.UI_FIELD_VALUE.2"
-                program="org.efaps.esjp.products.reports.InventoryReport">
-                <property name="FilterKey">org.efaps.esjp.products.reports.InventoryReport.FilterKey</property>
-                <property name="Field01">date</property>
-                <property name="Field02">storageGroup</property>
-                <property name="Field03">storage</property>
-                <property name="Field04">storageDisplay</property>
-                <property name="Field05">typeDisplay</property>
-                <property name="Field06">classDisplay</property>
-                <property name="Field07">individualDisplay</property>
-                <property name="DBProperty01">org.efaps.esjp.products.reports.InventoryReport.date</property>
-                <property name="DBProperty02">org.efaps.esjp.products.reports.InventoryReport.storageGroup</property>
-                <property name="DBProperty03">org.efaps.esjp.products.reports.InventoryReport.storage</property>
-                <property name="DBProperty04">org.efaps.esjp.products.reports.InventoryReport.storageDisplay</property>
-                <property name="DBProperty05">org.efaps.esjp.products.reports.InventoryReport.typeDisplay</property>
-                <property name="DBProperty06">org.efaps.esjp.products.reports.InventoryReport.classDisplay</property>
-                <property name="DBProperty07">org.efaps.esjp.products.reports.InventoryReport.individualDisplay</property>
-                <property name="Products_WarehouseGroup_Select">attribute[Name]</property>
-                <property name="Products_Warehouse_Select">attribute[Name]</property>
-            </trigger>
-             <trigger event="UI_ACCESSCHECK" method="configCheck"
-                name="Products_InventoryReportForm.filterIndividual.UI_ACCESSCHECK"
-                program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                <!-- Products-Configuration -->
-                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
-                <property name="Attribute">org.efaps.products.ActivateIndividual</property>
+                <property name="AccessAttribute01"></property>
+                <property name="AccessAttribute02"></property>
+                <property name="AccessAttribute03"></property>
+                <property name="AccessAttribute04"></property>
+                <property name="AccessAttribute05"></property>
+                <property name="AccessAttribute06"></property>
+                <property name="AccessAttribute07">org.efaps.products.TreeView.Activate</property>
+                <property name="AccessAttribute08">org.efaps.products.ActivateIndividual</property>
             </trigger>
         </field>
         <field name="report">
