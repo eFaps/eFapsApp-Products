@@ -17,6 +17,8 @@
 
 package org.efaps.esjp.products;
 
+import java.util.List;
+
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
 import org.efaps.admin.event.Return;
@@ -26,6 +28,7 @@ import org.efaps.admin.ui.AbstractCommand;
 import org.efaps.db.Context;
 import org.efaps.db.Insert;
 import org.efaps.db.Instance;
+import org.efaps.db.PrintQuery;
 import org.efaps.esjp.ci.CIFormProducts;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.AbstractCommon;
@@ -46,8 +49,9 @@ public abstract class TreeView_Base
     /**
      * Creates the TreeView Element.
      *
-     * @param _parameter Parameter as passed by the eFaps API @return the
-     * return @throws EFapsException on error
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
      */
     public Return create(final Parameter _parameter)
         throws EFapsException
@@ -67,11 +71,13 @@ public abstract class TreeView_Base
         return create.execute(_parameter);
     }
 
+
     /**
      * Add to create.
      *
-     * @param _parameter Parameter as passed by the eFaps API @param _insert the
-     * insert @throws EFapsException on error
+     * @param _parameter the _parameter
+     * @param _insert the _insert
+     * @throws EFapsException the e faps exception
      */
     protected void add2create(final Parameter _parameter,
                               final Insert _insert)
@@ -90,4 +96,32 @@ public abstract class TreeView_Base
             }
         }
     }
+
+    /**
+     * Creates the multiple products.
+     *
+     * @param _parameter the _parameter
+     * @return the return
+     * @throws EFapsException the e faps exception
+     */
+    public Return createMultipleProducts(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Instance parentInst = Instance.get(((String[]) Context.getThreadContext().getSessionAttribute(
+                        CIFormProducts.Products_ProductSearch4TreeViewForm.parentOID.name))[0]);
+        final List<Instance> prodInstances = getSelectedInstances(_parameter);
+        for (final Instance prodInst : prodInstances) {
+            final PrintQuery print = new PrintQuery(prodInst);
+            print.addAttribute(CIProducts.ProductAbstract.Name);
+            print.executeWithoutAccessCheck();
+
+            final Insert insert = new Insert(CIProducts.TreeViewProduct);
+            insert.add(CIProducts.TreeViewProduct.ParentLink, parentInst);
+            insert.add(CIProducts.TreeViewProduct.ProductLink, prodInst);
+            insert.add(CIProducts.TreeViewProduct.Label, print.getAttribute(CIProducts.ProductAbstract.Name));
+            insert.execute();
+        }
+        return new Return();
+    }
+
 }
