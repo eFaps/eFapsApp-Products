@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.efaps.admin.dbproperty.DBProperties;
 import org.efaps.admin.event.Parameter;
 import org.efaps.api.ui.IEsjpSnipplet;
 import org.efaps.db.Context;
@@ -35,6 +36,7 @@ import org.efaps.esjp.erp.Currency;
 import org.efaps.esjp.erp.NumberFormatter;
 import org.efaps.esjp.products.Inventory;
 import org.efaps.esjp.products.Inventory_Base.InventoryBean;
+import org.efaps.esjp.products.TreeView;
 import org.efaps.esjp.ui.html.dojo.charting.Axis;
 import org.efaps.esjp.ui.html.dojo.charting.ColumnsChart;
 import org.efaps.esjp.ui.html.dojo.charting.Data;
@@ -99,6 +101,18 @@ public abstract class InventoryValuePanel_Base
         throws EFapsException
     {
         return Instance.get(getConfig().getProperty("CurrencyOID", Currency.getBaseCurrency().getOid()));
+    }
+
+    /**
+     * Gets the currency inst.
+     *
+     * @return the currency inst
+     * @throws EFapsException the e faps exception
+     */
+    protected Instance getTreeViewInst()
+        throws EFapsException
+    {
+        return Instance.get(getConfig().getProperty("TreeViewOID"));
     }
 
     /**
@@ -238,7 +252,13 @@ public abstract class InventoryValuePanel_Base
                 BigDecimal total = BigDecimal.ZERO;
                 for (final InventoryBean bean : beans) {
                     String serieName;
-                    if (getClassificationLevel() > 0) {
+                    if (getTreeViewInst().isValid()) {
+                        serieName = TreeView.getTreeViewLabel(new Parameter(),
+                                        getTreeViewInst(), bean.getProdInstance(), true, true);
+                        serieName = serieName == null
+                                    ? DBProperties.getProperty(InventoryValuePanel.class.getName() + ".WithoutTreeView")
+                                    : serieName;
+                    } else if (getClassificationLevel() > 0) {
                         serieName = bean.getProdClass(getClassificationLevel());
                     } else {
                         serieName = bean.getProdType();
