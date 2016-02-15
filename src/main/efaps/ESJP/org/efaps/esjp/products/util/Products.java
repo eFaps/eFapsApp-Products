@@ -221,6 +221,13 @@ public final class Products
 
     /** See description. */
     @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute TREEVIEWACT = new BooleanSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "TreeView.Activate")
+                    .description("Activate the TreeView.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
     public static final IntegerSysConfAttribute REPINVENTORYCLASSLEVEL = new IntegerSysConfAttribute()
                     .sysConfUUID(SYSCONFUUID)
                     .key(BASE + "report.InventoryReport.ClassificationLevel")

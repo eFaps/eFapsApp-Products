@@ -27,6 +27,7 @@
         <childs>
             <child>Products_TreeViewMyDesk_Menu_Action_CreateRoot</child>
             <child>Products_TreeViewMyDesk_Menu_Action_CreateNode</child>
+            <child>Products_TreeViewMyDesk_Menu_Action_CreateProduct</child>
             <child>Products_TreeViewMyDesk_Menu_Action_Delete</child>
         </childs>
     </definition>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
 
  Copyright 2003 - 2016 The eFaps Team
@@ -16,21 +16,21 @@
  limitations under the License.
 
 -->
-
-<datamodel-type xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>b3546e76-371e-4a44-8a23-312765281db2</uuid>
+<ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>112d8c93-1051-45e7-8502-1fe1bc610986</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_TreeViewNode</name>
-        <parent>Products_TreeViewAbstract</parent>
-        <attribute>
-            <name>ParentLink</name>
-            <type>Link</type>
-            <typelink>Products_TreeViewAbstract</typelink>
-            <sqltable>Products_TreeViewSQLTable</sqltable>
-            <sqlcolumn>PARENTID</sqlcolumn>
-        </attribute>
+        <name>Products_TreeViewTree_Product_Menu_Action_Delete</name>
+        <access>
+            <role>Products_Admin</role>
+            <role>Products_Modifier</role>
+        </access>
+        <target>
+            <execute program="org.efaps.esjp.common.uitable.CommonDelete" />
+        </target>
+        <property name="AskUser">true</property>
+        <property name="Submit">true</property>
     </definition>
-</datamodel-type>
+</ui-command>

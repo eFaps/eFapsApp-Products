@@ -29,12 +29,14 @@
         </access>
         <target>
             <form>Products_TreeViewNodeForm</form>
-            <execute program="org.efaps.esjp.common.uiform.Create" />
+            <execute program="org.efaps.esjp.products.TreeView" method="create" />
         </target>
         <property name="Target">modal</property>
         <property name="TargetCreateType">Products_TreeViewNode</property>
         <property name="TargetMode">create</property>
         <property name="WindowHeight">460</property>
         <property name="WindowWidth">515</property>
+        <property name="Submit">true</property>
+        <property name="SubmitSelectedRows">1</property>
     </definition>
 </ui-command>

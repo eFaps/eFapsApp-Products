@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
 
  Copyright 2003 - 2016 The eFaps Team
@@ -16,21 +17,22 @@
  limitations under the License.
 
 -->
-
-<datamodel-type xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>b3546e76-371e-4a44-8a23-312765281db2</uuid>
+    <uuid>2f698f39-af65-4cb4-8d7c-87665f92bdc3</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_TreeViewNode</name>
-        <parent>Products_TreeViewAbstract</parent>
-        <attribute>
-            <name>ParentLink</name>
-            <type>Link</type>
-            <typelink>Products_TreeViewAbstract</typelink>
-            <sqltable>Products_TreeViewSQLTable</sqltable>
-            <sqlcolumn>PARENTID</sqlcolumn>
-        </attribute>
+        <name>Products_TreeViewTree_Product_Menu_Action_CreateProduct</name>
+        <target>
+            <form>Products_TreeViewProductForm</form>
+            <execute program="org.efaps.esjp.common.uiform.Create" />
+        </target>
+        <property name="Target">modal</property>
+        <property name="TargetCreateType">Products_TreeViewProduct</property>
+        <property name="TargetConnectAttribute">Products_TreeViewProduct/ParentLink</property>
+        <property name="TargetMode">create</property>
+        <property name="WindowHeight">460</property>
+        <property name="WindowWidth">515</property>
     </definition>
-</datamodel-type>
+</ui-command>

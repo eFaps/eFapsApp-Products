@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
 
-  Copyright 2003 - 2010 The eFaps Team
+  Copyright 2003 - 2016 The eFaps Team
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -16,22 +15,23 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  Author:          The eFaps Team
-  Revision:        $Rev: 5316 $
-  Last Changed:    $Date: 2010-08-16 11:37:54 -0500 (Mon, 16 Aug 2010) $
-  Last Changed By: $Author: miguel.a.aranya $
-
 -->
-
-<ui-form xmlns="http://www.efaps.org/xsd"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+<ui-form xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>c0a83f09-fb8a-461c-bac2-dbcdae6e218e</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev: 5316 $</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_TreeViewNodeForm</name>
+        <field name="parentOID">
+            <property name="ModeCreate">HIDDEN</property>
+            <property name="ModeView">NONE</property>
+            <property name="ModeEdit">NONE</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
+            <trigger program="org.efaps.esjp.common.uiform.Field" method="getStoreOIDsFieldValue"
+                name="Products_TreeViewNodeForm.archiveOID.UI_FIELD_VALUE"
+                event="UI_FIELD_VALUE" />
+        </field>
         <field name="label">
             <property name="Columns">40</property>
             <property name="ModeCreate">EDITABLE</property>

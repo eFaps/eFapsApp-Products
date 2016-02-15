@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
 
- Copyright 2003 - 2009 The eFaps Team
+ Copyright 2003 - 2016 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -16,19 +15,11 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
- Author:          The eFaps Team
- Revision:        $Rev: 5375 $
- Last Changed:    $Date: 2010-08-20 14:31:15 -0500 (Fri, 20 Aug 2010) $
- Last Changed By: $Author: jorge.m.cueva $
-
 -->
-
-<ui-command xmlns="http://www.efaps.org/xsd"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+<ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>811743e5-0ae1-456d-b616-bd60f1e726a1</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev: 5375 $</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_TreeViewMyDesk</name>
@@ -47,9 +38,15 @@
                 <property name="Child_Type01">Products_TreeViewProduct</property>
                 <property name="Child_LinkFrom01">ParentLink</property>
             </evaluate>
+            <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                name="Products_TreeViewMyDesk.UI_ACCESSCHECK"
+                method="configCheck"
+                event="UI_ACCESSCHECK">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.TreeView.Activate</property>
+            </trigger>
         </target>
-
-        <!-- properties -->
         <property name="Target">content</property>
         <property name="TargetShowCheckBoxes">true</property>
         <property name="TargetStructurBrowserField">label</property>

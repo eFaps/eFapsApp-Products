@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
 
- Copyright 2003 - 2010 The eFaps Team
+ Copyright 2003 - 2016 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -16,23 +15,22 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
- Author:          The eFaps Team
- Revision:        $Rev: 5626 $
- Last Changed:    $Date: 2010-10-05 11:56:11 -0500 (Tue, 05 Oct 2010) $
- Last Changed By: $Author: jorge.m.cueva $
-
 -->
-
-<datamodel-type  xmlns="http://www.efaps.org/xsd"
-                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                 xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+<datamodel-type xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>fad1673b-516f-42c2-8c66-c7d03d07019a</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev: 5626 $</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_TreeViewProduct</name>
-        <parent>Products_TreeViewNode</parent>
+        <parent>Products_TreeViewAbstract</parent>
+        <attribute>
+            <name>ParentLink</name>
+            <type>Link</type>
+            <typelink>Products_TreeViewAbstract</typelink>
+            <sqltable>Products_TreeViewSQLTable</sqltable>
+            <sqlcolumn>PARENTID</sqlcolumn>
+        </attribute>
         <attribute>
             <name>ProductLink</name>
             <type>Link</type>
