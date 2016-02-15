@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
 
- Copyright 2003 - 2010 The eFaps Team
+ Copyright 2003 - 2016 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -16,22 +15,32 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
- Author:          The eFaps Team
- Revision:        $Rev: 5626 $
- Last Changed:    $Date: 2010-10-05 11:56:11 -0500 (Tue, 05 Oct 2010) $
- Last Changed By: $Author: jorge.m.cueva $
-
 -->
-
-<datamodel-type  xmlns="http://www.efaps.org/xsd"
-                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                 xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+<datamodel-type xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>913417ed-f426-4020-a53d-66fba1a81163</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev: 5626 $</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_TreeViewRoot</name>
         <parent>Products_TreeViewAbstract</parent>
+        <trigger program="org.efaps.esjp.common.cache.CacheUtils"
+            method="cleanQueryCacheTrigger"
+            name="Products_TreeViewRoot.INSERT_POST"
+            event="INSERT_POST">
+            <property name="CacheName">org.efaps.esjp.products.TreeView.CacheKey</property>
+        </trigger>
+        <trigger program="org.efaps.esjp.common.cache.CacheUtils"
+            method="cleanQueryCacheTrigger"
+            name="Products_TreeViewRoot.UPDATE_POST"
+            event="UPDATE_POST">
+            <property name="CacheName">org.efaps.esjp.products.TreeView.CacheKey</property>
+        </trigger>
+        <trigger program="org.efaps.esjp.common.cache.CacheUtils"
+            method="cleanQueryCacheTrigger"
+            name="Products_TreeViewRoot.DELETE_POST"
+            event="DELETE_POST">
+            <property name="CacheName">org.efaps.esjp.products.TreeView.CacheKey</property>
+        </trigger>
     </definition>
 </datamodel-type>
