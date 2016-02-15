@@ -38,6 +38,7 @@
                 <property name="Field05">typeDisplay</property>
                 <property name="Field06">classDisplay</property>
                 <property name="Field07">currency</property>
+                <property name="Field08">productTreeView</property>
                 <property name="FilterType01">DateTime</property>
                 <property name="FilterType02">Instance</property>
                 <property name="FilterType03">Instance</property>
@@ -45,6 +46,7 @@
                 <property name="FilterType05">Enum</property>
                 <property name="FilterType06">Enum</property>
                 <property name="FilterType07">Currency</property>
+                <property name="FilterType08">Instance</property>
                 <property name="FilterDefault01">TODAY</property>
                 <property name="FilterDefault02">-</property>
                 <property name="FilterDefault03">-</property>
@@ -52,6 +54,17 @@
                 <property name="FilterDefault05">org.efaps.esjp.products.reports.InventoryReport_Base$TypeDisplay</property>
                 <property name="FilterDefault06">org.efaps.esjp.products.reports.InventoryReport_Base$ClassDisplay</property>
                 <property name="FilterDefault07">BASECURRENCY</property>
+                <property name="FilterDefault08">-</property>
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="AccessAttribute01"></property>
+                <property name="AccessAttribute02"></property>
+                <property name="AccessAttribute03"></property>
+                <property name="AccessAttribute04"></property>
+                <property name="AccessAttribute05"></property>
+                <property name="AccessAttribute06"></property>
+                <property name="AccessAttribute07"></property>
+                <property name="AccessAttribute08">org.efaps.products.TreeView.Activate</property>
             </trigger>
             <trigger event="UI_FIELD_VALUE" index="2" method="getFilterFieldValue"
                 name="Products_InventoryCostReportForm.filter.UI_FIELD_VALUE.2"
@@ -64,6 +77,7 @@
                 <property name="Field05">typeDisplay</property>
                 <property name="Field06">classDisplay</property>
                 <property name="Field07">currency</property>
+                <property name="Field08">productTreeView</property>
                 <property name="DBProperty01">org.efaps.esjp.products.reports.InventoryReport.date</property>
                 <property name="DBProperty02">org.efaps.esjp.products.reports.InventoryReport.storageGroup</property>
                 <property name="DBProperty03">org.efaps.esjp.products.reports.InventoryReport.storage</property>
@@ -71,8 +85,20 @@
                 <property name="DBProperty05">org.efaps.esjp.products.reports.InventoryReport.typeDisplay</property>
                 <property name="DBProperty06">org.efaps.esjp.products.reports.InventoryReport.classDisplay</property>
                 <property name="DBProperty07">org.efaps.esjp.products.reports.InventoryReport.currency</property>
+                <property name="DBProperty08">org.efaps.esjp.products.reports.InventoryReport.productTreeView</property>
                 <property name="Products_WarehouseGroup_Select">attribute[Name]</property>
                 <property name="Products_Warehouse_Select">attribute[Name]</property>
+                <property name="Products_TreeViewRoot_Select">attribute[Label]</property>
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="AccessAttribute01"></property>
+                <property name="AccessAttribute02"></property>
+                <property name="AccessAttribute03"></property>
+                <property name="AccessAttribute04"></property>
+                <property name="AccessAttribute05"></property>
+                <property name="AccessAttribute06"></property>
+                <property name="AccessAttribute07"></property>
+                <property name="AccessAttribute08">org.efaps.products.TreeView.Activate</property>
             </trigger>
         </field>
         <field name="report">
