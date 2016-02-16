@@ -26,6 +26,7 @@
         <target>
             <search>Products_TreeViewMyDesk_Menu_Action_CreateProductMultiple_Search</search>
             <execute program="org.efaps.esjp.products.TreeView" method="createMultipleProducts"/>
+            <validate program="org.efaps.esjp.products.TreeView" method="validateProduct"/>
         </target>
         <property name="Target">modal</property>
         <property name="TargetMode">create</property>

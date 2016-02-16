@@ -30,6 +30,7 @@
         <target>
             <form>Products_TreeViewProductForm</form>
             <execute method="create" program="org.efaps.esjp.products.TreeView" />
+            <validate program="org.efaps.esjp.products.TreeView" method="validateProduct"/>
         </target>
         <property name="Target">modal</property>
         <property name="TargetCreateType">Products_TreeViewProduct</property>

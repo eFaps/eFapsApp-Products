@@ -19,10 +19,12 @@ package org.efaps.esjp.products;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
@@ -46,6 +48,9 @@ import org.efaps.esjp.ci.CIFormProducts;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.AbstractCommon;
 import org.efaps.esjp.common.uiform.Create;
+import org.efaps.esjp.erp.AbstractWarning;
+import org.efaps.esjp.erp.IWarning;
+import org.efaps.esjp.erp.WarningUtil;
 import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
 
@@ -181,6 +186,96 @@ public abstract class TreeView_Base
         return retVal;
     }
 
+
+    /**
+     * Validate product.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
+    public Return validateProduct(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        final List<IWarning> warnings = new ArrayList<IWarning>();
+        Instance parentInst = _parameter.getInstance();
+        if (parentInst == null || parentInst != null && !parentInst.getType().isKindOf(CIProducts.TreeViewAbstract)) {
+            parentInst = Instance.get(((String[]) Context.getThreadContext().getSessionAttribute(
+                        CIFormProducts.Products_ProductSearch4TreeViewForm.parentOID.name))[0]);
+        }
+        while (!parentInst.getType().isCIType(CIProducts.TreeViewRoot)) {
+            final PrintQuery print = new CachedPrintQuery(parentInst, TreeView.CACHEKEY).setLifespan(30)
+                            .setLifespanUnit(TimeUnit.MINUTES);
+            final SelectBuilder selParentInst = SelectBuilder.get().linkto(
+                            CIProducts.TreeViewAbstract.AbstractParentLink).instance();
+            print.addSelect(selParentInst);
+            print.execute();
+            parentInst = print.getSelect(selParentInst);
+        }
+        final Set<Instance> productInsts = TreeView.getProductDescendants(_parameter, parentInst);
+        final List<Instance> prodInstances = getSelectedInstances(_parameter);
+        if (prodInstances.isEmpty()) {
+            final Instance prodInstTmp = Instance.get(_parameter.getParameterValue(
+                            CIFormProducts.Products_TreeViewProductForm.product4Create.name));
+            if (prodInstTmp.isValid()) {
+                prodInstances.add(prodInstTmp);
+            }
+        }
+        for (final Instance prodInst : prodInstances) {
+            if (productInsts.contains(prodInst)) {
+                final TreeViewProductNotUniqueInHierachy warning = new TreeViewProductNotUniqueInHierachy();
+                final PrintQuery print = new PrintQuery(prodInst);
+                print.addAttribute(CIProducts.ProductAbstract.Name);
+                print.executeWithoutAccessCheck();
+                warning.addObject(print.getAttribute(CIProducts.ProductAbstract.Name));
+                warnings.add(warning);
+            }
+        }
+        if (warnings.isEmpty()) {
+            ret.put(ReturnValues.TRUE, true);
+        } else {
+            ret.put(ReturnValues.SNIPLETT, WarningUtil.getHtml4Warning(warnings).toString());
+            if (!WarningUtil.hasError(warnings)) {
+                ret.put(ReturnValues.TRUE, true);
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * Gets the product descendants.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _treeViewInst the tree view inst
+     * @return the product descendants
+     * @throws EFapsException on error
+     */
+    protected static Set<Instance> getProductDescendants(final Parameter _parameter,
+                                                         final Instance _treeViewInst)
+        throws EFapsException
+    {
+        final Set<Instance> ret = new HashSet<>();
+        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.TreeViewAbstract);
+        queryBldr.addWhereAttrEqValue(CIProducts.TreeViewAbstract.AbstractParentLink, _treeViewInst);
+        final CachedInstanceQuery query = queryBldr.getCachedQuery(TreeView.CACHEKEY)
+                                            .setLifespan(30).setLifespanUnit(TimeUnit.MINUTES);
+        query.execute();
+        while (query.next()) {
+            if (query.getCurrentValue().getType().isCIType(CIProducts.TreeViewProduct)) {
+                final PrintQuery print = new CachedPrintQuery(query.getCurrentValue(), TreeView.CACHEKEY)
+                                .setLifespan(30).setLifespanUnit(TimeUnit.MINUTES);
+                final SelectBuilder selProductInst = SelectBuilder.get().linkto(CIProducts.TreeViewProduct.ProductLink)
+                                .instance();
+                print.addSelect(selProductInst);
+                print.execute();
+                ret.add(print.<Instance>getSelect(selProductInst));
+            } else {
+                ret.addAll(TreeView.getProductDescendants(_parameter, query.getCurrentValue()));
+            }
+        }
+        return ret;
+    }
     /**
      * Gets the tree view label.
      *
@@ -196,7 +291,8 @@ public abstract class TreeView_Base
         throws EFapsException
     {
         final boolean hideRoot = Boolean.parseBoolean(new TreeView().getProperty(_parameter, "HideRoot", "false"));
-        final boolean hideProduct = Boolean.parseBoolean(new TreeView().getProperty(_parameter, "HideProduct", "false"));
+        final boolean hideProduct = Boolean.parseBoolean(new TreeView().getProperty(_parameter, "HideProduct",
+                        "false"));
         return TreeView.getTreeViewLabel(_parameter, _treeViewInst, _productInst, hideRoot, hideProduct);
     }
 
@@ -229,7 +325,7 @@ public abstract class TreeView_Base
             if (labelmap.keySet().contains(_treeViewInst)) {
                 for (final Entry<Instance, String> entry : labelmap.entrySet()) {
                     if (entry.getKey().getType().isCIType(CIProducts.TreeViewRoot) && !_hideRoot
-                                    || entry.getKey().getType().isCIType(CIProducts.TreeViewProduct) && ! _hideProduct
+                                    || entry.getKey().getType().isCIType(CIProducts.TreeViewProduct) && !_hideProduct
                                     || entry.getKey().getType().isCIType(CIProducts.TreeViewNode)) {
                         if (ret.length() > 0) {
                             ret.insert(0, " - ");
@@ -270,5 +366,20 @@ public abstract class TreeView_Base
             ret.putAll(getLabelMap(_parameter, parentInst));
         }
         return ret;
+    }
+
+    /**
+     * Warning for not enough Stock.
+     */
+    public static class TreeViewProductNotUniqueInHierachy
+        extends AbstractWarning
+    {
+        /**
+         * Constructor.
+         */
+        public TreeViewProductNotUniqueInHierachy()
+        {
+            setError(true);
+        }
     }
 }

@@ -27,6 +27,7 @@
         <target>
             <form>Products_TreeViewProductForm</form>
             <execute program="org.efaps.esjp.common.uiform.Create" />
+            <validate program="org.efaps.esjp.products.TreeView" method="validateProduct"/>
         </target>
         <property name="Target">modal</property>
         <property name="TargetCreateType">Products_TreeViewProduct</property>

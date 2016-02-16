@@ -17,6 +17,8 @@
 
 package org.efaps.esjp.products;
 
+import java.util.Set;
+
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
@@ -38,6 +40,21 @@ public class TreeView
 
     /** The Constant CACHEKEY. */
     public static final String CACHEKEY = TreeView_Base.CACHEKEY;
+
+    /**
+     * Gets the product descendants.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _treeViewInst the tree view inst
+     * @return the product descendants
+     * @throws EFapsException on error
+     */
+    public static Set<Instance> getProductDescendants(final Parameter _parameter,
+                                                      final Instance _treeViewInst)
+        throws EFapsException
+    {
+        return TreeView_Base.getProductDescendants(_parameter, _treeViewInst);
+    }
 
     /**
      * Gets the tree view label.
