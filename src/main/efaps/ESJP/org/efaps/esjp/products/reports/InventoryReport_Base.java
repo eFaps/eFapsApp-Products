@@ -482,7 +482,9 @@ public abstract class InventoryReport_Base
             final Map<String, Object> map = getFilterMap(_parameter);
             if (map.containsKey("productTreeView")) {
                 final InstanceFilterValue filter = (InstanceFilterValue) map.get("productTreeView");
-                ret = filter.getObject();
+                if (filter != null) {
+                    ret = filter.getObject();
+                }
             }
             return ret;
         }
