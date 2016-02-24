@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -47,6 +46,7 @@ import org.efaps.admin.datamodel.attributetype.ModifierLinkType;
 import org.efaps.admin.datamodel.attributetype.OIDType;
 import org.efaps.admin.datamodel.attributetype.TypeType;
 import org.efaps.admin.datamodel.ui.FieldValue;
+import org.efaps.admin.datamodel.ui.IUIValue;
 import org.efaps.admin.dbproperty.DBProperties;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
@@ -116,22 +116,22 @@ public abstract class Product_Base
         final RangesValue rval = new RangesValue()
         {
 
+            /** */
+            private static final long serialVersionUID = 1L;
+
             @Override
-            protected void setSelectedValue(final Parameter _parameter,
-                                            final Map<?, ?> _valueMap)
+            protected boolean isSelected(final Parameter _parameter,
+                                              final RangeValueOption _option)
                 throws EFapsException
             {
-                final FieldValue fieldValue = (FieldValue) _parameter.get(ParameterValues.UIOBJECT);
+                boolean ret = false;
+                final IUIValue uiValue = (IUIValue) _parameter.get(ParameterValues.UIOBJECT);
                 final Instance dimInst = Products.DEFAULTDIMENSION.get();
                 if (_parameter.get(ParameterValues.ACCESSMODE).equals(TargetMode.CREATE)
                                 && dimInst != null && dimInst.isValid()) {
-                    for (final Entry<?, ?> entry : _valueMap.entrySet()) {
-                        if (entry.getValue().equals(Long.valueOf(dimInst.getId()).toString())) {
-                            fieldValue.setValue(entry.getKey());
-                            break;
-                        }
-                    }
+                    ret = Long.valueOf(dimInst.getId()).equals(uiValue.getObject());
                 }
+                return ret;
             }
         };
         return rval.execute(_parameter);
