@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2015 The eFaps Team
+ * Copyright 2003 - 2016 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Revision:        $Rev$
- * Last Changed:    $Date$
- * Last Changed By: $Author$
  */
 
 package org.efaps.esjp.products;
@@ -35,7 +32,6 @@ import org.joda.time.DateTime;
  * class.
  *
  * @author The eFaps Team
- * @version $Id$
  */
 @EFapsUUID("f25ae69a-e283-4036-8326-47e61ff768d4")
 @EFapsApplication("eFapsApp-Products")
@@ -43,6 +39,15 @@ public class Cost
     extends Cost_Base
 {
 
+    /**
+     * Gets the cost4 currency.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _productInstance the product instance
+     * @param _currencyInstance the currency instance
+     * @return the cost4 currency
+     * @throws EFapsException on error
+     */
     public static BigDecimal getCost4Currency(final Parameter _parameter,
                                               final Instance _productInstance,
                                               final Instance _currencyInstance)
@@ -51,6 +56,16 @@ public class Cost
         return Cost_Base.getCost4Currency(_parameter, _productInstance, _currencyInstance);
     }
 
+    /**
+     * Gets the cost4 currency.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _date the date
+     * @param _productInstance the product instance
+     * @param _currencyInstance the currency instance
+     * @return the cost4 currency
+     * @throws EFapsException on error
+     */
     public static BigDecimal getCost4Currency(final Parameter _parameter,
                                               final DateTime _date,
                                               final Instance _productInstance,
@@ -59,5 +74,4 @@ public class Cost
     {
         return Cost_Base.getCost4Currency(_parameter, _date, _productInstance, _currencyInstance);
     }
-
 }

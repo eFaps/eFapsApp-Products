@@ -59,7 +59,7 @@
             <name>CurrencyLink</name>
             <type>LinkWithRanges</type>
             <typelink>ERP_Currency</typelink>
-            <sqltable>Sales_DocumentSumsSQLTable</sqltable>
+            <sqltable>Products_CostingSQLTable</sqltable>
             <sqlcolumn>CURRENCYID</sqlcolumn>
             <trigger program="org.efaps.esjp.admin.datamodel.RangesValue"
                 name="Products_CostingAbstract.CurrencyLink.RANGE_VALUE" event="RANGE_VALUE">

@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2009 The eFaps Team
+ * Copyright 2003 - 2016 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Revision:        $Rev$
- * Last Changed:    $Date$
- * Last Changed By: $Author$
  */
 
 package org.efaps.esjp.products;
@@ -59,7 +56,6 @@ import org.joda.time.DateTime;
  * TODO comment!
  *
  * @author The eFaps Team
- * @version $Id$
  */
 @EFapsUUID("a7a6c100-8fce-4217-bc8e-c9066b1ab9e2")
 @EFapsApplication("eFapsApp-Products")
@@ -210,6 +206,11 @@ public abstract class Cost_Base
         return retVal;
     }
 
+    /**
+     * Gets the fraction digit.
+     *
+     * @return the fraction digit
+     */
     protected Integer getFractionDigit()
     {
         return 2;
@@ -238,6 +239,14 @@ public abstract class Cost_Base
         return ret;
     }
 
+    /**
+     * Gets the cost.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _prodInst the prod inst
+     * @return the cost
+     * @throws EFapsException on error
+     */
     public CostBean getCost(final Parameter _parameter,
                             final Instance _prodInst)
         throws EFapsException
@@ -245,6 +254,15 @@ public abstract class Cost_Base
         return getCost(_parameter, new DateTime(), _prodInst);
     }
 
+    /**
+     * Gets the cost.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _date the date
+     * @param _prodInst the prod inst
+     * @return the cost
+     * @throws EFapsException on error
+     */
     public CostBean getCost(final Parameter _parameter,
                             final DateTime _date,
                             final Instance _prodInst)
@@ -254,6 +272,14 @@ public abstract class Cost_Base
         return getCosts(_parameter, _date, _prodInst).get(_prodInst);
     }
 
+    /**
+     * Gets the costs.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _prodInst the prod inst
+     * @return the costs
+     * @throws EFapsException on error
+     */
     public Map<Instance, CostBean> getCosts(final Parameter _parameter,
                                             final Instance... _prodInst)
         throws EFapsException
@@ -262,6 +288,15 @@ public abstract class Cost_Base
         return getCosts(_parameter, new DateTime(), _prodInst);
     }
 
+    /**
+     * Gets the costs.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _date the date
+     * @param _prodInsts the prod insts
+     * @return the costs
+     * @throws EFapsException on error
+     */
     public Map<Instance, CostBean> getCosts(final Parameter _parameter,
                                             final DateTime _date,
                                             final Instance... _prodInsts)
@@ -289,20 +324,35 @@ public abstract class Cost_Base
                                 .setProductInstance(prodInst)
                                 .setCurrencyInstance(multi.<Instance>getSelect(selCurInst))
                                 .setCost(multi.<BigDecimal>getAttribute(CIProducts.ProductCost.Price))
-                                .setValidFrom( multi.<DateTime>getAttribute(CIProducts.ProductCost.ValidFrom))
-                                .setValidUntil( multi.<DateTime>getAttribute(CIProducts.ProductCost.ValidUntil))
-                                .setCreated( multi.<DateTime>getAttribute(CIProducts.ProductCost.Created));
+                                .setValidFrom(multi.<DateTime>getAttribute(CIProducts.ProductCost.ValidFrom))
+                                .setValidUntil(multi.<DateTime>getAttribute(CIProducts.ProductCost.ValidUntil))
+                                .setCreated(multi.<DateTime>getAttribute(CIProducts.ProductCost.Created));
                 ret.put(prodInst, bean);
             }
         }
         return ret;
     }
 
+    /**
+     * Gets the bean.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the bean
+     */
     protected CostBean getBean(final Parameter _parameter)
     {
         return new CostBean();
     }
 
+    /**
+     * Gets the cost4 currency.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _productInstance the product instance
+     * @param _currencyInstance the currency instance
+     * @return the cost4 currency
+     * @throws EFapsException on error
+     */
     protected static BigDecimal getCost4Currency(final Parameter _parameter,
                                                  final Instance _productInstance,
                                                  final Instance _currencyInstance)
@@ -311,6 +361,16 @@ public abstract class Cost_Base
         return Cost.getCost4Currency(_parameter, new DateTime(), _productInstance, _currencyInstance);
     }
 
+    /**
+     * Gets the cost4 currency.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _date the date
+     * @param _productInstance the product instance
+     * @param _currencyInstance the currency instance
+     * @return the cost4 currency
+     * @throws EFapsException on error
+     */
     protected static BigDecimal getCost4Currency(final Parameter _parameter,
                                                  final DateTime _date,
                                                  final Instance _productInstance,
@@ -326,6 +386,9 @@ public abstract class Cost_Base
     }
 
 
+    /**
+     * The Class CostBean.
+     */
     public static class CostBean
     {
 
@@ -365,6 +428,7 @@ public abstract class Cost_Base
          *
          * @param _currencyInstance value for instance variable
          *            {@link #currencyInstance}
+         * @return the cost bean
          */
         public CostBean setCurrencyInstance(final Instance _currencyInstance)
         {
@@ -387,6 +451,7 @@ public abstract class Cost_Base
          *
          * @param _productInstance value for instance variable
          *            {@link #productInstance}
+         * @return the cost bean
          */
         public CostBean setProductInstance(final Instance _productInstance)
         {
@@ -419,7 +484,7 @@ public abstract class Cost_Base
             BigDecimal ret = BigDecimal.ZERO;
             if (getCurrencyInstance().equals(_currencyInst)) {
                 ret = getCost();
-            } else if (getCost().compareTo( BigDecimal.ZERO) != 0){
+            } else if (getCost().compareTo(BigDecimal.ZERO) != 0) {
                 final RateInfo[] rateInfos = new Currency().evaluateRateInfos(_parameter, getDate(),
                                 getCurrencyInstance(), _currencyInst);
                 final RateInfo rateInfo = rateInfos[2];
@@ -433,6 +498,7 @@ public abstract class Cost_Base
          * Setter method for instance variable {@link #cost}.
          *
          * @param _cost value for instance variable {@link #cost}
+         * @return the cost bean
          */
         public CostBean setCost(final BigDecimal _cost)
         {
@@ -454,6 +520,7 @@ public abstract class Cost_Base
          * Setter method for instance variable {@link #date}.
          *
          * @param _date value for instance variable {@link #date}
+         * @return the cost bean
          */
         public CostBean setDate(final DateTime _date)
         {
