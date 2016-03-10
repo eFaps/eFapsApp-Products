@@ -23,11 +23,17 @@
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductCostAbstract</name>
+          <attribute>
+            <name>Type</name>
+            <type>Type</type>
+            <sqltable>Products_ProductCostSQLTable</sqltable>
+            <sqlcolumn>TYPEID</sqlcolumn>
+        </attribute>
         <attribute>
             <name>OID</name>
             <type>OID</type>
             <sqltable>Products_ProductCostSQLTable</sqltable>
-            <sqlcolumn>ID</sqlcolumn>
+            <sqlcolumn>TYPEID,ID</sqlcolumn>
         </attribute>
         <attribute>
             <name>ID</name>
