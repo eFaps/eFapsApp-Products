@@ -28,6 +28,7 @@
             <property name="Attribute">Type</property>
             <property name="HRef">TREE</property>
             <property name="Label">Products_ProductCost/Type.Label</property>
+            <property name="FilterType">PICKLIST</property>
         </field>
             <field name="price">
             <property name="Attribute">Price</property>
@@ -37,6 +38,7 @@
         <field name="currencyLink">
             <property name="Select">linkto[CurrencyLink].attribute[Name]</property>
             <property name="Label">Products_ProductCost/CurrencyLink.Label</property>
+            <property name="FilterType">PICKLIST</property>
         </field>
         <field name="validFrom">
             <property name="Attribute">ValidFrom</property>
@@ -46,5 +48,10 @@
             <property name="Attribute">ValidUntil</property>
             <property name="Label">Products_ProductCost/ValidUntil.Label</property>
         </field>
+        <field name="created">
+            <property name="Attribute">Created</property>
+            <property name="Label">Products_ProductCost/Created.Label</property>
+        </field>
+
     </definition>
 </ui-table>

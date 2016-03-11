@@ -107,19 +107,24 @@ public abstract class Cost_Base
         final Object from = name2Value.get("ValidFrom")[0];
         final DateTime date = new DateTime(from);
         final PrintQuery print = new PrintQuery(costInstance);
-        print.addAttribute(CIProducts.ProductCost.ProductLink);
+        print.addAttribute(CIProducts.ProductCostAbstract.ProductLink,
+                        CIProducts.ProductCostAbstract.CurrencyLink);
         print.executeWithoutAccessCheck();
 
-        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductCost);
-        queryBldr.addWhereAttrGreaterValue(CIProducts.ProductCost.ValidUntil, date);
-        queryBldr.addWhereAttrEqValue(CIProducts.ProductCost.ProductLink,
-                        print.<Long>getAttribute(CIProducts.ProductCost.ProductLink));
+        final QueryBuilder queryBldr = new QueryBuilder(costInstance.getType());
+        queryBldr.addWhereAttrGreaterValue(CIProducts.ProductCostAbstract.ValidUntil, date);
+        queryBldr.addWhereAttrEqValue(CIProducts.ProductCostAbstract.ProductLink,
+                        print.<Long>getAttribute(CIProducts.ProductCostAbstract.ProductLink));
+        if (costInstance.getType().isCIType(CIProducts.ProductCostAlternative)) {
+            queryBldr.addWhereAttrEqValue(CIProducts.ProductCostAbstract.CurrencyLink,
+                            print.<Long>getAttribute(CIProducts.ProductCostAbstract.CurrencyLink));
+        }
         final InstanceQuery query = queryBldr.getQuery();
         query.executeWithoutAccessCheck();
         while (query.next()) {
             if (!query.getCurrentValue().equals(costInstance)) {
                 final Update update = new Update(query.getCurrentValue());
-                update.add(CIProducts.ProductCost.ValidUntil, date.minusDays(1));
+                update.add(CIProducts.ProductCostAbstract.ValidUntil, date.minusDays(1));
                 update.executeWithoutTrigger();
             }
         }
