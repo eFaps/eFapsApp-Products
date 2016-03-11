@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
 
- Copyright 2003 - 2014 The eFaps Team
+ Copyright 2003 - 2016 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -14,29 +15,21 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
- Author:          The eFaps Team
- Revision:        $Rev$
- Last Changed:    $Date$
- Last Changed By: $Author$
-
 -->
-<datamodel-sqltable xmlns="http://www.efaps.org/xsd"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<datamodel-sqltable xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>3f35f2bf-3d7d-40db-8a8e-110039a0a0f6</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
-
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_CostingSQLTable</name>
         <typeid-column>TYPEID</typeid-column>
         <database>
             <table-name>T_PRODCOSTING</table-name>
-            <!-- columns -->
             <column name="TYPEID"       type="INTEGER"  not-null="true" />
-            <column name="QUANTITY"     type="DECIMAL"  not-null="true"     length="15"     scale="4" />
             <column name="TRANSID"      type="INTEGER"  not-null="true" />
+            <column name="CURRENCYID"   type="INTEGER"  not-null="true"/>
+            <column name="QUANTITY"     type="DECIMAL"  not-null="true"     length="15"     scale="4" />
             <column name="COST"         type="DECIMAL"  not-null="true"     length="15"     scale="4" />
             <column name="RESULT"       type="DECIMAL"  not-null="true"     length="15"     scale="4" />
             <column name="UPTODATE"     type="BOOLEAN"  not-null="true" />
@@ -44,10 +37,11 @@
             <column name="CREATED"      type="DATETIME" not-null="true" />
             <column name="MODIFIER"     type="INTEGER"  not-null="true" />
             <column name="MODIFIED"     type="DATETIME" not-null="true" />
-            <unique name="T_PRODCOSTING_UK_TRANSID" columns="TRANSID"/>
-            <foreign name="T_PRODCOSTING_FK_TRANSID"    key="TRANSID"   reference="T_PRODTRANSACTION(ID)" />
-            <foreign name="T_PRODCOSTING_FK_CRTR"       key="CREATOR"   reference="T_USERPERSON(ID)" />
-            <foreign name="T_PRODCOSTING_FK_MDFR"       key="MODIFIER"  reference="T_USERPERSON(ID)" />
+            <unique name="T_PRODCOSTING_UK_TRANSID"     columns="TRANSID,CURRENCYID"/>
+            <foreign name="T_PRODCOSTING_FK_TRANSID"    key="TRANSID"       reference="T_PRODTRANSACTION(ID)" />
+            <foreign name="T_PRODCOSTING_FK_CURRENCYID" key="CURRENCYID"    reference="T_ERPCUR(ID)"/>
+            <foreign name="T_PRODCOSTING_FK_CRTR"       key="CREATOR"       reference="T_USERPERSON(ID)" />
+            <foreign name="T_PRODCOSTING_FK_MDFR"       key="MODIFIER"      reference="T_USERPERSON(ID)" />
         </database>
     </definition>
 </datamodel-sqltable>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
  Copyright 2003 - 2016 The eFaps Team
@@ -16,13 +16,21 @@
  limitations under the License.
 
 -->
+
 <datamodel-type xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>6c9d0fd1-77b1-4e1a-84c5-9942864ad270</uuid>
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>3d99fa55-571f-4904-8f38-155922e08d1c</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_Costing</name>
-        <parent>Products_CostingAbstract</parent>
+        <name>Products_ProductCost</name>
+        <parent>Products_ProductCostAbstract</parent>
+        <trigger program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType"
+            name="Products_ProductCost.ACCESSCHECK"
+            event="ACCESSCHECK" />
+        <trigger program="org.efaps.esjp.products.Cost"
+            method="trigger4Insert"
+            name="Products_ProductCost.INSERT_POST"
+            event="INSERT_POST" />
     </definition>
 </datamodel-type>

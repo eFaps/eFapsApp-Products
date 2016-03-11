@@ -32,7 +32,7 @@
             <table>Products_CostingTable</table>
             <evaluate program="org.efaps.esjp.products.Product"
                 method="getCosting4Product">
-                <property name="Type">Products_Costing</property>
+                <property name="Type">Products_CostingAbstract</property>
             </evaluate>
             <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
                 method="configCheck"

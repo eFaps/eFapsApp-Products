@@ -18,11 +18,16 @@
 -->
 <datamodel-type xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>6c9d0fd1-77b1-4e1a-84c5-9942864ad270</uuid>
+    <uuid>c68a78fd-bb3c-42e7-bfaf-82c85b0c00dc</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_Costing</name>
-        <parent>Products_CostingAbstract</parent>
+        <name>Products_ProductCostAlternative</name>
+        <parent>Products_ProductCostAbstract</parent>
+        <trigger event="ACCESSCHECK" name="Products_ProductCostAlternative.ACCESSCHECK"
+            program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType" />
+        <trigger event="INSERT_POST" method="trigger4Insert"
+            name="Products_ProductCostAlternative.INSERT_POST"
+            program="org.efaps.esjp.products.Cost" />
     </definition>
 </datamodel-type>
