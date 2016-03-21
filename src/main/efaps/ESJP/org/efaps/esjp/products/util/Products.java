@@ -186,6 +186,13 @@ public final class Products
 
     /** See description. */
     @EFapsSysConfAttribute
+    public static final PropertiesSysConfAttribute MATERIALDESCR = new PropertiesSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "Material.Descriptions")
+                    .description("Substitutor values: Default=${Name}, Products_ProductStandartClass=text ${name} .");
+
+    /** See description. */
+    @EFapsSysConfAttribute
     public static final BooleanSysConfAttribute STANDARTACTFAM = new BooleanSysConfAttribute()
                     .sysConfUUID(SYSCONFUUID)
                     .key(BASE + "Standart.ActivateFamilies")
@@ -197,6 +204,13 @@ public final class Products
                     .sysConfUUID(SYSCONFUUID)
                     .key(BASE + "Standart.ActivateClassification")
                     .description("Activate the classifcation for standart products.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final PropertiesSysConfAttribute STANDARTDESCR = new PropertiesSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "Standart.Descriptions")
+                    .description("Substitutor values: Default=${Name}, Products_ProductStandartClass=text ${name} .");
 
     /** See description. */
     @EFapsSysConfAttribute
@@ -218,6 +232,14 @@ public final class Products
                     .sysConfUUID(SYSCONFUUID)
                     .key(BASE + "Service.FamiliesPrefix")
                     .description("Activate the family management for materials.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final PropertiesSysConfAttribute SERVDESCR = new PropertiesSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "Service.Descriptions")
+                    .description("Substitutor values: Default=${Name}, Products_ProductStandartClass=text ${name} .");
+
 
     /** See description. */
     @EFapsSysConfAttribute

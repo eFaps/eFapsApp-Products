@@ -24,12 +24,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.efaps.admin.common.NumberGenerator;
 import org.efaps.admin.common.SystemConfiguration;
 import org.efaps.admin.datamodel.Attribute;
@@ -47,6 +50,8 @@ import org.efaps.admin.datamodel.attributetype.OIDType;
 import org.efaps.admin.datamodel.attributetype.TypeType;
 import org.efaps.admin.datamodel.ui.FieldValue;
 import org.efaps.admin.datamodel.ui.IUIValue;
+import org.efaps.admin.datamodel.ui.LinkWithRangesUI;
+import org.efaps.admin.datamodel.ui.UIValue;
 import org.efaps.admin.dbproperty.DBProperties;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
@@ -56,6 +61,7 @@ import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.admin.ui.AbstractCommand;
 import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
+import org.efaps.api.ui.IOption;
 import org.efaps.db.AttributeQuery;
 import org.efaps.db.CachedPrintQuery;
 import org.efaps.db.Context;
@@ -82,7 +88,11 @@ import org.efaps.esjp.erp.IWarning;
 import org.efaps.esjp.erp.WarningUtil;
 import org.efaps.esjp.products.util.Products;
 import org.efaps.esjp.products.util.Products.ProductIndividual;
+import org.efaps.ui.wicket.models.cell.UIFormCellCmd;
+import org.efaps.ui.wicket.models.objects.IFormElement;
+import org.efaps.ui.wicket.models.objects.UIFieldForm;
 import org.efaps.ui.wicket.models.objects.UIForm;
+import org.efaps.ui.wicket.models.objects.UIForm.Element;
 import org.efaps.ui.wicket.models.objects.UITable;
 import org.efaps.ui.wicket.models.objects.UITable.TableFilter;
 import org.efaps.ui.wicket.util.EFapsKey;
@@ -442,7 +452,7 @@ public abstract class Product_Base
                 final boolean first = true;
                 QueryBuilder attrQueryBldr = null;
                 for (final String element : excludes.values()) {
-                    Type type;
+                    final Type type;
                     if (isUUID(element)) {
                         type = Type.get(UUID.fromString(element));
                     } else {
@@ -760,7 +770,7 @@ public abstract class Product_Base
             map.put("productDesc", print.getAttribute(CIProducts.ProductAbstract.Description));
             final Long dimId = print.<Long>getAttribute(CIProducts.ProductAbstract.Dimension);
             final Long dUoMId = print.<Long>getAttribute(CIProducts.ProductAbstract.DefaultUoM);
-            long selectedUoM;
+            final long selectedUoM;
             if (dUoMId == null) {
                 selectedUoM = Dimension.get(dimId).getBaseUoM().getId();
             } else {
@@ -1462,6 +1472,95 @@ public abstract class Product_Base
             insert.execute();
         }
         return new Return();
+    }
+
+    /**
+     * Sets the description.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the return
+     * @throws EFapsException on error
+     */
+    public Return setDescription(final Parameter _parameter)
+        throws EFapsException
+    {
+        final UIForm uiForm = (UIForm) ((UIFormCellCmd) _parameter.get(ParameterValues.CLASS)).getParent();
+        final Type type;
+        if (_parameter.getInstance() != null && _parameter.getInstance().isValid()) {
+            type = _parameter.getInstance().getType();
+        } else {
+            type = ((UIFormCellCmd) _parameter.get(ParameterValues.CLASS)).getParent().getCommand()
+                            .getTargetCreateType();
+        }
+        final Properties descriptions;
+        if (type.isCIType(CIProducts.ProductStandart)) {
+            descriptions = Products.STANDARTDESCR.get();
+        } else if (type.isCIType(CIProducts.ProductMaterial)) {
+            descriptions = Products.MATERIALDESCR.get();
+        } else if (type.isCIType(CIProducts.ProductService)) {
+            descriptions = Products.SERVDESCR.get();
+        } else {
+            descriptions = new Properties();
+        }
+
+        String text = descriptions.getProperty("Default", "Default");
+
+        // main fields
+        final Map<String, String> valueMap = new HashMap<>();
+        for (final org.efaps.admin.ui.field.Field field : uiForm.getForm().getFields()) {
+            valueMap.put(field.getName(), getSubstitutionValue4Description(_parameter, type, field));
+        }
+
+        for (final Element ele : uiForm.getElements()) {
+            final IFormElement el = ele.getElement();
+            if (el instanceof UIFieldForm) {
+                final Classification clazz = (Classification) Type.get(((UIFieldForm) el).getClassificationUUID());
+                if (descriptions.containsKey(clazz.getName())) {
+                    text = descriptions.getProperty(clazz.getName());
+                }
+                for (final org.efaps.admin.ui.field.Field field : ((UIFieldForm) el).getForm().getFields()) {
+                    valueMap.put(field.getName(), getSubstitutionValue4Description(_parameter, clazz, field));
+                }
+            }
+        }
+
+        final String fieldName = getProperty(_parameter, "FieldName", "description");
+        final Return ret = new Return();
+        final StringBuilder js = new StringBuilder();
+        js.append(getSetFieldValue(0, fieldName, StrSubstitutor.replace(text, valueMap).replace("  ", " ")));
+        ret.put(ReturnValues.SNIPLETT, js.toString());
+        return ret;
+    }
+
+    /**
+     * Gets the substitution value for description.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _type
+     * @param _field the field
+     * @return the substitution value4 description
+     * @throws EFapsException on error
+     */
+    protected String getSubstitutionValue4Description(final Parameter _parameter,
+                                                      final Type _type,
+                                                      final org.efaps.admin.ui.field.Field _field)
+        throws EFapsException
+    {
+        String ret = _parameter.getParameterValue(_field.getName());
+        if (ret != null && !StringUtils.isEmpty(_field.getAttribute())) {
+            final Attribute attr = _type.getAttribute(_field.getAttribute());
+            if (attr.getAttributeType().getUIProvider() instanceof LinkWithRangesUI) {
+                @SuppressWarnings("unchecked")
+                final List<IOption> options = (List<IOption>) attr.getAttributeType().getUIProvider().getValue(
+                                UIValue.get(_field, attr, ret));
+                for (final IOption option : options) {
+                    if (String.valueOf(option.getValue()).equals(ret)) {
+                        ret = option.getLabel();
+                    }
+                }
+            }
+        }
+        return ret;
     }
 
     /**
