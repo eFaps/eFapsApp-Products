@@ -111,7 +111,23 @@
             <profile name="sales"/>
         </profiles>
         <name>Products_ProductServiceForm</name>
-         <field character="Group" name="nameGroup">
+         <field name="productFamily">
+            <property name="Select">linkto[ProductFamilyLink].instance</property>
+            <property name="Label">Products_ProductAbstract/ProductFamilyLink.Label</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="ModeEdit">NONE</property>
+            <property name="ColSpan">3</property>
+            <trigger event="UI_FIELD_FORMAT" method="productFamilyFieldFormat"
+                name="Products_ProductServiceForm.productFamily.UI_FIELD_FORMAT"
+                program="org.efaps.esjp.products.ProductFamily" />
+            <trigger event="UI_ACCESSCHECK" method="configCheck"
+                name="Products_ProductServiceForm.productFamily.UI_ACCESSCHECK"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.Service.ActivateFamilies</property>
+            </trigger>
+        </field><field character="Group" name="nameGroup">
             <property name="GroupCount">3</property>
             <property name="ModeCreate">READONLY</property>
             <property name="ModeView">NONE</property>
@@ -235,24 +251,7 @@
                 <property name="Attribute">org.efaps.products.Service.ActivateFamilies</property>
             </trigger>
         </field>
-        <field name="productFamily">
-            <property name="Select">linkto[ProductFamilyLink].instance</property>
-            <property name="Label">Products_ProductAbstract/ProductFamilyLink.Label</property>
-            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
-            <property name="ModeEdit">NONE</property>
-            <trigger event="UI_FIELD_FORMAT"
-                method="productFamilyFieldFormat"
-                name="Products_ProductServiceForm.productFamily.UI_FIELD_FORMAT"
-                program="org.efaps.esjp.products.ProductFamily"/>
-            <trigger event="UI_ACCESSCHECK"
-                method="configCheck"
-                name="Products_ProductServiceForm.productFamily.UI_ACCESSCHECK"
-                program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                <!-- Products-Configuration -->
-                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
-                <property name="Attribute">org.efaps.products.Service.ActivateFamilies</property>
-            </trigger>
-        </field>
+
         <field name="name">
             <property name="Columns">40</property>
             <property name="ModeCreate">EDITABLE</property>

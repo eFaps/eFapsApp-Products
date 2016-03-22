@@ -221,6 +221,7 @@ public abstract class ProductFamily_Base
         map.put(CIFormProducts.Products_ProductForm.nameSuffix4Edit.name,
                         new Product().getSuffix4Family(_parameter, famInst));
         map.put(CIFormProducts.Products_ProductForm.productFamilyLink.name, famInst.getOid());
+        map.put(CIFormProducts.Products_ProductForm.productFamily.name, getName(_parameter, famInst));
         ret.put(ReturnValues.VALUES, map);
         return ret;
     }
