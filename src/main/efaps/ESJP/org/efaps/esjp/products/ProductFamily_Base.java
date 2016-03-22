@@ -42,6 +42,8 @@ import org.efaps.esjp.ci.CIFormProducts;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.AbstractCommon;
 import org.efaps.esjp.common.uiform.Create;
+import org.efaps.esjp.common.util.InterfaceUtils;
+import org.efaps.esjp.common.util.InterfaceUtils_Base.DojoLibs;
 import org.efaps.esjp.erp.AbstractWarning;
 import org.efaps.esjp.erp.IWarning;
 import org.efaps.esjp.erp.WarningUtil;
@@ -224,6 +226,63 @@ public abstract class ProductFamily_Base
     }
 
     /**
+     * Gets the sets the selected family ui value.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the sets the selected family ui value
+     * @throws EFapsException on error
+     */
+    public Return getSetSelectedFamilyUIValue(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        Instance famInst = null;
+        if (_parameter.getInstance() != null && _parameter.getInstance().isValid()) {
+            final PrintQuery print = new PrintQuery(_parameter.getInstance());
+            final SelectBuilder selFamInst = SelectBuilder.get().linkto(CIProducts.ProductAbstract.ProductFamilyLink)
+                            .instance();
+            print.addSelect(selFamInst);
+            print.execute();
+            famInst = print.getSelect(selFamInst);
+        }
+        if (famInst == null) {
+            famInst = Instance.get("");
+        }
+
+        StringBuilder js = new StringBuilder()
+            .append("topic.subscribe('eFaps/expand/")
+                .append(CIFormProducts.Products_ProductFamilyPickerForm.strctBrws.name)
+                .append("', function (e) {\n")
+            .append("var nl = query('[name=\\'selectedRow\\']').forEach(function (node) {\n")
+            .append("node.type='radio';\n")
+            .append("if (node.value == '").append(famInst.getOid()).append("') {\n")
+            .append("domAttr.set(node, 'checked', true);\n")
+            .append("}\n")
+            .append("});\n")
+            .append("});\n")
+            .append("topic.subscribe('eFaps/collapse/")
+                .append(CIFormProducts.Products_ProductFamilyPickerForm.strctBrws.name)
+                .append("', function (e) {\n")
+            .append("var nl = query('[name=\\'selectedRow\\']').forEach(function (node) {\n")
+            .append("node.type='radio';\n")
+            .append("if (node.value == '").append(famInst.getOid()).append("') {\n")
+            .append("domAttr.set(node, 'checked', true);\n")
+            .append("}\n")
+            .append("});\n")
+            .append("});\n")
+            .append("query('[name=\\'selectedRow\\']').forEach(function (node) {\n")
+            .append("node.type='radio';\n")
+            .append("if (node.value == '").append(famInst.getOid()).append("') {\n")
+            .append("domAttr.set(node, 'checked', true);\n")
+            .append("}\n")
+            .append(" });\n")
+            .append(" query('[name=\\'selecteAll\\']').style(\"display\", \"none\");\n");
+        js = InterfaceUtils.wrapInDojoRequire(_parameter, js, DojoLibs.TOPIC, DojoLibs.QUERY, DojoLibs.DOMATTR);
+        ret.put(ReturnValues.SNIPLETT, InterfaceUtils.wrappInScriptTag(_parameter, js, true, 1000));
+        return ret;
+    }
+
+    /**
      * Product family field format.
      *
      * @param _parameter Parameter as passed by the eFaps API
@@ -245,32 +304,6 @@ public abstract class ProductFamily_Base
         }
         return ret;
     }
-
-    /**
-     * Gets the descendants.
-     *
-     * @param _parameter Parameter as passed by the eFaps API
-     * @param _famInst the fam inst
-     * @return the descendants
-     * @throws EFapsException on error
-     */
-    protected static List<Instance> getDescendants(final Parameter _parameter,
-                                                   final Instance _famInst)
-        throws EFapsException
-    {
-        final List<Instance> ret = new ArrayList<>();
-        final QueryBuilder queryBlr = new QueryBuilder(CIProducts.ProductFamilyStandart);
-        queryBlr.addWhereAttrEqValue(CIProducts.ProductFamilyStandart.ParentLink, _famInst);
-        final CachedInstanceQuery query = queryBlr.getCachedQuery(ProductFamily_Base.CACHEKEY);
-        ret.addAll(query.execute());
-        final List<Instance> tmp = new ArrayList<>();
-        for (final Instance inst : ret) {
-            tmp.addAll(ProductFamily.getDescendants(_parameter, inst));
-        }
-        ret.addAll(tmp);
-        return ret;
-    }
-
 
     /**
      * Gets the name.
@@ -405,6 +438,32 @@ public abstract class ProductFamily_Base
         }
         return ret;
     }
+
+    /**
+     * Gets the descendants.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _famInst the fam inst
+     * @return the descendants
+     * @throws EFapsException on error
+     */
+    protected static List<Instance> getDescendants(final Parameter _parameter,
+                                                   final Instance _famInst)
+        throws EFapsException
+    {
+        final List<Instance> ret = new ArrayList<>();
+        final QueryBuilder queryBlr = new QueryBuilder(CIProducts.ProductFamilyStandart);
+        queryBlr.addWhereAttrEqValue(CIProducts.ProductFamilyStandart.ParentLink, _famInst);
+        final CachedInstanceQuery query = queryBlr.getCachedQuery(ProductFamily_Base.CACHEKEY);
+        ret.addAll(query.execute());
+        final List<Instance> tmp = new ArrayList<>();
+        for (final Instance inst : ret) {
+            tmp.addAll(ProductFamily.getDescendants(_parameter, inst));
+        }
+        ret.addAll(tmp);
+        return ret;
+    }
+
 
     /**
      * Gets the family instance for code.
