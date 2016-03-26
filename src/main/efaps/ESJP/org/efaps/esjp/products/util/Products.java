@@ -82,6 +82,7 @@ public final class Products
     public static final IntegerSysConfAttribute FAMILYSUFFIXLENGTH = new IntegerSysConfAttribute()
                     .sysConfUUID(SYSCONFUUID)
                     .key(BASE + "Family.SuffixLength")
+                    .defaultValue(3)
                     .description("Activate the family management for materials.");
 
     /** See description. */

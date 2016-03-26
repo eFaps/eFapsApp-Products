@@ -1339,6 +1339,9 @@ public abstract class Product_Base
         }
         Integer val = 1;
         final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductAbstract);
+        // do not include the individual products, because they have their own naming
+        queryBldr.addWhereAttrNotEqValue(CIProducts.ProductAbstract.Type, CIProducts.ProductBatch.getType().getId(),
+                        CIProducts.ProductIndividual.getType().getId());
         queryBldr.addWhereAttrEqValue(CIProducts.ProductAbstract.ProductFamilyLink, _famInst);
         queryBldr.addOrderByAttributeDesc(CIProducts.ProductAbstract.Name);
         queryBldr.setLimit(1);
@@ -1349,7 +1352,9 @@ public abstract class Product_Base
             final String name = multi.getAttribute(CIProducts.ProductAbstract.Name);
             final String[] nameAr = name.split("\\.");
             final String numStr = nameAr[nameAr.length - 1];
-            val = Integer.parseInt(numStr) + 1;
+            if (StringUtils.isNumeric(numStr)) {
+                val = Integer.parseInt(numStr) + 1;
+            }
         }
         final NumberFormat nf = NumberFormat.getInstance();
         nf.setMinimumIntegerDigits(length);
@@ -1536,7 +1541,7 @@ public abstract class Product_Base
      * Gets the substitution value for description.
      *
      * @param _parameter Parameter as passed by the eFaps API
-     * @param _type
+     * @param _type the type
      * @param _field the field
      * @return the substitution value4 description
      * @throws EFapsException on error
