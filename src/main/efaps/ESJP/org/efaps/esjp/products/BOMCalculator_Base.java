@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2012 The eFaps Team
+ * Copyright 2003 - 2016 The eFaps Team
 
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,9 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Revision:        $Rev: 8342 $
- * Last Changed:    $Date: 2012-12-11 09:42:17 -0500 (Tue, 11 Dec 2012) $
- * Last Changed By: $Author: jan@moxter.net $
  */
 
 package org.efaps.esjp.products;
@@ -29,7 +26,7 @@ import java.util.Map.Entry;
 import org.efaps.admin.datamodel.Dimension;
 import org.efaps.admin.datamodel.Dimension.UoM;
 import org.efaps.admin.event.Parameter;
-import org.efaps.admin.program.esjp.EFapsRevision;
+import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.AttributeQuery;
 import org.efaps.db.Instance;
@@ -39,7 +36,6 @@ import org.efaps.db.SelectBuilder;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.AbstractCommon;
 import org.efaps.esjp.products.util.Products;
-import org.efaps.esjp.products.util.ProductsSettings;
 import org.efaps.util.EFapsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,10 +44,9 @@ import org.slf4j.LoggerFactory;
  * TODO comment!
  *
  * @author The eFaps Team
- * @version $Id: $
  */
 @EFapsUUID("c715f832-ac54-46de-bc39-1ca3b704315f")
-@EFapsRevision("$Rev: 3449 $")
+@EFapsApplication("eFapsApp-Products")
 public abstract class BOMCalculator_Base
     extends AbstractCommon
 {
@@ -246,7 +241,7 @@ public abstract class BOMCalculator_Base
                                           final QueryBuilder _queryBldr)
         throws EFapsException
     {
-        final Instance storGrpInstance = Products.getSysConfig().getLink(ProductsSettings.DEFAULTSTORAGEGROUP);
+        final Instance storGrpInstance = Products.DEFAULTSTORAGEGRP4BOM.get();
         if (storGrpInstance != null && storGrpInstance.isValid()) {
             final QueryBuilder attrQueryBldr = new QueryBuilder(CIProducts.StorageGroupAbstract2StorageAbstract);
             attrQueryBldr.addWhereAttrEqValue(CIProducts.StorageGroupAbstract2StorageAbstract.FromAbstractLink,
@@ -330,7 +325,7 @@ public abstract class BOMCalculator_Base
                                             final QueryBuilder _queryBldr)
         throws EFapsException
     {
-        final Instance storGrpInstance = Products.getSysConfig().getLink(ProductsSettings.DEFAULTSTORAGEGROUP);
+        final Instance storGrpInstance = Products.DEFAULTSTORAGEGRP4BOM.get();
         if (storGrpInstance != null && storGrpInstance.isValid()) {
             final QueryBuilder attrQueryBldr = new QueryBuilder(CIProducts.StorageGroupAbstract2StorageAbstract);
             attrQueryBldr.addWhereAttrEqValue(CIProducts.StorageGroupAbstract2StorageAbstract.FromAbstractLink,

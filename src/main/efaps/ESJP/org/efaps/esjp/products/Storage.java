@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2010 The eFaps Team
+ * Copyright 2003 - 2016 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Revision:        $Rev$
- * Last Changed:    $Date$
- * Last Changed By: $Author$
  */
 
 package org.efaps.esjp.products;
 
 import org.efaps.admin.event.Parameter;
-import org.efaps.admin.program.esjp.EFapsRevision;
+import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Instance;
 import org.efaps.util.EFapsException;
@@ -32,10 +29,9 @@ import org.efaps.util.EFapsException;
  * class.
  *
  * @author The eFaps Team
- * @version $Id$
  */
 @EFapsUUID("748a6c1e-fb93-48b5-8ff2-65d6478a7519")
-@EFapsRevision("$Rev$")
+@EFapsApplication("eFapsApp-Products")
 public class Storage
     extends Storage_Base
 {
@@ -44,6 +40,7 @@ public class Storage
      * Get the default storage.
      *
      * @param _parameter Parameter as passed by the eFaps API
+     * @param _key the key
      * @return instance of a storage
      * @throws EFapsException on error
      */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2014 The eFaps Team
+ * Copyright 2003 - 2016 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Revision:        $Rev$
- * Last Changed:    $Date$
- * Last Changed By: $Author$
  */
 
 package org.efaps.esjp.products;
@@ -41,7 +38,7 @@ import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
 import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
-import org.efaps.admin.program.esjp.EFapsRevision;
+import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.admin.ui.Command;
 import org.efaps.db.Context;
@@ -59,7 +56,6 @@ import org.efaps.esjp.ci.CITableProducts;
 import org.efaps.esjp.erp.CommonDocument;
 import org.efaps.esjp.erp.NumberFormatter;
 import org.efaps.esjp.products.util.Products;
-import org.efaps.esjp.products.util.ProductsSettings;
 import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
@@ -70,10 +66,9 @@ import org.joda.time.format.DateTimeFormatter;
  * TODO comment!
  *
  * @author The eFaps Team
- * @version $Id$
  */
 @EFapsUUID("a117dd2e-05d3-4fc0-84c6-53b47cda5eeb")
-@EFapsRevision("$Rev$")
+@EFapsApplication("eFapsApp-Products")
 public abstract class Storage_Base
     extends CommonDocument
 {
@@ -516,10 +511,10 @@ public abstract class Storage_Base
     {
         Instance ret = null;
         if (_key != null) {
-            ret = Products.getSysConfig().getLink(ProductsSettings.DEFAULTWAREHOUSE + "." + _key);
+            ret = Products.DEFAULTWAREHOUSE.get();
         }
         if (ret == null || ret != null && !ret.isValid()) {
-            ret = Products.getSysConfig().getLink(ProductsSettings.DEFAULTWAREHOUSE);
+            ret = Products.DEFAULTWAREHOUSE.get();
         }
         return ret;
     }

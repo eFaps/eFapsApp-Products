@@ -37,7 +37,6 @@ import org.apache.sanselan.ImageInfo;
 import org.apache.sanselan.ImageReadException;
 import org.apache.sanselan.ImageWriteException;
 import org.apache.sanselan.Sanselan;
-import org.efaps.admin.common.SystemConfiguration;
 import org.efaps.admin.datamodel.Type;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
@@ -62,7 +61,6 @@ import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.file.FileUtil;
 import org.efaps.esjp.common.file.ImageField;
 import org.efaps.esjp.products.util.Products;
-import org.efaps.esjp.products.util.ProductsSettings;
 import org.efaps.util.EFapsException;
 
 import com.mortennobel.imagescaling.DimensionConstrain;
@@ -78,26 +76,6 @@ import com.mortennobel.imagescaling.ResampleOp;
 @EFapsRevision("$Rev$")
 public abstract class Image_Base
 {
-
-    /**
-     * Access is defined by a SystemConfiguration.
-     *
-     * @param _parameter Parameter as passed by the eFaps API
-     * @return Return with true if access is granted
-     * @throws EFapsException on error
-     */
-    public Return access4Image(final Parameter _parameter)
-        throws EFapsException
-    {
-        final Return ret = new Return();
-        final SystemConfiguration config = Products.getSysConfig();
-        if (config != null) {
-            if (config.getAttributeValueAsBoolean(ProductsSettings.ACTIVATEIMAGE)) {
-                ret.put(ReturnValues.TRUE, true);
-            }
-        }
-        return ret;
-    }
 
     /**
      * Grants access to the field used as a link to the original file.
@@ -205,8 +183,11 @@ public abstract class Image_Base
         connectImage(_parameter, CIProducts.Product2ImageOriginal.getType(), parentInst, imageInst);
         final FileParameter fileItem = getFileParameter(_parameter);
         uploadImage(_parameter, imageInst, fileItem);
-        final Properties props = Products.getSysConfig()
-                        .getAttributeValueAsProperties(ProductsSettings.IMAGEPROPERTIES);
+        Properties props = new Properties();
+        if (parentInst.getType().isCIType(CIProducts.ProductStandart)) {
+            props = Products.STANDARTIMG.get();
+        }
+        // TODO update the properties
         if (props.containsKey("Image4Doc_Create") && "true".equalsIgnoreCase(props.getProperty("Image4Doc_Create"))) {
             final int width = Integer.parseInt(props.getProperty("Image4Doc_Width", "250"));
             final int height = Integer.parseInt(props.getProperty("Image4Doc_Height", "250"));

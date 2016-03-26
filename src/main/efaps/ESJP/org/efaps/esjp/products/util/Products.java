@@ -222,6 +222,14 @@ public final class Products
 
     /** See description. */
     @EFapsSysConfAttribute
+    public static final PropertiesSysConfAttribute STANDARTIMG = new PropertiesSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "Standart.Image")
+                    .description("Substitutor values: Default=${Name}, Products_ProductStandartClass=text ${name} .");
+
+
+    /** See description. */
+    @EFapsSysConfAttribute
     public static final BooleanSysConfAttribute SERVACTFAM = new BooleanSysConfAttribute()
                     .sysConfUUID(SYSCONFUUID)
                     .key(BASE + "Service.ActivateFamilies")
@@ -277,6 +285,20 @@ public final class Products
                     .sysConfUUID(SYSCONFUUID)
                     .key(BASE + "DefaultDimension")
                     .description("Activate the family management for materials.");
+
+    /** See description. */
+    @EFapsSysConfLink
+    public static final SysConfLink DEFAULTWAREHOUSE = new SysConfLink()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "DefaultDimension")
+                    .description("Link to a default warehouse instance.");
+
+    /** See description. */
+    @EFapsSysConfLink
+    public static final SysConfLink DEFAULTSTORAGEGRP4BOM = new SysConfLink()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "DefaultStorageGroup4BOMCalculator")
+                    .description("Link to a default StorageGroup instance used by the BOMCalculator.");
 
     /**
      * Singelton.

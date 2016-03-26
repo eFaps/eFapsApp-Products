@@ -330,6 +330,21 @@
                 <property name="AttributeExists">org.efaps.products.Standart.Descriptions</property>
             </trigger>
         </field>
+        <field name="image">
+            <property name="Label">Products_ProductForm.image.Label</property>
+            <property name="ModeEdit">NONE</property>
+            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+            <trigger event="UI_FIELD_VALUE" method="getImageFieldValueUI"
+                name="Products_ImageForm.image.UI_FIELD_VALUE"
+                program="org.efaps.esjp.products.Image">
+                <property name="max-width">200px</property>
+                <property name="max-height">200px</property>
+                <property name="RelationType">Products_Product2ImageThumbnail</property>
+            </trigger>
+            <trigger event="UI_ACCESSCHECK" method="access4Image"
+                name="Products_ProductForm.image.UI_ACCESSCHECK"
+                program="org.efaps.esjp.products.Image" />
+        </field>
         <field name="dimension">
             <property name="Attribute">Dimension</property>
             <property name="ModeCreate">EDITABLE</property>
