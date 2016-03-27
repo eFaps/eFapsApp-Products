@@ -57,13 +57,6 @@
                 <property name="FilterDefault08">-</property>
                 <!-- Products-Configuration -->
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
-                <property name="AccessAttribute01"></property>
-                <property name="AccessAttribute02"></property>
-                <property name="AccessAttribute03"></property>
-                <property name="AccessAttribute04"></property>
-                <property name="AccessAttribute05"></property>
-                <property name="AccessAttribute06"></property>
-                <property name="AccessAttribute07"></property>
                 <property name="AccessAttribute08">org.efaps.products.TreeView.Activate</property>
             </trigger>
             <trigger event="UI_FIELD_VALUE" index="2" method="getFilterFieldValue"
@@ -91,13 +84,6 @@
                 <property name="Products_TreeViewRoot_Select">attribute[Label]</property>
                 <!-- Products-Configuration -->
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
-                <property name="AccessAttribute01"></property>
-                <property name="AccessAttribute02"></property>
-                <property name="AccessAttribute03"></property>
-                <property name="AccessAttribute04"></property>
-                <property name="AccessAttribute05"></property>
-                <property name="AccessAttribute06"></property>
-                <property name="AccessAttribute07"></property>
                 <property name="AccessAttribute08">org.efaps.products.TreeView.Activate</property>
             </trigger>
         </field>

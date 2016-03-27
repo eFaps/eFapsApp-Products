@@ -278,6 +278,26 @@ public abstract class Cost_Base
     }
 
     /**
+     * Gets the cost.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _date the date
+     * @param _alterCurrencyInstance the alter currency instance
+     * @param _prodInst the prod inst
+     * @return the cost
+     * @throws EFapsException on error
+     */
+    public CostBean getAlternativeCost(final Parameter _parameter,
+                                       final DateTime _date,
+                                       final Instance _alterCurrencyInstance,
+                                       final Instance _prodInst)
+        throws EFapsException
+
+    {
+        return getAlternativeCosts(_parameter, _date, _alterCurrencyInstance, _prodInst).get(_prodInst);
+    }
+
+    /**
      * Gets the costs.
      *
      * @param _parameter Parameter as passed by the eFaps API
@@ -298,6 +318,25 @@ public abstract class Cost_Base
      *
      * @param _parameter Parameter as passed by the eFaps API
      * @param _date the date
+     * @param _alterCurrencyInstance the alter currency instance
+     * @param _prodInsts the prod insts
+     * @return the costs
+     * @throws EFapsException on error
+     */
+    public Map<Instance, CostBean> getAlternativeCosts(final Parameter _parameter,
+                                                       final DateTime _date,
+                                                       final Instance _alterCurrencyInstance,
+                                                       final Instance... _prodInsts)
+        throws EFapsException
+    {
+        return getCostsInternal(_parameter, _date, _alterCurrencyInstance, _prodInsts);
+    }
+
+    /**
+     * Gets the costs.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _date the date
      * @param _prodInsts the prod insts
      * @return the costs
      * @throws EFapsException on error
@@ -307,20 +346,48 @@ public abstract class Cost_Base
                                             final Instance... _prodInsts)
         throws EFapsException
     {
+        return getCostsInternal(_parameter, _date, null, _prodInsts);
+    }
+
+    /**
+     * Gets the costs.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _date the date
+     * @param _alterCurrencyInstance the alter currency instance
+     * @param _prodInsts the prod insts
+     * @return the costs
+     * @throws EFapsException on error
+     */
+    protected Map<Instance, CostBean> getCostsInternal(final Parameter _parameter,
+                                                       final DateTime _date,
+                                                       final Instance _alterCurrencyInstance,
+                                                       final Instance... _prodInsts)
+        throws EFapsException
+    {
         final Map<Instance, CostBean> ret = new HashMap<>();
         if (_prodInsts != null && _prodInsts.length > 0) {
-            final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductCost);
-            queryBldr.addWhereAttrLessValue(CIProducts.ProductCost.ValidFrom, _date.withTimeAtStartOfDay()
+            final QueryBuilder queryBldr;
+            if (_alterCurrencyInstance != null && _alterCurrencyInstance.isValid()) {
+                queryBldr = new QueryBuilder(CIProducts.ProductCostAlternative);
+                queryBldr.addWhereAttrEqValue(CIProducts.ProductCostAlternative.CurrencyLink, _alterCurrencyInstance);
+            } else {
+                queryBldr = new QueryBuilder(CIProducts.ProductCost);
+            }
+
+            queryBldr.addWhereAttrLessValue(CIProducts.ProductCostAbstract.ValidFrom, _date.withTimeAtStartOfDay()
                             .plusMinutes(1));
-            queryBldr.addWhereAttrGreaterValue(CIProducts.ProductCost.ValidUntil,
-                            _date.withTimeAtStartOfDay().minusMinutes(1));
-            queryBldr.addWhereAttrEqValue(CIProducts.ProductCost.ProductLink, (Object[]) _prodInsts);
+            queryBldr.addWhereAttrGreaterValue(CIProducts.ProductCostAbstract.ValidUntil, _date.withTimeAtStartOfDay()
+                            .minusMinutes(1));
+            queryBldr.addWhereAttrEqValue(CIProducts.ProductCostAbstract.ProductLink, (Object[]) _prodInsts);
             final MultiPrintQuery multi = queryBldr.getPrint();
-            final SelectBuilder selCurInst = SelectBuilder.get().linkto(CIProducts.ProductCost.CurrencyLink).instance();
-            final SelectBuilder selProdInst = SelectBuilder.get().linkto(CIProducts.ProductCost.ProductLink).instance();
+            final SelectBuilder selCurInst = SelectBuilder.get().linkto(CIProducts.ProductCostAbstract.CurrencyLink)
+                            .instance();
+            final SelectBuilder selProdInst = SelectBuilder.get().linkto(CIProducts.ProductCostAbstract.ProductLink)
+                            .instance();
             multi.addSelect(selCurInst, selProdInst);
-            multi.addAttribute(CIProducts.ProductCost.Price, CIProducts.ProductCost.ValidFrom,
-                            CIProducts.ProductCost.ValidUntil, CIProducts.ProductCost.Created);
+            multi.addAttribute(CIProducts.ProductCostAbstract.Price, CIProducts.ProductCostAbstract.ValidFrom,
+                            CIProducts.ProductCostAbstract.ValidUntil, CIProducts.ProductCostAbstract.Created);
             multi.execute();
             while (multi.next()) {
                 final Instance prodInst = multi.getSelect(selProdInst);
@@ -370,6 +437,26 @@ public abstract class Cost_Base
      * Gets the cost4 currency.
      *
      * @param _parameter Parameter as passed by the eFaps API
+     * @param _alterCurrencyInstance the alter currency instance
+     * @param _productInstance the product instance
+     * @param _currencyInstance the currency instance
+     * @return the cost4 currency
+     * @throws EFapsException on error
+     */
+    protected static BigDecimal getAlternativeCost4Currency(final Parameter _parameter,
+                                                            final Instance _alterCurrencyInstance,
+                                                            final Instance _productInstance,
+                                                            final Instance _currencyInstance)
+        throws EFapsException
+    {
+        return Cost.getAlternativeCost4Currency(_parameter, new DateTime(), _alterCurrencyInstance,
+                        _productInstance, _currencyInstance);
+    }
+
+    /**
+     * Gets the cost4 currency.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
      * @param _date the date
      * @param _productInstance the product instance
      * @param _currencyInstance the currency instance
@@ -384,6 +471,33 @@ public abstract class Cost_Base
     {
         BigDecimal ret = BigDecimal.ZERO;
         final CostBean costBean = new Cost().getCost(_parameter, _date, _productInstance);
+        if (costBean != null) {
+            ret = costBean.getCost4Currency(_parameter, _currencyInstance);
+        }
+        return ret;
+    }
+
+    /**
+     * Gets the cost4 currency.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _date the date
+     * @param _alterCurrencyInstance the alter currency instance
+     * @param _productInstance the product instance
+     * @param _currencyInstance the currency instance
+     * @return the cost4 currency
+     * @throws EFapsException on error
+     */
+    protected static BigDecimal getAlternativeCost4Currency(final Parameter _parameter,
+                                                            final DateTime _date,
+                                                            final Instance _alterCurrencyInstance,
+                                                            final Instance _productInstance,
+                                                            final Instance _currencyInstance)
+        throws EFapsException
+    {
+        BigDecimal ret = BigDecimal.ZERO;
+        final CostBean costBean = new Cost().getAlternativeCost(_parameter, _date, _alterCurrencyInstance,
+                        _productInstance);
         if (costBean != null) {
             ret = costBean.getCost4Currency(_parameter, _currencyInstance);
         }
