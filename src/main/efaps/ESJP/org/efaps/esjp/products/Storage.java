@@ -40,14 +40,12 @@ public class Storage
      * Get the default storage.
      *
      * @param _parameter Parameter as passed by the eFaps API
-     * @param _key the key
      * @return instance of a storage
      * @throws EFapsException on error
      */
-    public static Instance getDefaultStorage(final Parameter _parameter,
-                                             final String _key)
+    public static Instance getDefaultStorage(final Parameter _parameter)
         throws EFapsException
     {
-        return Storage_Base.getDefaultStorage(_parameter, _key);
+        return Storage_Base.getDefaultStorage(_parameter);
     }
 }

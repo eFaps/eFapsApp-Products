@@ -290,7 +290,7 @@ public final class Products
     @EFapsSysConfLink
     public static final SysConfLink DEFAULTWAREHOUSE = new SysConfLink()
                     .sysConfUUID(SYSCONFUUID)
-                    .key(BASE + "DefaultDimension")
+                    .key(BASE + "DefaultWareHouse")
                     .description("Link to a default warehouse instance.");
 
     /** See description. */

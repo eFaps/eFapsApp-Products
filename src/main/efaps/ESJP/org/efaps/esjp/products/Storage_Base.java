@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.UUID;
 
+import org.efaps.admin.common.SystemConfiguration;
 import org.efaps.admin.datamodel.Dimension;
 import org.efaps.admin.datamodel.Dimension.UoM;
 import org.efaps.admin.datamodel.Status;
@@ -501,17 +502,24 @@ public abstract class Storage_Base
      * Get the default storage.
      *
      * @param _parameter Parameter as passed by the eFaps API
-     * @param _key optional key to be added
      * @return instance of a storage
      * @throws EFapsException on error
      */
-    protected static Instance getDefaultStorage(final Parameter _parameter,
-                                                final String _key)
+    protected static Instance getDefaultStorage(final Parameter _parameter)
         throws EFapsException
     {
         Instance ret = null;
-        if (_key != null) {
-            ret = Products.DEFAULTWAREHOUSE.get();
+        final Storage storage = new Storage();
+        if (storage.containsProperty(_parameter, "SystemConfig")
+                        && storage.containsProperty(_parameter, "Link4DefaultStorage")) {
+            final String sysConStr = storage.getProperty(_parameter, "SystemConfig");
+            SystemConfiguration sysConf;
+            if (storage.isUUID(sysConStr)) {
+                sysConf = SystemConfiguration.get(UUID.fromString(sysConStr));
+            } else {
+                sysConf = SystemConfiguration.get(sysConStr);
+            }
+            ret = sysConf.getLink(storage.getProperty(_parameter, "Link4DefaultStorage"));
         }
         if (ret == null || ret != null && !ret.isValid()) {
             ret = Products.DEFAULTWAREHOUSE.get();
