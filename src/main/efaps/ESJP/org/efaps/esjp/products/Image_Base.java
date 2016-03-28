@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2011 The eFaps Team
+ * Copyright 2003 - 2016 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Revision:        $Rev$
- * Last Changed:    $Date$
- * Last Changed By: $Author$
  */
 
 package org.efaps.esjp.products;
@@ -42,7 +39,7 @@ import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
 import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
-import org.efaps.admin.program.esjp.EFapsRevision;
+import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.admin.ui.AbstractCommand;
 import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
@@ -58,6 +55,7 @@ import org.efaps.db.QueryBuilder;
 import org.efaps.db.SelectBuilder;
 import org.efaps.db.Update;
 import org.efaps.esjp.ci.CIProducts;
+import org.efaps.esjp.common.AbstractCommon;
 import org.efaps.esjp.common.file.FileUtil;
 import org.efaps.esjp.common.file.ImageField;
 import org.efaps.esjp.products.util.Products;
@@ -70,11 +68,11 @@ import com.mortennobel.imagescaling.ResampleOp;
  * TODO comment! First fast draft for testing purpose only!!!
  *
  * @author The eFaps Team
- * @version $Id$
  */
 @EFapsUUID("ac49af4b-e10e-43f8-976d-8b5170dbfb7a")
-@EFapsRevision("$Rev$")
+@EFapsApplication("eFapsApp-Products")
 public abstract class Image_Base
+    extends AbstractCommon
 {
 
     /**
@@ -144,20 +142,21 @@ public abstract class Image_Base
         }
         Return retVal;
         if (imageOid != null) {
-            retVal = new ImageField(){
+            retVal = new ImageField()
+            {
 
                 @Override
                 protected String getImageOid(final Parameter _parameter)
                     throws EFapsException
                 {
-                    return imageOid ;
+                    return imageOid;
                 }
 
                 @Override
                 protected String getTargetOid(final Parameter _parameter)
                     throws EFapsException
                 {
-                    return linkOid ;
+                    return linkOid;
                 }
 
             }.getViewFieldValueUI(_parameter);
@@ -188,20 +187,20 @@ public abstract class Image_Base
             props = Products.STANDARTIMG.get();
         }
         // TODO update the properties
-        if (props.containsKey("Image4Doc_Create") && "true".equalsIgnoreCase(props.getProperty("Image4Doc_Create"))) {
-            final int width = Integer.parseInt(props.getProperty("Image4Doc_Width", "250"));
-            final int height = Integer.parseInt(props.getProperty("Image4Doc_Height", "250"));
-            final boolean enlarge = "true".equalsIgnoreCase(props.getProperty("Image4Doc_Enlarge", "false"));
+        if (props.containsKey("Image4Doc.Create") && "true".equalsIgnoreCase(props.getProperty("Image4Doc.Create"))) {
+            final int width = Integer.parseInt(props.getProperty("Image4Doc.Width", "250"));
+            final int height = Integer.parseInt(props.getProperty("Image4Doc.Height", "250"));
+            final boolean enlarge = "true".equalsIgnoreCase(props.getProperty("Image4Doc.Enlarge", "false"));
             final DimensionConstrain dim = DimensionConstrain.createMaxDimension(width, height, !enlarge);
             final File img = createNewImageFile(_parameter, "Image4Doc_", fileItem, dim);
             final Instance copyInst = createImage(_parameter, CIProducts.ImageDocument.getType(), imageInst);
             connectImage(_parameter, CIProducts.Product2ImageDocument.getType(), parentInst, copyInst);
             uploadImage(_parameter, copyInst, img);
         }
-        if (props.containsKey("Thumbnail_Create") && "true".equalsIgnoreCase(props.getProperty("Thumbnail_Create"))) {
-            final int width = Integer.parseInt(props.getProperty("Thumbnail_Width", "150"));
-            final int height = Integer.parseInt(props.getProperty("Thumbnail_Height", "150"));
-            final boolean enlarge = "true".equalsIgnoreCase(props.getProperty("Thumbnail_Enlarge", "false"));
+        if (props.containsKey("Thumbnail.Create") && "true".equalsIgnoreCase(props.getProperty("Thumbnail.Create"))) {
+            final int width = Integer.parseInt(props.getProperty("Thumbnail.Width", "150"));
+            final int height = Integer.parseInt(props.getProperty("Thumbnail.Height", "150"));
+            final boolean enlarge = "true".equalsIgnoreCase(props.getProperty("Thumbnail.Enlarge", "false"));
             final DimensionConstrain dim = DimensionConstrain.createMaxDimension(width, height, !enlarge);
             final File img = createNewImageFile(_parameter, "Thumbnail_", fileItem, dim);
             final Instance copyInst = createImage(_parameter, CIProducts.ImageThumbnail.getType(), imageInst);
