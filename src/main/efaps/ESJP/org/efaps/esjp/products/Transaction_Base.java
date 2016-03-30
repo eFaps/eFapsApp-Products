@@ -709,19 +709,26 @@ public abstract class Transaction_Base
         final Instance instance = _parameter.getInstance();
         // get the transaction
         final PrintQuery print = new PrintQuery(instance);
-        print.addAttribute(CIProducts.TransactionAbstract.Storage, CIProducts.TransactionAbstract.Product,
+        final SelectBuilder selProductInst = SelectBuilder.get().linkto(CIProducts.TransactionAbstract.Product)
+                        .instance();
+        print.addSelect(selProductInst);
+        print.addAttribute(CIProducts.TransactionAbstract.Storage,
                         CIProducts.TransactionAbstract.UoM, CIProducts.TransactionAbstract.Quantity);
+        print.executeWithoutAccessCheck();
 
-        if (print.executeWithoutAccessCheck()) {
-            BigDecimal transQuantity = print.<BigDecimal>getAttribute(CIProducts.TransactionAbstract.Quantity);
-            final Long storage = print.<Long>getAttribute(CIProducts.TransactionAbstract.Storage);
-            final Long product = print.<Long>getAttribute(CIProducts.TransactionAbstract.Product);
-            final Long uomId = print.<Long>getAttribute(CIProducts.TransactionAbstract.UoM);
+        final Instance productInst = print.getSelect(selProductInst);
+        //valid product and it is not a infinite product
+        if (productInst != null && productInst.isValid()
+                        && !productInst.getType().isCIType(CIProducts.ProductInfinite)) {
+
+            BigDecimal transQuantity = print.getAttribute(CIProducts.TransactionAbstract.Quantity);
+            final Long storage = print.getAttribute(CIProducts.TransactionAbstract.Storage);
+
+            final Long uomId = print.getAttribute(CIProducts.TransactionAbstract.UoM);
 
             final UoM uom = Dimension.getUoM(uomId);
             transQuantity = transQuantity.multiply(new BigDecimal(uom.getNumerator())).divide(
                             new BigDecimal(uom.getDenominator()), BigDecimal.ROUND_HALF_UP);
-
 
             CIType inventory;
             if (instance.getType().isKindOf(CIProducts.TransactionIndividualInbound.getType())
@@ -733,7 +740,7 @@ public abstract class Transaction_Base
 
             final QueryBuilder queryBldr = new QueryBuilder(inventory);
             queryBldr.addWhereAttrEqValue(CIProducts.InventoryAbstract.Storage, storage);
-            queryBldr.addWhereAttrEqValue(CIProducts.InventoryAbstract.Product, product);
+            queryBldr.addWhereAttrEqValue(CIProducts.InventoryAbstract.Product, productInst);
             final MultiPrintQuery multi = queryBldr.getPrint();
             multi.addAttribute(CIProducts.InventoryAbstract.Quantity,
                                CIProducts.InventoryAbstract.Reserved);
@@ -752,7 +759,7 @@ public abstract class Transaction_Base
                 update = new Insert(inventory);
                 update.add(CIProducts.InventoryAbstract.UoM, uom.getDimension().getBaseUoM().getId());
                 update.add(CIProducts.InventoryAbstract.Storage, storage);
-                update.add(CIProducts.InventoryAbstract.Product, product);
+                update.add(CIProducts.InventoryAbstract.Product, productInst);
             }
             if (instance.getType().isKindOf(CIProducts.TransactionInbound.getType())) {
                 quantity = currentQuantity.add(transQuantity);
@@ -815,7 +822,6 @@ public abstract class Transaction_Base
     {
         return updateFields4Product4SetInventory(_parameter);
     }
-
 
     /**
      * Method is used as the execute event on moving products from one Storage

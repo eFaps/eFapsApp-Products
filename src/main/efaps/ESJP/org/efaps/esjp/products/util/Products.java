@@ -58,6 +58,14 @@ public final class Products
 
     /** See description. */
     @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute ACTIVATEINFINITE = new BooleanSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "Infinite.Activate")
+                    .description("Activate the Infiniteproduct managements.")
+                    .defaultValue(true);
+
+    /** See description. */
+    @EFapsSysConfAttribute
     public static final BooleanSysConfAttribute ACTIVATEPRICEMASSUP = new BooleanSysConfAttribute()
                     .sysConfUUID(SYSCONFUUID)
                     .key(BASE + "ActivatePriceMassUpdate")
@@ -141,6 +149,27 @@ public final class Products
                     .sysConfUUID(SYSCONFUUID)
                     .key(BASE + "Generic.FamiliesPrefix")
                     .description("Activate the family management for materials.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute INFINITEACTFAM = new BooleanSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "Infinite.ActivateFamilies")
+                    .description("Activate the family management for Infinite products.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final StringSysConfAttribute INFINITEFAMPRE = new StringSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "Infinite.FamiliesPrefix")
+                    .description("Activate the family management for Infinite products.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final PropertiesSysConfAttribute INFINITEDESCR = new PropertiesSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "Infinite.Descriptions")
+                    .description("Substitutor values: Default=${Name}, Products_ProductStandartClass=text ${name} .");
 
     /** See description. */
     @EFapsSysConfAttribute

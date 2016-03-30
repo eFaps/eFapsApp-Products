@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
+
+ Copyright 2003 - 2009 The eFaps Team
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+
+-->
+<ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>85ecf2e5-a881-40ba-86a2-947fee22bb68</uuid>
+    <file-application>eFapsApp-Products</file-application>
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <name>Products_ProductInfiniteMyDesk</name>
+        <access>
+            <role>Products_Admin</role>
+            <role>Products_Modifier</role>
+            <role>Products_Reader</role>
+        </access>
+        <target>
+            <menu>Products_ProductInfiniteMyDesk_Menu</menu>
+            <table>Products_ProductInfiniteTable</table>
+            <evaluate method="productMultiPrint" program="org.efaps.esjp.products.Product">
+                <property name="Type">Products_ProductInfinite</property>
+            </evaluate>
+            <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                name="Products_ProductInfiniteMyDesk.UI_ACCESSCHECK"
+                method="configCheck"
+                event="UI_ACCESSCHECK">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.Infinite.Activate</property>
+            </trigger>
+        </target>
+        <property name="Target">content</property>
+        <property name="TargetShowCheckBoxes">true</property>
+    </definition>
+</ui-command>
