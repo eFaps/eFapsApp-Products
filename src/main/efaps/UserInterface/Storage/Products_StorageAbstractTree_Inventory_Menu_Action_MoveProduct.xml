@@ -71,6 +71,10 @@
                 <property name="UseNumberGenerator4Name">true</property>
                 <property name="StatusGroup">Sales_TransactionDocumentStatus</property>
                 <property name="Status">Open</property>
+                <!-- Sales-Configuration -->
+                <property name="JasperConfig">c9a1cbc3-fd35-4463-80d2-412422a3802f</property>
+                <property name="JasperConfigReport">org.efaps.sales.TransactionDocument.JasperReport</property>
+                <property name="JasperConfigMime">org.efaps.sales.TransactionDocument.Mime</property>
                 <property name="JasperReport">Sales_TransactionDocument</property>
             </execute>
             <validate program="org.efaps.esjp.products.Transaction" method="validateMove" />

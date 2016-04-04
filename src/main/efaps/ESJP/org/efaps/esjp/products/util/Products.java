@@ -329,6 +329,8 @@ public final class Products
                     .key(BASE + "DefaultStorageGroup4BOMCalculator")
                     .description("Link to a default StorageGroup instance used by the BOMCalculator.");
 
+
+
     /**
      * Singelton.
      */
