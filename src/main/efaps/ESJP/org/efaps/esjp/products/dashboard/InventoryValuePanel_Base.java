@@ -49,6 +49,8 @@ import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
 import org.joda.time.DurationFieldType;
 
+import com.mchange.v1.lang.BooleanUtils;
+
 /**
  * TODO comment!
  *
@@ -101,6 +103,16 @@ public abstract class InventoryValuePanel_Base
         throws EFapsException
     {
         return Instance.get(getConfig().getProperty("CurrencyOID", Currency.getBaseCurrency().getOid()));
+    }
+
+    /**
+     * Checks if is active.
+     *
+     * @return true, if is active
+     */
+    protected boolean isAlternative()
+    {
+        return BooleanUtils.parseBoolean(getConfig().getProperty("Alternative", "false"));
     }
 
     /**
@@ -235,10 +247,11 @@ public abstract class InventoryValuePanel_Base
                 xValue++;
 
                 final Parameter parameter = new Parameter();
-                final Inventory inventory = new Inventory();
-                inventory.setDate(date);
-                inventory.setShowProdClass(getClassificationLevel() > 0);
-                inventory.setCurrencyInst(getCurrencyInst());
+                final Inventory inventory = new Inventory()
+                        .setDate(date)
+                        .setShowProdClass(getClassificationLevel() > 0)
+                        .setCurrencyInst(getCurrencyInst())
+                        .setAlternative(isAlternative());
 
                 final Map<String, Object> map = new HashMap<>();
                 map.put("value", xValue);

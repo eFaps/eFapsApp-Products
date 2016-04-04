@@ -80,6 +80,9 @@ public abstract class Inventory_Base
      */
     private boolean showProdClass;
 
+    /** Use alternative type for costing. */
+    private boolean alternative;
+
     /**
      * Currency the cost evaluation will be executed for.
      * If null no cost evaluation is done.
@@ -293,12 +296,19 @@ public abstract class Inventory_Base
     protected void addCost(final Parameter _parameter,
                            final List<InventoryBean> _beans,
                            final Set<Instance> _prodInsts)
-        throws EFapsException
+                               throws EFapsException
     {
         if (isEvaluateCost()) {
-            final Map<Instance, CostBean> costs = getCostObject(_parameter)
-                            .getCosts(_parameter, getDate() == null ? new DateTime() : getDate(),
-                                            _prodInsts.toArray(new Instance[_prodInsts.size()]));
+            final Map<Instance, CostBean> costs;
+            if (isAlternative()) {
+                costs = getCostObject(_parameter).getAlternativeCosts(_parameter,
+                                getDate() == null ? new DateTime() : getDate(), getCurrencyInst(),
+                                _prodInsts.toArray(new Instance[_prodInsts.size()]));
+            } else {
+                costs = getCostObject(_parameter)
+                                .getCosts(_parameter, getDate() == null ? new DateTime() : getDate(),
+                                                _prodInsts.toArray(new Instance[_prodInsts.size()]));
+            }
             for (final InventoryBean bean : _beans) {
                 bean.setCostBean(_parameter, costs.get(bean.getProdInstance()), getCurrencyInst());
             }
@@ -442,10 +452,12 @@ public abstract class Inventory_Base
      * Setter method for instance variable {@link #currencyInst}.
      *
      * @param _currencyInst the new currency inst
+     * @return the inventory
      */
-    public void setCurrencyInst(final Instance _currencyInst)
+    public Inventory setCurrencyInst(final Instance _currencyInst)
     {
         this.currencyInst = _currencyInst;
+        return (Inventory) this;
     }
 
     /**
@@ -472,10 +484,34 @@ public abstract class Inventory_Base
      * Setter method for instance variable {@link #showProdClass}.
      *
      * @param _showProdClass value for instance variable {@link #showProdClass}
+     * @return the inventory
      */
-    public void setShowProdClass(final boolean _showProdClass)
+    public Inventory setShowProdClass(final boolean _showProdClass)
     {
         this.showProdClass = _showProdClass;
+        return (Inventory) this;
+    }
+
+    /**
+     * Getter method for the instance variable {@link #alternative}.
+     *
+     * @return value of instance variable {@link #alternative}
+     */
+    public boolean isAlternative()
+    {
+        return this.alternative;
+    }
+
+    /**
+     * Setter method for instance variable {@link #alternative}.
+     *
+     * @param _alternative value for instance variable {@link #alternative}
+     * @return the inventory
+     */
+    public Inventory setAlternative(final boolean _alternative)
+    {
+        this.alternative = _alternative;
+        return (Inventory) this;
     }
 
     /**
@@ -500,10 +536,12 @@ public abstract class Inventory_Base
      * Setter method for instance variable {@link #date}.
      *
      * @param _date value for instance variable {@link #date}
+     * @return the inventory
      */
-    public void setDate(final DateTime _date)
+    public Inventory setDate(final DateTime _date)
     {
         this.date = _date;
+        return (Inventory) this;
     }
 
     /**
