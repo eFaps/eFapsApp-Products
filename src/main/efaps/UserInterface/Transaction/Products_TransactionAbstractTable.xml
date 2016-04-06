@@ -31,10 +31,15 @@
             <property name="ShowTypeIcon">true</property>
             <property name="FilterType">PICKLIST</property>
         </field>
-        <field name="document">
+        <field name="documentType">
+            <property name="Select">linkto[Document].type.label</property>
+            <property name="Label">Products_TransactionAbstract/Document.Label</property>
+            <property name="FilterType">PICKLIST</property>
+        </field>
+         <field name="documentName">
             <property name="SelectAlternateOID">linkto[Document].oid</property>
             <property name="HRef">TREE</property>
-            <property name="Phrase">$&lt;linkto[Document].type.label&gt; - $&lt;linkto[Document].attribute[Name]&gt;</property>
+            <property name="Select">linkto[Document].attribute[Name]</property>
             <property name="Label">Products_TransactionAbstract/Document.Label</property>
         </field>
         <field name="status">
