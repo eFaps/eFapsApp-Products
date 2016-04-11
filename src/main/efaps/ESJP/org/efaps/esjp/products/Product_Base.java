@@ -160,8 +160,10 @@ public abstract class Product_Base
         final Return ret;
         if (_parameter.get(ParameterValues.ACCESSMODE).equals(TargetMode.CREATE) && dimInst != null
                         && dimInst.isValid()) {
-            final FieldValue fieldValue = (FieldValue) _parameter.get(ParameterValues.UIOBJECT);
-            fieldValue.setValue(Dimension.get(dimInst.getId()).getBaseUoM().getId());
+            final IUIValue fieldValue = (IUIValue) _parameter.get(ParameterValues.UIOBJECT);
+            if (fieldValue instanceof FieldValue) {
+                ((FieldValue) fieldValue).setValue(Dimension.get(dimInst.getId()).getBaseUoM().getId());
+            }
             ret = field.getUoMDropDownFieldValue(_parameter);
         } else if (_parameter.get(ParameterValues.ACCESSMODE).equals(TargetMode.EDIT)) {
             ret = field.getUoMDropDownFieldValue(_parameter);
@@ -1120,7 +1122,7 @@ public abstract class Product_Base
         throws EFapsException
     {
         final Return retVal = new Return();
-        final FieldValue fieldValue = (FieldValue) _parameter.get(ParameterValues.UIOBJECT);
+        final IUIValue fieldValue = (IUIValue) _parameter.get(ParameterValues.UIOBJECT);
         final TreeMap<String, Long> map = new TreeMap<String, Long>();
         long actual = 0;
 

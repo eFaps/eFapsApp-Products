@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.efaps.admin.datamodel.Attribute;
-import org.efaps.admin.datamodel.ui.FieldValue;
+import org.efaps.admin.datamodel.ui.IUIValue;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
 import org.efaps.admin.event.Return;
@@ -74,12 +74,12 @@ public abstract class Cost_Base
     public Return getValidUntilUI(final Parameter _parameter)
         throws EFapsException
     {
-        final FieldValue fValue = (FieldValue) _parameter.get(ParameterValues.UIOBJECT);
+        final IUIValue fValue = (IUIValue) _parameter.get(ParameterValues.UIOBJECT);
         final DateTime value;
-        if (fValue.getTargetMode().equals(TargetMode.CREATE)) {
+        if (TargetMode.CREATE.equals(_parameter.get(ParameterValues.ACCESSMODE))) {
             value = new DateTime().plusYears(10);
         } else {
-            value = (DateTime) fValue.getValue();
+            value = (DateTime) fValue.getObject();
         }
         final Return ret = new Return();
         ret.put(ReturnValues.VALUES, value);
