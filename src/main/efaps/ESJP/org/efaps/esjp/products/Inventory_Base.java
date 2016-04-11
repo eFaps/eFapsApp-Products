@@ -81,7 +81,7 @@ public abstract class Inventory_Base
     private boolean showProdClass;
 
     /** Use alternative type for costing. */
-    private boolean alternative;
+    private Instance alternativeCurrencyInst;
 
     /**
      * Currency the cost evaluation will be executed for.
@@ -296,13 +296,13 @@ public abstract class Inventory_Base
     protected void addCost(final Parameter _parameter,
                            final List<InventoryBean> _beans,
                            final Set<Instance> _prodInsts)
-                               throws EFapsException
+        throws EFapsException
     {
         if (isEvaluateCost()) {
             final Map<Instance, CostBean> costs;
             if (isAlternative()) {
                 costs = getCostObject(_parameter).getAlternativeCosts(_parameter,
-                                getDate() == null ? new DateTime() : getDate(), getCurrencyInst(),
+                                getDate() == null ? new DateTime() : getDate(), getAlternativeCurrencyInst(),
                                 _prodInsts.toArray(new Instance[_prodInsts.size()]));
             } else {
                 costs = getCostObject(_parameter)
@@ -499,18 +499,28 @@ public abstract class Inventory_Base
      */
     public boolean isAlternative()
     {
-        return this.alternative;
+        return getAlternativeCurrencyInst() != null && getAlternativeCurrencyInst().isValid();
     }
 
     /**
-     * Setter method for instance variable {@link #alternative}.
+     * Getter method for the instance variable {@link #alternativeCurrencyInst}.
      *
-     * @param _alternative value for instance variable {@link #alternative}
+     * @return value of instance variable {@link #alternativeCurrencyInst}
+     */
+    public Instance getAlternativeCurrencyInst()
+    {
+        return this.alternativeCurrencyInst;
+    }
+
+    /**
+     * Setter method for instance variable {@link #alternativeCurrencyInst}.
+     *
+     * @param _alternativeCurrencyInst value for instance variable {@link #alternativeCurrencyInst}
      * @return the inventory
      */
-    public Inventory setAlternative(final boolean _alternative)
+    public Inventory setAlternativeCurrencyInst(final Instance _alternativeCurrencyInst)
     {
-        this.alternative = _alternative;
+        this.alternativeCurrencyInst = _alternativeCurrencyInst;
         return (Inventory) this;
     }
 
@@ -647,7 +657,6 @@ public abstract class Inventory_Base
         }
         return ret;
     }
-
 
     /**
      * The Class EmptyPredicate.

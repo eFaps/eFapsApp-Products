@@ -43,6 +43,7 @@ import org.efaps.esjp.products.Inventory;
 import org.efaps.esjp.products.Inventory_Base.InventoryBean;
 import org.efaps.esjp.products.StorageGroup;
 import org.efaps.esjp.products.TreeView;
+import org.efaps.esjp.products.reports.CostReport_Base.CostTypeFilterValue;
 import org.efaps.esjp.products.util.Products;
 import org.efaps.ui.wicket.models.EmbeddedLink;
 import org.efaps.util.EFapsException;
@@ -272,6 +273,9 @@ public abstract class InventoryReport_Base
             throws EFapsException
         {
             final Instance treeViewInst = getTreeViewInst(_parameter);
+            final Map<String, Object> map = getFilteredReport().getFilterMap(_parameter);
+            final CostTypeFilterValue filterValue = (CostTypeFilterValue) map.get("costType");
+            final Instance alterInst = filterValue != null ? Instance.get(filterValue.getObject()) : null;
 
             return new Inventory()
             {
@@ -328,7 +332,7 @@ public abstract class InventoryReport_Base
                 {
                     return new ReportInventoryBean(treeViewInst);
                 }
-            };
+            }.setAlternativeCurrencyInst(alterInst != null && alterInst.isValid() ? alterInst : null);
         }
 
         /**

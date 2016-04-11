@@ -251,7 +251,7 @@ public abstract class InventoryValuePanel_Base
                         .setDate(date)
                         .setShowProdClass(getClassificationLevel() > 0)
                         .setCurrencyInst(getCurrencyInst())
-                        .setAlternative(isAlternative());
+                        .setAlternativeCurrencyInst(isAlternative() ? getCurrencyInst() : null);
 
                 final Map<String, Object> map = new HashMap<>();
                 map.put("value", xValue);
