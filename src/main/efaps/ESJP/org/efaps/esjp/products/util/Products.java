@@ -80,6 +80,13 @@ public final class Products
 
     /** See description. */
     @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute COSTACTIVATEALT = new BooleanSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "Cost.ActivateAlternative")
+                    .description(" Activate the possibility to register alterntative costs.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
     public static final BooleanSysConfAttribute ACTIVATEFAMILY = new BooleanSysConfAttribute()
                     .sysConfUUID(SYSCONFUUID)
                     .key(BASE + "Family.Activate")
@@ -299,7 +306,6 @@ public final class Products
                     .sysConfUUID(SYSCONFUUID)
                     .key(BASE + "report.CostReport")
                     .description("Configuration for CostReport.");
-
 
     /** See description. */
     @EFapsSysConfAttribute
