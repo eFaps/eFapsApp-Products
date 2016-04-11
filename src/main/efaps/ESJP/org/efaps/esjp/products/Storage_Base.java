@@ -32,7 +32,7 @@ import org.efaps.admin.datamodel.Dimension;
 import org.efaps.admin.datamodel.Dimension.UoM;
 import org.efaps.admin.datamodel.Status;
 import org.efaps.admin.datamodel.Type;
-import org.efaps.admin.datamodel.ui.FieldValue;
+import org.efaps.admin.datamodel.ui.IUIValue;
 import org.efaps.admin.datamodel.ui.UIInterface;
 import org.efaps.admin.dbproperty.DBProperties;
 import org.efaps.admin.event.Parameter;
@@ -374,8 +374,8 @@ public abstract class Storage_Base
         throws EFapsException
     {
         final Return ret = new Return();
-        final FieldValue fieldValue = (FieldValue) _parameter.get(ParameterValues.UIOBJECT);
-        final Object value = fieldValue.getValue();
+        final IUIValue fieldValue = (IUIValue) _parameter.get(ParameterValues.UIOBJECT);
+        final Object value = fieldValue.getObject();
         if (value != null) {
             Long uomId = null;
             if (value instanceof String) {
