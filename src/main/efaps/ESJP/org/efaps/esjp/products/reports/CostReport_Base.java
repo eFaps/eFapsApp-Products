@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2015 The eFaps Team
+ * Copyright 2003 - 2016 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections4.comparators.ComparatorChain;
+import org.apache.commons.lang3.ArrayUtils;
+import org.efaps.admin.datamodel.ui.IUIValue;
+import org.efaps.admin.dbproperty.DBProperties;
 import org.efaps.admin.event.Parameter;
+import org.efaps.admin.event.Parameter.ParameterValues;
 import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsApplication;
@@ -39,6 +43,9 @@ import org.efaps.db.QueryBuilder;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.jasperreport.AbstractDynamicReport;
 import org.efaps.esjp.common.jasperreport.datatype.DateTimeDate;
+import org.efaps.esjp.common.uiform.Field;
+import org.efaps.esjp.common.uiform.Field_Base.DropDownPosition;
+import org.efaps.esjp.erp.Currency;
 import org.efaps.esjp.erp.CurrencyInst;
 import org.efaps.esjp.erp.FilteredReport;
 import org.efaps.esjp.products.Cost;
@@ -61,7 +68,6 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRRewindableDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
-// TODO: Auto-generated Javadoc
 /**
  * TODO comment!.
  *
@@ -129,6 +135,41 @@ public abstract class CostReport_Base
     }
 
     /**
+     * Gets the cost type field value.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return the cost type field value
+     * @throws EFapsException on error
+     */
+    public Return getCostTypeFieldValue(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        final IUIValue value = (IUIValue) _parameter.get(ParameterValues.UIOBJECT);
+        final String key = value.getField().getName();
+        final Map<String, Object> map = getFilterMap(_parameter);
+        final String selected = map.containsKey(key) ? ((CostTypeFilterValue) map.get(key)).getObject() : "DEFAULT";
+        final List<DropDownPosition> values = new ArrayList<DropDownPosition>();
+        values.add(new Field.DropDownPosition("DEFAULT", new CostTypeFilterValue().getLabel(_parameter))
+                        .setSelected(selected == null || "DEFAULT".equals(selected)));
+        for (final CurrencyInst currencyInst : CurrencyInst.getAvailable()) {
+            if (!currencyInst.getInstance().equals(Currency.getBaseCurrency())) {
+                final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductCostAlternative);
+                queryBldr.addWhereAttrEqValue(CIProducts.ProductCostAlternative.CurrencyLink,
+                                currencyInst.getInstance());
+                queryBldr.setLimit(1);
+                if (!queryBldr.getQuery().executeWithoutAccessCheck().isEmpty()) {
+                    values.add(new Field.DropDownPosition(currencyInst.getInstance().getOid(), new CostTypeFilterValue()
+                                    .setObject(currencyInst.getInstance().getOid()).getLabel(_parameter))
+                                                    .setSelected(currencyInst.getInstance().getOid().equals(selected)));
+                }
+            }
+        }
+        ret.put(ReturnValues.VALUES, values);
+        return ret;
+    }
+
+    /**
      * Gets the report.
      *
      * @param _parameter Parameter as passed by the eFasp API
@@ -161,9 +202,6 @@ public abstract class CostReport_Base
             this.filteredReport = _filteredReport;
         }
 
-        /* (non-Javadoc)
-         * @see org.efaps.esjp.common.jasperreport.AbstractDynamicReport_Base#createDataSource(org.efaps.admin.event.Parameter)
-         */
         @Override
         protected JRDataSource createDataSource(final Parameter _parameter)
             throws EFapsException
@@ -241,9 +279,6 @@ public abstract class CostReport_Base
             }
         }
 
-        /* (non-Javadoc)
-         * @see org.efaps.esjp.common.jasperreport.AbstractDynamicReport_Base#addColumnDefintion(org.efaps.admin.event.Parameter, net.sf.dynamicreports.jasper.builder.JasperReportBuilder)
-         */
         @Override
         protected void addColumnDefintion(final Parameter _parameter,
                                           final JasperReportBuilder _builder)
@@ -331,7 +366,7 @@ public abstract class CostReport_Base
         protected StockFilter getStockFilter(final Parameter _parameter)
             throws EFapsException
         {
-            final EnumFilterValue filter = (EnumFilterValue)getFilteredReport().getFilterMap(_parameter).get("stock");
+            final EnumFilterValue filter = (EnumFilterValue) getFilteredReport().getFilterMap(_parameter).get("stock");
             StockFilter ret;
             if (filter != null) {
                 ret = (StockFilter) filter.getObject();
@@ -364,7 +399,14 @@ public abstract class CostReport_Base
         {
             final DateTime date = (DateTime) getFilteredReport().getFilterMap(_parameter).get("date");
             final Instance currencyInst = getCurrencyInst(_parameter);
-            return new DataBean(_parameter).setDate(date).setCurrencyInstance(currencyInst);
+            final Map<String, Object> map = getFilteredReport().getFilterMap(_parameter);
+            final CostTypeFilterValue filterValue = (CostTypeFilterValue) map.get("costType");
+            Instance alterInst = null;
+            if (filterValue != null) {
+                alterInst = Instance.get(filterValue.getObject());
+            }
+            return new DataBean(_parameter).setDate(date).setCurrencyInstance(currencyInst)
+                            .setAlternativeInstance(alterInst);
         }
     }
 
@@ -394,6 +436,9 @@ public abstract class CostReport_Base
 
         /** The currency instance. */
         private Instance currencyInstance;
+
+        /** The alternative instance. */
+        private Instance alternativeInstance;
 
         /**
          * Instantiates a new data bean.
@@ -525,7 +570,13 @@ public abstract class CostReport_Base
             throws EFapsException
         {
             if (this.costBean == null) {
-                this.costBean = new Cost().getCost(this.parameter, getDate(), getProductInst());
+                if (getAlternativeInstance() == null) {
+                    this.costBean = new Cost().getCost(this.parameter, getDate(), getProductInst());
+                } else {
+                    this.costBean = new Cost().getAlternativeCost(this.parameter, getDate(),
+                                    getAlternativeInstance(), getProductInst());
+                }
+
                 if (this.costBean == null) {
                     this.costBean = new CostBean();
                 }
@@ -639,6 +690,32 @@ public abstract class CostReport_Base
         {
             return getProductInst().getOid();
         }
+
+        /**
+         * Getter method for the instance variable {@link #alternativeInstance}.
+         *
+         * @return value of instance variable {@link #alternativeInstance}
+         */
+        public Instance getAlternativeInstance()
+        {
+            return this.alternativeInstance;
+        }
+
+        /**
+         * Setter method for instance variable {@link #alternativeInstance}.
+         *
+         * @param _alternativeInstance value for instance variable {@link #alternativeInstance}
+         * @return the data bean
+         */
+        public DataBean setAlternativeInstance(final Instance _alternativeInstance)
+        {
+            if (_alternativeInstance != null && !_alternativeInstance.isValid()) {
+                this.alternativeInstance = null;
+            } else {
+                this.alternativeInstance = _alternativeInstance;
+            }
+            return this;
+        }
     }
 
     /**
@@ -661,15 +738,47 @@ public abstract class CostReport_Base
             addExpression(DynamicReports.field("productOID", String.class));
         }
 
-        /* (non-Javadoc)
-         * @see net.sf.dynamicreports.report.builder.expression.AbstractComplexExpression#evaluate(java.util.List, net.sf.dynamicreports.report.definition.ReportParameters)
-         */
         @Override
         public EmbeddedLink evaluate(final List<?> _values,
                                      final ReportParameters _reportParameters)
         {
             final String oid = (String) _values.get(0);
             return EmbeddedLink.getJasperLink(oid);
+        }
+    }
+
+    /**
+     * The Class CostTypeFilter.
+     */
+    public static class CostTypeFilterValue
+        extends AbstractFilterValue<String>
+    {
+        /** The Constant serialVersionUID. */
+        private static final long serialVersionUID = 1L;
+
+        /**
+         * @param _parameter Parameter as passed by the eFaps API
+         * @return the label for this filter
+         * @throws EFapsException on error
+         */
+        @Override
+        public String getLabel(final Parameter _parameter)
+            throws EFapsException
+        {
+            return getObject() == null || getObject() != null && !Instance.get(getObject()).isValid()
+                            ? DBProperties.getProperty(CostReport.class.getName() + ".CostType.Standart")
+                            : DBProperties.getFormatedDBProperty(
+                                            CostReport.class.getName() + ".CostType.Alternative",
+                                            (Object) CurrencyInst.get(Instance.get(getObject())).getName());
+        }
+
+        @Override
+        public AbstractFilterValue<String> parseObject(final String[] _values)
+        {
+            if (!ArrayUtils.isEmpty(_values)) {
+                setObject(_values[0]);
+            }
+            return super.parseObject(_values);
         }
     }
 }

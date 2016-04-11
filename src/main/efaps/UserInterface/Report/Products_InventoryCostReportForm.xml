@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
-  Copyright 2003 - 2015 The eFaps Team
+  Copyright 2003 - 2016 The eFaps Team
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@
                 <property name="Field06">classDisplay</property>
                 <property name="Field07">currency</property>
                 <property name="Field08">productTreeView</property>
+                <property name="Field09">costType</property>
                 <property name="FilterType01">DateTime</property>
                 <property name="FilterType02">Instance</property>
                 <property name="FilterType03">Instance</property>
@@ -47,6 +48,7 @@
                 <property name="FilterType06">Enum</property>
                 <property name="FilterType07">Currency</property>
                 <property name="FilterType08">Instance</property>
+                <property name="FilterType09">FilterValue</property>
                 <property name="FilterDefault01">TODAY</property>
                 <property name="FilterDefault02">-</property>
                 <property name="FilterDefault03">-</property>
@@ -55,9 +57,11 @@
                 <property name="FilterDefault06">org.efaps.esjp.products.reports.InventoryReport_Base$ClassDisplay</property>
                 <property name="FilterDefault07">BASECURRENCY</property>
                 <property name="FilterDefault08">-</property>
+                <property name="FilterDefault09">org.efaps.esjp.sales.report.ProductsTransactionResultReport_Base$CostTypeFilterValue</property>
                 <!-- Products-Configuration -->
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="AccessAttribute08">org.efaps.products.TreeView.Activate</property>
+                <property name="AccessAttribute09">org.efaps.sales.Costing.AlternativeCurrencies</property>
             </trigger>
             <trigger event="UI_FIELD_VALUE" index="2" method="getFilterFieldValue"
                 name="Products_InventoryCostReportForm.filter.UI_FIELD_VALUE.2"

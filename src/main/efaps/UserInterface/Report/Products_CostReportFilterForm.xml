@@ -25,8 +25,9 @@
         <name>Products_CostReportFilterForm</name>
         <field name="date">
             <property name="ModeEdit">EDITABLE</property>
-            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.DateUI</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.DateUI</property>
             <property name="Label">org.efaps.esjp.products.reports.CostReport.date</property>
+            <property name="Columns">12</property>
             <trigger event="UI_FIELD_VALUE" method="getDateFromFieldValue"
                 name="Products_CostReportFilterForm.date.UI_FIELD_VALUE"
                 program="org.efaps.esjp.erp.FilteredReport" />
@@ -56,12 +57,28 @@
         </field>
         <field name="stock">
             <property name="ModeEdit">EDITABLE</property>
-            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="UIType">SNIPPLET</property>
             <property name="Label">org.efaps.esjp.products.reports.CostReport.stock</property>
             <trigger event="UI_FIELD_VALUE" method="getEnumFieldValue"
                 name="Products_CostReportFilterForm.stock.UI_FIELD_VALUE"
                 program="org.efaps.esjp.products.reports.CostReport">
                 <property name="Enum">org.efaps.esjp.products.reports.CostReport_Base$StockFilter</property>
+            </trigger>
+        </field>
+        <field name="costType">
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="UIType">RADIO</property>
+            <property name="Label">org.efaps.esjp.products.reports.CostReport.costType</property>
+            <trigger event="UI_FIELD_VALUE" method="getCostTypeFieldValue"
+                name="Products_CostReportFilterForm.costType.UI_FIELD_VALUE"
+                program="org.efaps.esjp.products.reports.CostReport">
+            </trigger>
+             <trigger event="UI_ACCESSCHECK" method="configCheck"
+                name="Products_CostReportFilterForm.costType.UI_ACCESSCHECK"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.Cost.ActivateAlternative</property>
             </trigger>
         </field>
     </definition>
