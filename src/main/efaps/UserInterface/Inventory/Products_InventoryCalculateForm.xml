@@ -36,14 +36,14 @@
             <property name="Attribute">Date</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="Required">true</property>
-            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.DateUI</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.DateUI</property>
             <property name="Label">Products_InventoryCalculateForm.date.Label</property>
         </field>
         <field name="storage">
             <property name="Attribute">Storage</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="Required">true</property>
-            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
             <property name="Label">Products_InventoryCalculateForm.storage.Label</property>
             <trigger program="org.efaps.esjp.products.Storage"
                 method="autoComplete4Storage"

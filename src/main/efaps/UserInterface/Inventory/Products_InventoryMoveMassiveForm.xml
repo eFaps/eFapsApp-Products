@@ -72,7 +72,7 @@
             <property name="ModeCreate">HIDDEN</property>
             <property name="ModeView">NONE</property>
             <property name="ModeEdit">HIDDEN</property>
-            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
             <trigger program="org.efaps.esjp.products.Transaction"
                 method="getJavaScript4MoveInventory"
                 name="Products_InventoryMoveMassiveForm.javaScript.UI_Field_Value"

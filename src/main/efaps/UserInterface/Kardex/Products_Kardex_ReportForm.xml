@@ -36,7 +36,7 @@
             <property name="Label">Products_Kardex_ReportForm.product.Label</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="Required">true</property>
-            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
             <trigger program="org.efaps.esjp.products.Product"
                 method="autoComplete4Product"
                 name="Products_Kardex_ReportForm.product.UI_FIELD_AUTOCOMPLETE"
@@ -55,7 +55,7 @@
         <field name="storage">
             <property name="Label">Products_Kardex_ReportForm.storage.Label</property>
             <property name="ModeCreate">EDITABLE</property>
-            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
             <trigger program="org.efaps.esjp.products.Storage"
                 method="autoComplete4Storage"
                 name="Products_Kardex_ReportForm.storage.UI_FIELD_AUTOCOMPLETE"
@@ -68,7 +68,7 @@
         <field name="showPrice">
             <property name="ModeCreate">EDITABLE</property>
             <property name="Label">Products_Kardex_ReportForm.showPrice.Label</property>
-            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
             <trigger program="org.efaps.esjp.common.uiform.Field"
                 method="checkboxFieldValue"
                 name="Sales_Document_ReportForm.filterActive.UI_FIELD_VALUE"

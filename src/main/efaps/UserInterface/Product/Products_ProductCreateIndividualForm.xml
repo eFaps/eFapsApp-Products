@@ -34,7 +34,7 @@
         <name>Products_ProductCreateIndividualForm</name>
         <!-- fields -->
         <field name="product">
-            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
             <property name="Label">Products_ProductStandart.Label</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="Required">true</property>
@@ -46,14 +46,14 @@
             </trigger>
         </field>
         <field name="name">
-            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
             <property name="Label">Products_ProductCreateIndividualForm.name.Label</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="Required">true</property>
         </field>
         <field name="storage">
             <property name="ModeCreate">EDITABLE</property>
-            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
             <property name="Label">Products_ProductCreateIndividualForm.storage.Label</property>
             <property name="Required">true</property>
             <trigger program="org.efaps.esjp.products.Product"
@@ -64,7 +64,7 @@
 
         <field name="javascript">
             <property name="ModeCreate">HIDDEN</property>
-            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
             <trigger program="org.efaps.esjp.products.Product"
                 method="javascript4CreateIndividualFieldValue"
                 name="Products_ProductCreateIndividualForm.product.UI_FIELD_AUTOCOMPLETE"

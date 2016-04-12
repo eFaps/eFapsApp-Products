@@ -24,7 +24,7 @@
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductFamilyPickerTable</name>
         <field name="codePart">
-            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
             <property name="Label">Products_ProductFamilyAbstract/CodePart.Label</property>
             <trigger program="org.efaps.esjp.products.ProductFamily"
                 name="Products_ProductFamilyTable.codePart.UI_FIELD_VALUE"

@@ -54,7 +54,7 @@
             <property name="Attribute">Date</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="Required">true</property>
-            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.DateUI</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.DateUI</property>
         </field>
         <field character="Target" name="positionTable">
             <property name="ModeCreate">EDITABLE</property>

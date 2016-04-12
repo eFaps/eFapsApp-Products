@@ -51,7 +51,7 @@
             <property name="FilterDefault">TODAY</property>
             <property name="Select">linkto[TransactionAbstractLink].attribute[Date]</property>
             <property name="Label">Products_TransactionAbstract/Date.Label</property>
-            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.DateUI</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.DateUI</property>
         </field>
         <field name="quantity">
             <property name="Attribute">Quantity</property>
@@ -77,7 +77,7 @@
             <property name="Attribute">Result</property>
             <property name="Label">Products_CostingTable.stockTotal.Label</property>
             <property name="Align">right</property>
-            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.DecimalUI</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.DecimalUI</property>
             <trigger program="org.efaps.esjp.products.Transaction"
                 method="getStockTotalFieldValue"
                 name="Products_CostingTable.stockTotal.UI_FIELD_VALUE"
@@ -86,7 +86,7 @@
         <field name="transNumber">
             <property name="Phrase">$&lt;linkto[TransactionAbstractLink].attribute[Date].format[YYDDD]&gt;$&lt;linkto[TransactionAbstractLink].attribute[Position].format[00]&gt;</property>
             <property name="Label">Products_TransactionAbstractTable.transNumber.Label</property>
-            <property name="ClassNameUI">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
         </field>
     </definition>
 </ui-table>
