@@ -27,14 +27,17 @@
             <property name="Label">Products_InventoryMoveMassiveTable.quantityInStock.Label</property>
             <property name="ModeCreate">READONLY</property>
             <property name="Width">1</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
         </field>
         <field name="quantity">
             <property name="ModeCreate">EDITABLE</property>
             <property name="Label">Products_TransactionAbstract/Quantity.Label</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
         </field>
         <field name="product">
             <property name="ModeCreate">EDITABLE</property>
             <property name="Label">Products_TransactionAbstract/Product.Label</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
             <trigger program="org.efaps.esjp.products.Product"
                 method="autoComplete4MassiveProductsInStorage"
                 name="Products_InventoryMoveMassiveTable.product.UI_FIELD_AUTOCOMPLETE"
@@ -51,12 +54,14 @@
         <field name="uoM">
             <property name="ModeCreate">EDITABLE</property>
             <property name="Label">Products_TransactionAbstract/UoM.Label</property>
+            <property name="UIType">DROPDOWN</property>
             <trigger event="UI_FIELD_VALUE" method="getUoMDropDownFieldValue"
                 name="Products_InventoryMoveForm.uoM.UI_FIELD_VALUE"
                 program="org.efaps.esjp.common.uiform.Field" />
         </field>
         <field name="storage">
             <property name="ModeCreate">HIDDEN</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
             <trigger program="org.efaps.esjp.products.Transaction"
                 method="setDefaultStorageInst"
                 name="Products_InventoryMoveMassiveTable.storage.UI_FIELD_VALUE"

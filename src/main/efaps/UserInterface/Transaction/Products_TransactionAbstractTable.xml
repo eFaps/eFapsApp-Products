@@ -98,6 +98,7 @@
         <field name="transNumber">
             <property name="Phrase">$&lt;attribute[Date].format[YYDDD]&gt;$&lt;attribute[Position].format[00]&gt;</property>
             <property name="Label">Products_TransactionAbstractTable.transNumber.Label</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
         </field>
     </definition>
 </ui-table>
