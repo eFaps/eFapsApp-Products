@@ -47,6 +47,7 @@
             <property name="FilterRequired">true</property>
             <property name="FilterBase">DATABASE</property>
             <property name="Classification">Products_MaterialClass</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
             <trigger event="UI_FIELD_FORMAT" method="classificationFieldFormat"
                 name="Contacts_ContactTable.classification"
                 program="org.efaps.esjp.common.uiform.Field" />
@@ -65,6 +66,7 @@
             <property name="FilterCmd">Products_ProductFamilyFilterCmd</property>
             <property name="FilterRequired">true</property>
             <property name="FilterBase">DATABASE</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
             <trigger event="UI_FIELD_FORMAT" method="productFamilyFieldFormat"
                 name="Products_ProductTable.productFamilyLink."
                 program="org.efaps.esjp.products.ProductFamily" />

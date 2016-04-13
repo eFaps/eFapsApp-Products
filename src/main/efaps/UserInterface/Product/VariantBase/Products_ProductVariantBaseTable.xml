@@ -47,6 +47,7 @@
             <property name="FilterRequired">true</property>
             <property name="FilterBase">DATABASE</property>
             <property name="Classification">Products_Class</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
             <trigger event="UI_FIELD_FORMAT" method="classificationFieldFormat"
                 name="Products_ProductVariantBaseTable.classification"
                 program="org.efaps.esjp.common.uiform.Field" />
@@ -73,6 +74,7 @@
             <property name="FilterRequired">false</property>
             <property name="FilterBase">DATABASE</property>
             <property name="Classification">Products_Class</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
             <trigger event="UI_FIELD_FORMAT" method="classificationFieldFormat"
                 name="Products_ProductTable.classificationWithFamily"
                 program="org.efaps.esjp.common.uiform.Field" />
@@ -98,6 +100,7 @@
             <property name="FilterCmd">Products_ProductFamilyFilterCmd</property>
             <property name="FilterRequired">true</property>
             <property name="FilterBase">DATABASE</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
             <trigger event="UI_FIELD_FORMAT" method="productFamilyFieldFormat"
                 name="Products_ProductVariantBaseTable.productFamilyLink."
                 program="org.efaps.esjp.products.ProductFamily" />

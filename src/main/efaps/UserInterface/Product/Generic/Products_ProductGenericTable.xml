@@ -44,6 +44,7 @@
         <field name="classification">
             <property name="Select">class.type</property>
             <property name="Label">Products_ProductTable.classification.Label</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
             <trigger program="org.efaps.esjp.common.uiform.Field"
                 method="classificationFieldFormat"
                 name="Products_ProductTable.classification"
@@ -56,6 +57,7 @@
             <property name="FilterCmd">Products_ProductFamilyFilterCmd</property>
             <property name="FilterRequired">true</property>
             <property name="FilterBase">DATABASE</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
             <trigger program="org.efaps.esjp.products.ProductFamily"
                 method="productFamilyFieldFormat"
                 name="Products_ProductTable.productFamilyLink."
