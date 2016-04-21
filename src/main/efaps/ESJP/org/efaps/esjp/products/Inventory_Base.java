@@ -47,6 +47,7 @@ import org.efaps.db.SelectBuilder;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.AbstractCommon;
 import org.efaps.esjp.common.eql.ClassSelect;
+import org.efaps.esjp.db.InstanceUtils;
 import org.efaps.esjp.erp.CurrencyInst;
 import org.efaps.esjp.products.Cost_Base.CostBean;
 import org.efaps.util.EFapsException;
@@ -222,7 +223,7 @@ public abstract class Inventory_Base
                 if (isShowStorage()) {
                     bean.setStorageInstance(multi.<Instance>getSelect(selStorageInst));
                 }
-                Set<TransactionBean> beans;
+                final Set<TransactionBean> beans;
                 if (prodInst2beans.containsKey(prodInst)) {
                     beans = prodInst2beans.get(prodInst);
                 } else {
@@ -649,7 +650,9 @@ public abstract class Inventory_Base
         };
         inventory.setDate(_date.withTimeAtStartOfDay());
         inventory.setShowStorage(false);
-        inventory.setStorageInsts(Arrays.asList(_storageInst));
+        if (InstanceUtils.isValid(_storageInst)) {
+            inventory.setStorageInsts(Arrays.asList(_storageInst));
+        }
 
         final List<? extends InventoryBean> list = inventory.getInventory(_parameter);
         for (final InventoryBean bean : list) {
@@ -1255,7 +1258,7 @@ public abstract class Inventory_Base
                     @Override
                     protected int getLevel()
                     {
-                        int ret;
+                        final int ret;
                         if (_level == null) {
                             ret = super.getLevel();
                         } else {
