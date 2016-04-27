@@ -770,8 +770,10 @@ public abstract class Product_Base
             print.addAttribute(CIProducts.ProductAbstract.Name, CIProducts.ProductAbstract.Description,
                             CIProducts.ProductAbstract.Dimension, CIProducts.ProductAbstract.DefaultUoM);
             print.execute();
-            map.put("productAutoComplete", print.getAttribute(CIProducts.ProductAbstract.Name));
-            map.put("productDesc", print.getAttribute(CIProducts.ProductAbstract.Description));
+            map.put("productAutoComplete", StringEscapeUtils.escapeEcmaScript(print.<String>getAttribute(
+                            CIProducts.ProductAbstract.Name)));
+            map.put("productDesc", StringEscapeUtils.escapeEcmaScript(print.<String>getAttribute(
+                            CIProducts.ProductAbstract.Description)));
             final Long dimId = print.<Long>getAttribute(CIProducts.ProductAbstract.Dimension);
             final Long dUoMId = print.<Long>getAttribute(CIProducts.ProductAbstract.DefaultUoM);
             final long selectedUoM;
