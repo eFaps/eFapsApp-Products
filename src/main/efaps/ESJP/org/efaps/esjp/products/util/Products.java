@@ -80,6 +80,15 @@ public final class Products
 
     /** See description. */
     @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute BATCH_ACTARCHIVE = new BooleanSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "Batch.ActivateArchives")
+                    .defaultValue(true)
+                    .description("Activate the possibility to relate arcives to a batch product. "
+                                    + "Only works if eFapsApp-Archives is installed also.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
     public static final BooleanSysConfAttribute COSTACTIVATEALT = new BooleanSysConfAttribute()
                     .sysConfUUID(SYSCONFUUID)
                     .key(BASE + "Cost.ActivateAlternative")
@@ -156,6 +165,15 @@ public final class Products
                     .sysConfUUID(SYSCONFUUID)
                     .key(BASE + "Generic.FamiliesPrefix")
                     .description("Activate the family management for materials.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute INDIVIDUAL_ACTARCHIVE = new BooleanSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "Individual.ActivateArchives")
+                    .defaultValue(true)
+                    .description("Activate the possibility to relate arcives to a indiviual product. "
+                                    + "Only works if eFapsApp-Archives is installed also.");
 
     /** See description. */
     @EFapsSysConfAttribute
