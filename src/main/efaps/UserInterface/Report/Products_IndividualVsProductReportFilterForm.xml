@@ -22,5 +22,9 @@
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_IndividualVsProductReportFilterForm</name>
+        <field name="placeholder">
+            <property name="ModeEdit">HIDDEN</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
+        </field>
     </definition>
 </ui-form>
