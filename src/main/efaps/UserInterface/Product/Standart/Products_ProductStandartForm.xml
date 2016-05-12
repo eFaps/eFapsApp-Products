@@ -54,6 +54,25 @@
             <property name="Attribute">Description</property>
             <property name="Required">true</property>
         </field>
+        <field name="image">
+            <property name="Label">Products_ProductForm.image.Label</property>
+            <property name="ModeEdit">NONE</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
+            <trigger event="UI_FIELD_VALUE" method="getImageFieldValueUI"
+                name="Products_ImageForm.image.UI_FIELD_VALUE"
+                program="org.efaps.esjp.products.Image">
+                <property name="max-width">200px</property>
+                <property name="max-height">200px</property>
+                <property name="RelationType">Products_Product2ImageThumbnail</property>
+            </trigger>
+            <trigger event="UI_ACCESSCHECK" method="configCheck"
+                name="Products_ProductStandartForm.image.UI_ACCESSCHECK"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="AttributeExists">org.efaps.products.Standart.Image</property>
+            </trigger>
+        </field>
         <field name="dimension">
             <property name="Attribute">Dimension</property>
             <property name="ModeCreate">EDITABLE</property>
@@ -341,9 +360,13 @@
                 <property name="max-height">200px</property>
                 <property name="RelationType">Products_Product2ImageThumbnail</property>
             </trigger>
-            <trigger event="UI_ACCESSCHECK" method="access4Image"
-                name="Products_ProductForm.image.UI_ACCESSCHECK"
-                program="org.efaps.esjp.products.Image" />
+            <trigger event="UI_ACCESSCHECK" method="configCheck"
+                name="Products_ProductStandartForm.image.UI_ACCESSCHECK"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="AttributeExists">org.efaps.products.Standart.Image</property>
+            </trigger>
         </field>
         <field name="dimension">
             <property name="Attribute">Dimension</property>

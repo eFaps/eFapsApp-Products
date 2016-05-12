@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
 
-  Copyright 2003 - 2013 The eFaps Team
+  Copyright 2003 - 2016 The eFaps Team
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -14,17 +15,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  Author:          The eFaps Team
-  Revision:        $Rev$
-  Last Changed:    $Date$
-  Last Changed By: $Author$
-
 -->
 <ui-form xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>cd8e71a6-f936-427f-b7e7-c0a25018c847</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_PriceListReportForm</name>
@@ -32,7 +27,8 @@
             <property name="HideLabel">true</property>
             <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
             <trigger event="UI_FIELD_VALUE" method="getDBPropertiesFieldValue"
-                name="Products_PriceListReportForm.description.UI_FIELD_VALUE" program="org.efaps.esjp.common.uiform.Field">
+                name="Products_PriceListReportForm.description.UI_FIELD_VALUE"
+                program="org.efaps.esjp.common.uiform.Field">
                 <property name="DBProperty">org.efaps.esjp.products.reports.PriceListReport.Title</property>
             </trigger>
         </field>
@@ -65,6 +61,9 @@
                 <property name="Type">0eefc758-0be6-4c40-8cf9-a4f88986f76e</property>
                 <property name="FilterKey">org.efaps.esjp.products.reports.PriceListReport.FilterKey</property>
                 <property name="ActiveProductsOnly">true</property>
+                <!-- Products-Configuration -->
+                <property name="PropertiesConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="PropertiesConfigAttribute">org.efaps.products.report.PriceListReport</property>
             </trigger>
         </field>
     </definition>

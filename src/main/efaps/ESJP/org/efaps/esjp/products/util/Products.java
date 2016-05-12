@@ -279,8 +279,7 @@ public final class Products
     public static final PropertiesSysConfAttribute STANDARTIMG = new PropertiesSysConfAttribute()
                     .sysConfUUID(SYSCONFUUID)
                     .key(BASE + "Standart.Image")
-                    .description("Substitutor values: Default=${Name}, Products_ProductStandartClass=text ${name} .");
-
+                    .description("Configuration for Image.");
 
     /** See description. */
     @EFapsSysConfAttribute
@@ -333,6 +332,17 @@ public final class Products
                     .description("Configuration for LastMovementReport.");
 
     /** See description. */
+    @EFapsSysConfAttribute
+    public static final PropertiesSysConfAttribute REPPRICELIST = new PropertiesSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "report.PriceListReport")
+                    .addDefaultValue("ShowClassification", "true")
+                    .addDefaultValue("ShowFamily", "false")
+                    .addDefaultValue("ActiveProductsOnly", "true")
+                    .addDefaultValue("Type", "Products_ProductPricelistRetail")
+                    .description("Configuration for PriceListReport.");
+
+    /** See description. */
     @EFapsSysConfLink
     public static final SysConfLink DEFAULTDIMENSION = new SysConfLink()
                     .sysConfUUID(SYSCONFUUID)
@@ -352,8 +362,6 @@ public final class Products
                     .sysConfUUID(SYSCONFUUID)
                     .key(BASE + "DefaultStorageGroup4BOMCalculator")
                     .description("Link to a default StorageGroup instance used by the BOMCalculator.");
-
-
 
     /**
      * Singelton.

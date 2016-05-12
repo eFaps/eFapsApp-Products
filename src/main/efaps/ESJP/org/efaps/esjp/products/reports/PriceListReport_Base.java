@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2015 The eFaps Team
+ * Copyright 2003 - 2016 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,9 @@ import org.efaps.db.SelectBuilder;
 import org.efaps.esjp.ci.CIERP;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.jasperreport.AbstractDynamicReport;
+import org.efaps.esjp.db.InstanceUtils;
 import org.efaps.esjp.erp.FilteredReport;
+import org.efaps.esjp.products.ProductFamily;
 import org.efaps.esjp.products.util.Products;
 import org.efaps.ui.wicket.models.EmbeddedLink;
 import org.efaps.util.EFapsException;
@@ -143,7 +145,6 @@ public abstract class PriceListReport_Base
          */
         private final PriceListReport_Base filteredReport;
 
-
         /**
          * List of PriceList type shown in the report.
          */
@@ -158,6 +159,9 @@ public abstract class PriceListReport_Base
          * Show only product marked as active.
          */
         private boolean activeProductsOnly;
+
+        /** The show family. */
+        private boolean showFamily;
 
         /**
          * @param _parameter     Parameter as passed from the eFaps API
@@ -176,6 +180,7 @@ public abstract class PriceListReport_Base
                 this.types.add(type);
             }
             this.showClass = !"false".equalsIgnoreCase(getProperty(_parameter, "ShowClassification"));
+            this.showFamily = "true".equalsIgnoreCase(getProperty(_parameter, "ShowFamily"));
             this.activeProductsOnly = "true".equalsIgnoreCase(getProperty(_parameter, "ActiveProductsOnly"));
         }
 
@@ -218,7 +223,7 @@ public abstract class PriceListReport_Base
         protected JRDataSource createDataSource(final Parameter _parameter)
             throws EFapsException
         {
-            JRRewindableDataSource ret;
+            final JRRewindableDataSource ret;
             if (getFilteredReport().isCached(_parameter)) {
                 ret = getFilteredReport().getDataSourceFromCache(_parameter);
                 try {
@@ -257,6 +262,8 @@ public abstract class PriceListReport_Base
                                 CIProducts.ProductAbstract.Description);
                 final SelectBuilder selProdDim = new SelectBuilder(selProd).attribute(
                                 CIProducts.ProductAbstract.Dimension);
+                final SelectBuilder selFamInst = new SelectBuilder(selProd)
+                                .linkto(CIProducts.ProductAbstract.ProductFamilyLink).instance();
                 final SelectBuilder selProdClass = new SelectBuilder(selProd).clazz().type();
                 final SelectBuilder selCurrency = SelectBuilder.get().linkto(
                                 CIProducts.ProductPricelistPosition.CurrencyId).attribute(CIERP.Currency.Symbol);
@@ -271,6 +278,9 @@ public abstract class PriceListReport_Base
                 multi.addSelect(selProdInst, selProdName, selProdDescr, selProdDim, selCurrency, selTypeInst);
                 if (isShowClass()) {
                     multi.addSelect(selProdClass);
+                }
+                if (isShowFamily()) {
+                    multi.addSelect(selFamInst);
                 }
                 multi.addAttribute(CIProducts.ProductPricelistPosition.Price);
                 multi.execute();
@@ -293,6 +303,12 @@ public abstract class PriceListReport_Base
                                 map.put("productClass", clazzes.get(0).getLabel());
                             } else {
                                 map.put("productClass", "-");
+                            }
+                        }
+                        if (isShowFamily()) {
+                            final Instance famInst = multi.getSelect(selFamInst);
+                            if (InstanceUtils.isValid(famInst)) {
+                                map.put("productFamily", new ProductFamily().getName(_parameter, famInst));
                             }
                         }
                     }
@@ -337,6 +353,9 @@ public abstract class PriceListReport_Base
             final TextColumnBuilder<String> productClass = DynamicReports.col.column(DBProperties
                             .getProperty(PriceListReport.class.getName() + ".productClass"), "productClass",
                             DynamicReports.type.stringType()).setWidth(200);
+            final TextColumnBuilder<String> productFamily = DynamicReports.col.column(DBProperties
+                            .getProperty(PriceListReport.class.getName() + ".productFamily"), "productFamily",
+                            DynamicReports.type.stringType()).setWidth(200);
             final TextColumnBuilder<String> productDim = DynamicReports.col.column(DBProperties
                             .getProperty(PriceListReport.class.getName() + ".productDim"), "productDim",
                             DynamicReports.type.stringType()).setWidth(50);
@@ -358,30 +377,34 @@ public abstract class PriceListReport_Base
             _builder.addColumn(productName, productDescr);
             if (isShowClass()) {
                 grid.add(productClass);
-                _builder.addColumn(productDim);
+                _builder.addColumn(productClass);
+            }
+            if (isShowFamily()) {
+                grid.add(productFamily);
+                _builder.addColumn(productFamily);
             }
             grid.add(productDim);
-            _builder.addColumn(productClass);
+            _builder.addColumn(productDim);
 
             final Map<Long, Set<Instance>> priceGrpMap = new HashMap<>();
             final Instance fakeInst = Instance.get("");
             if (Products.ACTIVATEPRICEGRP.get()) {
                 final JRMapCollectionDataSource datasource = (JRMapCollectionDataSource) createDataSource(_parameter);
                 for (final Map<String, ?> map : datasource.getData()) {
-                   for (final Entry<String, ?> entry : map.entrySet()) {
-                       if (entry.getKey().startsWith("price-")) {
-                           final String[] val = entry.getKey().split("-");
-                           final Long typeId = Long.valueOf(val[1]);
-                           Set<Instance> priceGrpSet;
-                           if (priceGrpMap.containsKey(typeId)) {
-                               priceGrpSet = priceGrpMap.get(typeId);
-                           } else{
-                               priceGrpSet = new HashSet<>();
-                               priceGrpMap.put(typeId, priceGrpSet);
-                           }
-                           priceGrpSet.add(val.length == 3 ? Instance.get(val[2]) : fakeInst);
-                       }
-                   }
+                    for (final Entry<String, ?> entry : map.entrySet()) {
+                        if (entry.getKey().startsWith("price-")) {
+                            final String[] val = entry.getKey().split("-");
+                            final Long typeId = Long.valueOf(val[1]);
+                            final Set<Instance> priceGrpSet;
+                            if (priceGrpMap.containsKey(typeId)) {
+                                priceGrpSet = priceGrpMap.get(typeId);
+                            } else {
+                                priceGrpSet = new HashSet<>();
+                                priceGrpMap.put(typeId, priceGrpSet);
+                            }
+                            priceGrpSet.add(val.length == 3 ? Instance.get(val[2]) : fakeInst);
+                        }
+                    }
                 }
             }
 
@@ -400,7 +423,7 @@ public abstract class PriceListReport_Base
                             final PrintQuery print = new PrintQuery(priceGrpInst);
                             print.addAttribute(CIProducts.PriceGroupAbstract.Name);
                             print.execute();
-                            subTitle= print.getAttribute(CIProducts.PriceGroupAbstract.Name);
+                            subTitle = print.getAttribute(CIProducts.PriceGroupAbstract.Name);
                         }
 
                         final TextColumnBuilder<BigDecimal> price = DynamicReports.col.column(DBProperties.getProperty(
@@ -469,9 +492,34 @@ public abstract class PriceListReport_Base
             this.activeProductsOnly = _activeProductsOnly;
         }
 
+        /**
+         * Gets the report class.
+         *
+         * @return the report class
+         */
         public PriceListReport_Base getFilteredReport()
         {
             return this.filteredReport;
+        }
+
+        /**
+         * Checks if is show family.
+         *
+         * @return the show family
+         */
+        public boolean isShowFamily()
+        {
+            return this.showFamily;
+        }
+
+        /**
+         * Sets the show family.
+         *
+         * @param _showFamily the new show family
+         */
+        public void setShowFamily(final boolean _showFamily)
+        {
+            this.showFamily = _showFamily;
         }
     }
 
