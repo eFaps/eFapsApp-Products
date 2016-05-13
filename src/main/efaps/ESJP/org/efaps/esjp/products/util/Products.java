@@ -279,6 +279,14 @@ public final class Products
     public static final PropertiesSysConfAttribute STANDARTIMG = new PropertiesSysConfAttribute()
                     .sysConfUUID(SYSCONFUUID)
                     .key(BASE + "Standart.Image")
+                    .addDefaultValue("Image4Doc.Create", "false")
+                    .addDefaultValue("Image4Doc.Width", "250")
+                    .addDefaultValue("Image4Doc.Height", "250")
+                    .addDefaultValue("Image4Doc.Enlarge", "false")
+                    .addDefaultValue("Thumbnail.Create", "true")
+                    .addDefaultValue("Thumbnail.Width", "150")
+                    .addDefaultValue("Thumbnail.Height", "150")
+                    .addDefaultValue("Thumbnail.Enlarge", "false")
                     .description("Configuration for Image.");
 
     /** See description. */

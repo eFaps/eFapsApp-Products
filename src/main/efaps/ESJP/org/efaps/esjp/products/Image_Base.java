@@ -18,10 +18,12 @@
 package org.efaps.esjp.products;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +31,7 @@ import java.util.Properties;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.sanselan.ImageFormat;
 import org.apache.sanselan.ImageInfo;
 import org.apache.sanselan.ImageReadException;
@@ -45,6 +48,7 @@ import org.efaps.admin.ui.AbstractCommand;
 import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
 import org.efaps.admin.ui.field.Field;
 import org.efaps.db.Checkin;
+import org.efaps.db.Checkout;
 import org.efaps.db.Context;
 import org.efaps.db.Context.FileParameter;
 import org.efaps.db.Insert;
@@ -58,6 +62,7 @@ import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.AbstractCommon;
 import org.efaps.esjp.common.file.FileUtil;
 import org.efaps.esjp.common.file.ImageField;
+import org.efaps.esjp.common.parameter.ParameterUtil;
 import org.efaps.esjp.products.util.Products;
 import org.efaps.util.EFapsException;
 
@@ -140,7 +145,7 @@ public abstract class Image_Base
             linkOid = null;
             imageOid = null;
         }
-        Return retVal;
+        final Return retVal;
         if (imageOid != null) {
             retVal = new ImageField()
             {
@@ -186,7 +191,6 @@ public abstract class Image_Base
         if (parentInst.getType().isCIType(CIProducts.ProductStandart)) {
             props = Products.STANDARTIMG.get();
         }
-        // TODO update the properties
         if (props.containsKey("Image4Doc.Create") && "true".equalsIgnoreCase(props.getProperty("Image4Doc.Create"))) {
             final int width = Integer.parseInt(props.getProperty("Image4Doc.Width", "250"));
             final int height = Integer.parseInt(props.getProperty("Image4Doc.Height", "250"));
@@ -211,14 +215,71 @@ public abstract class Image_Base
     }
 
     /**
-     * @param _parameter    Parameter as passed by the eFaps API
-     * @param _prefix       Prefix
-     * @param _fileItem     FileItem the new image will be created from
-     * @param _dim          Dimension of the new image
+     * @param _parameter Parameter as passed by the eFaps API
+     * @return Return with true if access is granted
      * @throws EFapsException on error
-     * @return new File
      */
-    @SuppressWarnings("rawtypes")
+    public Return createCopy(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Instance relInst = _parameter.getInstance();
+        final PrintQuery print = new PrintQuery(relInst);
+        final SelectBuilder selImgInst = SelectBuilder.get().linkto(CIProducts.Product2ImageOriginal.ImageLink)
+                        .instance();
+        final SelectBuilder selImgDescr = SelectBuilder.get().linkto(CIProducts.Product2ImageOriginal.ImageLink)
+                        .attribute(CIProducts.ImageAbstract.Description);
+        final SelectBuilder selProdInst = SelectBuilder.get().linkto(CIProducts.Product2ImageOriginal.ProductLink)
+                        .instance();
+        print.addSelect(selImgInst, selProdInst, selImgDescr);
+        print.addAttribute(CIProducts.Product2ImageOriginal.Caption);
+        print.execute();
+        final Instance imgInst = print.getSelect(selImgInst);
+        final Instance prodInst = print.getSelect(selProdInst);
+        Properties props = new Properties();
+        if (prodInst.getType().isCIType(CIProducts.ProductStandart)) {
+            props = Products.STANDARTIMG.get();
+        }
+        final String imageType = getProperty(_parameter, "ImageType", "Thumbnail");
+        final Checkout checkout = new Checkout(imgInst);
+        final InputStream inputStream = checkout.execute();
+        final String fileName = checkout.getFileName();
+
+
+        ParameterUtil.setParmeterValue(_parameter, "description4Create",
+                        print.<String>getSelect(selImgDescr));
+
+        ParameterUtil.setParmeterValue(_parameter, "caption",
+                        print.<String>getAttribute(CIProducts.Product2ImageOriginal.Caption));
+
+        switch (imageType) {
+            case "Thumbnail":
+                if (props.containsKey("Thumbnail.Create")) {
+                    final int width = Integer.parseInt(props.getProperty("Thumbnail.Width", "150"));
+                    final int height = Integer.parseInt(props.getProperty("Thumbnail.Height", "150"));
+                    final boolean enlarge = "true".equalsIgnoreCase(props.getProperty("Thumbnail.Enlarge", "false"));
+                    final DimensionConstrain dim = DimensionConstrain.createMaxDimension(width, height, !enlarge);
+                    final File img = createNewImageFile(_parameter, "Thumbnail_", inputStream, fileName, dim);
+                    final Instance copyInst = createImage(_parameter, CIProducts.ImageThumbnail.getType(), imgInst);
+                    connectImage(_parameter, CIProducts.Product2ImageThumbnail.getType(), prodInst, copyInst);
+                    uploadImage(_parameter, copyInst, img);
+                }
+                break;
+            default:
+                break;
+        }
+        return new Return();
+    }
+
+    /**
+     * Creates the new image file.
+     *
+     * @param _parameter the _parameter
+     * @param _prefix the _prefix
+     * @param _fileItem the _file item
+     * @param _dim the _dim
+     * @return the file
+     * @throws EFapsException the e faps exception
+     */
     protected File createNewImageFile(final Parameter _parameter,
                                       final String _prefix,
                                       final FileParameter _fileItem,
@@ -227,18 +288,47 @@ public abstract class Image_Base
     {
         final File ret;
         try {
-            final ImageInfo info = Sanselan.getImageInfo(_fileItem.getInputStream(), _fileItem.getName());
-            ret = new FileUtil().getFile(_prefix + _fileItem.getName(), info.getFormat().extension);
+            ret =  createNewImageFile(_parameter, _prefix, _fileItem.getInputStream(), _fileItem.getName(), _dim);
+        } catch (final IOException e) {
+            throw new EFapsException(this.getClass(), "createNewImage", e, _parameter);
+        }
+        return ret;
+    }
+
+    /**
+     * Creates the new image file.
+     *
+     * @param _parameter    Parameter as passed by the eFaps API
+     * @param _prefix       Prefix
+     * @param _imageStream the _image stream
+     * @param _imageName the _image name
+     * @param _dim          Dimension of the new image
+     * @return new File
+     * @throws EFapsException on error
+     */
+    @SuppressWarnings("rawtypes")
+    protected File createNewImageFile(final Parameter _parameter,
+                                      final String _prefix,
+                                      final InputStream _imageStream,
+                                      final String _imageName,
+                                      final DimensionConstrain _dim)
+        throws EFapsException
+    {
+        final File ret;
+        try {
+            final byte[] bytes = IOUtils.toByteArray(_imageStream);
+            final ImageInfo info = Sanselan.getImageInfo(new ByteArrayInputStream(bytes), _imageName);
+            ret = new FileUtil().getFile(_prefix + _imageName, info.getFormat().extension);
 
             final FileOutputStream os = new FileOutputStream(ret);
 
             if (info.getFormat().equals(ImageFormat.IMAGE_FORMAT_JPEG)) {
-                final BufferedImage img = ImageIO.read(_fileItem.getInputStream());
+                final BufferedImage img = ImageIO.read(new ByteArrayInputStream(bytes));
                 final ResampleOp resampleOp = new ResampleOp(_dim);
                 final BufferedImage rescaledTomato = resampleOp.filter(img, null);
                 ImageIO.write(rescaledTomato, "jpg", os);
             } else {
-                final BufferedImage image = Sanselan.getBufferedImage(_fileItem.getInputStream());
+                final BufferedImage image = Sanselan.getBufferedImage(new ByteArrayInputStream(bytes));
                 final ResampleOp resampleOp = new ResampleOp(_dim);
                 // resampleOp.setUnsharpenMask(AdvancedResizeOp.UnsharpenMask.Normal);
                 final BufferedImage rescaledTomato = resampleOp.filter(image, null);
