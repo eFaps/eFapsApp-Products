@@ -24,7 +24,7 @@
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductIndividualSearch</name>
         <target>
-            <form>Products_ProductForm</form>
+            <form>Products_ProductIndividualSearchForm</form>
             <table>Products_ProductTable</table>
             <evaluate program="org.efaps.esjp.common.uisearch.Search">
                 <property name="Type">Products_ProductIndividual</property>
