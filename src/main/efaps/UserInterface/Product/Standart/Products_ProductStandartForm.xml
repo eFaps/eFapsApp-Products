@@ -101,6 +101,7 @@
             <property name="Attribute">Active</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+            <property name="Required">true</property>
         </field>
         <field character="Group" name="createGroup">
             <property name="GroupCount">2</property>
@@ -218,6 +219,7 @@
             <property name="ModeEdit">NONE</property>
             <property name="Label">Products_ProductForm.nameSuffix.Label</property>
             <property name="ModeCreate">EDITABLE</property>
+            <property name="Required">true</property>
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductStandartForm.nameSuffix.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
@@ -396,6 +398,7 @@
             <property name="Attribute">Active</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+            <property name="Required">true</property>
         </field>
         <field name="salesUnit">
             <property name="Attribute">SalesUnit</property>
@@ -404,6 +407,7 @@
             <property name="ModeView">NONE</property>
             <property name="ModePrint">NONE</property>
             <property name="Required">true</property>
+            <property name="Columns">4</property>
         </field>
         <field name="salesUnit4Read">
             <property name="Select">attribute[SalesUnit].format[0.####]</property>
