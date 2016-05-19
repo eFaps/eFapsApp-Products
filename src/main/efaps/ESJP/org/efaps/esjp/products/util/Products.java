@@ -262,6 +262,14 @@ public final class Products
 
     /** See description. */
     @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute STANDARTACTIND = new BooleanSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "Standart.ActivateIndividual")
+                    .description("Activate the individual for standart products. "
+                                    + "Also needs the general mechanism activated");
+
+    /** See description. */
+    @EFapsSysConfAttribute
     public static final PropertiesSysConfAttribute STANDARTDESCR = new PropertiesSysConfAttribute()
                     .sysConfUUID(SYSCONFUUID)
                     .key(BASE + "Standart.Descriptions")

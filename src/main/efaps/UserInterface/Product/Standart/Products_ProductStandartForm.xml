@@ -103,6 +103,27 @@
             <property name="ModeEdit">EDITABLE</property>
             <property name="Required">true</property>
         </field>
+        <field name="individual">
+            <property name="Attribute">Individual</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                name="Products_ProductFamilyMyDesk.UI_ACCESSCHECK"
+                method="configCheck"
+                event="UI_ACCESSCHECK" index="1">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.ActivateIndividual</property>
+            </trigger>
+            <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                name="Products_ProductFamilyMyDesk.UI_ACCESSCHECK"
+                method="configCheck"
+                event="UI_ACCESSCHECK" index="2">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.Standart.ActivateIndividual</property>
+            </trigger>
+        </field>
         <field character="Group" name="createGroup">
             <property name="GroupCount">2</property>
         </field>
@@ -418,6 +439,27 @@
             <property name="Attribute">TaxCategory</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+        </field>
+        <field name="individual">
+            <property name="Attribute">Individual</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                name="Products_ProductFamilyMyDesk.UI_ACCESSCHECK"
+                method="configCheck"
+                event="UI_ACCESSCHECK" index="1">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.ActivateIndividual</property>
+            </trigger>
+            <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                name="Products_ProductFamilyMyDesk.UI_ACCESSCHECK"
+                method="configCheck"
+                event="UI_ACCESSCHECK" index="2">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.Standart.ActivateIndividual</property>
+            </trigger>
         </field>
         <field character="Group" name="createGroup">
             <property name="GroupCount">2</property>
