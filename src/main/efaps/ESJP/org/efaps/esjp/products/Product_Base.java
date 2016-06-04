@@ -611,7 +611,7 @@ public abstract class Product_Base
                                         CIProducts.ProductBatch.getType().getId());
                     }
                 }
-                if (Products.ACTIVATEFAMILY.get()) {
+                if (Products.FAMILY_ACTIVATE.get()) {
                     @SuppressWarnings("unchecked")
                     final Map<String, Object> filterMap = (Map<String, Object>) _parameter.get(ParameterValues.OTHERS);
                     if (filterMap != null && filterMap.containsKey("productFamilyLink")) {
@@ -1341,7 +1341,7 @@ public abstract class Product_Base
                                    final Instance _famInst)
         throws EFapsException
     {
-        Integer length = Products.FAMILYSUFFIXLENGTH.get();
+        Integer length = Products.FAMILY_SUFFIXLENGTH.get();
         if (length == null || length < 1) {
             length = 3;
         }

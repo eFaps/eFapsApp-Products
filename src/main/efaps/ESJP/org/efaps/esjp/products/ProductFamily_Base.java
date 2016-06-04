@@ -18,10 +18,13 @@
 package org.efaps.esjp.products;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.EnumUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.efaps.admin.datamodel.ui.IUIValue;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
@@ -47,6 +50,7 @@ import org.efaps.esjp.common.util.InterfaceUtils_Base.DojoLibs;
 import org.efaps.esjp.erp.AbstractWarning;
 import org.efaps.esjp.erp.IWarning;
 import org.efaps.esjp.erp.WarningUtil;
+import org.efaps.esjp.products.util.Products;
 import org.efaps.util.EFapsException;
 
 /**
@@ -59,6 +63,21 @@ import org.efaps.util.EFapsException;
 public abstract class ProductFamily_Base
     extends AbstractCommon
 {
+
+    /**
+     * The Enum NameDefintion.
+     *
+     * @author The eFaps Team
+     */
+    public enum NameDefintion
+    {
+        /** The whole path is shown. */
+        ALL,
+
+        /** Show only the last. */
+        LAST;
+    }
+
 
     /** The cachekey. */
     protected static final String CACHEKEY = ProductFamily.class.getName() + ".CacheKey";
@@ -84,7 +103,6 @@ public abstract class ProductFamily_Base
         }
         return ret;
     }
-
 
     /**
      * Creates the.
@@ -175,7 +193,7 @@ public abstract class ProductFamily_Base
             }
             if (inst.isValid()) {
                 while (!inst.getType().isCIType(CIProducts.ProductFamilyRoot)) {
-                    final PrintQuery print = new CachedPrintQuery(inst, CACHEKEY);
+                    final PrintQuery print = new CachedPrintQuery(inst, ProductFamily.CACHEKEY);
                     final SelectBuilder selParentInst = SelectBuilder.get()
                                     .linkto(CIProducts.ProductFamilyStandart.ParentLink)
                                     .instance();
@@ -185,7 +203,7 @@ public abstract class ProductFamily_Base
                     inst = print.getSelect(selParentInst);
                     strBldr.insert(0, print.<String>getAttribute(CIProducts.ProductFamilyAbstract.CodePart));
                 }
-                final PrintQuery print = new CachedPrintQuery(inst, CACHEKEY);
+                final PrintQuery print = new CachedPrintQuery(inst, ProductFamily.CACHEKEY);
                 final SelectBuilder selLineCode = SelectBuilder.get()
                                 .linkto(CIProducts.ProductFamilyAbstract.ProductLineLink)
                                 .attribute(CIProducts.ProductLineAbstract.CodePart);
@@ -333,46 +351,61 @@ public abstract class ProductFamily_Base
                           final Instance _inst)
         throws EFapsException
     {
-        final StringBuilder strBldr = new StringBuilder();
+        final String separator = getProperty(_parameter, "NameSeparator", Products.FAMILY_NAMESEP.get());
+
+        final boolean includeLine = containsProperty(_parameter, "NameIncludeLine")
+                        ?  Boolean.parseBoolean(getProperty(_parameter, "NameIncludeLine"))
+                        :  Products.FAMILY_NAMEINCLLINE.get();
+
+        final NameDefintion nameDef = containsProperty(_parameter, "NameDefintion")
+                        ?  EnumUtils.getEnum(NameDefintion.class, getProperty(_parameter, "NameDefintion"))
+                        :  Products.FAMILY_NAMEDEF.get();
+
         Instance inst = _inst;
         if (inst.getType().isKindOf(CIProducts.ProductAbstract)) {
-            final PrintQuery print = new PrintQuery(inst);
+            final PrintQuery print = CachedPrintQuery.get4Request(inst);
             final SelectBuilder selFamInts = SelectBuilder.get().linkto(CIProducts.ProductAbstract.ProductFamilyLink)
                             .instance();
             print.addSelect(selFamInts);
             print.execute();
             inst = print.getSelect(selFamInts);
         }
-        boolean first = true;
+        final List<String> parts = new ArrayList<>();
         while (!inst.getType().isCIType(CIProducts.ProductFamilyRoot)) {
-            final PrintQuery print = new CachedPrintQuery(inst, CACHEKEY);
+            final PrintQuery print = new CachedPrintQuery(inst, ProductFamily.CACHEKEY);
             final SelectBuilder selParentInst = SelectBuilder.get().linkto(CIProducts.ProductFamilyStandart.ParentLink)
                             .instance();
             print.addSelect(selParentInst);
             print.addAttribute(CIProducts.ProductFamilyAbstract.Name);
             print.execute();
             inst = print.getSelect(selParentInst);
-            if (first) {
-                first = false;
-            } else {
-                strBldr.insert(0, " - ");
-            }
-            strBldr.insert(0, print.<String>getAttribute(CIProducts.ProductFamilyAbstract.Name));
+            parts.add(print.<String>getAttribute(CIProducts.ProductFamilyAbstract.Name));
         }
-        final PrintQuery print = new CachedPrintQuery(inst, CACHEKEY);
-        final SelectBuilder selLineCode = SelectBuilder.get().linkto(CIProducts.ProductFamilyAbstract.ProductLineLink)
+        final PrintQuery print = new CachedPrintQuery(inst, ProductFamily.CACHEKEY);
+        final SelectBuilder selLineName = SelectBuilder.get().linkto(CIProducts.ProductFamilyAbstract.ProductLineLink)
                         .attribute(CIProducts.ProductLineAbstract.Name);
-        print.addSelect(selLineCode);
+        print.addSelect(selLineName);
         print.addAttribute(CIProducts.ProductFamilyAbstract.Name);
         print.execute();
-        if (first) {
-            first = false;
-        } else {
-            strBldr.insert(0, " - ");
+        parts.add(print.<String>getAttribute(CIProducts.ProductFamilyAbstract.Name));
+
+        if (includeLine) {
+            parts.add(print.getSelect(selLineName));
         }
-        strBldr.insert(0, print.<String>getAttribute(CIProducts.ProductFamilyAbstract.Name));
-        strBldr.insert(0, print.getSelect(selLineCode) + " - ");
-        return strBldr.toString();
+
+        final List<String> finalParts;
+        switch (nameDef) {
+            case LAST:
+                finalParts = parts.isEmpty() ? parts : parts.subList(0, 1);
+                Collections.reverse(finalParts);
+                break;
+            case ALL:
+            default:
+                finalParts = parts;
+                Collections.reverse(finalParts);
+                break;
+        }
+        return finalParts.isEmpty() ? "" : StringUtils.join(finalParts, separator);
     }
 
     /**

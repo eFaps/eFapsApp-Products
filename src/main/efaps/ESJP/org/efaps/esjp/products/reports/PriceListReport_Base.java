@@ -53,7 +53,6 @@ import org.efaps.esjp.db.InstanceUtils;
 import org.efaps.esjp.erp.FilteredReport;
 import org.efaps.esjp.products.ProductFamily;
 import org.efaps.esjp.products.util.Products;
-import org.efaps.ui.wicket.models.EmbeddedLink;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
 
@@ -61,11 +60,8 @@ import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.builder.DynamicReports;
 import net.sf.dynamicreports.report.builder.column.ComponentColumnBuilder;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
-import net.sf.dynamicreports.report.builder.component.GenericElementBuilder;
-import net.sf.dynamicreports.report.builder.expression.AbstractComplexExpression;
 import net.sf.dynamicreports.report.builder.grid.ColumnGridComponentBuilder;
 import net.sf.dynamicreports.report.builder.grid.ColumnTitleGroupBuilder;
-import net.sf.dynamicreports.report.definition.ReportParameters;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRRewindableDataSource;
@@ -360,11 +356,7 @@ public abstract class PriceListReport_Base
                             .getProperty(PriceListReport.class.getName() + ".productDim"), "productDim",
                             DynamicReports.type.stringType()).setWidth(50);
 
-            final GenericElementBuilder linkElement = DynamicReports.cmp.genericElement(
-                            "http://www.efaps.org", "efapslink")
-                            .addParameter(EmbeddedLink.JASPER_PARAMETERKEY, new LinkExpression())
-                            .setHeight(12).setWidth(25);
-            final ComponentColumnBuilder linkColumn = DynamicReports.col.componentColumn(linkElement).setTitle("");
+            final ComponentColumnBuilder linkColumn = FilteredReport.getLinkColumn(_parameter, "productOID");
 
             final List<ColumnGridComponentBuilder> grid = new ArrayList<ColumnGridComponentBuilder>();
 
@@ -520,35 +512,6 @@ public abstract class PriceListReport_Base
         public void setShowFamily(final boolean _showFamily)
         {
             this.showFamily = _showFamily;
-        }
-    }
-
-    /**
-     * Expression used to render a link for the UserInterface.
-     */
-    public static class LinkExpression
-        extends AbstractComplexExpression<EmbeddedLink>
-    {
-
-        /**
-         * Needed for serialization.
-         */
-        private static final long serialVersionUID = 1L;
-
-        /**
-         * Costructor.
-         */
-        public LinkExpression()
-        {
-            addExpression(DynamicReports.field("productOID", String.class));
-        }
-
-        @Override
-        public EmbeddedLink evaluate(final List<?> _values,
-                                     final ReportParameters _reportParameters)
-        {
-            final String oid = (String) _values.get(0);
-            return EmbeddedLink.getJasperLink(oid);
         }
     }
 }

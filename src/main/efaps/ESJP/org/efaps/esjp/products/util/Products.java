@@ -27,10 +27,12 @@ import org.efaps.api.annotation.EFapsSysConfAttribute;
 import org.efaps.api.annotation.EFapsSysConfLink;
 import org.efaps.api.annotation.EFapsSystemConfiguration;
 import org.efaps.esjp.admin.common.systemconfiguration.BooleanSysConfAttribute;
+import org.efaps.esjp.admin.common.systemconfiguration.EnumSysConfAttribute;
 import org.efaps.esjp.admin.common.systemconfiguration.IntegerSysConfAttribute;
 import org.efaps.esjp.admin.common.systemconfiguration.PropertiesSysConfAttribute;
 import org.efaps.esjp.admin.common.systemconfiguration.StringSysConfAttribute;
 import org.efaps.esjp.admin.common.systemconfiguration.SysConfLink;
+import org.efaps.esjp.products.ProductFamily_Base.NameDefintion;
 import org.efaps.util.cache.CacheReloadException;
 
 /**
@@ -96,18 +98,43 @@ public final class Products
 
     /** See description. */
     @EFapsSysConfAttribute
-    public static final BooleanSysConfAttribute ACTIVATEFAMILY = new BooleanSysConfAttribute()
+    public static final BooleanSysConfAttribute FAMILY_ACTIVATE = new BooleanSysConfAttribute()
                     .sysConfUUID(SYSCONFUUID)
                     .key(BASE + "Family.Activate")
                     .description(" Activate the individual management menu in general.");
 
     /** See description. */
     @EFapsSysConfAttribute
-    public static final IntegerSysConfAttribute FAMILYSUFFIXLENGTH = new IntegerSysConfAttribute()
+    public static final IntegerSysConfAttribute FAMILY_SUFFIXLENGTH = new IntegerSysConfAttribute()
                     .sysConfUUID(SYSCONFUUID)
                     .key(BASE + "Family.SuffixLength")
                     .defaultValue(3)
                     .description("Activate the family management for materials.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final StringSysConfAttribute FAMILY_NAMESEP = new StringSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "Family.NameSeparator")
+                    .defaultValue(" - ")
+                    .description("Seperator String used to seperate the diffenert parts of a complete family name.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute FAMILY_NAMEINCLLINE = new BooleanSysConfAttribute()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "Family.NameIncludeLine")
+                    .defaultValue(true)
+                    .description("Include the line in the name.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final EnumSysConfAttribute<NameDefintion> FAMILY_NAMEDEF = new EnumSysConfAttribute<NameDefintion>()
+                    .sysConfUUID(SYSCONFUUID)
+                    .key(BASE + "Family.NameDefinition")
+                    .clazz(NameDefintion.class)
+                    .defaultValue(NameDefintion.ALL)
+                    .description("Name Definition");
 
     /** See description. */
     @EFapsSysConfAttribute
