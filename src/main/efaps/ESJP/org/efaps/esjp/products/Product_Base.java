@@ -48,7 +48,6 @@ import org.efaps.admin.datamodel.attributetype.ModifiedType;
 import org.efaps.admin.datamodel.attributetype.ModifierLinkType;
 import org.efaps.admin.datamodel.attributetype.OIDType;
 import org.efaps.admin.datamodel.attributetype.TypeType;
-import org.efaps.admin.datamodel.ui.FieldValue;
 import org.efaps.admin.datamodel.ui.IUIValue;
 import org.efaps.admin.datamodel.ui.LinkWithRangesUI;
 import org.efaps.admin.datamodel.ui.UIValue;
@@ -76,6 +75,7 @@ import org.efaps.db.Update;
 import org.efaps.esjp.admin.datamodel.RangesValue;
 import org.efaps.esjp.ci.CIFormProducts;
 import org.efaps.esjp.ci.CIProducts;
+import org.efaps.esjp.common.parameter.ParameterUtil;
 import org.efaps.esjp.common.uiform.Create;
 import org.efaps.esjp.common.uiform.Edit;
 import org.efaps.esjp.common.uiform.Field;
@@ -88,7 +88,6 @@ import org.efaps.esjp.erp.IWarning;
 import org.efaps.esjp.erp.WarningUtil;
 import org.efaps.esjp.products.util.Products;
 import org.efaps.esjp.products.util.Products.ProductIndividual;
-import org.efaps.ui.wicket.models.cell.UIFormCellCmd;
 import org.efaps.ui.wicket.models.objects.IFormElement;
 import org.efaps.ui.wicket.models.objects.UIFieldForm;
 import org.efaps.ui.wicket.models.objects.UIForm;
@@ -160,10 +159,7 @@ public abstract class Product_Base
         final Return ret;
         if (_parameter.get(ParameterValues.ACCESSMODE).equals(TargetMode.CREATE) && dimInst != null
                         && dimInst.isValid()) {
-            final IUIValue fieldValue = (IUIValue) _parameter.get(ParameterValues.UIOBJECT);
-            if (fieldValue instanceof FieldValue) {
-                ((FieldValue) fieldValue).setValue(Dimension.get(dimInst.getId()).getBaseUoM().getId());
-            }
+            ParameterUtil.setProperty(_parameter, "Dimension", Dimension.get(dimInst.getId()).getName());
             ret = field.getUoMDropDownFieldValue(_parameter);
         } else if (_parameter.get(ParameterValues.ACCESSMODE).equals(TargetMode.EDIT)) {
             ret = field.getUoMDropDownFieldValue(_parameter);
@@ -1497,13 +1493,13 @@ public abstract class Product_Base
     public Return setDescription(final Parameter _parameter)
         throws EFapsException
     {
-        final UIForm uiForm = (UIForm) ((UIFormCellCmd) _parameter.get(ParameterValues.CLASS)).getParent();
+        final UIForm uiForm = null; //(UIForm) ((UIFormCellCmd) _parameter.get(ParameterValues.CLASS)).getParent();
         final Type type;
         if (_parameter.getInstance() != null && _parameter.getInstance().isValid()) {
             type = _parameter.getInstance().getType();
         } else {
-            type = ((UIFormCellCmd) _parameter.get(ParameterValues.CLASS)).getParent().getCommand()
-                            .getTargetCreateType();
+            type = null;//((UIFormCellCmd) _parameter.get(ParameterValues.CLASS)).getParent().getCommand()
+                   //         .getTargetCreateType();
         }
         final Properties descriptions;
         if (type.isCIType(CIProducts.ProductStandart)) {

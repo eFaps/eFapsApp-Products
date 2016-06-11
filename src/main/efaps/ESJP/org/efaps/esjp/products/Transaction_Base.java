@@ -71,7 +71,6 @@ import org.efaps.esjp.erp.WarningUtil;
 import org.efaps.esjp.products.Inventory_Base.InventoryBean;
 import org.efaps.esjp.products.util.Products;
 import org.efaps.esjp.products.util.Products.ProductIndividual;
-import org.efaps.ui.wicket.models.cell.UIFormCell;
 import org.efaps.ui.wicket.util.DateUtil;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
@@ -1160,8 +1159,9 @@ public abstract class Transaction_Base
     {
         final Return ret = new Return();
         final StringBuilder js = new StringBuilder();
-        final UIFormCell form = (UIFormCell) _parameter.get(ParameterValues.CLASS);
-        if (form != null && form.getParent().getInstance() != null) {
+        final Object form = null; //(UIFormCell) _parameter.get(ParameterValues.CLASS);
+        if (form != null //&& form.getParent().getInstance() != null
+                        ) {
             final String product = _parameter.getParameterValue("product");
             if (product != null && !product.isEmpty()) {
                 final Instance instProd = Instance.get(product);
@@ -1174,7 +1174,8 @@ public abstract class Transaction_Base
                                 print.<String>getAttribute(CIProducts.ProductAbstract.Description));
                 insert.add(CIProducts.TransactionInbound.UoM, _parameter.getParameterValue("uoM"));
                 insert.add(CIProducts.TransactionInbound.Quantity, _parameter.getParameterValue("quantity"));
-                insert.add(CIProducts.TransactionInbound.Storage, form.getParent().getInstance().getId());
+                insert.add(CIProducts.TransactionInbound.Storage, null //form.getParent().getInstance().getId()
+                                );
                 insert.add(CIProducts.TransactionInbound.Date, new DateTime());
                 insert.execute();
 
