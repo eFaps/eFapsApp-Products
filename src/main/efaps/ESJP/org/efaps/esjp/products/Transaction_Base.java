@@ -200,8 +200,8 @@ public abstract class Transaction_Base
                             CIFormProducts.Products_TransactionInOutForm.product.name)));
             final PrintQuery print = new PrintQuery(productInst);
             final SelectBuilder selProdInst = SelectBuilder.get()
-                            .linkfrom(CIProducts.StockProductAbstract2IndividualAbstract.ToAbstract)
-                            .linkto(CIProducts.StockProductAbstract2IndividualAbstract.FromAbstract).instance();
+                            .linkfrom(CIProducts.StoreableProductAbstract2IndividualAbstract.ToAbstract)
+                            .linkto(CIProducts.StoreableProductAbstract2IndividualAbstract.FromAbstract).instance();
             print.addSelect(selProdInst);
             print.executeWithoutAccessCheck();
             final Instance stockProdIns = print.getSelect(selProdInst);
@@ -869,8 +869,8 @@ public abstract class Transaction_Base
                 final boolean individual = prodInst.getType().isKindOf(CIProducts.ProductIndividualAbstract.getType());
                 final PrintQuery prodPrint = new PrintQuery(prodInst);
                 final SelectBuilder selProdInst = SelectBuilder.get()
-                                .linkfrom(CIProducts.StockProductAbstract2IndividualAbstract.ToAbstract)
-                                .linkto(CIProducts.StockProductAbstract2IndividualAbstract.FromAbstract).instance();
+                                .linkfrom(CIProducts.StoreableProductAbstract2IndividualAbstract.ToAbstract)
+                                .linkto(CIProducts.StoreableProductAbstract2IndividualAbstract.FromAbstract).instance();
                 if (individual) {
                     prodPrint.addSelect(selProdInst);
                 }
@@ -1148,57 +1148,6 @@ public abstract class Transaction_Base
     }
 
     /**
-     * Method for create a new transaction inbound.
-     *
-     * @param _parameter Parameter as passed from the efaps API.
-     * @return new Return.
-     * @throws EFapsException on error.
-     */
-    public Return executeButton(final Parameter _parameter)
-        throws EFapsException
-    {
-        final Return ret = new Return();
-        final StringBuilder js = new StringBuilder();
-        final Object form = null; //(UIFormCell) _parameter.get(ParameterValues.CLASS);
-        if (form != null //&& form.getParent().getInstance() != null
-                        ) {
-            final String product = _parameter.getParameterValue("product");
-            if (product != null && !product.isEmpty()) {
-                final Instance instProd = Instance.get(product);
-                final PrintQuery print = new PrintQuery(instProd);
-                print.addAttribute(CIProducts.ProductAbstract.Description);
-                print.execute();
-                final Insert insert = new Insert(CIProducts.TransactionInbound);
-                insert.add(CIProducts.TransactionInbound.Product, instProd.getId());
-                insert.add(CIProducts.TransactionInbound.Description,
-                                print.<String>getAttribute(CIProducts.ProductAbstract.Description));
-                insert.add(CIProducts.TransactionInbound.UoM, _parameter.getParameterValue("uoM"));
-                insert.add(CIProducts.TransactionInbound.Quantity, _parameter.getParameterValue("quantity"));
-                insert.add(CIProducts.TransactionInbound.Storage, null //form.getParent().getInstance().getId()
-                                );
-                insert.add(CIProducts.TransactionInbound.Date, new DateTime());
-                insert.execute();
-
-                if (insert.getInstance() != null) {
-                    final String description = _parameter.getParameterValue("quantity") + " - "
-                                    + print.<String>getAttribute(CIProducts.ProductAbstract.Description);
-                    js.append("document.getElementsByName('description')[0].innerHTML=\"")
-                                    .append(description).append("\";")
-                                    .append("document.getElementsByName('product')[0].value=\"\";")
-                                    .append("document.getElementsByName('productAutoComplete')[0].value=\"\";")
-                                    .append("document.getElementsByName('quantity')[0].value=\"\";")
-                                    .append("document.getElementsByName('uoM')[0].innerHTML=\"\";");
-                }
-            } else {
-                js.append("document.getElementsByName('description')[0].innerHTML=\"<span style='color:red;' >")
-                         .append(DBProperties.getProperty("org.efaps.esjp.products.enterProduct")).append("</span>\"");
-            }
-        }
-        ret.put(ReturnValues.SNIPLETT, js.toString());
-        return ret;
-    }
-
-    /**
      * Check the access for the document link field in the transaction formular.
      * Access will only be granted if a document is connected.
      *
@@ -1351,14 +1300,14 @@ public abstract class Transaction_Base
                 final Instance prodInst = multi.<Instance>getSelect(selProdInst);
                 if (Products.ACTIVATEINDIVIDUAL.get() && !ProductIndividual.NONE.equals(multi.getSelect(selProdInd))) {
                     final QueryBuilder attrQueryBldr = new QueryBuilder(
-                                    CIProducts.StockProductAbstract2IndividualAbstract);
-                    attrQueryBldr.addWhereAttrEqValue(CIProducts.StockProductAbstract2IndividualAbstract.FromAbstract,
+                                    CIProducts.StoreableProductAbstract2IndividualAbstract);
+                    attrQueryBldr.addWhereAttrEqValue(CIProducts.StoreableProductAbstract2IndividualAbstract.FromAbstract,
                                     prodInst);
 
                     final QueryBuilder queryBldr = new QueryBuilder(CIProducts.InventoryIndividual);
                     queryBldr.addWhereAttrEqValue(CIProducts.InventoryIndividual.Storage, _parameter.getInstance());
                     queryBldr.addWhereAttrInQuery(CIProducts.InventoryIndividual.Product, attrQueryBldr
-                                    .getAttributeQuery(CIProducts.StockProductAbstract2IndividualAbstract.ToAbstract));
+                                    .getAttributeQuery(CIProducts.StoreableProductAbstract2IndividualAbstract.ToAbstract));
                     final MultiPrintQuery indMulti = queryBldr.getPrint();
                     indMulti.addSelect(selProdInst, selProdDecr, selProdName, selProdInd);
                     indMulti.addAttribute(CIProducts.InventoryIndividual.Quantity, CIProducts.InventoryAbstract.UoM);

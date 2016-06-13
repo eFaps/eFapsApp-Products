@@ -38,7 +38,7 @@
             <form>Products_ProductNonStockForm</form>
         </target>
         <!-- type tree for -->
-        <type>Products_NonStockProductAbstract</type>
+        <type>Products_UnstoreableProductAbstract</type>
         <childs>
             <child>Products_ProductTree_PricelistRetail</child>
             <child>Products_ProductTree_PricelistMinRetail</child>

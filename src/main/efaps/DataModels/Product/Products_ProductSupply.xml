@@ -28,7 +28,7 @@
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductSupply</name>
-        <parent>Products_StockProductAbstract</parent>
+        <parent>Products_StoreableProductAbstract</parent>
         <trigger event="ACCESSCHECK" name="Products_ProductSupply.ACCESSCHECK"
             program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType" />
 

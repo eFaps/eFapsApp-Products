@@ -37,7 +37,7 @@
             <form>Products_ProductForm</form>
             <help>org.efaps.wiki.products.Showproducts.wiki</help>
         </target>
-        <type>Products_StockProductAbstract</type>
+        <type>Products_StoreableProductAbstract</type>
         <childs>
             <child>Products_ProductTree_PricelistRetail</child>
             <child>Products_ProductTree_PricelistMinRetail</child>

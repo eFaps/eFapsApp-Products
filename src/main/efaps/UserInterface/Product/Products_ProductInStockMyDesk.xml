@@ -41,7 +41,7 @@
             <menu>Products_ProductInStockMyDesk_Menu</menu>
             <table>Products_ProductTable</table>
             <evaluate program="org.efaps.esjp.products.Product" method="productMultiPrint">
-                <property name="Type">Products_StockProductAbstract</property>
+                <property name="Type">Products_StoreableProductAbstract</property>
                 <property name="ExpandChildTypes">true</property>
             </evaluate>
             <help>org.efaps.wiki.products.Products.wiki</help>

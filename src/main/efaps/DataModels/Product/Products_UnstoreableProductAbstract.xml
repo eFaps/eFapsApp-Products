@@ -16,11 +16,6 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
- Author:          The eFaps Team
- Revision:        $Rev$
- Last Changed:    $Date$
- Last Changed By: $Author$
-
 -->
 
 <datamodel-type  xmlns="http://www.efaps.org/xsd"
@@ -28,10 +23,9 @@
                  xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>62dbdc67-d8d0-40a2-92d9-38e4b174de9a</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_NonStockProductAbstract</name>
+        <name>Products_UnstoreableProductAbstract</name>
         <parent>Products_ProductAbstract</parent>
         <purpose abstract="true" />
     </definition>

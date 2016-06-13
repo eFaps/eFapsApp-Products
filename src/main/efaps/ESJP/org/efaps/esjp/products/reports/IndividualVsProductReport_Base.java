@@ -164,8 +164,8 @@ public abstract class IndividualVsProductReport_Base
                                 attrQueryBldr.getAttributeQuery(CIProducts.InventoryAbstract.Product));
                 final MultiPrintQuery multi = queryBldr.getPrint();
                 final SelectBuilder selProd = SelectBuilder.get()
-                                .linkfrom(CIProducts.StockProductAbstract2IndividualAbstract.ToAbstract)
-                                .linkto(CIProducts.StockProductAbstract2IndividualAbstract.FromAbstract);
+                                .linkfrom(CIProducts.StoreableProductAbstract2IndividualAbstract.ToAbstract)
+                                .linkto(CIProducts.StoreableProductAbstract2IndividualAbstract.FromAbstract);
                 final SelectBuilder selProdInst = new SelectBuilder(selProd).instance();
                 final SelectBuilder selProdName = new SelectBuilder(selProd).attribute(CIProducts.ProductAbstract.Name);
                 final SelectBuilder selProdDescr = new SelectBuilder(selProd)
@@ -191,24 +191,24 @@ public abstract class IndividualVsProductReport_Base
                     prodBean.getIndividuals().add(dataBean);
                 }
                 // get stock products that have no individual stock
-                final QueryBuilder attQeryBldr = new QueryBuilder(CIProducts.StockProductAbstract2IndividualAbstract);
+                final QueryBuilder attQeryBldr = new QueryBuilder(CIProducts.StoreableProductAbstract2IndividualAbstract);
 
-                final QueryBuilder prodQueryBldr = new QueryBuilder(CIProducts.StockProductAbstract);
-                prodQueryBldr.addWhereAttrInQuery(CIProducts.StockProductAbstract.ID, attrQueryBldr.getAttributeQuery(
+                final QueryBuilder prodQueryBldr = new QueryBuilder(CIProducts.StoreableProductAbstract);
+                prodQueryBldr.addWhereAttrInQuery(CIProducts.StoreableProductAbstract.ID, attrQueryBldr.getAttributeQuery(
                                 CIProducts.InventoryAbstract.Product));
-                prodQueryBldr.addWhereAttrInQuery(CIProducts.StockProductAbstract.ID, attQeryBldr.getAttributeQuery(
-                                CIProducts.StockProductAbstract2IndividualAbstract.FromAbstract));
-                prodQueryBldr.addWhereAttrNotEqValue(CIProducts.StockProductAbstract.ID, beans.keySet().toArray());
+                prodQueryBldr.addWhereAttrInQuery(CIProducts.StoreableProductAbstract.ID, attQeryBldr.getAttributeQuery(
+                                CIProducts.StoreableProductAbstract2IndividualAbstract.FromAbstract));
+                prodQueryBldr.addWhereAttrNotEqValue(CIProducts.StoreableProductAbstract.ID, beans.keySet().toArray());
                 final MultiPrintQuery multi2 = prodQueryBldr.getPrint();
-                multi2.addAttribute(CIProducts.StockProductAbstract.Name, CIProducts.StockProductAbstract.Description);
+                multi2.addAttribute(CIProducts.StoreableProductAbstract.Name, CIProducts.StoreableProductAbstract.Description);
                 multi2.execute();
                 while (multi2.next()) {
                     final Instance prodInst = multi2.getCurrentInstance();
                     if (!beans.containsKey(prodInst)) {
                         final ProductBean prodBean = new ProductBean();
                         prodBean.setOID(prodInst.getOid())
-                            .setName(multi2.<String>getAttribute(CIProducts.StockProductAbstract.Name))
-                            .setDescr(multi2.<String>getAttribute(CIProducts.StockProductAbstract.Description));
+                            .setName(multi2.<String>getAttribute(CIProducts.StoreableProductAbstract.Name))
+                            .setDescr(multi2.<String>getAttribute(CIProducts.StoreableProductAbstract.Description));
                         beans.put(prodInst, prodBean);
                     }
                 }

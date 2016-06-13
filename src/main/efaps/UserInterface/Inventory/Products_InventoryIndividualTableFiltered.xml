@@ -49,8 +49,8 @@
             <property name="Label">Products_Inventory/Description.Label</property>
         </field>
         <field name="productOrig">
-            <property name="SelectAlternateOID">linkto[Product].linkfrom[Products_StockProductAbstract2IndividualAbstract#ToAbstract].linkto[FromAbstract].oid</property>
-            <property name="Select">linkto[Product].linkfrom[Products_StockProductAbstract2IndividualAbstract#ToAbstract].linkto[FromAbstract].attribute[Name].attribute[Name]</property>
+            <property name="SelectAlternateOID">linkto[Product].linkfrom[Products_StoreableProductAbstract2IndividualAbstract#ToAbstract].linkto[FromAbstract].oid</property>
+            <property name="Select">linkto[Product].linkfrom[Products_StoreableProductAbstract2IndividualAbstract#ToAbstract].linkto[FromAbstract].attribute[Name].attribute[Name]</property>
             <property name="Label">Products_Inventory/Product.Label</property>
             <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
         </field>

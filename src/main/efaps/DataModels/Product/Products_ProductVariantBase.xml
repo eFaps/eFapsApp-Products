@@ -22,7 +22,7 @@
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductVariantBase</name>
-        <parent>Products_NonStockProductAbstract</parent>
+        <parent>Products_UnstoreableProductAbstract</parent>
         <attribute>
             <name>VariantConfig</name>
             <type>Jaxb</type>

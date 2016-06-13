@@ -32,7 +32,7 @@
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductProductionPartList</name>
-        <parent>Products_NonStockProductAbstract</parent>
+        <parent>Products_UnstoreableProductAbstract</parent>
         <attribute>
             <name>UoM</name>
             <type>Link</type>

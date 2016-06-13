@@ -76,10 +76,10 @@ public abstract class Batch_Base
     {
         final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductBatch);
 
-        final QueryBuilder relAttrQueryBldr = new QueryBuilder(CIProducts.StockProductAbstract2Batch);
-        relAttrQueryBldr.addWhereAttrEqValue(CIProducts.StockProductAbstract2Batch.FromLink, _prodInst);
+        final QueryBuilder relAttrQueryBldr = new QueryBuilder(CIProducts.StoreableProductAbstract2Batch);
+        relAttrQueryBldr.addWhereAttrEqValue(CIProducts.StoreableProductAbstract2Batch.FromLink, _prodInst);
         queryBldr.addWhereAttrInQuery(CIProducts.ProductBatch.ID,
-                        relAttrQueryBldr.getAttributeQuery(CIProducts.StockProductAbstract2Batch.ToLink));
+                        relAttrQueryBldr.getAttributeQuery(CIProducts.StoreableProductAbstract2Batch.ToLink));
 
         final QueryBuilder attrQueryBldr = new QueryBuilder(CIProducts.InventoryIndividual);
         queryBldr.addWhereAttrInQuery(CIProducts.ProductBatch.ID,

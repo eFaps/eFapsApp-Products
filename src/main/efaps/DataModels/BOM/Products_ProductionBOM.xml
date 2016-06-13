@@ -33,14 +33,14 @@
         <attribute>
             <name>From</name>
             <type>Link</type>
-            <typelink>Products_StockProductAbstract</typelink>
+            <typelink>Products_StoreableProductAbstract</typelink>
             <sqltable>Products_BOMSQLTable</sqltable>
             <sqlcolumn>FROMID</sqlcolumn>
         </attribute>
         <attribute>
             <name>To</name>
             <type>Link</type>
-            <typelink>Products_StockProductAbstract</typelink>
+            <typelink>Products_StoreableProductAbstract</typelink>
             <sqltable>Products_BOMSQLTable</sqltable>
             <sqlcolumn>TOID</sqlcolumn>
         </attribute>

@@ -35,7 +35,7 @@
         <target>
             <table>Products_Product2ProductTable</table>
             <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
-                <property name="Type">Products_StockProductAbstract2IndividualAbstract</property>
+                <property name="Type">Products_StoreableProductAbstract2IndividualAbstract</property>
                 <property name="LinkFrom">FromAbstract</property>
             </evaluate>
             <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"

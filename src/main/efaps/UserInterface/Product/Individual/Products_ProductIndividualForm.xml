@@ -40,8 +40,8 @@
             <property name="Required">true</property>
         </field>
         <field name="product">
-            <property name="SelectAlternateOID">linkfrom[Products_StockProductAbstract2Individual#ToLink].linkto[FromLink].oid</property>
-            <property name="Select">linkfrom[Products_StockProductAbstract2Individual#ToLink].linkto[FromLink].attribute[Name]</property>
+            <property name="SelectAlternateOID">linkfrom[Products_StoreableProductAbstract2Individual#ToLink].linkto[FromLink].oid</property>
+            <property name="Select">linkfrom[Products_StoreableProductAbstract2Individual#ToLink].linkto[FromLink].attribute[Name]</property>
             <property name="Label">Products_ProductIndividualForm.product.label</property>
             <property name="HRef">TREE</property>
         </field>
@@ -129,8 +129,8 @@
             <property name="Required">true</property>
         </field>
         <field name="product">
-            <property name="SelectAlternateOID">linkfrom[Products_StockProductAbstract2Individual#ToLink].linkto[FromLink].oid</property>
-            <property name="Select">linkfrom[Products_StockProductAbstract2Individual#ToLink].linkto[FromLink].attribute[Name]</property>
+            <property name="SelectAlternateOID">linkfrom[Products_StoreableProductAbstract2Individual#ToLink].linkto[FromLink].oid</property>
+            <property name="Select">linkfrom[Products_StoreableProductAbstract2Individual#ToLink].linkto[FromLink].attribute[Name]</property>
             <property name="Label">Products_ProductIndividualForm.product.label</property>
             <property name="HRef">TREE</property>
         </field>

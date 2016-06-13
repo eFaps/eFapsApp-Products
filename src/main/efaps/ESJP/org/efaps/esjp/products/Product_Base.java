@@ -340,9 +340,9 @@ public abstract class Product_Base
         map.put("Name", getName4Batch(_parameter));
         final Instance batchInst = cloneProduct(_parameter, _prodInstance,
                         CIProducts.ProductBatch.getType(), map, false);
-        final Insert relInsert = new Insert(CIProducts.StockProductAbstract2Batch);
-        relInsert.add(CIProducts.StockProductAbstract2Batch.FromLink, _prodInstance);
-        relInsert.add(CIProducts.StockProductAbstract2Batch.ToLink, batchInst);
+        final Insert relInsert = new Insert(CIProducts.StoreableProductAbstract2Batch);
+        relInsert.add(CIProducts.StoreableProductAbstract2Batch.FromLink, _prodInstance);
+        relInsert.add(CIProducts.StoreableProductAbstract2Batch.ToLink, batchInst);
         relInsert.execute();
         return batchInst;
     }
@@ -1409,13 +1409,13 @@ public abstract class Product_Base
          throws EFapsException
     {
         Instance ret = null;
-        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.StockProductAbstract2IndividualAbstract);
-        queryBldr.addWhereAttrEqValue(CIProducts.StockProductAbstract2IndividualAbstract.ToAbstract,
+        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.StoreableProductAbstract2IndividualAbstract);
+        queryBldr.addWhereAttrEqValue(CIProducts.StoreableProductAbstract2IndividualAbstract.ToAbstract,
                         _individualProdInst);
 
         final MultiPrintQuery multi = queryBldr.getPrint();
         final SelectBuilder selInst = SelectBuilder.get().linkto(
-                        CIProducts.StockProductAbstract2IndividualAbstract.FromAbstract).instance();
+                        CIProducts.StoreableProductAbstract2IndividualAbstract.FromAbstract).instance();
         multi.addSelect(selInst);
         multi.execute();
         while (multi.next()) {

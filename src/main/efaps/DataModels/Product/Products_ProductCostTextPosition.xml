@@ -29,7 +29,7 @@
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductCostTextPosition</name>
-        <parent>Products_NonStockProductAbstract</parent>
+        <parent>Products_UnstoreableProductAbstract</parent>
         <trigger event="ACCESSCHECK"
             name="Products_ProductTextPosition.ACCESSCHECK"
             program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType" />

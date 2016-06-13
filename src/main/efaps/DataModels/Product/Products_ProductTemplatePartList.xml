@@ -32,7 +32,7 @@
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductTemplatePartList</name>
-        <parent>Products_NonStockProductAbstract</parent>
+        <parent>Products_UnstoreableProductAbstract</parent>
         <trigger program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType"
                  name="Products_ProductTemplatePartList.ACCESSCHECK" event="ACCESSCHECK" />
 

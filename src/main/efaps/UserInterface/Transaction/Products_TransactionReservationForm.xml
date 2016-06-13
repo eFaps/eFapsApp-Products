@@ -54,7 +54,7 @@
             <trigger event="UI_FIELD_AUTOCOMPLETE" method="autoComplete4Product"
                 name="Products_TransactionAbstractForm.product.UI_FIELD_AUTOCOMPLETE"
                 program="org.efaps.esjp.products.Product" >
-                <property name="Type01">Products_StockProductAbstract</property>
+                <property name="Type01">Products_StoreableProductAbstract</property>
                 <property name="Type02">!Products_ProductIndividualAbstract</property>
             </trigger>
             <trigger event="UI_FIELD_UPDATE" method="updateFields4Product"

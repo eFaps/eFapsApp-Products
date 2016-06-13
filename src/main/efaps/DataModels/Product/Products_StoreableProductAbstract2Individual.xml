@@ -14,36 +14,26 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
- Author:          The eFaps Team
- Revision:        $Rev$
- Last Changed:    $Date$
- Last Changed By: $Author$
-
 -->
-<datamodel-type xmlns="http://www.efaps.org/xsd"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<datamodel-type xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>3a327169-d65e-4789-920f-c769f427186f</uuid>
+    <uuid>2c27ee9f-2b8f-41df-ac0a-931d433404bc</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
-
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_StockProductAbstract2Batch</name>
-        <parent>Products_StockProductAbstract2IndividualAbstract</parent>
-
-        <!-- attributes -->
+        <name>Products_StoreableProductAbstract2Individual</name>
+        <parent>Products_StoreableProductAbstract2IndividualAbstract</parent>
         <attribute>
             <name>FromLink</name>
             <type>Link</type>
-            <typelink>Products_StockProductAbstract</typelink>
+            <typelink>Products_StoreableProductAbstract</typelink>
             <sqltable>Products_Product2ProductAbstractSQLTable</sqltable>
             <sqlcolumn>FROMID</sqlcolumn>
         </attribute>
         <attribute>
             <name>ToLink</name>
             <type>Link</type>
-            <typelink>Products_ProductBatch</typelink>
+            <typelink>Products_ProductIndividual</typelink>
             <sqltable>Products_Product2ProductAbstractSQLTable</sqltable>
             <sqlcolumn>TOID</sqlcolumn>
         </attribute>

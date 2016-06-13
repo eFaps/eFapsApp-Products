@@ -395,12 +395,12 @@ public abstract class TransactionResultReport_Base
         {
             final Instance prodInst = _parameter.getInstance();
             if (isIndividual(_parameter)) {
-                final QueryBuilder attrQueryBldr = new QueryBuilder(CIProducts.StockProductAbstract2IndividualAbstract);
-                attrQueryBldr.addWhereAttrEqValue(CIProducts.StockProductAbstract2IndividualAbstract.FromAbstract,
+                final QueryBuilder attrQueryBldr = new QueryBuilder(CIProducts.StoreableProductAbstract2IndividualAbstract);
+                attrQueryBldr.addWhereAttrEqValue(CIProducts.StoreableProductAbstract2IndividualAbstract.FromAbstract,
                                 prodInst);
                 _queryBldr.addWhereAttrInQuery(CIProducts.TransactionAbstract.Product,
                                 attrQueryBldr.getAttributeQuery(
-                                        CIProducts.StockProductAbstract2IndividualAbstract.ToAbstract));
+                                        CIProducts.StoreableProductAbstract2IndividualAbstract.ToAbstract));
             } else {
                 _queryBldr.addWhereAttrEqValue(CIProducts.TransactionAbstract.Product, prodInst);
             }
