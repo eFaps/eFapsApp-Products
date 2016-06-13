@@ -23,17 +23,30 @@
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_CostingTable</name>
+        <field name="documentType">
+            <property name="Select">linkto[TransactionAbstractLink].linkto[Document].type.label</property>
+            <property name="Label">Products_TransactionAbstract/Type.Label</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="FilterType">PICKLIST</property>
+        </field>
         <field name="document">
             <property name="SelectAlternateOID">linkto[TransactionAbstractLink].linkto[Document].oid</property>
             <property name="HRef">TREE</property>
-            <property name="Phrase">$&lt;linkto[TransactionAbstractLink].linkto[Document].type.label&gt; - $&lt;linkto[TransactionAbstractLink].linkto[Document].attribute[Name]&gt;</property>
+            <property name="Select">linkto[TransactionAbstractLink].linkto[Document].attribute[Name]</property>
             <property name="Label">Products_TransactionAbstract/Document.Label</property>
-            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
+        </field>
+        <field name="contact">
+            <property name="SelectAlternateOID">linkto[TransactionAbstractLink].linkto[Document].linkto[Contact].oid</property>
+            <property name="HRef">TREE</property>
+            <property name="Select">linkto[TransactionAbstractLink].linkto[Document].linkto[Contact].attribute[Name]</property>
+            <property name="Label">Products_CostingTable.contact.Label</property>
+            <property name="FilterType">PICKLIST</property>
         </field>
          <field name="status">
             <property name="Select">linkto[TransactionAbstractLink].linkto[Document].status.label</property>
             <property name="Label">ERP_DocumentAbstract/StatusAbstract.Label</property>
             <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="FilterType">PICKLIST</property>
         </field>
         <field name="transactionQuantity">
             <property name="SelectAlternateOID">linkto[TransactionAbstractLink].oid</property>
