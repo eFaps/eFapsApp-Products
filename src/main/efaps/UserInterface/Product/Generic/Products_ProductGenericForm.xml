@@ -57,6 +57,7 @@
             <property name="ModeEdit">EDITABLE</property>
             <property name="ModeView">NONE</property>
             <property name="Required">true</property>
+            <property name="UIType">DROPDOWN</property>
             <trigger program="org.efaps.esjp.products.Product"
                 method="defaultUoMFieldValue"
                 name="Products_ProductForm.defaultUoM.UI_FIELD_VALUE"

@@ -60,6 +60,7 @@ import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.admin.ui.AbstractCommand;
 import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
+import org.efaps.admin.ui.Form;
 import org.efaps.api.ui.IOption;
 import org.efaps.db.AttributeQuery;
 import org.efaps.db.CachedPrintQuery;
@@ -88,10 +89,7 @@ import org.efaps.esjp.erp.IWarning;
 import org.efaps.esjp.erp.WarningUtil;
 import org.efaps.esjp.products.util.Products;
 import org.efaps.esjp.products.util.Products.ProductIndividual;
-import org.efaps.ui.wicket.models.objects.IFormElement;
-import org.efaps.ui.wicket.models.objects.UIFieldForm;
 import org.efaps.ui.wicket.models.objects.UIForm;
-import org.efaps.ui.wicket.models.objects.UIForm.Element;
 import org.efaps.ui.wicket.models.objects.UITable;
 import org.efaps.ui.wicket.models.objects.UITable.TableFilter;
 import org.efaps.ui.wicket.util.EFapsKey;
@@ -130,15 +128,14 @@ public abstract class Product_Base
 
             @Override
             protected boolean isSelected(final Parameter _parameter,
-                                              final RangeValueOption _option)
+                                         final RangeValueOption _option)
                 throws EFapsException
             {
                 boolean ret = false;
-                final IUIValue uiValue = (IUIValue) _parameter.get(ParameterValues.UIOBJECT);
                 final Instance dimInst = Products.DEFAULTDIMENSION.get();
-                if (_parameter.get(ParameterValues.ACCESSMODE).equals(TargetMode.CREATE)
-                                && dimInst != null && dimInst.isValid()) {
-                    ret = Long.valueOf(dimInst.getId()).equals(uiValue.getObject());
+                if (_parameter.get(ParameterValues.ACCESSMODE).equals(TargetMode.CREATE) && dimInst != null && dimInst
+                                .isValid()) {
+                    ret = dimInst.getId() == (Long) _option.getValue();
                 }
                 return ret;
             }
@@ -1493,13 +1490,13 @@ public abstract class Product_Base
     public Return setDescription(final Parameter _parameter)
         throws EFapsException
     {
-        final UIForm uiForm = null; //(UIForm) ((UIFormCellCmd) _parameter.get(ParameterValues.CLASS)).getParent();
-        final Type type;
+        final AbstractCommand cmd = (AbstractCommand) _parameter.get(ParameterValues.CALL_CMD);
+        final Form form = cmd.getTargetForm();
+        Type type = null;
         if (_parameter.getInstance() != null && _parameter.getInstance().isValid()) {
             type = _parameter.getInstance().getType();
         } else {
-            type = null;//((UIFormCellCmd) _parameter.get(ParameterValues.CLASS)).getParent().getCommand()
-                   //         .getTargetCreateType();
+            type = cmd.getTargetCreateType();
         }
         final Properties descriptions;
         if (type.isCIType(CIProducts.ProductStandart)) {
@@ -1518,18 +1515,16 @@ public abstract class Product_Base
 
         // main fields
         final Map<String, String> valueMap = new HashMap<>();
-        for (final org.efaps.admin.ui.field.Field field : uiForm.getForm().getFields()) {
+        for (final org.efaps.admin.ui.field.Field field : form.getFields()) {
             valueMap.put(field.getName(), getSubstitutionValue4Description(_parameter, type, field));
         }
 
-        for (final Element ele : uiForm.getElements()) {
-            final IFormElement el = ele.getElement();
-            if (el instanceof UIFieldForm) {
-                final Classification clazz = (Classification) Type.get(((UIFieldForm) el).getClassificationUUID());
-                if (descriptions.containsKey(clazz.getName())) {
-                    text = descriptions.getProperty(clazz.getName());
-                }
-                for (final org.efaps.admin.ui.field.Field field : ((UIFieldForm) el).getForm().getFields()) {
+        final Set<Classification> clazzes = type.getClassifiedByTypes();
+        for (final Classification clazz  : clazzes) {
+            if (descriptions.containsKey(clazz.getName())) {
+                text = descriptions.getProperty(clazz.getName());
+                final Form clazzForm = clazz.getTypeForm();
+                for (final org.efaps.admin.ui.field.Field field : clazzForm.getFields()) {
                     valueMap.put(field.getName(), getSubstitutionValue4Description(_parameter, clazz, field));
                 }
             }
