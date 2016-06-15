@@ -160,8 +160,6 @@ public abstract class Product_Base
             ret = field.getUoMDropDownFieldValue(_parameter);
         } else if (_parameter.get(ParameterValues.ACCESSMODE).equals(TargetMode.EDIT)) {
             ret = field.getUoMDropDownFieldValue(_parameter);
-        } else {
-            ret = field.emptyDropDownFieldValue(_parameter);
         }
         return ret;
     }
