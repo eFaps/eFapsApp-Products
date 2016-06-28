@@ -57,7 +57,7 @@
         </field>
         <field name="stock">
             <property name="ModeEdit">EDITABLE</property>
-            <property name="UIType">SNIPPLET</property>
+            <property name="UIType">RADIO</property>
             <property name="Label">org.efaps.esjp.products.reports.CostReport.stock</property>
             <trigger event="UI_FIELD_VALUE" method="getEnumFieldValue"
                 name="Products_CostReportFilterForm.stock.UI_FIELD_VALUE"

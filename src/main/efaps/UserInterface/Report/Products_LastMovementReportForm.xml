@@ -20,13 +20,12 @@
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>577a57eb-a091-4f15-a344-ce0896159256</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev: 14786 $</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_LastMovementReportForm</name>
         <field name="filter">
             <property name="HideLabel">true</property>
-            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="UIType">SNIPPLET</property>
             <trigger event="UI_FIELD_VALUE" index="1" method="setDefaultFilter"
                 name="Products_LastMovementReportForm.filter.UI_FIELD_VALUE.1"
                 program="org.efaps.esjp.products.reports.LastMovementReport">
@@ -73,7 +72,7 @@
         </field>
         <field name="report">
             <property name="HideLabel">true</property>
-            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="UIType">SNIPPLET</property>
             <trigger event="UI_FIELD_VALUE" method="generateReport"
                 name="Products_LastMovementReportForm.report.UI_FIELD_VALUE"
                 program="org.efaps.esjp.products.reports.LastMovementReport">

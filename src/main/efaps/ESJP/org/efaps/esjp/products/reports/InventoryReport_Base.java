@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2015 The eFaps Team
+ * Copyright 2003 - 2016 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -203,7 +203,7 @@ public abstract class InventoryReport_Base
         protected JRDataSource createDataSource(final Parameter _parameter)
             throws EFapsException
         {
-            JRRewindableDataSource ret;
+            final JRRewindableDataSource ret;
             if (this.filteredReport.isCached(_parameter)) {
                 ret = this.filteredReport.getDataSourceFromCache(_parameter);
                 try {
@@ -284,7 +284,7 @@ public abstract class InventoryReport_Base
                 protected Type getInventoryType(final Parameter _parameter)
                     throws EFapsException
                 {
-                    Type ret;
+                    final Type ret;
                     if (Products.ACTIVATEINDIVIDUAL.get()) {
                         switch (getIndividualDisplay(_parameter)) {
                             case PRODUCT:
@@ -307,7 +307,7 @@ public abstract class InventoryReport_Base
                 protected Type getTransactionType(final Parameter _parameter)
                     throws EFapsException
                 {
-                    Type ret;
+                    final Type ret;
                     if (Products.ACTIVATEINDIVIDUAL.get()) {
                         switch (getIndividualDisplay(_parameter)) {
                             case PRODUCT:
@@ -317,11 +317,11 @@ public abstract class InventoryReport_Base
                                 ret = CIProducts.TransactionIndividualAbstract.getType();
                                 break;
                             default:
-                                ret = super.getInventoryType(_parameter);
+                                ret = super.getTransactionType(_parameter);
                                 break;
                         }
                     } else {
-                        ret = super.getInventoryType(_parameter);
+                        ret = super.getTransactionType(_parameter);
                     }
                     return ret;
                 }
@@ -382,7 +382,7 @@ public abstract class InventoryReport_Base
             throws EFapsException
         {
             final EnumFilterValue filter = (EnumFilterValue) getFilterMap(_parameter).get("storageDisplay");
-            StorageDisplay ret;
+            final StorageDisplay ret;
             if (filter != null) {
                 ret = (StorageDisplay) filter.getObject();
             } else {
@@ -402,7 +402,7 @@ public abstract class InventoryReport_Base
             throws EFapsException
         {
             final EnumFilterValue filter = (EnumFilterValue) getFilterMap(_parameter).get("typeDisplay");
-            TypeDisplay ret;
+            final TypeDisplay ret;
             if (filter != null) {
                 ret = (TypeDisplay) filter.getObject();
             } else {
@@ -422,7 +422,7 @@ public abstract class InventoryReport_Base
             throws EFapsException
         {
             final EnumFilterValue filter = (EnumFilterValue) getFilterMap(_parameter).get("classDisplay");
-            ClassDisplay ret;
+            final ClassDisplay ret;
             if (filter != null) {
                 ret = (ClassDisplay) filter.getObject();
             } else {
@@ -442,7 +442,7 @@ public abstract class InventoryReport_Base
             throws EFapsException
         {
             final EnumFilterValue filter = (EnumFilterValue) getFilterMap(_parameter).get("individualDisplay");
-            IndividualDisplay ret;
+            final IndividualDisplay ret;
             if (filter != null) {
                 ret = (IndividualDisplay) filter.getObject();
             } else {
