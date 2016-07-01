@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
  Copyright 2003 - 2016 The eFaps Team
 
@@ -15,27 +14,22 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
+
 -->
 <datamodel-type xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>0b77ddab-3b0c-4473-9cd2-aed936a7a8be</uuid>
+    <uuid>183ab417-5993-444c-95a1-f7228c7890b3</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_Warehouse</name>
-        <parent>Products_DynamicStorage</parent>
+        <name>Products_ClosureInventoryPosition</name>
+        <parent>Products_StaticStoragePosition</parent>
         <attribute>
-            <name>Status</name>
-            <type>Status</type>
-            <typelink>Products_StorageAbstractStatus</typelink>
-            <sqltable>Products_StorageAbstractSQLTable</sqltable>
-            <sqlcolumn>STATUS</sqlcolumn>
-            <trigger program="org.efaps.esjp.admin.datamodel.StatusValue"
-                name="Products_Warehouse.Status.RANGE_VALUE"
-                event="RANGE_VALUE" />
+            <name>ClosureInventoryLink</name>
+            <type>Link</type>
+            <typelink>Products_ClosureInventory</typelink>
+            <sqltable>Products_StaticStoragePositionSQLTable</sqltable>
+            <sqlcolumn>STORAGEID</sqlcolumn>
         </attribute>
-        <trigger program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType"
-            name="Products_Warehouse.ACCESSCHECK"
-            event="ACCESSCHECK" />
     </definition>
 </datamodel-type>

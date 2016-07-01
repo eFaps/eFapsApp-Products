@@ -104,18 +104,18 @@ public abstract class Storage_Base
         updateStaticInventory.execute();
 
         final QueryBuilder position = new QueryBuilder(CIProducts.StaticInventoryPosition);
-        position.addWhereAttrEqValue(CIProducts.StaticInventoryPosition.StaticInventory,
+        position.addWhereAttrEqValue(CIProducts.StaticInventoryPosition.StaticInventoryLink,
                         fromStorageId);
         final MultiPrintQuery multiPosition = position.getPrint();
         multiPosition.addAttribute(CIProducts.StaticInventoryPosition.Quantity,
-                        CIProducts.StaticInventoryPosition.UoM, CIProducts.StaticInventoryPosition.Product);
+                        CIProducts.StaticInventoryPosition.UoM, CIProducts.StaticInventoryPosition.ProductLink);
         multiPosition.execute();
 
         while (multiPosition.next()) {
             final BigDecimal quantity = multiPosition
                             .<BigDecimal>getAttribute(CIProducts.StaticInventoryPosition.Quantity);
             final Long uoMId = multiPosition.<Long>getAttribute(CIProducts.StaticInventoryPosition.UoM);
-            final Long productId = multiPosition.<Long>getAttribute(CIProducts.StaticInventoryPosition.Product);
+            final Long productId = multiPosition.<Long>getAttribute(CIProducts.StaticInventoryPosition.ProductLink);
             final Insert inbound = new Insert(CIProducts.TransactionInbound4StaticStorage);
             inbound.add(CIProducts.TransactionInbound4StaticStorage.Quantity, quantity);
             inbound.add(CIProducts.TransactionInbound4StaticStorage.Storage, insert.getId());
@@ -145,7 +145,7 @@ public abstract class Storage_Base
         final DateTime date = new DateTime(dateStr);
         final Instance storageInst = Instance.get(storageOid);
 
-        final Map<String, BigDecimal> actual = new HashMap<String, BigDecimal>();
+        final Map<String, BigDecimal> actual = new HashMap<>();
 
         final QueryBuilder queryBldr = new QueryBuilder(CIProducts.Inventory);
         queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, storageInst);
@@ -187,7 +187,7 @@ public abstract class Storage_Base
             }
             actual.put(oid, quantity);
         }
-        final List<Instance> instances = new ArrayList<Instance>();
+        final List<Instance> instances = new ArrayList<>();
         for (final Entry<String, BigDecimal> entry : actual.entrySet()) {
             if (entry.getValue().compareTo(BigDecimal.ZERO) != 0) {
                 instances.add(Instance.get(entry.getKey()));
@@ -267,8 +267,8 @@ public abstract class Storage_Base
                                     CITableProducts.Products_StaticInventoryPositionTable.product.name)[i]);
                     final UoM uom = Dimension.getUoM(Long.parseLong(_parameter.getParameterValues(
                                     CITableProducts.Products_StaticInventoryPositionTable.uoM.name)[i]));
-                    posIns.add(CIProducts.StaticInventoryPosition.StaticInventory, insert.getInstance());
-                    posIns.add(CIProducts.StaticInventoryPosition.Product, productdId.getId());
+                    posIns.add(CIProducts.StaticInventoryPosition.StaticInventoryLink, insert.getInstance());
+                    posIns.add(CIProducts.StaticInventoryPosition.ProductLink, productdId.getId());
                     posIns.add(CIProducts.StaticInventoryPosition.Quantity, quantity);
                     posIns.add(CIProducts.StaticInventoryPosition.UoM, uom.getId());
                     posIns.execute();
@@ -291,7 +291,7 @@ public abstract class Storage_Base
         final Instance staticInventoryInst = _parameter.getInstance();
         // Clear products related to this StaticInventoryStorage
         final QueryBuilder clearPosition = new QueryBuilder(CIProducts.StaticInventoryPosition);
-        clearPosition.addWhereAttrEqValue(CIProducts.StaticInventoryPosition.StaticInventory,
+        clearPosition.addWhereAttrEqValue(CIProducts.StaticInventoryPosition.StaticInventoryLink,
                         staticInventoryInst.getId());
         final MultiPrintQuery multiPosition = clearPosition.getPrint();
         multiPosition.execute();
@@ -337,8 +337,8 @@ public abstract class Storage_Base
         throws EFapsException
     {
         final String input = (String) _parameter.get(ParameterValues.OTHERS);
-        final List<Map<String, String>> list = new ArrayList<Map<String, String>>();
-        final Map<String, Map<String, String>> orderMap = new TreeMap<String, Map<String, String>>();
+        final List<Map<String, String>> list = new ArrayList<>();
+        final Map<String, Map<String, String>> orderMap = new TreeMap<>();
 
         final String key = containsProperty(_parameter, "Key") ? getProperty(_parameter, "Key") : "OID";
 
@@ -351,7 +351,7 @@ public abstract class Storage_Base
         multi.execute();
         while (multi.next()) {
             final String name = multi.<String>getAttribute(CIProducts.StorageAbstract.Name);
-            final Map<String, String> map = new HashMap<String, String>();
+            final Map<String, String> map = new HashMap<>();
             map.put(EFapsKey.AUTOCOMPLETE_KEY.getKey(), multi.getAttribute(key).toString());
             map.put(EFapsKey.AUTOCOMPLETE_VALUE.getKey(), name);
             map.put(EFapsKey.AUTOCOMPLETE_CHOICE.getKey(), name);
