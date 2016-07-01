@@ -216,7 +216,7 @@ public abstract class LastMovementReport_Base
         protected JRDataSource createDataSource(final Parameter _parameter)
             throws EFapsException
         {
-            JRRewindableDataSource ret;
+            final JRRewindableDataSource ret;
             if (this.filteredReport.isCached(_parameter)) {
                 ret = this.filteredReport.getDataSourceFromCache(_parameter);
                 try {
@@ -230,7 +230,7 @@ public abstract class LastMovementReport_Base
                 final List<DataBean> tmpBeans = getBeans(_parameter, null);
                 final Map<Instance, List<DataBean>> prod2beans = new HashMap<>();
                 for (final DataBean bean : tmpBeans) {
-                    List<DataBean> ilist;
+                    final List<DataBean> ilist;
                     if (prod2beans.containsKey(bean.getProdInstance())) {
                         ilist = prod2beans.get(bean.getProdInstance());
                     } else {
@@ -287,7 +287,7 @@ public abstract class LastMovementReport_Base
                     prodFilter = CollectionUtils.disjunction(prod2beans.keySet(), done);
                     startDate = startDate.minusDays(10);
                 }
-                final ComparatorChain<DataBean> chain = new ComparatorChain<DataBean>();
+                final ComparatorChain<DataBean> chain = new ComparatorChain<>();
                 if (!StorageDisplay.NONE.equals(getStorageDisplay(_parameter))) {
                     chain.addComparator(new Comparator<DataBean>()
                     {
@@ -362,7 +362,7 @@ public abstract class LastMovementReport_Base
             throws EFapsException
         {
             final EnumFilterValue filter = (EnumFilterValue) getFilterMap(_parameter).get("storageDisplay");
-            StorageDisplay ret;
+            final StorageDisplay ret;
             if (filter != null) {
                 ret = (StorageDisplay) filter.getObject();
             } else {
@@ -493,7 +493,7 @@ public abstract class LastMovementReport_Base
             throws EFapsException
         {
             final EnumFilterValue filter = (EnumFilterValue) getFilterMap(_parameter).get("typeDisplay");
-            TypeDisplay ret;
+            final TypeDisplay ret;
             if (filter != null) {
                 ret = (TypeDisplay) filter.getObject();
             } else {
@@ -513,7 +513,7 @@ public abstract class LastMovementReport_Base
             throws EFapsException
         {
             final EnumFilterValue filter = (EnumFilterValue) getFilterMap(_parameter).get("classDisplay");
-            ClassDisplay ret;
+            final ClassDisplay ret;
             if (filter != null) {
                 ret = (ClassDisplay) filter.getObject();
             } else {
@@ -641,6 +641,14 @@ public abstract class LastMovementReport_Base
                                     ? super.getInventoryType(_parameter)
                                     : CIProducts.Inventory.getType();
                 }
+
+                @Override
+                protected Type getTransactionType(final Parameter _parameter)
+                    throws EFapsException
+                {
+                    return includeIndividual(_parameter) ? super.getTransactionType(_parameter)
+                                    : CIProducts.TransactionInOutAbstract.getType();
+                }
             };
         }
 
@@ -660,7 +668,6 @@ public abstract class LastMovementReport_Base
                 if (StorageDisplay.GROUP.equals(getStorageDisplay(_parameter))) {
                     storageGroup = DynamicReports.grp.group(storageColumn);
                     _builder.groupBy(storageGroup);
-
                 } else if (StorageDisplay.COLUMN.equals(getStorageDisplay(_parameter))) {
                     //
                 }
@@ -1054,7 +1061,8 @@ public abstract class LastMovementReport_Base
          *
          * @param _key the _key
          */
-        public ConditionExpression(final String _key) {
+        public ConditionExpression(final String _key)
+        {
             this.key = _key;
         }
 
