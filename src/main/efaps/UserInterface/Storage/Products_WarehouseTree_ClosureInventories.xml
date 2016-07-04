@@ -17,22 +17,18 @@
 -->
 <ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>107e9cf8-aab4-45c7-b4ad-2dc4dac605d2</uuid>
+    <uuid>74ca2f01-6d83-4d0c-8c3e-2c5b08ef7650</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_WarehouseTree</name>
+        <name>Products_WarehouseTree_ClosureInventories</name>
         <target>
-            <menu>Products_WarehouseTree_Menu</menu>
-            <form>Products_WarehouseForm</form>
+            <table>Products_StorageAbstractTable</table>
+            <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
+                <property name="Type">Products_ClosureInventory</property>
+                <property name="LinkFrom">StorageLink</property>
+            </evaluate>
         </target>
-        <type>Products_Warehouse</type>
-        <childs>
-            <child>Products_StorageAbstractTree_Inventory</child>
-            <child>Products_StorageAbstractTree_Transaction</child>
-            <child>Products_StorageAbstractTree_InventoryIndivual</child>
-            <child>Products_WarehouseTree_ClosureInventories</child>
-        </childs>
         <property name="Target">content</property>
         <property name="TargetMode">view</property>
     </definition>

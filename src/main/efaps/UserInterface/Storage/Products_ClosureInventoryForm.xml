@@ -38,6 +38,16 @@
             <property name="Attribute">Description</property>
             <property name="Required">true</property>
         </field>
+        <field name="date">
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="Attribute">Date</property>
+        </field>
+        <field name="storage">
+            <property name="SelectAlternateOID">linkto[StorageLink].oid</property>
+            <property name="Select">linkto[StorageLink].attribute[Name]</property>
+            <property name="HRef">TREE</property>
+            <property name="Label">Products_ClosureInventory/StorageLink.Label</property>
+        </field>
         <field name="status">
             <property name="Attribute">StatusAbstract</property>
             <property name="ModeCreate">EDITABLE</property>

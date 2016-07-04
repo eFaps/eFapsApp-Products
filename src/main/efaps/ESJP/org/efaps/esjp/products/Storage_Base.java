@@ -43,6 +43,8 @@ import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.admin.ui.Command;
 import org.efaps.api.ui.IUserInterface;
+import org.efaps.db.CachedInstanceQuery;
+import org.efaps.db.CachedPrintQuery;
 import org.efaps.db.Context;
 import org.efaps.db.Delete;
 import org.efaps.db.Insert;
@@ -75,6 +77,9 @@ import org.joda.time.format.DateTimeFormatter;
 public abstract class Storage_Base
     extends CommonDocument
 {
+
+    /** The Constant CACHE_KEY. */
+    protected static final String CACHE_KEY = Storage.class.getName() + "CacheKey";
 
     /**
      * @param _parameter parameter as passed from the eFaps API
@@ -429,7 +434,7 @@ public abstract class Storage_Base
 
     /**
      * Method to check if the instance is of the type Static Inventory to show
-     * in other case doesn't show
+     * in other case doesn't show.
      *
      * @param _parameter as passed from eFaps API.
      * @return Return ret.
@@ -449,7 +454,7 @@ public abstract class Storage_Base
 
     /**
      * Method to check if the instance is of the type Snapshot to show in other
-     * case doesn't show
+     * case doesn't show.
      *
      * @param _parameter as passed from eFaps API.
      * @return Return ret.
@@ -523,6 +528,8 @@ public abstract class Storage_Base
         final Insert insert = new Insert(CIProducts.ClosureInventory);
         insert.add(CIProducts.ClosureInventory.Status, Status.find(CIProducts.StorageAbstractStatus.Active));
         insert.add(CIProducts.ClosureInventory.Name, name + " - " + date.toString("yyyy-MM-dd"));
+        insert.add(CIProducts.ClosureInventory.Date, date);
+        insert.add(CIProducts.ClosureInventory.StorageLink, storageInst);
         insert.execute();
 
         final List<? extends InventoryBean> beans = inventory.getInventory(_parameter);
@@ -536,6 +543,53 @@ public abstract class Storage_Base
             posInsert.execute();
         }
         return new Return();
+    }
+
+    /**
+     * Gets the last closure instance for a storage.
+     * Used by an alternative Instance Field trigger.
+     *
+     * @param _parameter the parameter
+     * @return the last closure instance 4 storage
+     * @throws EFapsException the e faps exception
+     */
+    public Return getLastClosureInstance4Storage(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        final Instance storageInst = _parameter.getInstance();
+
+        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ClosureInventory);
+        queryBldr.addWhereAttrEqValue(CIProducts.ClosureInventory.StorageLink, storageInst);
+        queryBldr.addOrderByAttributeDesc(CIProducts.ClosureInventory.Date);
+        queryBldr.setLimit(1);
+        final CachedInstanceQuery query = queryBldr.getCachedQuery(Storage.CACHE_KEY);
+        query.execute();
+        if (query.next()) {
+            ret.put(ReturnValues.INSTANCE, query.getCurrentValue());
+        }
+        return ret;
+    }
+
+    /**
+     * Gets the last closure 4 storage.
+     *
+     * @param _parameter the parameter
+     * @return the last closure 4 storage
+     * @throws EFapsException the e faps exception
+     */
+    public Return getLastClosure4Storage(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        final Instance inst = _parameter.getInstance();
+        if (inst.getType().isCIType(CIProducts.ClosureInventory)) {
+            final PrintQuery print = new CachedPrintQuery(inst, Storage.CACHE_KEY);
+            print.addAttribute(CIProducts.ClosureInventory.Name);
+            print.execute();
+            ret.put(ReturnValues.VALUES, print.getAttribute(CIProducts.ClosureInventory.Name));
+        }
+        return ret;
     }
 
     /**

@@ -50,5 +50,16 @@
             <property name="ModeCreate">EDITABLE</property>
             <property name="Attribute">Date</property>
         </field>
+        <field name="closureInventory">
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="HRef">TREE</property>
+            <property name="Label">Products_WarehouseForm.closureInventory.Label</property>
+            <trigger program="org.efaps.esjp.products.Storage" method="getLastClosureInstance4Storage"
+                name="Products_WarehouseForm.closureInventory.UI_FIELD_ALTINST"
+                event="UI_FIELD_ALTINST"></trigger>
+            <trigger program="org.efaps.esjp.products.Storage" method="getLastClosure4Storage"
+                name="Products_WarehouseForm.closureInventory.UI_FIELD_VALUE"
+                event="UI_FIELD_VALUE"></trigger>
+        </field>
     </definition>
 </ui-form>

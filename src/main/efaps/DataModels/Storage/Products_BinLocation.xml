@@ -38,5 +38,21 @@
         <trigger program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType"
             name="Products_BinLocation.ACCESSCHECK"
             event="ACCESSCHECK" />
+
+        <trigger program="org.efaps.esjp.common.cache.CacheUtils"
+            method="cleanQueryCacheTrigger" name="Products_BinLocation.INSERT_POST"
+            event="INSERT_POST">
+            <property name="CacheName">org.efaps.esjp.products.Storage.CacheKey</property>
+        </trigger>
+        <trigger program="org.efaps.esjp.common.cache.CacheUtils"
+            method="cleanQueryCacheTrigger" name="Products_BinLocation.UPDATE_POST"
+            event="UPDATE_POST">
+            <property name="CacheName">org.efaps.esjp.products.Storage.CacheKey</property>
+        </trigger>
+        <trigger program="org.efaps.esjp.common.cache.CacheUtils"
+            method="cleanQueryCacheTrigger" name="Products_BinLocation.DELETE_POST"
+            event="DELETE_POST">
+            <property name="CacheName">org.efaps.esjp.products.Storage.CacheKey</property>
+        </trigger>
     </definition>
 </datamodel-type>

@@ -36,6 +36,9 @@ public class Storage
     extends Storage_Base
 {
 
+    /** The Constant CACHE_KEY. */
+    public static final String CACHE_KEY = Storage_Base.CACHE_KEY;
+
     /**
      * Get the default storage.
      *
