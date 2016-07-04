@@ -16,24 +16,23 @@
 
 
 -->
-<datamodel-type xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>eff52a2f-dfa0-4b99-839c-af3e0a1bf1d3</uuid>
+    <uuid>321bfa62-ee38-4335-b1cf-ba6553f9858b</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_DynamicStorage</name>
-        <parent>Products_StorageAbstract</parent>
-        <purpose abstract="true"/>
-        <attribute>
-            <name>StatusAbstract</name>
-            <type>Status</type>
-            <typelink>Products_StorageAbstractStatus</typelink>
-            <sqltable>Products_StorageAbstractSQLTable</sqltable>
-            <sqlcolumn>STATUS</sqlcolumn>
-            <trigger program="org.efaps.esjp.admin.datamodel.StatusValue"
-                name="Products_DynamicStorage.Status.RANGE_VALUE"
-                event="RANGE_VALUE" />
-        </attribute>
+        <name>Products_WarehouseTree_Menu_Action_Edit</name>
+        <access>
+            <role>Products_Admin</role>
+        </access>
+        <target>
+            <form>Products_WarehouseForm</form>
+            <execute program="org.efaps.esjp.common.uiform.Edit" />
+        </target>
+        <property name="Target">modal</property>
+        <property name="TargetMode">edit</property>
+        <property name="WindowHeight">460</property>
+        <property name="WindowWidth">515</property>
     </definition>
-</datamodel-type>
+</ui-command>

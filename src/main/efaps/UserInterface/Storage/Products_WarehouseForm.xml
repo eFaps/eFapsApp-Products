@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
 
   Copyright 2003 - 2016 The eFaps Team
@@ -17,16 +16,15 @@
   limitations under the License.
 
 -->
-
 <ui-form xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>a5d72b89-fd37-43e9-a466-4daac6b79548</uuid>
+    <uuid>3e3b8a0e-e512-4443-b53a-255fa52c1104</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_StorageAbstractForm</name>
+        <name>Products_WarehouseForm</name>
         <field name="name">
-            <property name="Columns">40</property>
+            <property name="Width">40</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
             <property name="ModeSearch">EDITABLE</property>
@@ -34,7 +32,7 @@
             <property name="Required">true</property>
         </field>
         <field name="description">
-            <property name="Columns">40</property>
+            <property name="Width">40</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
             <property name="ModeSearch">EDITABLE</property>
@@ -51,30 +49,6 @@
             <property name="Columns">12</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="Attribute">Date</property>
-            <trigger event="UI_ACCESSCHECK" method="verifyIfShowStaticStorage"
-                name="Products_StorageAbstractForm.storage.UI_ACCESSCHECK"
-                program="org.efaps.esjp.products.Storage" />
-        </field>
-        <field name="storage">
-            <property name="Label">Products_StorageAbstractForm.storage.Label</property>
-            <property name="ModeCreate">EDITABLE</property>
-            <property name="ModeEdit">NONE</property>
-            <property name="ModeSearch">NONE</property>
-            <property name="ModeView">NONE</property>
-            <property name="Required">true</property>
-            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
-            <trigger event="UI_FIELD_VALUE" method="dropDownFieldValue"
-                name="Products_StorageAbstractForm.storage.UI_FIELD_VALUE"
-                program="org.efaps.esjp.common.uiform.Field">
-                <property name="Type">Products_StaticInventory</property>
-                <property name="StatusGroup">Products_StorageAbstractStatus</property>
-                <property name="Status">Active</property>
-                <property name="Phrase">$&lt;attribute[Name]&gt;</property>
-                <property name="OrderSelect">attribute[Name]</property>
-            </trigger>
-            <trigger event="UI_ACCESSCHECK" method="verifyIfShowStaticStorage"
-                name="Products_StorageAbstractForm.storage.UI_ACCESSCHECK"
-                program="org.efaps.esjp.products.Storage" />
         </field>
     </definition>
 </ui-form>

@@ -49,6 +49,13 @@
             <defaultvalue>0</defaultvalue>
         </attribute>
         <attribute>
+            <name>Reserved</name>
+            <type>Decimal</type>
+            <sqltable>Products_StaticStoragePositionSQLTable</sqltable>
+            <sqlcolumn>RESERVED</sqlcolumn>
+            <defaultvalue>0</defaultvalue>
+        </attribute>
+        <attribute>
             <name>UoM</name>
             <type>Link</type>
             <typelink>Admin_DataModel_UoM</typelink>

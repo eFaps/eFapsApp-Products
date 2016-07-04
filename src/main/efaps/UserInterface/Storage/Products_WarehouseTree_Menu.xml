@@ -16,24 +16,15 @@
 
 
 -->
-<datamodel-type xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>eff52a2f-dfa0-4b99-839c-af3e0a1bf1d3</uuid>
+    <uuid>e345b57e-cc83-44b2-9e54-be5f134ac371</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_DynamicStorage</name>
-        <parent>Products_StorageAbstract</parent>
-        <purpose abstract="true"/>
-        <attribute>
-            <name>StatusAbstract</name>
-            <type>Status</type>
-            <typelink>Products_StorageAbstractStatus</typelink>
-            <sqltable>Products_StorageAbstractSQLTable</sqltable>
-            <sqlcolumn>STATUS</sqlcolumn>
-            <trigger program="org.efaps.esjp.admin.datamodel.StatusValue"
-                name="Products_DynamicStorage.Status.RANGE_VALUE"
-                event="RANGE_VALUE" />
-        </attribute>
+        <name>Products_WarehouseTree_Menu</name>
+        <childs>
+            <child>Products_WarehouseTree_Menu_Action</child>
+        </childs>
     </definition>
-</datamodel-type>
+</ui-menu>

@@ -433,10 +433,12 @@ public abstract class Inventory_Base
      * Setter method for instance variable {@link #storageInsts}.
      *
      * @param _storageInsts value for instance variable {@link #storageInsts}
+     * @return the inventory
      */
-    public void setStorageInsts(final List<Instance> _storageInsts)
+    public Inventory setStorageInsts(final List<Instance> _storageInsts)
     {
         this.storageInsts = _storageInsts;
+        return (Inventory) this;
     }
 
     /**

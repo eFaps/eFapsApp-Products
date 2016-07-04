@@ -25,8 +25,15 @@
         <name>Products_StaticStorage</name>
         <parent>Products_StorageAbstract</parent>
         <purpose abstract="true"/>
-        <trigger program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType"
-            name="Products_StaticStorage.ACCESSCHECK"
-            event="ACCESSCHECK" />
+        <attribute>
+            <name>StatusAbstract</name>
+            <type>Status</type>
+            <typelink>Products_StorageAbstractStatus</typelink>
+            <sqltable>Products_StorageAbstractSQLTable</sqltable>
+            <sqlcolumn>STATUS</sqlcolumn>
+            <trigger program="org.efaps.esjp.admin.datamodel.StatusValue"
+                name="Products_StaticStorage.Status.RANGE_VALUE"
+                event="RANGE_VALUE" />
+        </attribute>
     </definition>
 </datamodel-type>

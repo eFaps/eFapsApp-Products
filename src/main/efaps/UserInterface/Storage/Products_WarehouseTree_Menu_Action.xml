@@ -14,26 +14,18 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
-
 -->
-<datamodel-type xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>eff52a2f-dfa0-4b99-839c-af3e0a1bf1d3</uuid>
+    <uuid>26887ab7-d980-4abd-b727-0098e3c977e8</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_DynamicStorage</name>
-        <parent>Products_StorageAbstract</parent>
-        <purpose abstract="true"/>
-        <attribute>
-            <name>StatusAbstract</name>
-            <type>Status</type>
-            <typelink>Products_StorageAbstractStatus</typelink>
-            <sqltable>Products_StorageAbstractSQLTable</sqltable>
-            <sqlcolumn>STATUS</sqlcolumn>
-            <trigger program="org.efaps.esjp.admin.datamodel.StatusValue"
-                name="Products_DynamicStorage.Status.RANGE_VALUE"
-                event="RANGE_VALUE" />
-        </attribute>
+        <name>Products_WarehouseTree_Menu_Action</name>
+        <childs>
+            <child>Products_WarehouseTree_Menu_Action_Edit</child>
+            <child>Products_WarehouseTree_Menu_Action_CreateCloseure</child>
+            <child>Products_StorageAbstractTree_Menu_Action_Recalculate</child>
+        </childs>
     </definition>
-</datamodel-type>
+</ui-menu>

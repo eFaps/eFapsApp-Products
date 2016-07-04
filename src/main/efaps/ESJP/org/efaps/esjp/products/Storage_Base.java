@@ -20,6 +20,7 @@ package org.efaps.esjp.products;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +57,7 @@ import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.ci.CITableProducts;
 import org.efaps.esjp.erp.CommonDocument;
 import org.efaps.esjp.erp.NumberFormatter;
+import org.efaps.esjp.products.Inventory_Base.InventoryBean;
 import org.efaps.esjp.products.util.Products;
 import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
@@ -494,8 +496,28 @@ public abstract class Storage_Base
         } else {
             ret.put(ReturnValues.TRUE, true);
         }
-
         return ret;
+    }
+
+    /**
+     * @param _parameter parameter as passed from the eFaps API
+     * @return Return with Map fro Autocomplete field
+     * @throws EFapsException on error
+     */
+    public Return createClosure4Storage(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Instance storageInst = _parameter.getCallInstance();
+        final DateTime date = new DateTime(_parameter.getParameterValue(
+                        CIFormProducts.Products_CreateClosure4StorageForm.date.name));
+        final Inventory inventory = new Inventory().setDate(date).setStorageInsts(Arrays.asList(
+                        new Instance[] { storageInst }));
+
+        final List<? extends InventoryBean> beans = inventory.getInventory(_parameter);
+        for (final InventoryBean bean : beans) {
+            System.out.println(bean);
+        }
+        return new Return();
     }
 
     /**
@@ -513,7 +535,7 @@ public abstract class Storage_Base
         if (storage.containsProperty(_parameter, "SystemConfig")
                         && storage.containsProperty(_parameter, "Link4DefaultStorage")) {
             final String sysConStr = storage.getProperty(_parameter, "SystemConfig");
-            SystemConfiguration sysConf;
+            final SystemConfiguration sysConf;
             if (storage.isUUID(sysConStr)) {
                 sysConf = SystemConfiguration.get(UUID.fromString(sysConStr));
             } else {

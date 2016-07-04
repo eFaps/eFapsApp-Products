@@ -28,6 +28,7 @@
             <column name="TYPEID"       type="INTEGER"      not-null="true"/>
             <column name="COMPANYID"    type="INTEGER"      not-null="true"/>
             <column name="QUANTITY"     type="DECIMAL"      not-null="true"  length="15" scale="4"/>
+            <column name="RESERVED"     type="DECIMAL"                       length="15" scale="4"/>
             <column name="PRODUCTID"    type="INTEGER"      not-null="true"/>
             <column name="UOMID"        type="INTEGER"      not-null="true"/>
             <column name="STORAGEID"    type="INTEGER"      not-null="true"/>

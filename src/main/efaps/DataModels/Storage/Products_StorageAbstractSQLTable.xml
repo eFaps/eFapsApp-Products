@@ -30,9 +30,9 @@
             <table-name>T_PRODSTORAGE</table-name>
             <column name="COMPANYID" type="INTEGER"         not-null="true" />
             <column name="TYPEID"    type="INTEGER"         not-null="true" />
-            <column name="NAME"      type="STRING_SHORT"                    length="128" />
+            <column name="STATUS"    type="INTEGER"         not-null="true" />
+            <column name="NAME"      type="STRING_SHORT"    not-null="true" length="128" />
             <column name="DESCR"     type="STRING_SHORT"                    length="255" />
-            <column name="STATUS"    type="INTEGER" />
             <column name="DATE"      type="DATETIME" />
             <foreign name="T_PRODSTORAGE_FK_COMPANYID" key="COMPANYID" reference="T_USERABSTRACT(ID)" />
         </database>
