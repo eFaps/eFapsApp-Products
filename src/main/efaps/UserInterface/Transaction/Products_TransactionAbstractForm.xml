@@ -114,9 +114,10 @@
             <property name="ModeEdit">NONE</property>
             <property name="ModePrint">NONE</property>
             <property name="ModeView">NONE</property>
-            <property name="Label">Products_TransactionAbstractForm.productDocumentType.Label</property>
-            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
-            <trigger event="UI_FIELD_VALUE" method="dropDownFieldValue" name="Products_TransactionAbstractForm.productDocumentType.UI_FIELD_VALUE" program="org.efaps.esjp.common.uiform.Field">
+            <property name="Label">Sales_TransactionAbstract.productDocumentType.Label</property>
+            <property name="UIType">DROPDOWN</property>
+            <trigger program="org.efaps.esjp.common.uiform.Field" method="getOptionListFieldValue"
+                name="Products_TransactionAbstractForm.productDocumentType.UI_FIELD_VALUE" event="UI_FIELD_VALUE">
                 <property name="Type">Sales_ProductDocumentType</property>
                 <property name="ValueSelect">attribute[OID]</property>
                 <property name="Phrase">$&lt;attribute[Name]&gt; - $&lt;attribute[Description]&gt;</property>

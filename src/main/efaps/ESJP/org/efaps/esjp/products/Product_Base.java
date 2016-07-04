@@ -83,6 +83,7 @@ import org.efaps.esjp.common.uiform.Field;
 import org.efaps.esjp.common.uitable.MultiPrint;
 import org.efaps.esjp.common.util.InterfaceUtils;
 import org.efaps.esjp.common.util.InterfaceUtils_Base.DojoLibs;
+import org.efaps.esjp.db.InstanceUtils;
 import org.efaps.esjp.erp.AbstractWarning;
 import org.efaps.esjp.erp.CommonDocument;
 import org.efaps.esjp.erp.IWarning;
@@ -878,7 +879,10 @@ public abstract class Product_Base
     public Return autoComplete4ProductsInStorage(final Parameter _parameter)
         throws EFapsException
     {
-        final Instance storInst = _parameter.getInstance();
+        Instance storInst = _parameter.getInstance();
+        if (InstanceUtils.isNotValid(storInst)) {
+            storInst = _parameter.getCallInstance();
+        }
         final List<Map<String, String>> list = new ArrayList<Map<String, String>>();
         final String input = (String) _parameter.get(ParameterValues.OTHERS);
         if (input.length() > 0) {
