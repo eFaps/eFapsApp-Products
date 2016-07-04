@@ -35,5 +35,11 @@
                 name="Products_DynamicStorage.Status.RANGE_VALUE"
                 event="RANGE_VALUE" />
         </attribute>
+        <attribute>
+            <name>ClosureDate</name>
+            <type>Date</type>
+            <sqltable>Products_StorageAbstractSQLTable</sqltable>
+            <sqlcolumn>CLOSUREDATE</sqlcolumn>
+        </attribute>
     </definition>
 </datamodel-type>

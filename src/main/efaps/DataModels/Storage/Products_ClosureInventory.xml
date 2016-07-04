@@ -57,7 +57,5 @@
             event="DELETE_POST">
             <property name="CacheName">org.efaps.esjp.products.Storage.CacheKey</property>
         </trigger>
-
-
     </definition>
 </datamodel-type>

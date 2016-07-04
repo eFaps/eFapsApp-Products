@@ -21,13 +21,17 @@
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_WarehouseTree_Menu_Action_CreateCloseure</name>
+        <name>Products_WarehouseTree_Menu_Action_CreateClosure</name>
         <access>
             <role>Products_Admin</role>
         </access>
         <target>
             <form>Products_CreateClosure4StorageForm</form>
             <execute method="createClosure4Storage" program="org.efaps.esjp.products.Storage" />
+            <validate program="org.efaps.esjp.products.Storage"
+                method="validateClosureDate">
+                <property name="DateFieldName4Closure">date</property>
+            </validate>
         </target>
         <property name="TargetMode">create</property>
         <property name="Target">modal</property>

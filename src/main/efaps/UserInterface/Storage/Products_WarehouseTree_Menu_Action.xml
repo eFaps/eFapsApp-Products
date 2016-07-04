@@ -24,7 +24,7 @@
         <name>Products_WarehouseTree_Menu_Action</name>
         <childs>
             <child>Products_WarehouseTree_Menu_Action_Edit</child>
-            <child>Products_WarehouseTree_Menu_Action_CreateCloseure</child>
+            <child>Products_WarehouseTree_Menu_Action_CreateClosure</child>
             <child>Products_StorageAbstractTree_Menu_Action_Recalculate</child>
         </childs>
     </definition>

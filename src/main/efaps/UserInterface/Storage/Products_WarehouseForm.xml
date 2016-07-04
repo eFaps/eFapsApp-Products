@@ -50,6 +50,9 @@
             <property name="ModeCreate">EDITABLE</property>
             <property name="Attribute">Date</property>
         </field>
+        <field name="closureDate">
+            <property name="Attribute">ClosureDate</property>
+        </field>
         <field name="closureInventory">
             <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
             <property name="HRef">TREE</property>

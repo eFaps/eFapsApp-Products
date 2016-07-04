@@ -57,8 +57,12 @@ import org.efaps.db.Update;
 import org.efaps.esjp.ci.CIFormProducts;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.ci.CITableProducts;
+import org.efaps.esjp.db.InstanceUtils;
+import org.efaps.esjp.erp.AbstractWarning;
 import org.efaps.esjp.erp.CommonDocument;
+import org.efaps.esjp.erp.IWarning;
 import org.efaps.esjp.erp.NumberFormatter;
+import org.efaps.esjp.erp.WarningUtil;
 import org.efaps.esjp.products.Inventory_Base.InventoryBean;
 import org.efaps.esjp.products.util.Products;
 import org.efaps.ui.wicket.util.EFapsKey;
@@ -79,7 +83,7 @@ public abstract class Storage_Base
 {
 
     /** The Constant CACHE_KEY. */
-    protected static final String CACHE_KEY = Storage.class.getName() + "CacheKey";
+    protected static final String CACHE_KEY = Storage.class.getName() + ".CacheKey";
 
     /**
      * @param _parameter parameter as passed from the eFaps API
@@ -542,6 +546,10 @@ public abstract class Storage_Base
             posInsert.add(CIProducts.ClosureInventoryPosition.UoM, bean.getUoMId());
             posInsert.execute();
         }
+
+        final Update update = new Update(storageInst);
+        update.add(CIProducts.Warehouse.ClosureDate, date);
+        update.executeWithoutTrigger();
         return new Return();
     }
 
@@ -593,6 +601,70 @@ public abstract class Storage_Base
     }
 
     /**
+     * Validate closure date.
+     *
+     * @param _parameter the parameter
+     * @return the return
+     * @throws EFapsException the e faps exception
+     */
+    public Return validateClosureDate(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        final Instance storageInst = _parameter.getCallInstance();
+        final String fieldName = getProperty(_parameter, "DateFieldName4Closure", "date");
+        final DateTime date = new DateTime(_parameter.getParameterValue(fieldName));
+        if (Storage.validateClosureDate(_parameter, storageInst, date)) {
+            ret.put(ReturnValues.TRUE, true);
+        } else {
+            ret.put(ReturnValues.SNIPLETT, WarningUtil
+                            .getHtml4Warning(Arrays.asList(new IWarning[] { new ClosureWarning() })).toString());
+        }
+        return ret;
+    }
+
+    /**
+     * Validate closure date.
+     *
+     * @param _parameter the parameter
+     * @param _storageInst the storage inst
+     * @param _date the date
+     * @return true, if successful
+     */
+    protected static boolean validateClosureDate(final Parameter _parameter,
+                                                 final Instance _storageInst,
+                                                 final DateTime _date)
+        throws EFapsException
+    {
+        final DateTime date = getClosureDate(_parameter, _storageInst);
+        return _date.isAfter(date);
+    }
+
+    /**
+     * Gets the closure date.
+     *
+     * @param _parameter the parameter
+     * @param _storageInst the storage inst
+     * @return the closure date
+     */
+    protected static DateTime getClosureDate(final Parameter _parameter,
+                                             final Instance _storageInst)
+        throws EFapsException
+    {
+        DateTime ret = null;
+        if (InstanceUtils.isKindOf(_storageInst, CIProducts.DynamicStorage)) {
+            final PrintQuery print = new CachedPrintQuery(_storageInst, Storage.CACHE_KEY);
+            print.addAttribute(CIProducts.DynamicStorage.ClosureDate);
+            print.execute();
+            ret = print.getAttribute(CIProducts.DynamicStorage.ClosureDate);
+        }
+        if (ret == null) {
+            ret = new DateTime().withYear(2000);
+        }
+        return ret;
+    }
+
+    /**
      * Get the default storage.
      *
      * @param _parameter Parameter as passed by the eFaps API
@@ -619,5 +691,20 @@ public abstract class Storage_Base
             ret = Products.DEFAULTWAREHOUSE.get();
         }
         return ret;
+    }
+
+    /**
+     * Warning for not enough Stock.
+     */
+    public static class ClosureWarning
+        extends AbstractWarning
+    {
+        /**
+         * Constructor.
+         */
+        public ClosureWarning()
+        {
+            setError(true);
+        }
     }
 }

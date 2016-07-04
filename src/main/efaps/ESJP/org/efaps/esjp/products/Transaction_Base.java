@@ -33,6 +33,7 @@ import java.util.UUID;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.efaps.admin.access.AccessTypeEnums;
+import org.efaps.admin.datamodel.Attribute;
 import org.efaps.admin.datamodel.Dimension;
 import org.efaps.admin.datamodel.Dimension.UoM;
 import org.efaps.admin.datamodel.Type;
@@ -47,6 +48,7 @@ import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
 import org.efaps.ci.CIAttribute;
 import org.efaps.ci.CIType;
+import org.efaps.db.CachedInstanceQuery;
 import org.efaps.db.Context;
 import org.efaps.db.Delete;
 import org.efaps.db.Insert;
@@ -150,12 +152,12 @@ public abstract class Transaction_Base
         throws EFapsException
     {
         final Return ret = new Return();
-        Map<Instance, BigDecimal> values;
+        final Map<Instance, BigDecimal> values;
         if (Context.getThreadContext().containsRequestAttribute(Transaction_Base.REQUESTKEY)) {
             values = (Map<Instance, BigDecimal>) Context.getThreadContext().getRequestAttribute(
                             Transaction_Base.REQUESTKEY);
         } else {
-            values = new HashMap<Instance, BigDecimal>();
+            values = new HashMap<>();
             Context.getThreadContext().setRequestAttribute(Transaction_Base.REQUESTKEY, values);
             final List<Instance> costingInsts = (List<Instance>) _parameter.get(ParameterValues.REQUEST_INSTANCES);
 
@@ -392,6 +394,61 @@ public abstract class Transaction_Base
                     update2.add(CIProducts.TransactionAbstract.Position, up ? pos - 1 : pos + 1);
                     update2.executeWithoutTrigger();
                 }
+            }
+        }
+        return new Return();
+    }
+
+    /**
+     * Method is executed as trigger before the insert, update or delete of an
+     * Products_Transaction.
+     *
+     * @param _parameter Parameters as passed from eFaps
+     * @return Return
+     * @throws EFapsException on error
+     */
+    public Return verifyDateTrigger(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Map<?, ?> values = (Map<?, ?>) _parameter.get(ParameterValues.NEW_VALUES);
+        Object storage = null;
+        Object dateObj = null;
+        for (final Entry<?, ?> entry : values.entrySet()) {
+            final Attribute attr = (Attribute) entry.getKey();
+            if (attr.getName().equals("Storage")) {
+                final Object[] objValues = (Object[]) entry.getValue();
+                if (objValues != null) {
+                    storage = objValues[0];
+                }
+            }
+            if (attr.getName().equals("Date")) {
+                final Object[] objValues = (Object[]) entry.getValue();
+                if (objValues != null) {
+                    dateObj = objValues[0];
+                }
+            }
+        }
+        if (storage != null && dateObj != null) {
+            Instance storageInst = null;
+            DateTime date = null;
+            if (storage instanceof Long) {
+                final QueryBuilder queryBldr = new QueryBuilder(CIProducts.StorageAbstract);
+                queryBldr.addWhereAttrEqValue(CIProducts.StorageAbstract.ID, storage);
+                final CachedInstanceQuery query = queryBldr.getCachedQuery(Storage.CACHE_KEY);
+                query.executeWithoutAccessCheck();
+                query.next();
+                storageInst = query.getCurrentValue();
+            } else if (storage instanceof Instance) {
+                storageInst = (Instance) storage;
+            }
+            if (dateObj instanceof String) {
+                date = new DateTime(dateObj);
+            } else if (dateObj instanceof DateTime) {
+                date = (DateTime) dateObj;
+            }
+            if (!Storage.validateClosureDate(_parameter, storageInst, date)) {
+                Context.getThreadContext().abort();
+                throw new EFapsException(Transaction.class, "InvalidDate");
             }
         }
         return new Return();
@@ -729,7 +786,7 @@ public abstract class Transaction_Base
             transQuantity = transQuantity.multiply(new BigDecimal(uom.getNumerator())).divide(
                             new BigDecimal(uom.getDenominator()), BigDecimal.ROUND_HALF_UP);
 
-            CIType inventory;
+            final CIType inventory;
             if (instance.getType().isKindOf(CIProducts.TransactionIndividualInbound.getType())
                              || instance.getType().isKindOf(CIProducts.TransactionIndividualOutbound.getType())) {
                 inventory = CIProducts.InventoryIndividual;
@@ -749,7 +806,7 @@ public abstract class Transaction_Base
             BigDecimal quantity = BigDecimal.ZERO;
             BigDecimal currentReserved = BigDecimal.ZERO;
             BigDecimal currentQuantity = BigDecimal.ZERO;
-            Update update;
+            final Update update;
             if (multi.next()) {
                 update = new Update(multi.getCurrentInstance());
                 currentReserved = multi.<BigDecimal>getAttribute(CIProducts.InventoryAbstract.Reserved);
@@ -862,7 +919,7 @@ public abstract class Transaction_Base
 
         final String storateTo = multi.<String>getAttribute(CIProducts.StorageAbstract.Name);
 
-        final List<CreatedDoc> transLists = new ArrayList<CreatedDoc>();
+        final List<CreatedDoc> transLists = new ArrayList<>();
         if (product != null && product.length > 0) {
             for (int x = 0; x < product.length; x++) {
                 final Instance prodInst = Instance.get(product[x]);
@@ -888,7 +945,7 @@ public abstract class Transaction_Base
                 final String newDesc = DBProperties.getFormatedDBProperty(Transaction.class.getName()
                         + ".moveInventory.Description", new Object[] { desc, quantityAr[x],
                             Dimension.getUoM(Long.parseLong(uoM[x])).getName(), productDesc, storageFrom, storateTo });
-                Instance prodInstTmp;
+                final Instance prodInstTmp;
                 if (individual) {
                     prodInstTmp = prodPrint.getSelect(selProdInst);
                     final CreatedDoc inbound = addTransactionProduct(CIProducts.TransactionIndividualInbound,
@@ -1199,7 +1256,7 @@ public abstract class Transaction_Base
         final String[] uoMs = _parameter
                         .getParameterValues(CITableProducts.Products_InventorySet4ProductsTable.uoM.name);
 
-        final List<CreatedDoc> transLists = new ArrayList<CreatedDoc>();
+        final List<CreatedDoc> transLists = new ArrayList<>();
         if (products != null) {
             for (int i = 0; i < products.length; i++) {
                 Instance productInst = Instance.get(products[i]);
@@ -1223,8 +1280,8 @@ public abstract class Transaction_Base
                     } else {
                         currQuantity = inventoryBean.getQuantity();
                     }
-                    BigDecimal moveQty;
-                    CIType type;
+                    final BigDecimal moveQty;
+                    final CIType type;
                     if (quantity.compareTo(currQuantity) != 0) {
                         if (quantity.compareTo(currQuantity) > 0) {
                             moveQty = quantity.subtract(currQuantity);
@@ -1280,7 +1337,7 @@ public abstract class Transaction_Base
         final List<Instance> instances = getSelectedInstances(_parameter);
         if (!instances.isEmpty()) {
             final StringBuilder js = new StringBuilder();
-            final Set<String> noEscape = new HashSet<String>();
+            final Set<String> noEscape = new HashSet<>();
             noEscape.add("uoM");
             final List<Map<String, Object>> strValues = new ArrayList<>();
             final MultiPrintQuery multi = new MultiPrintQuery(instances);
@@ -1301,13 +1358,14 @@ public abstract class Transaction_Base
                 if (Products.ACTIVATEINDIVIDUAL.get() && !ProductIndividual.NONE.equals(multi.getSelect(selProdInd))) {
                     final QueryBuilder attrQueryBldr = new QueryBuilder(
                                     CIProducts.StoreableProductAbstract2IndividualAbstract);
-                    attrQueryBldr.addWhereAttrEqValue(CIProducts.StoreableProductAbstract2IndividualAbstract.FromAbstract,
-                                    prodInst);
+                    attrQueryBldr.addWhereAttrEqValue(
+                                    CIProducts.StoreableProductAbstract2IndividualAbstract.FromAbstract, prodInst);
 
                     final QueryBuilder queryBldr = new QueryBuilder(CIProducts.InventoryIndividual);
                     queryBldr.addWhereAttrEqValue(CIProducts.InventoryIndividual.Storage, _parameter.getInstance());
                     queryBldr.addWhereAttrInQuery(CIProducts.InventoryIndividual.Product, attrQueryBldr
-                                    .getAttributeQuery(CIProducts.StoreableProductAbstract2IndividualAbstract.ToAbstract));
+                                    .getAttributeQuery(
+                                                    CIProducts.StoreableProductAbstract2IndividualAbstract.ToAbstract));
                     final MultiPrintQuery indMulti = queryBldr.getPrint();
                     indMulti.addSelect(selProdInst, selProdDecr, selProdName, selProdInd);
                     indMulti.addAttribute(CIProducts.InventoryIndividual.Quantity, CIProducts.InventoryAbstract.UoM);
@@ -1361,9 +1419,9 @@ public abstract class Transaction_Base
         final DateTime date = DateUtil.getDateFromParameter(dateStr);
 
         if (!ArrayUtils.isEmpty(products)) {
-            final List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+            final List<Map<String, Object>> list = new ArrayList<>();
             for (int j = 0; j < products.length; j++) {
-                final Map<String, Object> map = new HashMap<String, Object>();
+                final Map<String, Object> map = new HashMap<>();
                 list.add(map);
                 final Instance productInst = Instance.get(products[j]);
                 if (productInst != null && productInst.isValid()) {
@@ -1416,15 +1474,15 @@ public abstract class Transaction_Base
             if (productInst != null && productInst.isValid() && quantity != null && uoMId != null) {
                 final InventoryBean inventoryBean = Inventory.getInventory4Product(_parameter,
                                 _parameter.getCallInstance(), date, productInst);
-                BigDecimal currQuantity;
+                final BigDecimal currQuantity;
                 if (inventoryBean == null) {
                     currQuantity = BigDecimal.ZERO;
                 } else {
                     currQuantity = inventoryBean.getQuantity();
                 }
                 final BigDecimal moveQty = quantity.subtract(currQuantity);
-                final List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-                final Map<String, Object> map = new HashMap<String, Object>();
+                final List<Map<String, Object>> list = new ArrayList<>();
+                final Map<String, Object> map = new HashMap<>();
                 list.add(map);
                 ret.put(ReturnValues.VALUES, list);
                 map.put(CITableProducts.Products_InventorySet4ProductsTable.alteration.name,
@@ -1462,7 +1520,7 @@ public abstract class Transaction_Base
                 if (prodInst.isValid()) {
                     final InventoryBean inventoryBean = Inventory.getInventory4Product(_parameter,
                                     _parameter.getCallInstance(), date, prodInst);
-                    BigDecimal currQuantity;
+                    final BigDecimal currQuantity;
                     if (inventoryBean == null) {
                         currQuantity = BigDecimal.ZERO;
                     } else {
@@ -1489,7 +1547,7 @@ public abstract class Transaction_Base
         throws EFapsException
     {
         final Return ret = new Return();
-        final List<IWarning> warnings = new ArrayList<IWarning>();
+        final List<IWarning> warnings = new ArrayList<>();
 
         final Type transType = Type.get(Long.parseLong(_parameter
                         .getParameterValue(CIFormProducts.Products_TransactionInOutForm.type.name)));
@@ -1607,7 +1665,7 @@ public abstract class Transaction_Base
         multi.addSelect(selProdInst);
         multi.execute();
 
-        final Map<Instance, Map<CIAttribute, Object>> map4Inventory = new HashMap<Instance, Map<CIAttribute, Object>>();
+        final Map<Instance, Map<CIAttribute, Object>> map4Inventory = new HashMap<>();
         while (multi.next()) {
             final Instance prodInst = multi.<Instance>getSelect(selProdInst);
             BigDecimal quantity = multi.<BigDecimal>getAttribute(CIProducts.TransactionAbstract.Quantity);
@@ -1633,7 +1691,7 @@ public abstract class Transaction_Base
             }
         }
 
-        final List<Long> validate = new ArrayList<Long>();
+        final List<Long> validate = new ArrayList<>();
         if (!map4Inventory.isEmpty()) {
             for (final Entry<Instance, Map<CIAttribute, Object>> entry : map4Inventory.entrySet()) {
                 final QueryBuilder queryBldr2 = new QueryBuilder(CIProducts.Inventory);
@@ -1643,7 +1701,7 @@ public abstract class Transaction_Base
                 final MultiPrintQuery inventoryMulti = queryBldr2.getPrint();
                 inventoryMulti.addAttribute(CIProducts.InventoryAbstract.Reserved);
                 inventoryMulti.execute();
-                Update update;
+                final Update update;
                 BigDecimal value2 = BigDecimal.ZERO;
                 final BigDecimal value = (BigDecimal) entry.getValue().get(CIProducts.TransactionAbstract.Quantity);
                 if (inventoryMulti.next()) {
