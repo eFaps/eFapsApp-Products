@@ -76,5 +76,29 @@
             <sqltable>Products_StorageAbstractSQLTable</sqltable>
             <sqlcolumn>DATE</sqlcolumn>
         </attribute>
+         <attribute>
+            <name>Creator</name>
+            <type>CreatorLink</type>
+            <sqltable>Products_StorageAbstractSQLTable</sqltable>
+            <sqlcolumn>CREATOR</sqlcolumn>
+        </attribute>
+        <attribute>
+            <name>Created</name>
+            <type>Created</type>
+            <sqltable>Products_StorageAbstractSQLTable</sqltable>
+            <sqlcolumn>CREATED</sqlcolumn>
+        </attribute>
+        <attribute>
+            <name>Modifier</name>
+            <type>ModifierLink</type>
+            <sqltable>Products_StorageAbstractSQLTable</sqltable>
+            <sqlcolumn>MODIFIER</sqlcolumn>
+        </attribute>
+        <attribute>
+            <name>Modified</name>
+            <type>Modified</type>
+            <sqltable>Products_StorageAbstractSQLTable</sqltable>
+            <sqlcolumn>MODIFIED</sqlcolumn>
+        </attribute>
     </definition>
 </datamodel-type>

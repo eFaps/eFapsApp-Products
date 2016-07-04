@@ -508,14 +508,32 @@ public abstract class Storage_Base
         throws EFapsException
     {
         final Instance storageInst = _parameter.getCallInstance();
+
+        final PrintQuery print = new PrintQuery(storageInst);
+        print.addAttribute(CIProducts.Warehouse.Name);
+        print.execute();
+
+        final String name = print.getAttribute(CIProducts.Warehouse.Name);
+
         final DateTime date = new DateTime(_parameter.getParameterValue(
                         CIFormProducts.Products_CreateClosure4StorageForm.date.name));
         final Inventory inventory = new Inventory().setDate(date).setStorageInsts(Arrays.asList(
                         new Instance[] { storageInst }));
 
+        final Insert insert = new Insert(CIProducts.ClosureInventory);
+        insert.add(CIProducts.ClosureInventory.Status, Status.find(CIProducts.StorageAbstractStatus.Active));
+        insert.add(CIProducts.ClosureInventory.Name, name + " - " + date.toString("yyyy-MM-dd"));
+        insert.execute();
+
         final List<? extends InventoryBean> beans = inventory.getInventory(_parameter);
         for (final InventoryBean bean : beans) {
-            System.out.println(bean);
+            final Insert posInsert = new Insert(CIProducts.ClosureInventoryPosition);
+            posInsert.add(CIProducts.ClosureInventoryPosition.ClosureInventoryLink, insert.getInstance());
+            posInsert.add(CIProducts.ClosureInventoryPosition.ProductLink, bean.getProdInstance());
+            posInsert.add(CIProducts.ClosureInventoryPosition.Quantity, bean.getQuantity());
+            posInsert.add(CIProducts.ClosureInventoryPosition.Reserved, bean.getReserved());
+            posInsert.add(CIProducts.ClosureInventoryPosition.UoM, bean.getUoMId());
+            posInsert.execute();
         }
         return new Return();
     }

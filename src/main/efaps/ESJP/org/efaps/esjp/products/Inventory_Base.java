@@ -1067,6 +1067,17 @@ public abstract class Inventory_Base
         }
 
         /**
+         * Getter method for the instance variable {@link #uoM}.
+         *
+         * @return value of instance variable {@link #uoM}
+         */
+        public Long getUoMId()
+        {
+            initialize();
+            return this.uoM.getId();
+        }
+
+        /**
          * Setter method for instance variable {@link #uoM}.
          *
          * @param _uoM value for instance variable {@link #uoM}
