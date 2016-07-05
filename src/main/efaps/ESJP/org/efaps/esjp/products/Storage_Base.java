@@ -630,6 +630,7 @@ public abstract class Storage_Base
      * @param _storageInst the storage inst
      * @param _date the date
      * @return true, if successful
+     * @throws EFapsException on error
      */
     protected static boolean validateClosureDate(final Parameter _parameter,
                                                  final Instance _storageInst,
@@ -646,6 +647,7 @@ public abstract class Storage_Base
      * @param _parameter the parameter
      * @param _storageInst the storage inst
      * @return the closure date
+     * @throws EFapsException on error
      */
     protected static DateTime getClosureDate(final Parameter _parameter,
                                              final Instance _storageInst)

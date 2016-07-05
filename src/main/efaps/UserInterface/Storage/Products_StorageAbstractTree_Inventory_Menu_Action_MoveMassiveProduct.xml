@@ -38,7 +38,11 @@
                 <property name="StatusGroup">Sales_TransactionDocumentStatus</property>
                 <property name="Status">Open</property>
             </execute>
-            <validate method="validateMove" program="org.efaps.esjp.products.Transaction" />
+            <validate method="validateMove" program="org.efaps.esjp.products.Transaction" index="0"/>
+            <validate program="org.efaps.esjp.products.Storage"
+                method="validateClosureDate" index="1">
+                <property name="DateFieldName4Closure">date</property>
+            </validate>
         </target>
         <property name="Target">modal</property>
         <property name="TargetCreateType">Products_TransactionInbound</property>
@@ -71,7 +75,11 @@
                 <property name="JasperConfigMime">org.efaps.sales.TransactionDocument.Mime</property>
                 <property name="JasperReport">Sales_TransactionDocument</property>
             </execute>
-            <validate method="validateMove" program="org.efaps.esjp.products.Transaction" />
+            <validate method="validateMove" program="org.efaps.esjp.products.Transaction" index="0"/>
+            <validate program="org.efaps.esjp.products.Storage"
+                method="validateClosureDate" index="1">
+                <property name="DateFieldName4Closure">date</property>
+            </validate>
             <command>Products_StorageAbstractTree_Inventory_ShowName</command>
         </target>
         <property name="Target">modal</property>
