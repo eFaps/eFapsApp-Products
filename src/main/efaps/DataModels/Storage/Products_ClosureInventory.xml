@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
   Copyright 2003 - 2016 The eFaps Team
 
@@ -18,11 +17,11 @@
 -->
 <datamodel-type xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>c97d3269-944f-4f77-b2fc-3d5db6ca4430</uuid>
+    <uuid>ee5af0d3-d81b-4c9a-ae48-2505dd84e919</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_StaticInventory</name>
+        <name>Products_ClosureInventory</name>
         <parent>Products_StaticStorage</parent>
         <attribute>
             <name>Status</name>
@@ -30,28 +29,33 @@
             <typelink>Products_StorageAbstractStatus</typelink>
             <sqltable>Products_StorageAbstractSQLTable</sqltable>
             <sqlcolumn>STATUS</sqlcolumn>
-            <trigger program="org.efaps.esjp.admin.datamodel.StatusValue"
-                name="Products_StaticInventory.Status.RANGE_VALUE"
-                event="RANGE_VALUE" />
+            <trigger event="RANGE_VALUE" name="Products_ClosureInventory.Status.RANGE_VALUE"
+                program="org.efaps.esjp.admin.datamodel.StatusValue" />
         </attribute>
-        <trigger event="ACCESSCHECK" name="Products_StaticStorage.ACCESSCHECK"
+        <attribute>
+            <name>StorageLink</name>
+            <type>Link</type>
+            <typelink>Products_StorageAbstract</typelink>
+            <sqltable>Products_StorageAbstractSQLTable</sqltable>
+            <sqlcolumn>RELID</sqlcolumn>
+        </attribute>
+        <trigger event="ACCESSCHECK" name="Products_ClosureInventory.ACCESSCHECK"
             program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType" />
 
         <trigger program="org.efaps.esjp.common.cache.CacheUtils"
-            method="cleanQueryCacheTrigger" name="Products_StaticInventory.INSERT_POST"
+            method="cleanQueryCacheTrigger" name="Products_ClosureInventory.INSERT_POST"
             event="INSERT_POST">
             <property name="CacheName">org.efaps.esjp.products.Storage.CacheKey</property>
         </trigger>
         <trigger program="org.efaps.esjp.common.cache.CacheUtils"
-            method="cleanQueryCacheTrigger" name="Products_StaticInventory.UPDATE_POST"
+            method="cleanQueryCacheTrigger" name="Products_ClosureInventory.UPDATE_POST"
             event="UPDATE_POST">
             <property name="CacheName">org.efaps.esjp.products.Storage.CacheKey</property>
         </trigger>
         <trigger program="org.efaps.esjp.common.cache.CacheUtils"
-            method="cleanQueryCacheTrigger" name="Products_StaticInventory.DELETE_POST"
+            method="cleanQueryCacheTrigger" name="Products_ClosureInventory.DELETE_POST"
             event="DELETE_POST">
             <property name="CacheName">org.efaps.esjp.products.Storage.CacheKey</property>
         </trigger>
-
     </definition>
 </datamodel-type>

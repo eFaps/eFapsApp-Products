@@ -62,6 +62,7 @@
         <type>Products_ProductCostTextPosition</type>
         <type>Products_ProductVariantBase</type>
         <type>Products_PriceGroupContact</type>
+        <type>Products_ClosureInventory</type>
 
          <status group="Products_StorageAbstractStatus">
             <key>Active</key>

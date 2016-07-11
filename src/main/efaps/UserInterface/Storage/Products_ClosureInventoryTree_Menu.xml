@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
  Copyright 2003 - 2016 The eFaps Team
 
@@ -15,18 +14,17 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
+
 -->
-<datamodel-type xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>4ef2a9d8-0f59-4ab1-b8e0-f4b5ff1e0e7f</uuid>
+    <uuid>4d13b4c5-a5b4-4a72-8302-f7e119a21ec7</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_TransactionInbound4StaticStorage</name>
-        <parent>Products_TransactionInOutAbstract</parent>
-        <trigger event="INSERT_POST" method="inboundTrigger" name="Products_TransactionInbound.INSERT_POST"
-            program="org.efaps.esjp.products.Transaction" />
-        <trigger event="ACCESSCHECK" name="Products_TransactionInbound.ACCESSCHECK"
-            program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType" />
+        <name>Products_ClosureInventoryTree_Menu</name>
+        <childs>
+            <child>Products_ClosureInventoryTree_Menu_Action</child>
+        </childs>
     </definition>
-</datamodel-type>
+</ui-menu>

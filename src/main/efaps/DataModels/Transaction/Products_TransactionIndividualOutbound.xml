@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
 
- Copyright 2003 - 2009 The eFaps Team
+ Copyright 2003 - 2016 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -14,21 +15,21 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
- Author:          The eFaps Team
- Revision:        $Rev$
- Last Changed:    $Date$
- Last Changed By: $Author$
-
 -->
 <datamodel-type xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>5bdbe9ec-3cd8-436c-978b-afb8aed4056d</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_TransactionIndividualOutbound</name>
         <parent>Products_TransactionIndividualAbstract</parent>
+        <trigger program="org.efaps.esjp.products.Transaction" method="verifyDateTrigger"
+            name="Products_TransactionIndividualOutbound.INSERT_PRE" event="INSERT_PRE" />
+        <trigger program="org.efaps.esjp.products.Transaction" method="verifyDateTrigger"
+            name="Products_TransactionIndividualOutbound.UPDATE_PRE" event="UPDATE_PRE" />
+        <trigger program="org.efaps.esjp.products.Transaction" method="verifyDateTrigger"
+            name="Products_TransactionIndividualOutbound.DELETE_PRE" event="DELETE_PRE" />
         <trigger event="INSERT_POST" method="individualOutboundTrigger"
             name="Products_TransactionIndividualOutbound.INSERT_POST"
             program="org.efaps.esjp.products.Transaction" />

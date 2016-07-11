@@ -40,6 +40,10 @@
                 <property name="JasperConfigMime">org.efaps.sales.TransactionDocument.Mime</property>
                 <property name="JasperReport">Sales_TransactionDocument</property>
             </execute>
+            <validate program="org.efaps.esjp.products.Storage"
+                method="validateClosureDate">
+                <property name="DateFieldName4Closure">date</property>
+            </validate>
         </target>
         <property name="Target">modal</property>
         <property name="TargetMode">create</property>

@@ -22,6 +22,7 @@ import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Instance;
 import org.efaps.util.EFapsException;
+import org.joda.time.DateTime;
 
 /**
  * This class must be replaced for customization, therefore it is left empty.
@@ -35,6 +36,41 @@ import org.efaps.util.EFapsException;
 public class Storage
     extends Storage_Base
 {
+
+    /** The Constant CACHE_KEY. */
+    public static final String CACHE_KEY = Storage_Base.CACHE_KEY;
+
+    /**
+     * Validate closure date.
+     *
+     * @param _parameter the parameter
+     * @param _storageInst the storage inst
+     * @param _date the date
+     * @return true, if successful
+     * @throws EFapsException the eFaps exception
+     */
+    public static boolean validateClosureDate(final Parameter _parameter,
+                                              final Instance _storageInst,
+                                              final DateTime _date)
+        throws EFapsException
+    {
+        return Storage_Base.validateClosureDate(_parameter, _storageInst, _date);
+    }
+
+    /**
+     * Gets the closure date.
+     *
+     * @param _parameter the parameter
+     * @param _storageInst the storage inst
+     * @return the closure date
+     * @throws EFapsException the eFaps exception
+     */
+    public static DateTime getClosureDate(final Parameter _parameter,
+                                          final Instance _storageInst)
+        throws EFapsException
+    {
+        return Storage_Base.getClosureDate(_parameter, _storageInst);
+    }
 
     /**
      * Get the default storage.

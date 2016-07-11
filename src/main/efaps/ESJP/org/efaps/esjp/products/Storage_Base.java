@@ -20,6 +20,7 @@ package org.efaps.esjp.products;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,8 @@ import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.admin.ui.Command;
 import org.efaps.api.ui.IUserInterface;
+import org.efaps.db.CachedInstanceQuery;
+import org.efaps.db.CachedPrintQuery;
 import org.efaps.db.Context;
 import org.efaps.db.Delete;
 import org.efaps.db.Insert;
@@ -54,8 +57,13 @@ import org.efaps.db.Update;
 import org.efaps.esjp.ci.CIFormProducts;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.ci.CITableProducts;
+import org.efaps.esjp.db.InstanceUtils;
+import org.efaps.esjp.erp.AbstractWarning;
 import org.efaps.esjp.erp.CommonDocument;
+import org.efaps.esjp.erp.IWarning;
 import org.efaps.esjp.erp.NumberFormatter;
+import org.efaps.esjp.erp.WarningUtil;
+import org.efaps.esjp.products.Inventory_Base.InventoryBean;
 import org.efaps.esjp.products.util.Products;
 import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
@@ -73,6 +81,9 @@ import org.joda.time.format.DateTimeFormatter;
 public abstract class Storage_Base
     extends CommonDocument
 {
+
+    /** The Constant CACHE_KEY. */
+    protected static final String CACHE_KEY = Storage.class.getName() + ".CacheKey";
 
     /**
      * @param _parameter parameter as passed from the eFaps API
@@ -104,18 +115,18 @@ public abstract class Storage_Base
         updateStaticInventory.execute();
 
         final QueryBuilder position = new QueryBuilder(CIProducts.StaticInventoryPosition);
-        position.addWhereAttrEqValue(CIProducts.StaticInventoryPosition.StaticInventory,
+        position.addWhereAttrEqValue(CIProducts.StaticInventoryPosition.StaticInventoryLink,
                         fromStorageId);
         final MultiPrintQuery multiPosition = position.getPrint();
         multiPosition.addAttribute(CIProducts.StaticInventoryPosition.Quantity,
-                        CIProducts.StaticInventoryPosition.UoM, CIProducts.StaticInventoryPosition.Product);
+                        CIProducts.StaticInventoryPosition.UoM, CIProducts.StaticInventoryPosition.ProductLink);
         multiPosition.execute();
 
         while (multiPosition.next()) {
             final BigDecimal quantity = multiPosition
                             .<BigDecimal>getAttribute(CIProducts.StaticInventoryPosition.Quantity);
             final Long uoMId = multiPosition.<Long>getAttribute(CIProducts.StaticInventoryPosition.UoM);
-            final Long productId = multiPosition.<Long>getAttribute(CIProducts.StaticInventoryPosition.Product);
+            final Long productId = multiPosition.<Long>getAttribute(CIProducts.StaticInventoryPosition.ProductLink);
             final Insert inbound = new Insert(CIProducts.TransactionInbound4StaticStorage);
             inbound.add(CIProducts.TransactionInbound4StaticStorage.Quantity, quantity);
             inbound.add(CIProducts.TransactionInbound4StaticStorage.Storage, insert.getId());
@@ -145,7 +156,7 @@ public abstract class Storage_Base
         final DateTime date = new DateTime(dateStr);
         final Instance storageInst = Instance.get(storageOid);
 
-        final Map<String, BigDecimal> actual = new HashMap<String, BigDecimal>();
+        final Map<String, BigDecimal> actual = new HashMap<>();
 
         final QueryBuilder queryBldr = new QueryBuilder(CIProducts.Inventory);
         queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, storageInst);
@@ -187,7 +198,7 @@ public abstract class Storage_Base
             }
             actual.put(oid, quantity);
         }
-        final List<Instance> instances = new ArrayList<Instance>();
+        final List<Instance> instances = new ArrayList<>();
         for (final Entry<String, BigDecimal> entry : actual.entrySet()) {
             if (entry.getValue().compareTo(BigDecimal.ZERO) != 0) {
                 instances.add(Instance.get(entry.getKey()));
@@ -267,8 +278,8 @@ public abstract class Storage_Base
                                     CITableProducts.Products_StaticInventoryPositionTable.product.name)[i]);
                     final UoM uom = Dimension.getUoM(Long.parseLong(_parameter.getParameterValues(
                                     CITableProducts.Products_StaticInventoryPositionTable.uoM.name)[i]));
-                    posIns.add(CIProducts.StaticInventoryPosition.StaticInventory, insert.getInstance());
-                    posIns.add(CIProducts.StaticInventoryPosition.Product, productdId.getId());
+                    posIns.add(CIProducts.StaticInventoryPosition.StaticInventoryLink, insert.getInstance());
+                    posIns.add(CIProducts.StaticInventoryPosition.ProductLink, productdId.getId());
                     posIns.add(CIProducts.StaticInventoryPosition.Quantity, quantity);
                     posIns.add(CIProducts.StaticInventoryPosition.UoM, uom.getId());
                     posIns.execute();
@@ -291,7 +302,7 @@ public abstract class Storage_Base
         final Instance staticInventoryInst = _parameter.getInstance();
         // Clear products related to this StaticInventoryStorage
         final QueryBuilder clearPosition = new QueryBuilder(CIProducts.StaticInventoryPosition);
-        clearPosition.addWhereAttrEqValue(CIProducts.StaticInventoryPosition.StaticInventory,
+        clearPosition.addWhereAttrEqValue(CIProducts.StaticInventoryPosition.StaticInventoryLink,
                         staticInventoryInst.getId());
         final MultiPrintQuery multiPosition = clearPosition.getPrint();
         multiPosition.execute();
@@ -337,8 +348,8 @@ public abstract class Storage_Base
         throws EFapsException
     {
         final String input = (String) _parameter.get(ParameterValues.OTHERS);
-        final List<Map<String, String>> list = new ArrayList<Map<String, String>>();
-        final Map<String, Map<String, String>> orderMap = new TreeMap<String, Map<String, String>>();
+        final List<Map<String, String>> list = new ArrayList<>();
+        final Map<String, Map<String, String>> orderMap = new TreeMap<>();
 
         final String key = containsProperty(_parameter, "Key") ? getProperty(_parameter, "Key") : "OID";
 
@@ -351,7 +362,7 @@ public abstract class Storage_Base
         multi.execute();
         while (multi.next()) {
             final String name = multi.<String>getAttribute(CIProducts.StorageAbstract.Name);
-            final Map<String, String> map = new HashMap<String, String>();
+            final Map<String, String> map = new HashMap<>();
             map.put(EFapsKey.AUTOCOMPLETE_KEY.getKey(), multi.getAttribute(key).toString());
             map.put(EFapsKey.AUTOCOMPLETE_VALUE.getKey(), name);
             map.put(EFapsKey.AUTOCOMPLETE_CHOICE.getKey(), name);
@@ -427,7 +438,7 @@ public abstract class Storage_Base
 
     /**
      * Method to check if the instance is of the type Static Inventory to show
-     * in other case doesn't show
+     * in other case doesn't show.
      *
      * @param _parameter as passed from eFaps API.
      * @return Return ret.
@@ -447,7 +458,7 @@ public abstract class Storage_Base
 
     /**
      * Method to check if the instance is of the type Snapshot to show in other
-     * case doesn't show
+     * case doesn't show.
      *
      * @param _parameter as passed from eFaps API.
      * @return Return ret.
@@ -494,7 +505,164 @@ public abstract class Storage_Base
         } else {
             ret.put(ReturnValues.TRUE, true);
         }
+        return ret;
+    }
 
+    /**
+     * @param _parameter parameter as passed from the eFaps API
+     * @return Return with Map fro Autocomplete field
+     * @throws EFapsException on error
+     */
+    public Return createClosure4Storage(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Instance storageInst = _parameter.getCallInstance();
+
+        final PrintQuery print = new PrintQuery(storageInst);
+        print.addAttribute(CIProducts.Warehouse.Name);
+        print.execute();
+
+        final String name = print.getAttribute(CIProducts.Warehouse.Name);
+
+        final DateTime date = new DateTime(_parameter.getParameterValue(
+                        CIFormProducts.Products_CreateClosure4StorageForm.date.name));
+        final Inventory inventory = new Inventory().setDate(date).setStorageInsts(Arrays.asList(
+                        new Instance[] { storageInst }));
+
+        final Insert insert = new Insert(CIProducts.ClosureInventory);
+        insert.add(CIProducts.ClosureInventory.Status, Status.find(CIProducts.StorageAbstractStatus.Active));
+        insert.add(CIProducts.ClosureInventory.Name, name + " - " + date.toString("yyyy-MM-dd"));
+        insert.add(CIProducts.ClosureInventory.Date, date);
+        insert.add(CIProducts.ClosureInventory.StorageLink, storageInst);
+        insert.execute();
+
+        final List<? extends InventoryBean> beans = inventory.getInventory(_parameter);
+        for (final InventoryBean bean : beans) {
+            final Insert posInsert = new Insert(CIProducts.ClosureInventoryPosition);
+            posInsert.add(CIProducts.ClosureInventoryPosition.ClosureInventoryLink, insert.getInstance());
+            posInsert.add(CIProducts.ClosureInventoryPosition.ProductLink, bean.getProdInstance());
+            posInsert.add(CIProducts.ClosureInventoryPosition.Quantity, bean.getQuantity());
+            posInsert.add(CIProducts.ClosureInventoryPosition.Reserved, bean.getReserved());
+            posInsert.add(CIProducts.ClosureInventoryPosition.UoM, bean.getUoMId());
+            posInsert.execute();
+        }
+
+        final Update update = new Update(storageInst);
+        update.add(CIProducts.Warehouse.ClosureDate, date);
+        update.executeWithoutTrigger();
+        return new Return();
+    }
+
+    /**
+     * Gets the last closure instance for a storage.
+     * Used by an alternative Instance Field trigger.
+     *
+     * @param _parameter the parameter
+     * @return the last closure instance 4 storage
+     * @throws EFapsException the e faps exception
+     */
+    public Return getLastClosureInstance4Storage(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        final Instance storageInst = _parameter.getInstance();
+
+        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ClosureInventory);
+        queryBldr.addWhereAttrEqValue(CIProducts.ClosureInventory.StorageLink, storageInst);
+        queryBldr.addOrderByAttributeDesc(CIProducts.ClosureInventory.Date);
+        queryBldr.setLimit(1);
+        final CachedInstanceQuery query = queryBldr.getCachedQuery(Storage.CACHE_KEY);
+        query.execute();
+        if (query.next()) {
+            ret.put(ReturnValues.INSTANCE, query.getCurrentValue());
+        }
+        return ret;
+    }
+
+    /**
+     * Gets the last closure 4 storage.
+     *
+     * @param _parameter the parameter
+     * @return the last closure 4 storage
+     * @throws EFapsException the e faps exception
+     */
+    public Return getLastClosure4Storage(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        final Instance inst = _parameter.getInstance();
+        if (inst.getType().isCIType(CIProducts.ClosureInventory)) {
+            final PrintQuery print = new CachedPrintQuery(inst, Storage.CACHE_KEY);
+            print.addAttribute(CIProducts.ClosureInventory.Name);
+            print.execute();
+            ret.put(ReturnValues.VALUES, print.getAttribute(CIProducts.ClosureInventory.Name));
+        }
+        return ret;
+    }
+
+    /**
+     * Validate closure date.
+     *
+     * @param _parameter the parameter
+     * @return the return
+     * @throws EFapsException the e faps exception
+     */
+    public Return validateClosureDate(final Parameter _parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        final Instance storageInst = _parameter.getCallInstance();
+        final String fieldName = getProperty(_parameter, "DateFieldName4Closure", "date");
+        final DateTime date = new DateTime(_parameter.getParameterValue(fieldName));
+        if (Storage.validateClosureDate(_parameter, storageInst, date)) {
+            ret.put(ReturnValues.TRUE, true);
+        } else {
+            ret.put(ReturnValues.SNIPLETT, WarningUtil
+                            .getHtml4Warning(Arrays.asList(new IWarning[] { new ClosureWarning() })).toString());
+        }
+        return ret;
+    }
+
+    /**
+     * Validate closure date.
+     *
+     * @param _parameter the parameter
+     * @param _storageInst the storage inst
+     * @param _date the date
+     * @return true, if successful
+     * @throws EFapsException on error
+     */
+    protected static boolean validateClosureDate(final Parameter _parameter,
+                                                 final Instance _storageInst,
+                                                 final DateTime _date)
+        throws EFapsException
+    {
+        final DateTime date = getClosureDate(_parameter, _storageInst);
+        return _date.isAfter(date);
+    }
+
+    /**
+     * Gets the closure date.
+     *
+     * @param _parameter the parameter
+     * @param _storageInst the storage inst
+     * @return the closure date
+     * @throws EFapsException on error
+     */
+    protected static DateTime getClosureDate(final Parameter _parameter,
+                                             final Instance _storageInst)
+        throws EFapsException
+    {
+        DateTime ret = null;
+        if (InstanceUtils.isKindOf(_storageInst, CIProducts.DynamicStorage)) {
+            final PrintQuery print = new CachedPrintQuery(_storageInst, Storage.CACHE_KEY);
+            print.addAttribute(CIProducts.DynamicStorage.ClosureDate);
+            print.execute();
+            ret = print.getAttribute(CIProducts.DynamicStorage.ClosureDate);
+        }
+        if (ret == null) {
+            ret = new DateTime().withYear(2000);
+        }
         return ret;
     }
 
@@ -513,7 +681,7 @@ public abstract class Storage_Base
         if (storage.containsProperty(_parameter, "SystemConfig")
                         && storage.containsProperty(_parameter, "Link4DefaultStorage")) {
             final String sysConStr = storage.getProperty(_parameter, "SystemConfig");
-            SystemConfiguration sysConf;
+            final SystemConfiguration sysConf;
             if (storage.isUUID(sysConStr)) {
                 sysConf = SystemConfiguration.get(UUID.fromString(sysConStr));
             } else {
@@ -525,5 +693,20 @@ public abstract class Storage_Base
             ret = Products.DEFAULTWAREHOUSE.get();
         }
         return ret;
+    }
+
+    /**
+     * Warning for not enough Stock.
+     */
+    public static class ClosureWarning
+        extends AbstractWarning
+    {
+        /**
+         * Constructor.
+         */
+        public ClosureWarning()
+        {
+            setError(true);
+        }
     }
 }

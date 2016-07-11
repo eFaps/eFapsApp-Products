@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
 
- Copyright 2003 - 2010 The eFaps Team
+ Copyright 2003 - 2016 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -16,34 +15,44 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
- Author:          The eFaps Team
- Revision:        $Rev$
- Last Changed:    $Date$
- Last Changed By: $Author$
-
 -->
-
-<datamodel-type  xmlns="http://www.efaps.org/xsd"
-                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                 xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+<datamodel-type xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>0b77ddab-3b0c-4473-9cd2-aed936a7a8be</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_Warehouse</name>
         <parent>Products_DynamicStorage</parent>
         <attribute>
-            <name>Status1</name>
+            <name>Status</name>
             <type>Status</type>
             <typelink>Products_StorageAbstractStatus</typelink>
             <sqltable>Products_StorageAbstractSQLTable</sqltable>
             <sqlcolumn>STATUS</sqlcolumn>
             <trigger program="org.efaps.esjp.admin.datamodel.StatusValue"
-                name="Accounting_Transaction.Status.RANGE_VALUE" event="RANGE_VALUE" />
+                name="Products_Warehouse.Status.RANGE_VALUE"
+                event="RANGE_VALUE" />
         </attribute>
         <trigger program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType"
-                 name="Products_Warehouse.ACCESSCHECK"
-                 event="ACCESSCHECK" />
+            name="Products_Warehouse.ACCESSCHECK"
+            event="ACCESSCHECK" />
+
+        <trigger program="org.efaps.esjp.common.cache.CacheUtils"
+            method="cleanQueryCacheTrigger" name="Products_Warehouse.INSERT_POST"
+            event="INSERT_POST">
+            <property name="CacheName">org.efaps.esjp.products.Storage.CacheKey</property>
+        </trigger>
+        <trigger program="org.efaps.esjp.common.cache.CacheUtils"
+            method="cleanQueryCacheTrigger" name="Products_Warehouse.UPDATE_POST"
+            event="UPDATE_POST">
+            <property name="CacheName">org.efaps.esjp.products.Storage.CacheKey</property>
+        </trigger>
+        <trigger program="org.efaps.esjp.common.cache.CacheUtils"
+            method="cleanQueryCacheTrigger" name="Products_Warehouse.DELETE_POST"
+            event="DELETE_POST">
+            <property name="CacheName">org.efaps.esjp.products.Storage.CacheKey</property>
+        </trigger>
+
     </definition>
 </datamodel-type>
