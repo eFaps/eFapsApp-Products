@@ -31,9 +31,9 @@
             <property name="Align">right</property>
         </field>
         <field name="product">
-            <property name="SelectAlternateOID">linkto[Product].oid</property>
+            <property name="SelectAlternateOID">linkto[ProductLink].oid</property>
             <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
-            <property name="Select">linkto[Product].attribute[Name]</property>
+            <property name="Select">linkto[ProductLink].attribute[Name]</property>
             <property name="Label">Products_Inventory/Product.Label</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
@@ -51,8 +51,8 @@
             <property name="Width">10</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
-            <property name="SelectAlternateOID">linkto[Product].oid</property>
-            <property name="Select">linkto[Product].attribute[Description]</property>
+            <property name="SelectAlternateOID">linkto[ProductLink].oid</property>
+            <property name="Select">linkto[ProductLink].attribute[Description]</property>
             <property name="Label">Products_Inventory/Description.Label</property>
             <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
         </field>
