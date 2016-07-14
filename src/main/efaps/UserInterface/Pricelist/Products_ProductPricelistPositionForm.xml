@@ -36,6 +36,7 @@
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
             <property name="Attribute">CurrencyId</property>
+            <property name="UIType">DROPDOWN</property>
             <trigger program="org.efaps.esjp.erp.Currency"
                 method="getCurrencyDropDownFieldValue"
                 name="Products_ProductPricelistPositionForm.currencyId.UI_FIELD_VALUE"
