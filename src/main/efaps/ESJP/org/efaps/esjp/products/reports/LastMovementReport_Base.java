@@ -270,7 +270,7 @@ public abstract class LastMovementReport_Base
                             final DateTime transDate = multi.getAttribute(CIProducts.TransactionAbstract.Date);
                             final BigDecimal quantity = multi.getAttribute(CIProducts.TransactionAbstract.Quantity);
 
-                            if (validateThreshold(_parameter, multi.getCurrentInstance(), quantity)) {
+                            if (validateThreshold(_parameter, multi.getCurrentInstance(), quantity, prodInst)) {
                                 final Iterator<DataBean> beanIter = beanList.iterator();
                                 final DataBean bean = beanIter.next();
                                 bean.setDate(date);
@@ -327,28 +327,29 @@ public abstract class LastMovementReport_Base
             return ret;
         }
 
-
         /**
          * Validate threshold.
          *
          * @param _parameter the _parameter
          * @param _transactionInstance the _transaction instance
          * @param _quantity the _quantity
+         * @param _prodInst the prod inst
          * @return true, if successful
-         * @throws EFapsException the e faps exception
+         * @throws EFapsException on error
          */
         protected boolean validateThreshold(final Parameter _parameter,
                                             final Instance _transactionInstance,
-                                            final BigDecimal _quantity)
-                                                throws EFapsException
+                                            final BigDecimal _quantity,
+                                            final Instance _prodInst)
+            throws EFapsException
         {
             return (_transactionInstance.getType().isCIType(CIProducts.TransactionOutbound)
                             || _transactionInstance.getType().isCIType(CIProducts.TransactionIndividualOutbound))
-                            && _quantity.compareTo(new BigDecimal(getOutThreshold(_parameter))) > 0
+                            && _quantity.compareTo(new BigDecimal(getOutThreshold(_parameter, _prodInst))) > 0
                             ||
                     (_transactionInstance.getType().isCIType(CIProducts.TransactionInbound)
                             || _transactionInstance.getType().isCIType(CIProducts.TransactionIndividualInbound))
-                                && _quantity.compareTo(new BigDecimal(getInThreshold(_parameter))) > 0;
+                                && _quantity.compareTo(new BigDecimal(getInThreshold(_parameter, _prodInst))) > 0;
         }
 
         /**
@@ -555,26 +556,44 @@ public abstract class LastMovementReport_Base
          * Gets the in threshold.
          *
          * @param _parameter the _parameter
+         * @param _prodInst the product instance
          * @return the in threshold
-         * @throws EFapsException the e faps exception
+         * @throws EFapsException on error
          */
-        protected Integer getInThreshold(final Parameter _parameter)
+        protected Integer getInThreshold(final Parameter _parameter,
+                                         final Instance _prodInst)
             throws EFapsException
         {
-            return Integer.parseInt(Products.REPLASTMOVE.get().getProperty("inThreshold", "0"));
+            Integer ret;
+            if (Products.REPLASTMOVE.get().containsKey(_prodInst.getType().getName() + ".inThreshold")) {
+                ret = Integer.parseInt(Products.REPLASTMOVE.get()
+                                .getProperty(_prodInst.getType().getName() + ".inThreshold"));
+            } else {
+                ret = Integer.parseInt(Products.REPLASTMOVE.get().getProperty("inThreshold", "0"));
+            }
+            return ret;
         }
 
         /**
          * Gets the out threshold.
          *
          * @param _parameter the _parameter
+         * @param _prodInst the product instance
          * @return the out threshold
-         * @throws EFapsException the e faps exception
+         * @throws EFapsException on error
          */
-        protected Integer getOutThreshold(final Parameter _parameter)
+        protected Integer getOutThreshold(final Parameter _parameter,
+                                          final Instance _prodInst)
             throws EFapsException
         {
-            return Integer.parseInt(Products.REPLASTMOVE.get().getProperty("outThreshold", "0"));
+            Integer ret;
+            if (Products.REPLASTMOVE.get().containsKey(_prodInst.getType().getName() + ".outThreshold")) {
+                ret = Integer.parseInt(Products.REPLASTMOVE.get()
+                                .getProperty(_prodInst.getType().getName() + ".outThreshold"));
+            } else {
+                ret = Integer.parseInt(Products.REPLASTMOVE.get().getProperty("outThreshold", "0"));
+            }
+            return ret;
         }
 
         /**
