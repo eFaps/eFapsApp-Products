@@ -413,42 +413,44 @@ public abstract class Transaction_Base
         final Map<?, ?> values = (Map<?, ?>) _parameter.get(ParameterValues.NEW_VALUES);
         Object storage = null;
         Object dateObj = null;
-        for (final Entry<?, ?> entry : values.entrySet()) {
-            final Attribute attr = (Attribute) entry.getKey();
-            if (attr.getName().equals("Storage")) {
-                final Object[] objValues = (Object[]) entry.getValue();
-                if (objValues != null) {
-                    storage = objValues[0];
+        if (values != null) {
+            for (final Entry<?, ?> entry : values.entrySet()) {
+                final Attribute attr = (Attribute) entry.getKey();
+                if (attr.getName().equals("Storage")) {
+                    final Object[] objValues = (Object[]) entry.getValue();
+                    if (objValues != null) {
+                        storage = objValues[0];
+                    }
+                }
+                if (attr.getName().equals("Date")) {
+                    final Object[] objValues = (Object[]) entry.getValue();
+                    if (objValues != null) {
+                        dateObj = objValues[0];
+                    }
                 }
             }
-            if (attr.getName().equals("Date")) {
-                final Object[] objValues = (Object[]) entry.getValue();
-                if (objValues != null) {
-                    dateObj = objValues[0];
+            if (storage != null && dateObj != null) {
+                Instance storageInst = null;
+                DateTime date = null;
+                if (storage instanceof Long) {
+                    final QueryBuilder queryBldr = new QueryBuilder(CIProducts.StorageAbstract);
+                    queryBldr.addWhereAttrEqValue(CIProducts.StorageAbstract.ID, storage);
+                    final CachedInstanceQuery query = queryBldr.getCachedQuery(Storage.CACHE_KEY);
+                    query.executeWithoutAccessCheck();
+                    query.next();
+                    storageInst = query.getCurrentValue();
+                } else if (storage instanceof Instance) {
+                    storageInst = (Instance) storage;
                 }
-            }
-        }
-        if (storage != null && dateObj != null) {
-            Instance storageInst = null;
-            DateTime date = null;
-            if (storage instanceof Long) {
-                final QueryBuilder queryBldr = new QueryBuilder(CIProducts.StorageAbstract);
-                queryBldr.addWhereAttrEqValue(CIProducts.StorageAbstract.ID, storage);
-                final CachedInstanceQuery query = queryBldr.getCachedQuery(Storage.CACHE_KEY);
-                query.executeWithoutAccessCheck();
-                query.next();
-                storageInst = query.getCurrentValue();
-            } else if (storage instanceof Instance) {
-                storageInst = (Instance) storage;
-            }
-            if (dateObj instanceof String) {
-                date = new DateTime(dateObj);
-            } else if (dateObj instanceof DateTime) {
-                date = (DateTime) dateObj;
-            }
-            if (!Storage.validateClosureDate(_parameter, storageInst, date)) {
-                Context.getThreadContext().abort();
-                throw new EFapsException(Transaction.class, "InvalidDate");
+                if (dateObj instanceof String) {
+                    date = new DateTime(dateObj);
+                } else if (dateObj instanceof DateTime) {
+                    date = (DateTime) dateObj;
+                }
+                if (!Storage.validateClosureDate(_parameter, storageInst, date)) {
+                    Context.getThreadContext().abort();
+                    throw new EFapsException(Transaction.class, "InvalidDate");
+                }
             }
         }
         return new Return();
