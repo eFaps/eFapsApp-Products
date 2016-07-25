@@ -32,7 +32,7 @@ import org.efaps.admin.datamodel.Dimension.UoM;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
 import org.efaps.admin.event.Return;
-import org.efaps.admin.program.esjp.EFapsRevision;
+import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.CachedMultiPrintQuery;
 import org.efaps.db.Instance;
@@ -48,10 +48,10 @@ import org.efaps.util.EFapsException;
  * TODO comment!
  *
  * @author The eFaps Team
- * @version $Id$
+ * 
  */
 @EFapsUUID("82271caf-5d4e-4ec9-bb99-8cbfaff5f8a7")
-@EFapsRevision("$Rev$")
+@EFapsApplication("eFapsApp-Products")
 public abstract class BOM_Base
 {
 

@@ -27,6 +27,8 @@ import java.util.Map.Entry;
 
 import org.efaps.admin.dbproperty.DBProperties;
 import org.efaps.admin.event.Parameter;
+import org.efaps.admin.program.esjp.EFapsApplication;
+import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.api.ui.IEsjpSnipplet;
 import org.efaps.db.Context;
 import org.efaps.db.Instance;
@@ -56,6 +58,8 @@ import com.mchange.v1.lang.BooleanUtils;
  *
  * @author The eFaps Team
  */
+@EFapsUUID("7bbd1fb7-d9c8-4db3-a18b-54af589237d1")
+@EFapsApplication("eFapsApp-Products")
 public abstract class InventoryValuePanel_Base
     extends AbstractDashboardPanel
     implements IEsjpSnipplet

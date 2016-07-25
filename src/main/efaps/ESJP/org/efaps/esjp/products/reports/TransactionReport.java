@@ -21,7 +21,7 @@
 
 package org.efaps.esjp.products.reports;
 
-import org.efaps.admin.program.esjp.EFapsRevision;
+import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 
 
@@ -34,7 +34,7 @@ import org.efaps.admin.program.esjp.EFapsUUID;
  * @version $Id: InventoryReport.java 14618 2014-12-14 18:04:40Z jan@moxter.net $
  */
 @EFapsUUID("9f35f7ea-eb70-4e80-92f1-40a39a670bba")
-@EFapsRevision("$Rev: 14618 $")
+@EFapsApplication("eFapsApp-Products")
 public class TransactionReport
     extends TransactionReport_Base
 {

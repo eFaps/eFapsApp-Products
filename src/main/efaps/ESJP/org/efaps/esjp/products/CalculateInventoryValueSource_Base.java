@@ -24,11 +24,8 @@ package org.efaps.esjp.products;
 import java.math.BigDecimal;
 import java.util.Map;
 
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JasperReport;
-
 import org.efaps.admin.event.Parameter;
-import org.efaps.admin.program.esjp.EFapsRevision;
+import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Instance;
 import org.efaps.db.MultiPrintQuery;
@@ -39,15 +36,18 @@ import org.efaps.esjp.ci.CIProducts;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
 
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JasperReport;
+
 
 /**
  * TODO comment!
  *
  * @author The eFaps Team
- * @version $Id$
+ * 
  */
 @EFapsUUID("3ee86b77-a8b1-4ec5-bb11-2d2071694344")
-@EFapsRevision("$Rev$")
+@EFapsApplication("eFapsApp-Products")
 public abstract class CalculateInventoryValueSource_Base
     extends  CalculateInventorySource
 {

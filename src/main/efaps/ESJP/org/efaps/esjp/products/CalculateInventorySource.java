@@ -21,7 +21,7 @@
 
 package org.efaps.esjp.products;
 
-import org.efaps.admin.program.esjp.EFapsRevision;
+import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 
 
@@ -31,10 +31,10 @@ import org.efaps.admin.program.esjp.EFapsUUID;
  * class.
  *
  * @author The eFaps Team
- * @version $Id$
+ * 
  */
 @EFapsUUID("e1075f4f-f76d-45e9-b95f-a2a7efee5a90")
-@EFapsRevision("$Rev$")
+@EFapsApplication("eFapsApp-Products")
 public class CalculateInventorySource
     extends CalculateInventorySource_Base
 {

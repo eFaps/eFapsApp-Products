@@ -20,7 +20,7 @@
 
 package org.efaps.esjp.products;
 
-import org.efaps.admin.program.esjp.EFapsRevision;
+import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 
 /**
@@ -33,7 +33,7 @@ import org.efaps.admin.program.esjp.EFapsUUID;
  *          jan.moxter $
  */
 @EFapsUUID("5effb2ed-a272-4142-894e-e3ecc4074340")
-@EFapsRevision("$Rev$")
+@EFapsApplication("eFapsApp-Products")
 public class Batch
     extends Batch_Base
 {

@@ -27,13 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
-import net.sf.dynamicreports.report.builder.DynamicReports;
-import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
-import net.sf.dynamicreports.report.constant.HorizontalAlignment;
-import net.sf.dynamicreports.report.datasource.DRDataSource;
-import net.sf.jasperreports.engine.JRDataSource;
-
 import org.efaps.admin.datamodel.Dimension;
 import org.efaps.admin.datamodel.Dimension.UoM;
 import org.efaps.admin.dbproperty.DBProperties;
@@ -41,7 +34,7 @@ import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
 import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
-import org.efaps.admin.program.esjp.EFapsRevision;
+import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Instance;
 import org.efaps.db.MultiPrintQuery;
@@ -52,14 +45,21 @@ import org.efaps.esjp.common.jasperreport.AbstractDynamicReport;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
 
+import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
+import net.sf.dynamicreports.report.builder.DynamicReports;
+import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
+import net.sf.dynamicreports.report.constant.HorizontalAlignment;
+import net.sf.dynamicreports.report.datasource.DRDataSource;
+import net.sf.jasperreports.engine.JRDataSource;
+
 /**
  * TODO comment!
  *
  * @author The eFaps Team
- * @version $Id$
+ * 
  */
 @EFapsUUID("a6c66a7c-8f5c-45cc-a4d2-22160cbc6848")
-@EFapsRevision("$Rev$")
+@EFapsApplication("eFapsApp-Products")
 public abstract class ExportKardexReport_Base
 {
 
@@ -95,7 +95,7 @@ public abstract class ExportKardexReport_Base
                 dataSource = new DRDataSource("date", "inbound", "outbound", "inventory");
             }
 
-            final List<Map<String, Object>> lst = new ArrayList<Map<String, Object>>();
+            final List<Map<String, Object>> lst = new ArrayList<>();
             if (product.isValid()) {
                 final QueryBuilder queryBldr = new QueryBuilder(CIProducts.TransactionInOutAbstract);
                 queryBldr.addWhereAttrEqValue(CIProducts.TransactionInOutAbstract.Product, product.getId());
@@ -113,7 +113,7 @@ public abstract class ExportKardexReport_Base
                 multi.execute();
                 addingRow2Map(lst, product, storage, dateFrom);
                 while (multi.next()) {
-                    final Map<String, Object> map = new HashMap<String, Object>();
+                    final Map<String, Object> map = new HashMap<>();
                     final DateTime date = multi.<DateTime>getAttribute(CIProducts.TransactionInOutAbstract.Date);
                     BigDecimal quantity = multi.<BigDecimal>getAttribute(CIProducts.TransactionInOutAbstract.Quantity);
                     map.put("date", date.toDate());
@@ -123,8 +123,8 @@ public abstract class ExportKardexReport_Base
                         map.put("outbound", quantity.negate());
                         quantity = quantity.negate();
                     }
-                    inventoryValue = inventoryValue.add(quantity);
-                    map.put("inventory", inventoryValue);
+                    this.inventoryValue = this.inventoryValue.add(quantity);
+                    map.put("inventory", this.inventoryValue);
 
                     if (showPrice) {
                         final Long uoMId = multi.<Long>getAttribute(CIProducts.TransactionInOutAbstract.UoM);
@@ -218,12 +218,12 @@ public abstract class ExportKardexReport_Base
                                      final DateTime _date)
             throws EFapsException
         {
-            final Map<String, Object> addRows = new HashMap<String, Object>();
+            final Map<String, Object> addRows = new HashMap<>();
             final BigDecimal inventory = compareInventory4Transaction(getQuantity2Inventory(_product, _storage), _product, _date);
             addRows.put("inventory", inventory);
             _lst.add(addRows);
 
-            inventoryValue = inventory;
+            this.inventoryValue = inventory;
         }
     }
 

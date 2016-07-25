@@ -24,17 +24,13 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.util.Map;
 
-import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
-import net.sf.dynamicreports.report.builder.DynamicReports;
-import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
-import net.sf.dynamicreports.report.datasource.DRDataSource;
-import net.sf.jasperreports.engine.JRDataSource;
-
 import org.efaps.admin.dbproperty.DBProperties;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
 import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
+import org.efaps.admin.program.esjp.EFapsApplication;
+import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Instance;
 import org.efaps.db.PrintQuery;
 import org.efaps.esjp.ci.CIProducts;
@@ -42,9 +38,27 @@ import org.efaps.esjp.common.jasperreport.AbstractDynamicReport;
 import org.efaps.esjp.products.BOMCalculator;
 import org.efaps.util.EFapsException;
 
+import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
+import net.sf.dynamicreports.report.builder.DynamicReports;
+import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
+import net.sf.dynamicreports.report.datasource.DRDataSource;
+import net.sf.jasperreports.engine.JRDataSource;
+
+/**
+ * The Class TerminateProductReport_Base.
+ */
+@EFapsUUID("5e19ad42-5fc1-43ff-9cc5-5b1fe5f5105f")
+@EFapsApplication("eFapsApp-Products")
 public abstract class TerminateProductReport_Base
 {
 
+    /**
+     * Gets the report.
+     *
+     * @param _parameter the parameter
+     * @return the report
+     * @throws EFapsException the e faps exception
+     */
     public Return getReport(final Parameter _parameter)
         throws EFapsException
     {
@@ -56,6 +70,13 @@ public abstract class TerminateProductReport_Base
         return ret;
     }
 
+    /**
+     * Export report.
+     *
+     * @param _parameter the parameter
+     * @return the return
+     * @throws EFapsException the e faps exception
+     */
     public Return exportReport(final Parameter _parameter)
         throws EFapsException
     {
@@ -76,10 +97,16 @@ public abstract class TerminateProductReport_Base
         return ret;
     }
 
+    /**
+     * The Class ProductReport.
+     */
     public static class ProductReport
         extends AbstractDynamicReport
     {
 
+        /* (non-Javadoc)
+         * @see org.efaps.esjp.common.jasperreport.AbstractDynamicReport_Base#createDataSource(org.efaps.admin.event.Parameter)
+         */
         @Override
         protected JRDataSource createDataSource(final Parameter _parameter)
             throws EFapsException
@@ -101,6 +128,9 @@ public abstract class TerminateProductReport_Base
             return ret;
         }
 
+        /* (non-Javadoc)
+         * @see org.efaps.esjp.common.jasperreport.AbstractDynamicReport_Base#addColumnDefintion(org.efaps.admin.event.Parameter, net.sf.dynamicreports.jasper.builder.JasperReportBuilder)
+         */
         @Override
         protected void addColumnDefintion(final Parameter _parameter,
                                           final JasperReportBuilder _builder)

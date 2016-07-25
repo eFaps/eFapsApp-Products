@@ -20,7 +20,7 @@
 
 package org.efaps.esjp.products;
 
-import org.efaps.admin.program.esjp.EFapsRevision;
+import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 
 
@@ -30,10 +30,10 @@ import org.efaps.admin.program.esjp.EFapsUUID;
  * class.
  *
  * @author The eFaps Team
- * @version $Id$
+ * 
  */
 @EFapsUUID("da10d27b-8df1-4804-bd19-bccc967a3204")
-@EFapsRevision("$Rev$")
+@EFapsApplication("eFapsApp-Products")
 public class TreeViewStructurBrowser
     extends TreeViewStructurBrowser_Base
 {

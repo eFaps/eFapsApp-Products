@@ -21,7 +21,7 @@
 
 package org.efaps.esjp.products;
 
-import org.efaps.admin.program.esjp.EFapsRevision;
+import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Instance;
 
@@ -32,10 +32,10 @@ import org.efaps.db.Instance;
  * class.
  *
  * @author The eFaps Team
- * @version $Id$
+ * 
  */
 @EFapsUUID("ba3f1861-8f83-4bb9-b470-473e21d3f95e")
-@EFapsRevision("$Rev$")
+@EFapsApplication("eFapsApp-Products")
 public class PartListInst
     extends PartListInst_Base
 {

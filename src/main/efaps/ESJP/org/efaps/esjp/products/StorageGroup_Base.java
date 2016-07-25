@@ -31,7 +31,7 @@ import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
 import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
-import org.efaps.admin.program.esjp.EFapsRevision;
+import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Instance;
 import org.efaps.db.MultiPrintQuery;
@@ -45,10 +45,10 @@ import org.efaps.util.EFapsException;
  * TODO comment!
  *
  * @author The eFaps Team
- * @version $Id$
+ * 
  */
 @EFapsUUID("005cbb83-b622-4d75-ba45-fb7bd8d93de3")
-@EFapsRevision("$Rev$")
+@EFapsApplication("eFapsApp-Products")
 public abstract class StorageGroup_Base
     extends CommonDocument
 {
@@ -65,8 +65,8 @@ public abstract class StorageGroup_Base
     {
         final String input = (String) _parameter.get(ParameterValues.OTHERS);
 
-        final List<Map<String, String>> list = new ArrayList<Map<String, String>>();
-        final Map<String, Map<String, String>> tmpMap = new TreeMap<String, Map<String, String>>();
+        final List<Map<String, String>> list = new ArrayList<>();
+        final Map<String, Map<String, String>> tmpMap = new TreeMap<>();
         if (input.length() > 0) {
             final QueryBuilder queryBldr = getQueryBldrFromProperties(_parameter);
             final boolean nameSearch = Character.isDigit(input.charAt(0));
@@ -82,7 +82,7 @@ public abstract class StorageGroup_Base
             while (multi.next()) {
                 final String name = multi.<String>getAttribute(CIProducts.StorageGroupAbstract.Name);
                 final String description = multi.<String>getAttribute(CIProducts.StorageGroupAbstract.Description);
-                final Map<String, String> map = new HashMap<String, String>();
+                final Map<String, String> map = new HashMap<>();
                 map.put(EFapsKey.AUTOCOMPLETE_KEY.getKey(), multi.getCurrentInstance().getOid());
                 map.put(EFapsKey.AUTOCOMPLETE_VALUE.getKey(), name);
                 map.put(EFapsKey.AUTOCOMPLETE_CHOICE.getKey(), name + " - " + description);

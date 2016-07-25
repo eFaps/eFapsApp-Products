@@ -29,7 +29,7 @@ import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
 import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
-import org.efaps.admin.program.esjp.EFapsRevision;
+import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.AttributeQuery;
 import org.efaps.db.Instance;
@@ -44,10 +44,10 @@ import org.slf4j.LoggerFactory;
  * TODO description!
  *
  * @author The eFasp Team
- * @version $Id$
+ * 
  */
 @EFapsUUID("c7f05800-d551-487c-9ed6-c34f31e4f7c8")
-@EFapsRevision("$Rev$")
+@EFapsApplication("eFapsApp-Products")
 public abstract class TreeViewStructurBrowser_Base
     extends StandartStructurBrowser
 {
@@ -89,7 +89,7 @@ public abstract class TreeViewStructurBrowser_Base
         if (type.isKindOf(CIProducts.TreeViewProduct.getType())
                         && productTypesStr != null && !productTypesStr.isEmpty()) {
             final String[] productTypes = productTypesStr.split(";");
-            final List<Long> typeIds = new ArrayList<Long>();
+            final List<Long> typeIds = new ArrayList<>();
             for (final String prodTypeStr : productTypes) {
                 typeIds.add(Type.get(prodTypeStr).getId());
             }

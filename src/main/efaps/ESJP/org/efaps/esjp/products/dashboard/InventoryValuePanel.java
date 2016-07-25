@@ -18,11 +18,16 @@
 
 package org.efaps.esjp.products.dashboard;
 
+import org.efaps.admin.program.esjp.EFapsApplication;
+import org.efaps.admin.program.esjp.EFapsUUID;
+
 /**
  * TODO comment!
  *
  * @author The eFaps Team
  */
+@EFapsUUID("423d07bd-1d05-428a-8491-f9d30b0f5c86")
+@EFapsApplication("eFapsApp-Products")
 public class InventoryValuePanel
     extends InventoryValuePanel_Base
 {

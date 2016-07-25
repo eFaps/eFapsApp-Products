@@ -21,7 +21,14 @@
 
 package org.efaps.esjp.products.reports;
 
+import org.efaps.admin.program.esjp.EFapsApplication;
+import org.efaps.admin.program.esjp.EFapsUUID;
 
+/**
+ * The Class TerminateProductReport.
+ */
+@EFapsUUID("a4252556-84d9-47f1-be60-78e622493129")
+@EFapsApplication("eFapsApp-Products")
 public class TerminateProductReport
     extends TerminateProductReport_Base
 {

@@ -21,7 +21,7 @@
 
 package org.efaps.esjp.products;
 
-import org.efaps.admin.program.esjp.EFapsRevision;
+import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 
 /**
@@ -30,10 +30,10 @@ import org.efaps.admin.program.esjp.EFapsUUID;
  * class.
  *
  * @author The eFaps Team
- * @version $Id$
+ * 
  */
 @EFapsUUID("49446d31-8cf5-45ea-9443-88ac40b1736b")
-@EFapsRevision("$Rev$")
+@EFapsApplication("eFapsApp-Products")
 public class BOM
     extends BOM_Base
 {

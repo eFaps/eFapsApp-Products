@@ -30,13 +30,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JasperReport;
-
 import org.efaps.admin.datamodel.Dimension;
 import org.efaps.admin.datamodel.Dimension.UoM;
 import org.efaps.admin.event.Parameter;
-import org.efaps.admin.program.esjp.EFapsRevision;
+import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Instance;
 import org.efaps.db.MultiPrintQuery;
@@ -47,15 +44,18 @@ import org.efaps.esjp.common.jasperreport.EFapsMapDataSource;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
 
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JasperReport;
+
 
 /**
  * TODO comment!
  *
  * @author The eFaps Team
- * @version $Id$
+ * 
  */
 @EFapsUUID("3ec02cd1-7e56-4a6c-b45e-8b09dfb2d4a9")
-@EFapsRevision("$Rev$")
+@EFapsApplication("eFapsApp-Products")
 public abstract class CalculateInventorySource_Base
     extends EFapsMapDataSource
 {
@@ -77,7 +77,7 @@ public abstract class CalculateInventorySource_Base
         _jrParameters.put("Date", date.toDate());
         final Instance storageInst = Instance.get(storageOid);
 
-        final Map<String, BigDecimal> actual = new HashMap<String, BigDecimal>();
+        final Map<String, BigDecimal> actual = new HashMap<>();
 
         final QueryBuilder queryBldr = new QueryBuilder(CIProducts.Inventory);
         queryBldr.addWhereAttrEqValue(CIProducts.Inventory.Storage, storageInst.getId());
@@ -119,7 +119,7 @@ public abstract class CalculateInventorySource_Base
             }
             actual.put(oid, quantity);
         }
-        final List<Instance> instances = new ArrayList<Instance>();
+        final List<Instance> instances = new ArrayList<>();
         for (final Entry<String, BigDecimal> entry : actual.entrySet()) {
             if (entry.getValue().compareTo(BigDecimal.ZERO) != 0) {
                 instances.add(Instance.get(entry.getKey()));
@@ -131,7 +131,7 @@ public abstract class CalculateInventorySource_Base
                         CIProducts.ProductAbstract.Dimension);
         multiRes.execute();
         while (multiRes.next()) {
-            final Map<String, Object> value = new HashMap<String, Object>();
+            final Map<String, Object> value = new HashMap<>();
             getValues().add(value);
             value.put("Name", multiRes.getAttribute(CIProducts.ProductAbstract.Name));
             value.put("Description", multiRes.getAttribute(CIProducts.ProductAbstract.Description));

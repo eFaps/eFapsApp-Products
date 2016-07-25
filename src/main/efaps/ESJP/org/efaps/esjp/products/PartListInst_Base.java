@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.efaps.admin.program.esjp.EFapsRevision;
+import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.AttributeQuery;
 import org.efaps.db.Instance;
@@ -41,10 +41,10 @@ import org.efaps.util.EFapsException;
  * TODO comment!
  *
  * @author The eFaps Team
- * @version $Id$
+ * 
  */
 @EFapsUUID("56c7e8e9-07e2-4ea4-97ef-16e263a68d65")
-@EFapsRevision("$Rev$")
+@EFapsApplication("eFapsApp-Products")
 public class PartListInst_Base
 {
     /**
@@ -79,8 +79,8 @@ public class PartListInst_Base
     public void evalStockQuantity()
         throws EFapsException
     {
-        final Map<String, BigDecimal> must = new HashMap<String, BigDecimal>();
-        final Map<String, BigDecimal> stock = new HashMap<String, BigDecimal>();
+        final Map<String, BigDecimal> must = new HashMap<>();
+        final Map<String, BigDecimal> stock = new HashMap<>();
         final QueryBuilder queryBldr = new QueryBuilder(CIProducts.SalesBOM);
         queryBldr.addWhereAttrEqValue(CIProducts.SalesBOM.From, this.instance.getId());
         final MultiPrintQuery multi = queryBldr.getPrint();

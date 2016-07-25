@@ -21,7 +21,7 @@
 
 package org.efaps.esjp.products;
 
-import org.efaps.admin.program.esjp.EFapsRevision;
+import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 
 
@@ -31,10 +31,10 @@ import org.efaps.admin.program.esjp.EFapsUUID;
  * class.
  *
  * @author The eFaps Team
- * @version $Id$
+ * 
  */
 @EFapsUUID("c709a642-0d92-4ba1-b43c-c87a58413046")
-@EFapsRevision("$Rev$")
+@EFapsApplication("eFapsApp-Products")
 public class StorageGroup
     extends StorageGroup_Base
 {

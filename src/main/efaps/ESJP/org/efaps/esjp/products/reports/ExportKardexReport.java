@@ -21,7 +21,7 @@
 
 package org.efaps.esjp.products.reports;
 
-import org.efaps.admin.program.esjp.EFapsRevision;
+import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 
 
@@ -31,10 +31,10 @@ import org.efaps.admin.program.esjp.EFapsUUID;
  * class.
  *
  * @author The eFaps Team
- * @version $Id$
+ * 
  */
 @EFapsUUID("2c427b2f-bbb9-4e83-95d1-c5501825a97d")
-@EFapsRevision("$Rev$")
+@EFapsApplication("eFapsApp-Products")
 public class ExportKardexReport
     extends ExportKardexReport_Base
 {
