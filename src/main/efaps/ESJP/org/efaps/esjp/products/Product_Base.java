@@ -177,9 +177,9 @@ public abstract class Product_Base
     {
         final Return ret = new Return();
 
-        final Collection<Map<String, String>> values = new ArrayList<Map<String, String>>();
+        final Collection<Map<String, String>> values = new ArrayList<>();
         ret.put(ReturnValues.VALUES, values);
-        final Map<String, String> map = new HashMap<String, String>();
+        final Map<String, String> map = new HashMap<>();
         values.add(map);
         final Long dimId = Long.valueOf(_parameter
                         .getParameterValue(CIFormProducts.Products_ProductForm.dimension.name));
@@ -334,7 +334,7 @@ public abstract class Product_Base
                                 final Instance _prodInstance)
         throws EFapsException
     {
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("Name", getName4Batch(_parameter));
         final Instance batchInst = cloneProduct(_parameter, _prodInstance,
                         CIProducts.ProductBatch.getType(), map, false);
@@ -377,7 +377,7 @@ public abstract class Product_Base
 
         if (prodOid != null && prodOid.length() > 0) {
             final Instance instance = Instance.get(prodOid);
-            final Map<String, Object> map = new HashMap<String, Object>();
+            final Map<String, Object> map = new HashMap<>();
             map.put(CIProducts.ProductIndividual.Individual.name, ProductIndividual.NONE.getInt());
             map.put(CIProducts.ProductIndividual.Name.name, name);
             final Instance uniqueInst = cloneProduct(_parameter, instance,
@@ -413,8 +413,8 @@ public abstract class Product_Base
         throws EFapsException
     {
         final String input = (String) _parameter.get(ParameterValues.OTHERS);
-        final List<Map<String, String>> list = new ArrayList<Map<String, String>>();
-        final Map<String, Map<String, String>> orderMap = new TreeMap<String, Map<String, String>>();
+        final List<Map<String, String>> list = new ArrayList<>();
+        final Map<String, Map<String, String>> orderMap = new TreeMap<>();
         if (!input.isEmpty()) {
             boolean cache = true;
             final boolean nameSearch = Character.isDigit(input.charAt(0));
@@ -437,7 +437,7 @@ public abstract class Product_Base
 
             final Map<Integer, String> classes = analyseProperty(_parameter, "Classification");
             if (!classes.isEmpty()) {
-                final List<Classification> classTypes = new ArrayList<Classification>();
+                final List<Classification> classTypes = new ArrayList<>();
                 for (final String clazz : classes.values()) {
                     classTypes.add((Classification) Type.get(clazz));
                 }
@@ -515,7 +515,7 @@ public abstract class Product_Base
                 final String desc = (String) multi.getAttribute(CIProducts.ProductAbstract.Description);
                 final String oid = (String) multi.getAttribute(CIProducts.ProductAbstract.OID);
                 final String choice = nameSearch ? name + " - " + desc : desc + " - " + name;
-                final Map<String, String> map = new HashMap<String, String>();
+                final Map<String, String> map = new HashMap<>();
                 map.put(EFapsKey.AUTOCOMPLETE_KEY.getKey(), oid);
                 map.put(EFapsKey.AUTOCOMPLETE_VALUE.getKey(), name);
                 map.put(EFapsKey.AUTOCOMPLETE_CHOICE.getKey(), choice);
@@ -551,7 +551,7 @@ public abstract class Product_Base
         throws EFapsException
     {
         final Return retVal = new Return();
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         retVal.put(ReturnValues.VALUES, map);
 
         final Instance prodInst = Instance.get(_parameter.getParameterValue("selectedRow"));
@@ -634,6 +634,36 @@ public abstract class Product_Base
                         }
                     }
                 }
+            }
+        };
+        return multi.execute(_parameter);
+    }
+
+    /**
+     * Product multi print.
+     *
+     * @param _parameter the _parameter
+     * @return the return
+     * @throws EFapsException on error
+     */
+    public Return individualInventoryMultiPrint(final Parameter _parameter)
+        throws EFapsException
+    {
+        final MultiPrint multi = new MultiPrint()
+        {
+
+            @Override
+            protected void add2QueryBldr(final Parameter _parameter,
+                                         final QueryBuilder _queryBldr)
+                throws EFapsException
+            {
+                super.add2QueryBldr(_parameter, _queryBldr);
+                final QueryBuilder queryBldr = new QueryBuilder(CIProducts.StoreableProductAbstract2IndividualAbstract);
+                queryBldr.addWhereAttrEqValue(CIProducts.StoreableProductAbstract2IndividualAbstract.FromAbstract,
+                                _parameter.getInstance());
+
+                _queryBldr.addWhereAttrInQuery(CIProducts.InventoryAbstract.Product, queryBldr
+                                .getAttributeQuery(CIProducts.StoreableProductAbstract2IndividualAbstract.ToAbstract));
             }
         };
         return multi.execute(_parameter);
@@ -753,8 +783,8 @@ public abstract class Product_Base
         throws EFapsException
     {
         final Return retVal = new Return();
-        final List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final List<Map<String, Object>> list = new ArrayList<>();
+        final Map<String, Object> map = new HashMap<>();
 
         final int selected = getSelectedRow(_parameter);
         final String prodOid = _parameter.getParameterValues("product")[selected];
@@ -883,7 +913,7 @@ public abstract class Product_Base
         if (InstanceUtils.isNotValid(storInst)) {
             storInst = _parameter.getCallInstance();
         }
-        final List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+        final List<Map<String, String>> list = new ArrayList<>();
         final String input = (String) _parameter.get(ParameterValues.OTHERS);
         if (input.length() > 0) {
             final boolean nameSearch = Character.isDigit(input.charAt(0));
@@ -939,7 +969,7 @@ public abstract class Product_Base
                 final String name = multi.<String>getAttribute(CIProducts.ProductAbstract.Name);
                 final String desc = multi.<String>getAttribute(CIProducts.ProductAbstract.Description);
                 final String choice = nameSearch ? name + " - " + desc : desc + " - " + name;
-                final Map<String, String> map = new HashMap<String, String>();
+                final Map<String, String> map = new HashMap<>();
                 map.put(EFapsKey.AUTOCOMPLETE_KEY.getKey(), multi.getCurrentInstance().getOid());
                 map.put(EFapsKey.AUTOCOMPLETE_VALUE.getKey(), name);
                 map.put(EFapsKey.AUTOCOMPLETE_CHOICE.getKey(), choice);
@@ -978,7 +1008,7 @@ public abstract class Product_Base
         }
         print.execute();
 
-        final Set<String> addedAttributes = new HashSet<String>();
+        final Set<String> addedAttributes = new HashSet<>();
 
         final Insert insert = new Insert(_cloneType);
         for (final Attribute attr : _instance.getType().getAttributes().values()) {
@@ -992,14 +1022,14 @@ public abstract class Product_Base
         insert.execute();
         final Instance ret = insert.getInstance();
         if (_addClassifications) {
-            final Set<Classification> classTypes = new HashSet<Classification>();
+            final Set<Classification> classTypes = new HashSet<>();
             Type curr = _instance.getType();
             while (curr.getParentType() != null) {
                 classTypes.addAll(curr.getClassifiedByTypes());
                 curr = curr.getParentType();
             }
             classTypes.addAll(curr.getClassifiedByTypes());
-            final Set<String> oids = new HashSet<String>();
+            final Set<String> oids = new HashSet<>();
             for (final Classification classType : classTypes) {
                 final QueryBuilder relQueryBldr = new QueryBuilder(classType.getClassifyRelationType());
                 relQueryBldr.addWhereAttrEqValue(classType.getRelLinkAttributeName(), _instance.getId());
@@ -1122,7 +1152,7 @@ public abstract class Product_Base
     {
         final Return retVal = new Return();
         final IUIValue fieldValue = (IUIValue) _parameter.get(ParameterValues.UIOBJECT);
-        final TreeMap<String, Long> map = new TreeMap<String, Long>();
+        final TreeMap<String, Long> map = new TreeMap<>();
         long actual = 0;
 
         // Sales_Configuration
@@ -1169,7 +1199,7 @@ public abstract class Product_Base
         throws EFapsException
     {
         final Return ret = new Return();
-        final List<IWarning> warnings = new ArrayList<IWarning>();
+        final List<IWarning> warnings = new ArrayList<>();
         final String name =  getNameFromUI(_parameter, _parameter.getInstance());
         final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductAbstract);
         queryBldr.addWhereAttrEqValue(CIProducts.ProductAbstract.Name, name);

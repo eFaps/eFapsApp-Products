@@ -495,5 +495,42 @@
             <property name="ModeSearch">NONE</property>
             <property name="Label">Products_ProductAbstract/Modified.Label</property>
         </field>
+        <field name="inventoryHeading" character="Heading">
+            <property name="Level">2</property>
+            <property name="Label">Products_ProductStandartForm.inventoryHeading.Heading</property>
+            <property name="ModeEdit">NONE</property>
+        </field>
+        <field name="inventoryTable" character="Target">
+            <property name="ModeEdit">NONE</property>
+            <table>Products_InventoryTable</table>
+            <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
+                <property name="Type">Products_Inventory</property>
+                <property name="LinkFrom">Product</property>
+            </evaluate>
+        </field>
+        <field character="Heading" name="inventoryIndividualHeading">
+            <property name="Level">2</property>
+            <property name="Label">Products_ProductStandartForm.inventoryIndividualHeading.Heading</property>
+            <property name="ModeEdit">NONE</property>
+            <trigger program="org.efaps.esjp.products.Product" method="individualAccessCheck"
+                name="Products_ProductStandartForm.inventoryIndividualHeading.UI_ACCESSCHECK"
+                event="UI_ACCESSCHECK">
+                <property name="Individual01">BATCH</property>
+                <property name="Individual02">INDIVIDUAL</property>
+            </trigger>
+        </field>
+        <field name="inventoryIndividualTable" character="Target">
+            <property name="ModeEdit">NONE</property>
+            <trigger program="org.efaps.esjp.products.Product" method="individualAccessCheck"
+                name="Products_ProductStandartForm.inventoryIndividualTable.UI_ACCESSCHECK"
+                event="UI_ACCESSCHECK">
+                <property name="Individual01">BATCH</property>
+                <property name="Individual02">INDIVIDUAL</property>
+            </trigger>
+            <table>Products_InventoryIndividualTable</table>
+            <evaluate program="org.efaps.esjp.products.Product" method="individualInventoryMultiPrint">
+                <property name="Type">Products_InventoryIndividual</property>
+            </evaluate>
+        </field>
     </definition>
 </ui-form>
