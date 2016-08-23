@@ -208,7 +208,7 @@ public abstract class Transaction_Base
             print.executeWithoutAccessCheck();
             final Instance stockProdIns = print.getSelect(selProdInst);
             final Parameter parameter = ParameterUtil.clone(_parameter);
-            ParameterUtil.setParmeterValue(parameter, getFieldName4Attribute(_parameter,
+            ParameterUtil.setParameterValues(parameter, getFieldName4Attribute(_parameter,
                             CIFormProducts.Products_TransactionInOutForm.product.name), stockProdIns.getOid());
             final CreatedDoc inoutDoc;
             if (docType.isCIType(CIProducts.TransactionIndividualInbound)) {

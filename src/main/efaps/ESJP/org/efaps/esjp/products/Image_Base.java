@@ -245,10 +245,10 @@ public abstract class Image_Base
         final String fileName = checkout.getFileName();
 
 
-        ParameterUtil.setParmeterValue(_parameter, "description4Create",
+        ParameterUtil.setParameterValues(_parameter, "description4Create",
                         print.<String>getSelect(selImgDescr));
 
-        ParameterUtil.setParmeterValue(_parameter, "caption",
+        ParameterUtil.setParameterValues(_parameter, "caption",
                         print.<String>getAttribute(CIProducts.Product2ImageOriginal.Caption));
 
         switch (imageType) {
