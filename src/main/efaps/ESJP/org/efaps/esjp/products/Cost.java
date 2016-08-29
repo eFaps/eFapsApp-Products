@@ -79,6 +79,7 @@ public class Cost
      * Gets the cost4 currency.
      *
      * @param _parameter Parameter as passed by the eFaps API
+     * @param _alterCurrencyInstance the alter currency instance
      * @param _productInstance the product instance
      * @param _currencyInstance the currency instance
      * @return the cost4 currency
@@ -99,6 +100,7 @@ public class Cost
      *
      * @param _parameter Parameter as passed by the eFaps API
      * @param _date the date
+     * @param _alterCurrencyInstance the alter currency instance
      * @param _productInstance the product instance
      * @param _currencyInstance the currency instance
      * @return the cost4 currency

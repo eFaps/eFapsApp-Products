@@ -28,7 +28,10 @@
         </access>
         <target>
             <form>Products_ProductCostForm</form>
-            <execute program="org.efaps.esjp.common.uiform.Create" />
+            <execute program="org.efaps.esjp.common.uiform.Create" >
+                <property name="StatusGroup">Products_ProductCostStatus</property>
+                <property name="Status">Active</property>
+            </execute>
             <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
                 name="Products_ProductTree_Cost_Menu_Action_CreateAlternative.UI_ACCESSCHECK"
                 method="configCheck"

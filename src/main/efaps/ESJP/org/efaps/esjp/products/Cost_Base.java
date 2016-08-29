@@ -25,9 +25,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
-import org.efaps.admin.datamodel.Attribute;
+import org.efaps.admin.datamodel.Status;
 import org.efaps.admin.datamodel.ui.IUIValue;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
@@ -37,6 +36,7 @@ import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
 import org.efaps.db.Context;
+import org.efaps.db.Insert;
 import org.efaps.db.Instance;
 import org.efaps.db.InstanceQuery;
 import org.efaps.db.MultiPrintQuery;
@@ -94,38 +94,109 @@ public abstract class Cost_Base
      * @return Return containing the value
      * @throws EFapsException on error
      */
-    public Return trigger4Insert(final Parameter _parameter)
+    public Return trigger4InsertPost(final Parameter _parameter)
         throws EFapsException
     {
-        final Map<?, ?> values = (Map<?, ?>) _parameter.get(ParameterValues.NEW_VALUES);
         final Instance costInstance = _parameter.getInstance();
-        final Map<String, Object[]> name2Value = new HashMap<String, Object[]>();
-        for (final Entry<?, ?> entry : values.entrySet()) {
-            final Attribute attr = (Attribute) entry.getKey();
-            name2Value.put(attr.getName(), (Object[]) entry.getValue());
-        }
-        final Object from = name2Value.get("ValidFrom")[0];
-        final DateTime date = new DateTime(from);
         final PrintQuery print = new PrintQuery(costInstance);
-        print.addAttribute(CIProducts.ProductCostAbstract.ProductLink,
+        print.addAttribute(CIProducts.ProductCostAbstract.ValidFrom,
+                        CIProducts.ProductCostAbstract.ValidUntil,
+                        CIProducts.ProductCostAbstract.ProductLink,
                         CIProducts.ProductCostAbstract.CurrencyLink);
         print.executeWithoutAccessCheck();
 
+        final DateTime from = print.getAttribute(CIProducts.ProductCostAbstract.ValidFrom);
+        final DateTime to = print.getAttribute(CIProducts.ProductCostAbstract.ValidUntil);
+
         final QueryBuilder queryBldr = new QueryBuilder(costInstance.getType());
-        queryBldr.addWhereAttrGreaterValue(CIProducts.ProductCostAbstract.ValidUntil, date);
+        queryBldr.addWhereAttrEqValue(CIProducts.ProductCostAbstract.StatusAbstract,
+                        Status.find(CIProducts.ProductCostStatus.Active));
+        queryBldr.addWhereAttrNotEqValue(CIProducts.ProductCostAbstract.ID, costInstance);
+        queryBldr.addWhereAttrGreaterValue(CIProducts.ProductCostAbstract.ValidUntil, from.minusSeconds(1));
         queryBldr.addWhereAttrEqValue(CIProducts.ProductCostAbstract.ProductLink,
                         print.<Long>getAttribute(CIProducts.ProductCostAbstract.ProductLink));
         if (costInstance.getType().isCIType(CIProducts.ProductCostAlternative)) {
             queryBldr.addWhereAttrEqValue(CIProducts.ProductCostAbstract.CurrencyLink,
                             print.<Long>getAttribute(CIProducts.ProductCostAbstract.CurrencyLink));
         }
-        final InstanceQuery query = queryBldr.getQuery();
-        query.executeWithoutAccessCheck();
-        while (query.next()) {
-            if (!query.getCurrentValue().equals(costInstance)) {
-                final Update update = new Update(query.getCurrentValue());
-                update.add(CIProducts.ProductCostAbstract.ValidUntil, date.minusDays(1));
+        queryBldr.addOrderByAttributeAsc(CIProducts.ProductCostAbstract.ValidFrom);
+        final MultiPrintQuery multi = queryBldr.getPrint();
+        multi.addAttribute(CIProducts.ProductCostAbstract.ValidUntil, CIProducts.ProductCostAbstract.ValidFrom,
+                        CIProducts.ProductCostAbstract.Price, CIProducts.ProductCostAbstract.ProductLink,
+                        CIProducts.ProductCostAbstract.CurrencyLink);
+        multi.setEnforceSorted(true);
+        multi.executeWithoutAccessCheck();
+        while (multi.next()) {
+            final DateTime currentFrom = multi.getAttribute(CIProducts.ProductCostAbstract.ValidFrom);
+            final DateTime currentTo = multi.getAttribute(CIProducts.ProductCostAbstract.ValidUntil);
+
+            DateTime newFrom = currentFrom;
+            DateTime newTo = currentTo;
+            boolean deactivate = false;
+            boolean create = false;
+
+            if (!(currentFrom.isAfter(from) && currentFrom.isAfter(to))) {
+                if (currentFrom.isBefore(from) && (currentTo.isAfter(from)
+                                || currentTo.toLocalDate().equals(from.toLocalDate()))) {
+                    newTo = from.minusDays(1);
+                    create = true;
+                    // new one is inside
+                    if (currentTo.isAfter(to)) {
+                        final Insert insert = new Insert(multi.getCurrentInstance().getType());
+                        insert.add(CIProducts.ProductCostAbstract.ValidFrom, to.plusDays(1));
+                        insert.add(CIProducts.ProductCostAbstract.ValidUntil, currentTo);
+                        insert.add(CIProducts.ProductCostAbstract.Price,
+                                        multi.<BigDecimal>getAttribute(CIProducts.ProductCostAbstract.Price));
+                        insert.add(CIProducts.ProductCostAbstract.ProductLink,
+                                        multi.<Long>getAttribute(CIProducts.ProductCostAbstract.ProductLink));
+                        insert.add(CIProducts.ProductCostAbstract.CurrencyLink,
+                                        multi.<Long>getAttribute(CIProducts.ProductCostAbstract.CurrencyLink));
+                        insert.add(CIProducts.ProductCostAbstract.StatusAbstract,
+                                        Status.find(CIProducts.ProductCostStatus.Active));
+                        insert.executeWithoutTrigger();
+                    }
+                } else if (currentFrom.isAfter(from) && currentFrom.toLocalDate().equals(to.toLocalDate())) {
+                    newFrom = to.minusDays(1);
+                    create = true;
+                } else if (currentFrom.isAfter(from) && currentFrom.isBefore(to) && currentTo.isAfter(to)) {
+                    newFrom = to.plusDays(1);
+                    create = true;
+                } else if (currentFrom.isAfter(from) && currentFrom.isBefore(to)
+                                && (currentTo.isBefore(to)  || currentTo.toLocalDate().equals(to.toLocalDate()))) {
+                    deactivate = true;
+                } else if (currentFrom.toLocalDate().equals(from.toLocalDate())
+                                && currentFrom.toLocalDate().equals(currentTo.toLocalDate())) {
+                    deactivate = true;
+                } else if (currentFrom.toLocalDate().equals(from.toLocalDate())
+                                && currentTo.isBefore(to)) {
+                    deactivate = true;
+                } else if (currentFrom.isAfter(from) && currentTo.isBefore(to)) {
+                    deactivate = true;
+                } else if (currentFrom.toLocalDate().equals(from.toLocalDate())
+                                && currentTo.toLocalDate().equals(to.toLocalDate())) {
+                    deactivate = true;
+                }
+            }
+
+            if (create || deactivate) {
+                final Update update = new Update(multi.getCurrentInstance());
+                update.add(CIProducts.ProductCostAbstract.StatusAbstract,
+                                Status.find(CIProducts.ProductCostStatus.Inactive));
                 update.executeWithoutTrigger();
+            }
+            if (create) {
+                final Insert insert = new Insert(multi.getCurrentInstance().getType());
+                insert.add(CIProducts.ProductCostAbstract.ValidFrom, newFrom);
+                insert.add(CIProducts.ProductCostAbstract.ValidUntil, newTo);
+                insert.add(CIProducts.ProductCostAbstract.Price,
+                                multi.<BigDecimal>getAttribute(CIProducts.ProductCostAbstract.Price));
+                insert.add(CIProducts.ProductCostAbstract.ProductLink,
+                                multi.<Long>getAttribute(CIProducts.ProductCostAbstract.ProductLink));
+                insert.add(CIProducts.ProductCostAbstract.CurrencyLink,
+                                multi.<Long>getAttribute(CIProducts.ProductCostAbstract.CurrencyLink));
+                insert.add(CIProducts.ProductCostAbstract.StatusAbstract,
+                                Status.find(CIProducts.ProductCostStatus.Active));
+                insert.executeWithoutTrigger();
             }
         }
         return new Return();
@@ -187,8 +258,8 @@ public abstract class Cost_Base
         }
 
         final Map<?, ?> properties = (Map<?, ?>) _parameter.get(ParameterValues.PROPERTIES);
-        final List<Map<String, String>> list = new ArrayList<Map<String, String>>();
-        final Map<String, String> map = new HashMap<String, String>();
+        final List<Map<String, String>> list = new ArrayList<>();
+        final Map<String, String> map = new HashMap<>();
 
         final String targetFieldName = (String) properties.get("fieldName");
         if (targetFieldName != null) {
@@ -380,6 +451,8 @@ public abstract class Cost_Base
             queryBldr.addWhereAttrGreaterValue(CIProducts.ProductCostAbstract.ValidUntil, _date.withTimeAtStartOfDay()
                             .minusMinutes(1));
             queryBldr.addWhereAttrEqValue(CIProducts.ProductCostAbstract.ProductLink, (Object[]) _prodInsts);
+            queryBldr.addWhereAttrEqValue(CIProducts.ProductCostAbstract.StatusAbstract,
+                            Status.find(CIProducts.ProductCostStatus.Active));
             final MultiPrintQuery multi = queryBldr.getPrint();
             final SelectBuilder selCurInst = SelectBuilder.get().linkto(CIProducts.ProductCostAbstract.CurrencyLink)
                             .instance();

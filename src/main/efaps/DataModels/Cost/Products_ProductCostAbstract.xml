@@ -102,6 +102,16 @@
             <sqltable>Products_ProductCostSQLTable</sqltable>
             <sqlcolumn>MODIFIED</sqlcolumn>
         </attribute>
+        <attribute>
+            <name>StatusAbstract</name>
+            <type>Status</type>
+            <typelink>Products_ProductCostStatus</typelink>
+            <sqltable>Products_ProductCostSQLTable</sqltable>
+            <sqlcolumn>STATUS</sqlcolumn>
+            <trigger program="org.efaps.esjp.admin.datamodel.StatusValue"
+                name="Products_ProductCostAbstract.Status.RANGE_VALUE"
+                event="RANGE_VALUE" />
+        </attribute>
         <trigger event="ACCESSCHECK" name="Products_ProductCost.ACCESSCHECK" program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType"/>
         <trigger event="INSERT_POST" method="trigger4Insert" name="Products_ProductCost.INSERT_POST" program="org.efaps.esjp.products.Cost"/>
     </definition>

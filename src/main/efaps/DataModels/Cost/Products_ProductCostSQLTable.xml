@@ -18,7 +18,7 @@
 -->
 
 <datamodel-sqltable  xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+         xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>5ed1b840-3ad6-4390-bdc3-cbe9a95a528b</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
@@ -27,7 +27,8 @@
          <typeid-column>TYPEID</typeid-column>
         <database>
             <table-name>T_PRODPRODCOST</table-name>
-            <column name="TYPEID"       type="INTEGER"  not-null="true" />
+            <column name="TYPEID"       type="INTEGER"        not-null="true" />
+            <column name="STATUS"       type="INTEGER"        not-null="true" />
             <column name="PRODID"       type="INTEGER"        not-null="true"/>
             <column name="VALIDFROM"    type="DATETIME"       not-null="true"/>
             <column name="VALIDUNTIL"   type="DATETIME"       not-null="true"/>

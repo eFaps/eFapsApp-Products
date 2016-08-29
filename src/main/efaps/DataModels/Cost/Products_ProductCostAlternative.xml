@@ -24,9 +24,19 @@
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductCostAlternative</name>
         <parent>Products_ProductCostAbstract</parent>
+         <attribute>
+            <name>Status</name>
+            <type>Status</type>
+            <typelink>Products_ProductCostStatus</typelink>
+            <sqltable>Products_ProductCostSQLTable</sqltable>
+            <sqlcolumn>STATUS</sqlcolumn>
+            <trigger program="org.efaps.esjp.admin.datamodel.StatusValue"
+                name="Products_ProductCostAlternative.Status.RANGE_VALUE"
+                event="RANGE_VALUE" />
+        </attribute>
         <trigger event="ACCESSCHECK" name="Products_ProductCostAlternative.ACCESSCHECK"
             program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType" />
-        <trigger event="INSERT_POST" method="trigger4Insert"
+        <trigger event="INSERT_POST" method="trigger4InsertPost"
             name="Products_ProductCostAlternative.INSERT_POST"
             program="org.efaps.esjp.products.Cost" />
     </definition>

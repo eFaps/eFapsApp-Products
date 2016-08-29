@@ -73,6 +73,11 @@
             <key>Inactive</key>
         </status>
 
+        <status group="Products_ProductCostStatus">
+            <key>Active</key>
+            <key>Inactive</key>
+        </status>
+
         <role>Products_Modifier</role>
     </definition>
 </access-set>
