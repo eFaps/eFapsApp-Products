@@ -159,8 +159,13 @@ public abstract class Cost_Base
                     newFrom = to.minusDays(1);
                     create = true;
                 } else if (currentFrom.isAfter(from) && currentFrom.isBefore(to) && currentTo.isAfter(to)) {
-                    newFrom = to.plusDays(1);
-                    create = true;
+                    // in case that it must be move to far into the future just deactivate it
+                    if (to.minusYears(5).isAfter(new DateTime()) && currentTo.minusYears(5).isAfter(new DateTime())) {
+                        deactivate = true;
+                    } else {
+                        newFrom = to.plusDays(1);
+                        create = true;
+                    }
                 } else if (currentFrom.isAfter(from) && currentFrom.isBefore(to)
                                 && (currentTo.isBefore(to)  || currentTo.toLocalDate().equals(to.toLocalDate()))) {
                     deactivate = true;
