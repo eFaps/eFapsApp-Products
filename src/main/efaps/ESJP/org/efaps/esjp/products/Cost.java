@@ -38,6 +38,8 @@ import org.joda.time.DateTime;
 public class Cost
     extends Cost_Base
 {
+    /** The Constant CACHKEY. */
+    public static final String CACHKEY = Cost_Base.CACHKEY;
 
     /**
      * Gets the cost4 currency.

@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.efaps.admin.datamodel.Status;
 import org.efaps.admin.datamodel.ui.IUIValue;
@@ -62,6 +63,9 @@ import org.joda.time.DateTime;
 public abstract class Cost_Base
     extends AbstractCommon
 {
+
+     /** The Constant CACHKEY. */
+    protected static final String CACHKEY = Cost.class.getName() + ".CacheKey4Cost";
 
     /**
      * Method to get the value for the date field "Valid until". On create mode
@@ -458,7 +462,8 @@ public abstract class Cost_Base
             queryBldr.addWhereAttrEqValue(CIProducts.ProductCostAbstract.ProductLink, (Object[]) _prodInsts);
             queryBldr.addWhereAttrEqValue(CIProducts.ProductCostAbstract.StatusAbstract,
                             Status.find(CIProducts.ProductCostStatus.Active));
-            final MultiPrintQuery multi = queryBldr.getPrint();
+            final MultiPrintQuery multi = queryBldr.getCachedPrint(Cost.CACHKEY)
+                            .setLifespan(30).setLifespanUnit(TimeUnit.MINUTES);
             final SelectBuilder selCurInst = SelectBuilder.get().linkto(CIProducts.ProductCostAbstract.CurrencyLink)
                             .instance();
             final SelectBuilder selProdInst = SelectBuilder.get().linkto(CIProducts.ProductCostAbstract.ProductLink)
