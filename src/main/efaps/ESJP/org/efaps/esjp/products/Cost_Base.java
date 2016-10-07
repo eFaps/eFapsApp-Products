@@ -409,7 +409,7 @@ public abstract class Cost_Base
                                                        final Instance... _prodInsts)
         throws EFapsException
     {
-        return getCostsInternal(_parameter, _date, _alterCurrencyInstance, _prodInsts);
+        return getCostsInternal(_parameter, _date, null, _alterCurrencyInstance, _prodInsts);
     }
 
     /**
@@ -426,21 +426,23 @@ public abstract class Cost_Base
                                             final Instance... _prodInsts)
         throws EFapsException
     {
-        return getCostsInternal(_parameter, _date, null, _prodInsts);
+        return getCostsInternal(_parameter, _date, null, null, _prodInsts);
     }
 
     /**
      * Gets the costs.
      *
      * @param _parameter Parameter as passed by the eFaps API
-     * @param _date the date
+     * @param _costDate the cost date
+     * @param _requestDate the request date
      * @param _alterCurrencyInstance the alter currency instance
      * @param _prodInsts the prod insts
      * @return the costs
      * @throws EFapsException on error
      */
     protected Map<Instance, CostBean> getCostsInternal(final Parameter _parameter,
-                                                       final DateTime _date,
+                                                       final DateTime _costDate,
+                                                       final DateTime _requestDate,
                                                        final Instance _alterCurrencyInstance,
                                                        final Instance... _prodInsts)
         throws EFapsException
@@ -455,13 +457,20 @@ public abstract class Cost_Base
                 queryBldr = new QueryBuilder(CIProducts.ProductCost);
             }
 
-            queryBldr.addWhereAttrLessValue(CIProducts.ProductCostAbstract.ValidFrom, _date.withTimeAtStartOfDay()
+            queryBldr.addWhereAttrLessValue(CIProducts.ProductCostAbstract.ValidFrom, _costDate.withTimeAtStartOfDay()
                             .plusMinutes(1));
-            queryBldr.addWhereAttrGreaterValue(CIProducts.ProductCostAbstract.ValidUntil, _date.withTimeAtStartOfDay()
-                            .minusMinutes(1));
+            queryBldr.addWhereAttrGreaterValue(CIProducts.ProductCostAbstract.ValidUntil, _costDate
+                            .withTimeAtStartOfDay().minusMinutes(1));
             queryBldr.addWhereAttrEqValue(CIProducts.ProductCostAbstract.ProductLink, (Object[]) _prodInsts);
-            queryBldr.addWhereAttrEqValue(CIProducts.ProductCostAbstract.StatusAbstract,
+            if (_requestDate == null) {
+                queryBldr.addWhereAttrEqValue(CIProducts.ProductCostAbstract.StatusAbstract,
                             Status.find(CIProducts.ProductCostStatus.Active));
+            } else {
+                queryBldr.addWhereAttrEqValue(CIProducts.ProductCostAbstract.StatusAbstract,
+                                Status.find(CIProducts.ProductCostStatus.Inactive));
+                queryBldr.addWhereAttrLessValue(CIProducts.ProductCostAbstract.Created, _requestDate
+                                .withTimeAtStartOfDay().plusMinutes(1));
+            }
             final MultiPrintQuery multi = queryBldr.getCachedPrint(Cost.CACHKEY)
                             .setLifespan(30).setLifespanUnit(TimeUnit.MINUTES);
             final SelectBuilder selCurInst = SelectBuilder.get().linkto(CIProducts.ProductCostAbstract.CurrencyLink)
@@ -475,14 +484,25 @@ public abstract class Cost_Base
             while (multi.next()) {
                 final Instance prodInst = multi.getSelect(selProdInst);
                 final CostBean bean = new CostBean()
-                                .setDate(_date)
+                                .setCostInstance(multi.getCurrentInstance())
+                                .setDate(_costDate)
                                 .setProductInstance(prodInst)
                                 .setCurrencyInstance(multi.<Instance>getSelect(selCurInst))
                                 .setCost(multi.<BigDecimal>getAttribute(CIProducts.ProductCost.Price))
                                 .setValidFrom(multi.<DateTime>getAttribute(CIProducts.ProductCost.ValidFrom))
                                 .setValidUntil(multi.<DateTime>getAttribute(CIProducts.ProductCost.ValidUntil))
                                 .setCreated(multi.<DateTime>getAttribute(CIProducts.ProductCost.Created));
-                ret.put(prodInst, bean);
+                // if an historic value is searched evaluate which will stay
+                if (_requestDate != null && ret.containsKey(prodInst)) {
+                    final CostBean current = ret.get(prodInst);
+                    if (current.getCreated().isBefore(bean.getCreated())
+                                    || (!current.getCreated().isAfter(bean.getCreated())
+                                        && current.getCostInstance().getId() < bean.getCostInstance().getId())) {
+                        ret.put(prodInst, bean);
+                    }
+                } else {
+                    ret.put(prodInst, bean);
+                }
             }
         }
         return ret;
@@ -589,10 +609,68 @@ public abstract class Cost_Base
 
 
     /**
+     * Gets the cost4 currency.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _date the date
+     * @param _requestDate the request date
+     * @param _productInstance the product instance
+     * @param _currencyInstance the currency instance
+     * @return the cost4 currency
+     * @throws EFapsException on error
+     */
+    protected static BigDecimal getHistoricCost4Currency(final Parameter _parameter,
+                                                         final DateTime _date,
+                                                         final DateTime _requestDate,
+                                                         final Instance _productInstance,
+                                                         final Instance _currencyInstance)
+        throws EFapsException
+    {
+        BigDecimal ret = BigDecimal.ZERO;
+        final CostBean costBean = new Cost().getCostsInternal(_parameter, _date, _requestDate, null, _productInstance)
+                        .get(_productInstance);
+        if (costBean != null) {
+            ret = costBean.getCost4Currency(_parameter, _currencyInstance);
+        }
+        return ret;
+    }
+
+    /**
+     * Gets the cost4 currency.
+     *
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _date the date
+     * @param _requestDate the request date
+     * @param _alterCurrencyInstance the alter currency instance
+     * @param _productInstance the product instance
+     * @param _currencyInstance the currency instance
+     * @return the cost4 currency
+     * @throws EFapsException on error
+     */
+    protected static BigDecimal getHistoricAlternativeCost4Currency(final Parameter _parameter,
+                                                                    final DateTime _date,
+                                                                    final DateTime _requestDate,
+                                                                    final Instance _alterCurrencyInstance,
+                                                                    final Instance _productInstance,
+                                                                    final Instance _currencyInstance)
+        throws EFapsException
+    {
+        BigDecimal ret = BigDecimal.ZERO;
+        final CostBean costBean = new Cost().getCostsInternal(_parameter, _date, _requestDate, _alterCurrencyInstance,
+                        _productInstance).get(_productInstance);
+        if (costBean != null) {
+            ret = costBean.getCost4Currency(_parameter, _currencyInstance);
+        }
+        return ret;
+    }
+
+    /**
      * The Class CostBean.
      */
     public static class CostBean
     {
+        /** The cost instance. */
+        private Instance costInstance;
 
         /** The date. */
         private DateTime validFrom;
@@ -793,6 +871,28 @@ public abstract class Cost_Base
         public CostBean setCreated(final DateTime _created)
         {
             this.created = _created;
+            return this;
+        }
+
+        /**
+         * Gets the cost instance.
+         *
+         * @return the cost instance
+         */
+        public Instance getCostInstance()
+        {
+            return this.costInstance;
+        }
+
+        /**
+         * Sets the cost instance.
+         *
+         * @param _costInstance the cost instance
+         * @return the cost bean
+         */
+        public CostBean setCostInstance(final Instance _costInstance)
+        {
+            this.costInstance = _costInstance;
             return this;
         }
     }
