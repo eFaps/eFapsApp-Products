@@ -19,7 +19,6 @@
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>5a0caecf-7bee-4711-aad2-408a0cb35579</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductFamilyRootForm</name>
@@ -28,9 +27,10 @@
             <property name="ModeEdit">NONE</property>
             <property name="ModeView">NONE</property>
             <property name="Attribute">ProductLineLink</property>
+            <property name="UIType">DROPDOWN</property>
             <property name="Required">true</property>
             <trigger program="org.efaps.esjp.common.uiform.Field"
-                method="dropDownFieldValue"
+                method="getOptionListFieldValue"
                 name="Products_ProductFamilyForm.productLineLink.UI_FIELD_VALUE"
                 event="UI_FIELD_VALUE">
                 <property name="Type">Products_ProductLineStandart</property>
