@@ -438,6 +438,31 @@ public final class Products
     }
 
     /**
+     * The Enum ProductIndividual.
+     *
+     */
+    public enum CostingState
+        implements IEnum
+    {
+
+        /** The none. */
+        ACTIVE,
+
+        /** The individual. */
+        FIXED,
+
+        /** The batch. */
+        INACTIVE;
+
+        @Override
+        public int getInt()
+        {
+            return ordinal();
+        }
+    }
+
+
+    /**
      * @return the SystemConfigruation for Sales
      * @throws CacheReloadException on error
      */

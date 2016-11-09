@@ -85,6 +85,13 @@
             <sqltable>Products_CostingSQLTable</sqltable>
             <sqlcolumn>UPTODATE</sqlcolumn>
         </attribute>
+         <attribute>
+            <name>State</name>
+            <type>Enum</type>
+            <className>org.efaps.esjp.products.util.Products$CostingState</className>
+            <sqltable>Products_CostingSQLTable</sqltable>
+            <sqlcolumn>STATE</sqlcolumn>
+        </attribute>
         <attribute>
             <name>Creator</name>
             <type>CreatorLink</type>

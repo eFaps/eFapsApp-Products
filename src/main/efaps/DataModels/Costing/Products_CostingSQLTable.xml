@@ -33,6 +33,7 @@
             <column name="COST"         type="DECIMAL"  not-null="true"     length="15"     scale="4" />
             <column name="RESULT"       type="DECIMAL"  not-null="true"     length="15"     scale="4" />
             <column name="UPTODATE"     type="BOOLEAN"  not-null="true" />
+            <column name="STATE"        type="INTEGER"  not-null="true" />
             <column name="CREATOR"      type="INTEGER"  not-null="true" />
             <column name="CREATED"      type="DATETIME" not-null="true" />
             <column name="MODIFIER"     type="INTEGER"  not-null="true" />

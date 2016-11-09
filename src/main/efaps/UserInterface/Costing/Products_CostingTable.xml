@@ -82,6 +82,7 @@
             <property name="Attribute">Result</property>
             <property name="Label">Products_CostingAbstract/Result.Label</property>
             <property name="Align">right</property>
+            <property name="HRef">TREE</property>
         </field>
         <field name="currencyLink">
             <property name="Select">linkto[CurrencyLink].attribute[Symbol]</property>
@@ -102,6 +103,10 @@
             <property name="Phrase">$&lt;linkto[TransactionAbstractLink].attribute[Date].format[YYDDD]&gt;$&lt;linkto[TransactionAbstractLink].attribute[Position].format[00]&gt;</property>
             <property name="Label">Products_TransactionAbstractTable.transNumber.Label</property>
             <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
+        </field>
+        <field name="state">
+            <property name="Attribute">State</property>
+            <property name="Label">Products_CostingAbstract/State.Label</property>
         </field>
     </definition>
 </ui-table>
