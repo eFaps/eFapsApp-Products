@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-  Copyright 2003 - 2013 The eFaps Team
+  Copyright 2003 - 2016 The eFaps Team
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -15,38 +15,32 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  Author:         The eFaps Team
-  Revision:       $Rev$
-  Last Changed:   $Date$
-  Last Changed By:$Author$
-
-
 -->
 
-<datamodel-dimension xmlns="http://www.efaps.org/xsd"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<datamodel-dimension xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>0aa00110-fdf1-4c85-ab72-22cb4e53422a</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
-
-    <definition>
+     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Length</name>
         <description>Length</description>
         <uom>
             <base>true</base>
-            <name>m</name>
+            <symbol>m</symbol>
+            <name>meter</name>
             <numerator>1</numerator>
             <denominator>1</denominator>
         </uom>
         <uom>
-            <name>mm</name>
+            <symbol>mm</symbol>
+            <name>millimeter</name>
             <numerator>1</numerator>
             <denominator>1000</denominator>
         </uom>
         <uom>
-            <name>cm</name>
+            <symbol>cm</symbol>
+            <name>centimeter</name>
             <numerator>1</numerator>
             <denominator>100</denominator>
         </uom>
