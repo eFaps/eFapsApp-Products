@@ -38,12 +38,13 @@ import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Instance;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.jasperreport.AbstractDynamicReport;
+import org.efaps.esjp.common.jasperreport.AbstractDynamicReport_Base;
 import org.efaps.esjp.erp.FilteredReport;
 import org.efaps.esjp.products.Inventory;
 import org.efaps.esjp.products.Inventory_Base.InventoryBean;
 import org.efaps.esjp.products.StorageGroup;
 import org.efaps.esjp.products.TreeView;
-import org.efaps.esjp.products.reports.CostReport_Base.CostTypeFilterValue;
+import org.efaps.esjp.products.reports.filter.CostTypeFilterValue;
 import org.efaps.esjp.products.util.Products;
 import org.efaps.ui.wicket.models.EmbeddedLink;
 import org.efaps.util.EFapsException;
@@ -209,7 +210,7 @@ public abstract class InventoryReport_Base
                 try {
                     ret.moveFirst();
                 } catch (final JRException e) {
-                    LOG.error("Catched error", e);
+                    AbstractDynamicReport_Base.LOG.error("Catched error", e);
                 }
             } else {
                 if (StorageDisplay.COLUMN.equals(getStorageDisplay(_parameter))) {

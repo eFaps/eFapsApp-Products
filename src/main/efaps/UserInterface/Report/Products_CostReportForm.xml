@@ -45,7 +45,7 @@
                 <property name="FilterDefault02">BASECURRENCY</property>
                 <property name="FilterDefault03">ALL</property>
                 <property name="FilterDefault04">org.efaps.esjp.products.reports.CostReport_Base$StockFilter</property>
-                <property name="FilterDefault05">org.efaps.esjp.products.reports.CostReport_Base$CostTypeFilterValue</property>
+                <property name="FilterDefault05">org.efaps.esjp.products.reports.filter.CostTypeFilterValue</property>
                 <!-- Products-Configuration -->
                 <property name="QueryBldrConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="QueryBldrConfigAttribute">org.efaps.products.report.CostReport</property>

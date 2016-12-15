@@ -28,9 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections4.comparators.ComparatorChain;
-import org.apache.commons.lang3.ArrayUtils;
 import org.efaps.admin.datamodel.ui.IUIValue;
-import org.efaps.admin.dbproperty.DBProperties;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
 import org.efaps.admin.event.Return;
@@ -42,14 +40,13 @@ import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.QueryBuilder;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.jasperreport.AbstractDynamicReport;
+import org.efaps.esjp.common.jasperreport.AbstractDynamicReport_Base;
 import org.efaps.esjp.common.jasperreport.datatype.DateTimeDate;
-import org.efaps.esjp.common.uiform.Field;
-import org.efaps.esjp.common.uiform.Field_Base.DropDownPosition;
-import org.efaps.esjp.erp.Currency;
 import org.efaps.esjp.erp.CurrencyInst;
 import org.efaps.esjp.erp.FilteredReport;
 import org.efaps.esjp.products.Cost;
 import org.efaps.esjp.products.Cost_Base.CostBean;
+import org.efaps.esjp.products.reports.filter.CostTypeFilterValue;
 import org.efaps.ui.wicket.models.EmbeddedLink;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
@@ -148,24 +145,8 @@ public abstract class CostReport_Base
         final IUIValue value = (IUIValue) _parameter.get(ParameterValues.UIOBJECT);
         final String key = value.getField().getName();
         final Map<String, Object> map = getFilterMap(_parameter);
-        final String selected = map.containsKey(key) ? ((CostTypeFilterValue) map.get(key)).getObject() : "DEFAULT";
-        final List<DropDownPosition> values = new ArrayList<DropDownPosition>();
-        values.add(new Field.DropDownPosition("DEFAULT", new CostTypeFilterValue().getLabel(_parameter))
-                        .setSelected(selected == null || "DEFAULT".equals(selected)));
-        for (final CurrencyInst currencyInst : CurrencyInst.getAvailable()) {
-            if (!currencyInst.getInstance().equals(Currency.getBaseCurrency())) {
-                final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductCostAlternative);
-                queryBldr.addWhereAttrEqValue(CIProducts.ProductCostAlternative.CurrencyLink,
-                                currencyInst.getInstance());
-                queryBldr.setLimit(1);
-                if (!queryBldr.getQuery().executeWithoutAccessCheck().isEmpty()) {
-                    values.add(new Field.DropDownPosition(currencyInst.getInstance().getOid(), new CostTypeFilterValue()
-                                    .setObject(currencyInst.getInstance().getOid()).getLabel(_parameter))
-                                                    .setSelected(currencyInst.getInstance().getOid().equals(selected)));
-                }
-            }
-        }
-        ret.put(ReturnValues.VALUES, values);
+        ret.put(ReturnValues.VALUES, CostTypeFilterValue.getCostTypePositions(_parameter,
+                        ((CostTypeFilterValue) map.get(key))));
         return ret;
     }
 
@@ -206,13 +187,13 @@ public abstract class CostReport_Base
         protected JRDataSource createDataSource(final Parameter _parameter)
             throws EFapsException
         {
-            JRRewindableDataSource ret;
+            final JRRewindableDataSource ret;
             if (getFilteredReport().isCached(_parameter)) {
                 ret = getFilteredReport().getDataSourceFromCache(_parameter);
                 try {
                     ret.moveFirst();
                 } catch (final JRException e) {
-                    LOG.error("Catched error", e);
+                    AbstractDynamicReport_Base.LOG.error("Catched error", e);
                 }
             } else {
                 final List<DataBean> beans = new ArrayList<>();
@@ -284,7 +265,7 @@ public abstract class CostReport_Base
                                           final JasperReportBuilder _builder)
             throws EFapsException
         {
-            final List<ColumnGridComponentBuilder> grid = new ArrayList<ColumnGridComponentBuilder>();
+            final List<ColumnGridComponentBuilder> grid = new ArrayList<>();
 
             final GenericElementBuilder linkElement = DynamicReports.cmp.genericElement(
                             "http://www.efaps.org", "efapslink")
@@ -367,7 +348,7 @@ public abstract class CostReport_Base
             throws EFapsException
         {
             final EnumFilterValue filter = (EnumFilterValue) getFilteredReport().getFilterMap(_parameter).get("stock");
-            StockFilter ret;
+            final StockFilter ret;
             if (filter != null) {
                 ret = (StockFilter) filter.getObject();
             } else {
@@ -375,7 +356,6 @@ public abstract class CostReport_Base
             }
             return ret;
         }
-
 
         /**
          * Getter method for the instance variable {@link #filteredReport}.
@@ -744,41 +724,6 @@ public abstract class CostReport_Base
         {
             final String oid = (String) _values.get(0);
             return EmbeddedLink.getJasperLink(oid);
-        }
-    }
-
-    /**
-     * The Class CostTypeFilter.
-     */
-    public static class CostTypeFilterValue
-        extends AbstractFilterValue<String>
-    {
-        /** The Constant serialVersionUID. */
-        private static final long serialVersionUID = 1L;
-
-        /**
-         * @param _parameter Parameter as passed by the eFaps API
-         * @return the label for this filter
-         * @throws EFapsException on error
-         */
-        @Override
-        public String getLabel(final Parameter _parameter)
-            throws EFapsException
-        {
-            return getObject() == null || getObject() != null && !Instance.get(getObject()).isValid()
-                            ? DBProperties.getProperty(CostReport.class.getName() + ".CostType.Standart")
-                            : DBProperties.getFormatedDBProperty(
-                                            CostReport.class.getName() + ".CostType.Alternative",
-                                            (Object) CurrencyInst.get(Instance.get(getObject())).getName());
-        }
-
-        @Override
-        public AbstractFilterValue<String> parseObject(final String[] _values)
-        {
-            if (!ArrayUtils.isEmpty(_values)) {
-                setObject(_values[0]);
-            }
-            return super.parseObject(_values);
         }
     }
 }
