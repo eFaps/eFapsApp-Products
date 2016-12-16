@@ -49,6 +49,7 @@ import org.efaps.db.SelectBuilder;
 import org.efaps.esjp.ci.CIERP;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.jasperreport.AbstractDynamicReport;
+import org.efaps.esjp.common.jasperreport.AbstractDynamicReport_Base;
 import org.efaps.esjp.common.jasperreport.datatype.DateTimeDate;
 import org.efaps.esjp.erp.FilteredReport;
 import org.efaps.esjp.products.Inventory;
@@ -222,7 +223,7 @@ public abstract class LastMovementReport_Base
                 try {
                     ret.moveFirst();
                 } catch (final JRException e) {
-                    LOG.error("Catched error", e);
+                    AbstractDynamicReport_Base.LOG.error("Catched error", e);
                 }
             } else {
                 final DateTime date = (DateTime) getFilterMap(_parameter).get("date");
@@ -564,7 +565,7 @@ public abstract class LastMovementReport_Base
                                          final Instance _prodInst)
             throws EFapsException
         {
-            Integer ret;
+            final Integer ret;
             if (Products.REPLASTMOVE.get().containsKey(_prodInst.getType().getName() + ".inThreshold")) {
                 ret = Integer.parseInt(Products.REPLASTMOVE.get()
                                 .getProperty(_prodInst.getType().getName() + ".inThreshold"));
@@ -586,7 +587,7 @@ public abstract class LastMovementReport_Base
                                           final Instance _prodInst)
             throws EFapsException
         {
-            Integer ret;
+            final Integer ret;
             if (Products.REPLASTMOVE.get().containsKey(_prodInst.getType().getName() + ".outThreshold")) {
                 ret = Integer.parseInt(Products.REPLASTMOVE.get()
                                 .getProperty(_prodInst.getType().getName() + ".outThreshold"));
@@ -907,7 +908,7 @@ public abstract class LastMovementReport_Base
                 // last movements where on the same day
                 if (Days.daysBetween(getLastOutDate(), getLastInDate()).getDays() == 0) {
                     // the amounts do cancel each other
-                    if (getLastOutAmount().compareTo(getLastOutAmount()) == 0) {
+                    if (getLastOutAmount().add(getLastInAmount()).compareTo(BigDecimal.ZERO) == 0) {
                         setLastOutDate(null);
                         setLastInDate(null);
                         setLastOutAmount(null);
