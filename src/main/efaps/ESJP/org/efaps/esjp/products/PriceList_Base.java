@@ -34,6 +34,7 @@ import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
+import org.efaps.api.ui.IFilterList;
 import org.efaps.db.AttributeQuery;
 import org.efaps.db.Context;
 import org.efaps.db.Instance;
@@ -98,7 +99,7 @@ public abstract class PriceList_Base
     {
         final Map<?, ?> values = (Map<?, ?>) _parameter.get(ParameterValues.NEW_VALUES);
         final Instance costInstance = _parameter.getInstance();
-        final Map<String, Object[]> name2Value = new HashMap<String, Object[]>();
+        final Map<String, Object[]> name2Value = new HashMap<>();
         String typename = null;
         for (final Entry<?, ?> entry : values.entrySet()) {
             final Attribute attr = (Attribute) entry.getKey();
@@ -120,7 +121,7 @@ public abstract class PriceList_Base
         add2QueryBuilder4TriggerInsert(_parameter, queryBldr);
         final InstanceQuery query = queryBldr.getQuery();
         query.execute();
-        final List<String> updateOIDs = new ArrayList<String>();
+        final List<String> updateOIDs = new ArrayList<>();
         while (query.next()) {
             final String oid = query.getCurrentValue().getOid();
             if (!costInstance.getOid().equals(oid)) {
@@ -176,7 +177,7 @@ public abstract class PriceList_Base
         throws EFapsException
     {
         final Return ret = new Return();
-        final List<Instance> instances = new ArrayList<Instance>();
+        final List<Instance> instances = new ArrayList<>();
 
         final Map<?, ?> properties = (Map<?, ?>) _parameter.get(ParameterValues.PROPERTIES);
         final Map<?, ?> filter = (Map<?, ?>) _parameter.get(ParameterValues.OTHERS);
@@ -185,7 +186,7 @@ public abstract class PriceList_Base
         for (final String typeStr : types.split(";")) {
             final Type type = Type.get(typeStr);
             final QueryBuilder queryBldr = new QueryBuilder(type);
-            analyzeTable(_parameter, filter, queryBldr, type);
+            analyzeTable(_parameter, (IFilterList) filter, queryBldr, type);
             final AttributeQuery attrQuery = queryBldr.getAttributeQuery(CIProducts.ProductPricelistAbstract.ID);
 
             final QueryBuilder posQueryBldr = new QueryBuilder(CIProducts.ProductPricelistPosition);
@@ -212,11 +213,11 @@ public abstract class PriceList_Base
         final IUIValue fieldValue = (IUIValue) _parameter.get(ParameterValues.UIOBJECT);
         final String fieldName = fieldValue.getField().getName();
 
-        Map<Instance, String> listProducts;
+        final Map<Instance, String> listProducts;
         if (Context.getThreadContext().containsRequestAttribute(fieldName)) {
             listProducts = (Map<Instance, String>) Context.getThreadContext().getRequestAttribute(fieldName);
         } else {
-            listProducts = new HashMap<Instance, String>();
+            listProducts = new HashMap<>();
             Context.getThreadContext().setRequestAttribute(fieldName, listProducts);
 
             final List<Instance> products = (List<Instance>) _parameter.get(ParameterValues.REQUEST_INSTANCES);
@@ -278,11 +279,11 @@ public abstract class PriceList_Base
         final IUIValue fieldValue = (IUIValue) _parameter.get(ParameterValues.UIOBJECT);
         final String fieldName = fieldValue.getField().getName();
 
-        Map<Instance, String> listProducts2Price;
+        final Map<Instance, String> listProducts2Price;
         if (Context.getThreadContext().containsRequestAttribute(fieldName)) {
             listProducts2Price = (Map<Instance, String>) Context.getThreadContext().getRequestAttribute(fieldName);
         } else {
-            listProducts2Price = new HashMap<Instance, String>();
+            listProducts2Price = new HashMap<>();
             Context.getThreadContext().setRequestAttribute(fieldName, listProducts2Price);
 
             final Map<?, ?> properties = (Map<?, ?>) _parameter.get(ParameterValues.PROPERTIES);

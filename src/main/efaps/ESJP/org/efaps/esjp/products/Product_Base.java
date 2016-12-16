@@ -61,6 +61,7 @@ import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.admin.ui.AbstractCommand;
 import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
 import org.efaps.admin.ui.Form;
+import org.efaps.api.ui.IMapFilter;
 import org.efaps.api.ui.IOption;
 import org.efaps.db.AttributeQuery;
 import org.efaps.db.CachedPrintQuery;
@@ -688,11 +689,11 @@ public abstract class Product_Base
             final Map<String, TableFilter> sessfilter = (Map<String, TableFilter>) Context
                             .getThreadContext().getSessionAttribute(sessKey);
             if (sessfilter.containsKey("productFamilyLink")) {
-                final TableFilter filter = sessfilter.get("productFamilyLink");
-                final Map<String, Object> map = filter.getMap4esjp();
+                final TableFilter tfilter = sessfilter.get("productFamilyLink");
+                final IMapFilter filter = (IMapFilter) tfilter.getFilter();
                 js.append("var selected = [");
-                if (map != null && map.containsKey("selectedRow")) {
-                    final String[] oids = (String[]) map.get("selectedRow");
+                if (filter != null && filter.containsKey("selectedRow")) {
+                    final String[] oids = (String[]) filter.get("selectedRow");
                     final List<Instance> familyInsts = new ArrayList<>();
                     for (final String oid : oids) {
                         final Instance instance = Instance.get(oid);
