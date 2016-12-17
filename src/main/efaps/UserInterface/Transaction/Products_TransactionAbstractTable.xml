@@ -51,7 +51,7 @@
         <field name="productDocumentType">
             <property name="SelectAlternateOID">linkto[Document].linkfrom[Sales_Document2ProductDocumentType#DocumentLink].linkto[DocumentTypeLink].oid</property>
             <property name="Phrase">$&lt;linkto[Document].linkfrom[Sales_Document2ProductDocumentType#DocumentLink].linkto[DocumentTypeLink].attribute[Name]&gt; - $&lt;linkto[Document].linkfrom[Sales_Document2ProductDocumentType#DocumentLink].linkto[DocumentTypeLink].attribute[Description]&gt;</property>
-            <property name="Label">Sales_ReturnSlip.documentType.Label</property>
+            <property name="Label">Sales_TransactionAbstract.productDocumentType.Label</property>
             <property name="FilterType">PICKLIST</property>
             <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
             <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"

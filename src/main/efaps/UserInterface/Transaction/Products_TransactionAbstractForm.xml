@@ -123,6 +123,12 @@
                 <property name="Phrase">$&lt;attribute[Name]&gt; - $&lt;attribute[Description]&gt;</property>
                 <property name="OrderSelect">attribute[Name]</property>
             </trigger>
+            <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                method="check4Application"
+                name="Products_TransactionAbstractForm.productDocumentType.UI_ACCESSCHECK"
+                event="UI_ACCESSCHECK">
+                <property name="Application">eFapsApp-Sales</property>
+            </trigger>
         </field>
     </definition>
 </ui-form>
