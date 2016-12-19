@@ -61,6 +61,8 @@ import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.admin.ui.AbstractCommand;
 import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
 import org.efaps.admin.ui.Form;
+import org.efaps.api.ui.IFilter;
+import org.efaps.api.ui.IFilterList;
 import org.efaps.api.ui.IMapFilter;
 import org.efaps.api.ui.IOption;
 import org.efaps.db.AttributeQuery;
@@ -607,31 +609,32 @@ public abstract class Product_Base
                     }
                 }
                 if (Products.FAMILY_ACTIVATE.get()) {
-                    @SuppressWarnings("unchecked")
-                    final Map<String, Object> filterMap = (Map<String, Object>) _parameter.get(ParameterValues.OTHERS);
-                    if (filterMap != null && filterMap.containsKey("productFamilyLink")) {
-                        @SuppressWarnings("unchecked")
-                        final Map<String, Object> map =  (Map<String, Object>) filterMap.get("productFamilyLink");
-                        if (map != null && map.containsKey(EFapsKey.SELECTEDROW_NAME.getKey())) {
-                            if (!map.containsKey(EFapsKey.SELECTEALL_NAME.getKey())) {
-                                final String[] oids = (String[]) map.get(EFapsKey.SELECTEDROW_NAME.getKey());
-                                final List<Instance> familyInsts = new ArrayList<>();
-                                for (final String oid : oids) {
-                                    final Instance instance = Instance.get(oid);
-                                    if (instance.isValid()) {
-                                        familyInsts.add(instance);
+                    final IFilterList filterList = (IFilterList) _parameter.get(ParameterValues.OTHERS);
+                    for (final IFilter filter : filterList) {
+                        if (filter instanceof IMapFilter && "productFamilyLink".equals(org.efaps.admin.ui.field.Field
+                                        .get(filter.getFieldId()).getName())) {
+                            final IMapFilter mapFilter = (IMapFilter) filter;
+                            if (mapFilter.containsKey(EFapsKey.SELECTEDROW_NAME.getKey())) {
+                                if (!mapFilter.containsKey(EFapsKey.SELECTEALL_NAME.getKey())) {
+                                    final String[] oids = (String[]) mapFilter.get(EFapsKey.SELECTEDROW_NAME.getKey());
+                                    final List<Instance> familyInsts = new ArrayList<>();
+                                    for (final String oid : oids) {
+                                        final Instance instance = Instance.get(oid);
+                                        if (instance.isValid()) {
+                                            familyInsts.add(instance);
+                                        }
                                     }
+                                    final List<Instance> tmpInsts = new ArrayList<>();
+                                    tmpInsts.addAll(familyInsts);
+                                    for (final Instance inst : familyInsts) {
+                                        tmpInsts.addAll(ProductFamily.getDescendants(_parameter, inst));
+                                    }
+                                    _queryBldr.addWhereAttrEqValue(CIProducts.ProductAbstract.ProductFamilyLink,
+                                                    tmpInsts.toArray());
                                 }
-                                final List<Instance> tmpInsts = new ArrayList<>();
-                                tmpInsts.addAll(familyInsts);
-                                for (final Instance inst : familyInsts) {
-                                    tmpInsts.addAll(ProductFamily.getDescendants(_parameter, inst));
-                                }
-                                _queryBldr.addWhereAttrEqValue(CIProducts.ProductAbstract.ProductFamilyLink,
-                                                tmpInsts.toArray());
+                            } else {
+                                _queryBldr.addWhereAttrEqValue(CIProducts.ProductAbstract.ID, 0);
                             }
-                        } else {
-                            _queryBldr.addWhereAttrEqValue(CIProducts.ProductAbstract.ID, 0);
                         }
                     }
                 }
