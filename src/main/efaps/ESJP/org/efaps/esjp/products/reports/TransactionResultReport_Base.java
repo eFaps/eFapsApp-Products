@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.comparators.ComparatorChain;
 import org.apache.commons.collections4.iterators.ReverseListIterator;
 import org.efaps.admin.datamodel.Status;
@@ -174,7 +175,7 @@ public abstract class TransactionResultReport_Base
         protected JRDataSource createDataSource(final Parameter _parameter)
             throws EFapsException
         {
-            JRRewindableDataSource ret;
+            final JRRewindableDataSource ret;
             if (getFilteredReport().isCached(_parameter)) {
                 ret = getFilteredReport().getDataSourceFromCache(_parameter);
                 try {
@@ -191,7 +192,7 @@ public abstract class TransactionResultReport_Base
                 } else {
                     queryBldr = new QueryBuilder(CIProducts.TransactionInOutAbstract);
                 }
-                add2QueryBuilder(_parameter, queryBldr);
+                add2QueryBuilder(_parameter, queryBldr, true);
                 final MultiPrintQuery multi = queryBldr.getPrint();
                 final SelectBuilder selDoc = SelectBuilder.get().linkto(CIProducts.TransactionAbstract.Document);
                 final SelectBuilder selDocStatus = new SelectBuilder(selDoc).status();
@@ -229,7 +230,7 @@ public abstract class TransactionResultReport_Base
                         add2Bean(_parameter, bean);
                     }
                 }
-                final ComparatorChain<DataBean> chain = new ComparatorChain<DataBean>();
+                final ComparatorChain<DataBean> chain = new ComparatorChain<>();
                 if (StorageDisplay.GROUP.equals(getStorageDisplay(_parameter))) {
                     chain.addComparator(new Comparator<DataBean>()
                     {
@@ -262,8 +263,9 @@ public abstract class TransactionResultReport_Base
                         return _bean0.getPosition().compareTo(_bean1.getPosition());
                     }
                 });
-
                 Collections.sort(beans, chain);
+                // after sorting add one transaction to show the previous total as a start value
+                addInitial(_parameter, beans);
 
                 final ReverseListIterator<DataBean> iter = new ReverseListIterator<>(beans);
 
@@ -310,6 +312,61 @@ public abstract class TransactionResultReport_Base
                 getReport().addParameter("InventoryMap", bean.getInventoryMap());
             }
             return ret;
+        }
+
+        /**
+         * Adds the initial.
+         *
+         * @param _parameter Parameter as passed by the eFaps API
+         * @param _beans the beans
+         * @throws EFapsException on error
+         */
+        protected void addInitial(final Parameter _parameter,
+                                  final List<DataBean> _beans)
+            throws EFapsException
+        {
+            if (CollectionUtils.isNotEmpty(_beans)) {
+                final DataBean topBean = _beans.get(0);
+                final QueryBuilder queryBldr;
+                if (isIndividual(_parameter)) {
+                    queryBldr = new QueryBuilder(CIProducts.TransactionIndividualAbstract);
+                } else {
+                    queryBldr = new QueryBuilder(CIProducts.TransactionInOutAbstract);
+                }
+                add2QueryBuilder(_parameter, queryBldr, false);
+                queryBldr.addWhereAttrLessValue(CIProducts.TransactionAbstract.Date, topBean.getDate());
+                queryBldr.addOrderByAttributeDesc(CIProducts.TransactionAbstract.Date);
+                queryBldr.addOrderByAttributeDesc(CIProducts.TransactionAbstract.Position);
+                queryBldr.setLimit(10);
+                final MultiPrintQuery multi = queryBldr.getPrint();
+                final SelectBuilder selDoc = SelectBuilder.get().linkto(CIProducts.TransactionAbstract.Document);
+                final SelectBuilder selDocStatus = new SelectBuilder(selDoc).status();
+                final SelectBuilder selStorage = SelectBuilder.get().linkto(
+                                CIProducts.TransactionInOutAbstract.Storage);
+                final SelectBuilder selStorageInst = new SelectBuilder(selStorage).instance();
+                final SelectBuilder selStorageName = new SelectBuilder(selStorage).attribute(
+                                CIProducts.StorageAbstract.Name);
+                final SelectBuilder selProdName = SelectBuilder.get().linkto(CIProducts.TransactionAbstract.Product)
+                                .attribute(CIProducts.ProductAbstract.Name);
+                multi.addSelect(selStorageName, selStorageInst, selProdName, selDocStatus);
+                multi.addAttribute(CIProducts.TransactionAbstract.Quantity, CIProducts.TransactionAbstract.Description,
+                                CIProducts.TransactionAbstract.Date, CIProducts.TransactionAbstract.Position);
+                multi.execute();
+                while (multi.next()) {
+                    if (isValidStatus(_parameter, multi.<Status>getSelect(selDocStatus))) {
+                        final DataBean bean = getDataBean()
+                            .setTransInst(multi.getCurrentInstance())
+                            .setDate(multi.<DateTime>getAttribute(CIProducts.TransactionAbstract.Date))
+                            .setQuantity(multi.<BigDecimal>getAttribute(CIProducts.TransactionAbstract.Quantity))
+                            .setStorageName(multi.<String>getSelect(selStorageName))
+                            .setStorageInst(multi.<Instance>getSelect(selStorageInst))
+                            .setProdName(multi.<String>getSelect(selProdName));
+                        add2Bean(_parameter, bean);
+                        _beans.add(0, bean);
+                        break;
+                    }
+                }
+            }
         }
 
         /**
@@ -387,15 +444,18 @@ public abstract class TransactionResultReport_Base
          *
          * @param _parameter the _parameter
          * @param _queryBldr the _query bldr
+         * @param _dateFilter the date filter
          * @throws EFapsException on error
          */
         protected void add2QueryBuilder(final Parameter _parameter,
-                                        final QueryBuilder _queryBldr)
+                                        final QueryBuilder _queryBldr,
+                                        final boolean _dateFilter)
             throws EFapsException
         {
             final Instance prodInst = _parameter.getInstance();
             if (isIndividual(_parameter)) {
-                final QueryBuilder attrQueryBldr = new QueryBuilder(CIProducts.StoreableProductAbstract2IndividualAbstract);
+                final QueryBuilder attrQueryBldr = new QueryBuilder(
+                                CIProducts.StoreableProductAbstract2IndividualAbstract);
                 attrQueryBldr.addWhereAttrEqValue(CIProducts.StoreableProductAbstract2IndividualAbstract.FromAbstract,
                                 prodInst);
                 _queryBldr.addWhereAttrInQuery(CIProducts.TransactionAbstract.Product,
@@ -404,21 +464,23 @@ public abstract class TransactionResultReport_Base
             } else {
                 _queryBldr.addWhereAttrEqValue(CIProducts.TransactionAbstract.Product, prodInst);
             }
-            final Map<String, Object> filter = getFilteredReport().getFilterMap(_parameter);
-            if (filter.containsKey("dateFrom")) {
-                final DateTime date = (DateTime) filter.get("dateFrom");
-                _queryBldr.addWhereAttrGreaterValue(CIProducts.TransactionAbstract.Date,
-                                date.withTimeAtStartOfDay().minusSeconds(1));
-            }
-            if (filter.containsKey("dateTo")) {
-                final DateTime date = (DateTime) filter.get("dateTo");
-                _queryBldr.addWhereAttrLessValue(CIProducts.TransactionAbstract.Date,
-                                date.withTimeAtStartOfDay().plusDays(1));
-            }
 
             final List<Instance> storageInst = getStorageInsts(_parameter);
             if (!storageInst.isEmpty()) {
                 _queryBldr.addWhereAttrEqValue(CIProducts.TransactionAbstract.Storage, storageInst.toArray());
+            }
+            if (_dateFilter) {
+                final Map<String, Object> filter = getFilteredReport().getFilterMap(_parameter);
+                if (filter.containsKey("dateFrom")) {
+                    final DateTime date = (DateTime) filter.get("dateFrom");
+                    _queryBldr.addWhereAttrGreaterValue(CIProducts.TransactionAbstract.Date,
+                                    date.withTimeAtStartOfDay().minusSeconds(1));
+                }
+                if (filter.containsKey("dateTo")) {
+                    final DateTime date = (DateTime) filter.get("dateTo");
+                    _queryBldr.addWhereAttrLessValue(CIProducts.TransactionAbstract.Date,
+                                    date.withTimeAtStartOfDay().plusDays(1));
+                }
             }
         }
 
@@ -591,7 +653,7 @@ public abstract class TransactionResultReport_Base
         {
             final EnumFilterValue filter = (EnumFilterValue) getFilteredReport().getFilterMap(_parameter).get(
                             "storageDisplay");
-            StorageDisplay ret;
+            final StorageDisplay ret;
             if (filter != null) {
                 ret = (StorageDisplay) filter.getObject();
             } else {
@@ -690,7 +752,7 @@ public abstract class TransactionResultReport_Base
          */
         public String getDocType()
         {
-            String ret;
+            final String ret;
             if (getDocInst() != null && getDocInst().isValid()) {
                 ret = getDocInst().getType().getLabel();
             } else {
@@ -706,7 +768,7 @@ public abstract class TransactionResultReport_Base
          */
         public BigDecimal getOutgoing()
         {
-            BigDecimal ret;
+            final BigDecimal ret;
             if (isTransOut()) {
                 ret = this.quantity;
             } else {
@@ -722,7 +784,7 @@ public abstract class TransactionResultReport_Base
          */
         public BigDecimal getIncoming()
         {
-            BigDecimal ret;
+            final BigDecimal ret;
             if (isTransOut()) {
                 ret = null;
             } else {
@@ -1065,7 +1127,7 @@ public abstract class TransactionResultReport_Base
         @Override
         public BigDecimal evaluate(final ReportParameters _reportParameters)
         {
-            BigDecimal ret;
+            final BigDecimal ret;
             if (this.group) {
                 final Map<Instance, BigDecimal> inventorymap = _reportParameters.getValue("InventoryMap");
                 final Object storageInst = _reportParameters.getFieldValue("storageInst");
