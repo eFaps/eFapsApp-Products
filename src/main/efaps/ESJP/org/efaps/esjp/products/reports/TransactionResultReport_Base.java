@@ -265,7 +265,7 @@ public abstract class TransactionResultReport_Base
                 });
                 Collections.sort(beans, chain);
                 // after sorting add one transaction to show the previous total as a start value
-                addInitial(_parameter, beans);
+                final boolean initial = addInitial(_parameter, beans);
 
                 final ReverseListIterator<DataBean> iter = new ReverseListIterator<>(beans);
 
@@ -299,6 +299,10 @@ public abstract class TransactionResultReport_Base
                     bean.setTotal(current);
                     current = current.subtract(bean.getQuantity());
                 }
+                // if an initial was added correct the values to be displayed
+                if (initial) {
+                    beans.get(0).setQuantity(null);
+                }
                 ret = new JRBeanCollectionDataSource(beans);
                 getFilteredReport().cache(_parameter, ret);
             }
@@ -319,12 +323,14 @@ public abstract class TransactionResultReport_Base
          *
          * @param _parameter Parameter as passed by the eFaps API
          * @param _beans the beans
+         * @return true, if successful
          * @throws EFapsException on error
          */
-        protected void addInitial(final Parameter _parameter,
-                                  final List<DataBean> _beans)
+        protected boolean addInitial(final Parameter _parameter,
+                                     final List<DataBean> _beans)
             throws EFapsException
         {
+            boolean ret = false;
             if (CollectionUtils.isNotEmpty(_beans)) {
                 final DataBean topBean = _beans.get(0);
                 final QueryBuilder queryBldr;
@@ -351,6 +357,7 @@ public abstract class TransactionResultReport_Base
                 multi.addSelect(selStorageName, selStorageInst, selProdName, selDocStatus);
                 multi.addAttribute(CIProducts.TransactionAbstract.Quantity, CIProducts.TransactionAbstract.Description,
                                 CIProducts.TransactionAbstract.Date, CIProducts.TransactionAbstract.Position);
+                multi.setEnforceSorted(true);
                 multi.execute();
                 while (multi.next()) {
                     if (isValidStatus(_parameter, multi.<Status>getSelect(selDocStatus))) {
@@ -363,10 +370,12 @@ public abstract class TransactionResultReport_Base
                             .setProdName(multi.<String>getSelect(selProdName));
                         add2Bean(_parameter, bean);
                         _beans.add(0, bean);
+                        ret = true;
                         break;
                     }
                 }
             }
+            return ret;
         }
 
         /**
@@ -730,7 +739,6 @@ public abstract class TransactionResultReport_Base
         /** The inventoryMap. */
         private Map<Instance, BigDecimal> inventoryMap;
 
-
         /** The inventory. */
         private BigDecimal inventory;
 
@@ -801,7 +809,7 @@ public abstract class TransactionResultReport_Base
         public BigDecimal getQuantity()
         {
             BigDecimal ret = this.quantity;
-            if (isTransOut()) {
+            if (isTransOut() && this.quantity != null) {
                 ret = this.quantity.negate();
             }
             return ret;
