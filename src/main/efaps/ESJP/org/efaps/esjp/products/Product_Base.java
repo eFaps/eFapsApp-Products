@@ -24,11 +24,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -94,6 +96,7 @@ import org.efaps.esjp.erp.WarningUtil;
 import org.efaps.esjp.products.util.Products;
 import org.efaps.esjp.products.util.Products.ProductIndividual;
 import org.efaps.ui.wicket.models.objects.UIForm;
+import org.efaps.ui.wicket.models.objects.UIGrid;
 import org.efaps.ui.wicket.models.objects.UITable;
 import org.efaps.ui.wicket.models.objects.UITable.TableFilter;
 import org.efaps.ui.wicket.util.EFapsKey;
@@ -684,9 +687,11 @@ public abstract class Product_Base
         throws EFapsException
     {
         final Return ret = new Return();
-        StringBuilder js = new StringBuilder();
+         StringBuilder js = new StringBuilder();
         final UIForm uiform = (UIForm) _parameter.get(ParameterValues.CLASS);
         final String sessKey =  uiform.getCallingCommand().getUUID() + "-" + UITable.UserCacheKey.FILTER.getValue();
+        final String gridXKey =  uiform.getCallingCommand().getUUID() + "-" + UIGrid.CacheKey.DBFILTER.getValue();
+        String[] oids = null;
         if (Context.getThreadContext().containsSessionAttribute(sessKey)) {
             @SuppressWarnings("unchecked")
             final Map<String, TableFilter> sessfilter = (Map<String, TableFilter>) Context
@@ -694,40 +699,51 @@ public abstract class Product_Base
             if (sessfilter.containsKey("productFamilyLink")) {
                 final TableFilter tfilter = sessfilter.get("productFamilyLink");
                 final IMapFilter filter = (IMapFilter) tfilter.getFilter();
-                js.append("var selected = [");
                 if (filter != null && filter.containsKey("selectedRow")) {
-                    final String[] oids = (String[]) filter.get("selectedRow");
-                    final List<Instance> familyInsts = new ArrayList<>();
-                    for (final String oid : oids) {
-                        final Instance instance = Instance.get(oid);
-                        if (instance.isValid()) {
-                            familyInsts.add(instance);
-                        }
-                    }
-                    final List<Instance> tmpInsts = new ArrayList<>();
-                    tmpInsts.addAll(familyInsts);
-                    for (final Instance inst : familyInsts) {
-                        tmpInsts.addAll(ProductFamily.getDescendants(_parameter, inst));
-                    }
-                    boolean first = true;
-                    for (final Instance inst : tmpInsts) {
-                        if (first) {
-                            first = false;
-                        } else {
-                            js.append(",");
-                        }
-                        js.append("'").append(inst.getOid()).append("'");
-                    }
+                    oids = (String[]) filter.get("selectedRow");
                 }
-                js.append("];\n")
-                    .append("var nl = query(\"[name='selectedRow']\").forEach(function(node){\n")
-                    .append("if (array.indexOf(selected, node.value) > -1) {\n")
-                    .append("domAttr.set(node, \"checked\", \"checked\");\n")
-                    .append("};\n")
-                    .append("});\n");
-
-                js = InterfaceUtils.wrapInDojoRequire(_parameter, js, DojoLibs.QUERY, DojoLibs.DOMATTR, DojoLibs.ARRAY);
             }
+        } else if (Context.getThreadContext().containsSessionAttribute(gridXKey)) {
+            final IFilterList filterList = (IFilterList) Context.getThreadContext().getSessionAttribute(gridXKey);
+            final Optional<IFilter> optional = filterList.stream()
+                            .filter(x -> org.efaps.admin.ui.field.Field
+                                            .get(x.getFieldId()).getName().equals("productFamilyLink"))
+                            .findFirst();
+            if (optional.isPresent()) {
+                 oids = (String[]) ((IMapFilter) optional.get()).get("selectedRow");
+            }
+        }
+
+        if (ArrayUtils.isNotEmpty(oids)) {
+            js.append("var selected = [");
+            final List<Instance> familyInsts = new ArrayList<>();
+            for (final String oid : oids) {
+                final Instance instance = Instance.get(oid);
+                if (instance.isValid())
+                    familyInsts.add(instance);
+            }
+            final List<Instance> tmpInsts = new ArrayList<>();
+            tmpInsts.addAll(familyInsts);
+            for (final Instance inst : familyInsts) {
+                tmpInsts.addAll(ProductFamily.getDescendants(_parameter, inst));
+            }
+            boolean first = true;
+            for (final Instance inst : tmpInsts) {
+                if (first) {
+                    first = false;
+                } else {
+                    js.append(",");
+                }
+                js.append("'").append(inst.getOid()).append("'");
+            }
+            js.append("];\n")
+                .append("var nl = query(\"[name='selectedRow']\").forEach(function(node){\n")
+                .append("if (array.indexOf(selected, node.value) > -1) {\n")
+                .append("domAttr.set(node, \"checked\", \"checked\");\n")
+                .append("};\n")
+                .append("});\n");
+
+            js = InterfaceUtils.wrapInDojoRequire(_parameter, js, DojoLibs.QUERY, DojoLibs.DOMATTR, DojoLibs.ARRAY);
         }
         ret.put(ReturnValues.SNIPLETT, InterfaceUtils.wrappInScriptTag(_parameter, js, true, 1000));
         return ret;
