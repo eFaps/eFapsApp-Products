@@ -30,6 +30,7 @@
             <child>Products_InventoryPartListMyDesk</child>
             <child>Products_ProductServiceMyDesk</child>
             <child>Products_ProductGenericMyDesk</child>
+            <child>Products_ProductTextPositionMyDesk</child>
         </childs>
     </definition>
 </ui-menu>
