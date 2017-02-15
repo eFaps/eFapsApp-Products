@@ -108,8 +108,11 @@ public abstract class CostTypeFilterValue_Base
         if (!ArrayUtils.isEmpty(_values) && _values[0].startsWith("ALTERNATIVE_")) {
             setAlternative(true);
             setObject(_values[0].replace("ALTERNATIVE_", ""));
-        }  else {
+        } else {
             setAlternative(false);
+        }
+        if (!ArrayUtils.isEmpty(_values) && _values[0].equals(CostTypeFilterValue.DEFAULT)) {
+            setObject(CostTypeFilterValue.DEFAULT);
         }
         return super.parseObject(_values);
     }
