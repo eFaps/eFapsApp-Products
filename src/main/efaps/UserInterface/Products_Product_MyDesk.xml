@@ -26,7 +26,7 @@
         <version-expression>(version==latest)</version-expression>
         <name>Products_Product_MyDesk</name>
         <childs>
-            <child>Products_ProductInStockMyDesk</child>
+            <child>Products_StoreableProductMyDesk</child>
             <child>Products_ProductMaterialMyDesk</child>
             <child>Products_ProductStandartMyDesk</child>
             <child>Products_ProductVariantBaseMyDesk</child>

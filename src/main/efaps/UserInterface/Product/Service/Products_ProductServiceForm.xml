@@ -294,12 +294,13 @@
                 name="Products_ProductServiceForm.dimension.UI_FIELD_UPDATE"
                  program="org.efaps.esjp.products.Product"/>
         </field>
-         <field name="defaultUoM">
+        <field name="defaultUoM">
             <property name="Attribute">DefaultUoM</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
             <property name="ModeView">NONE</property>
             <property name="Required">true</property>
+            <property name="UIType">DROPDOWN</property>
             <trigger event="UI_FIELD_VALUE"
                 method="defaultUoMFieldValue"
                 name="Products_ProductServiceForm.defaultUoM.UI_FIELD_VALUE"

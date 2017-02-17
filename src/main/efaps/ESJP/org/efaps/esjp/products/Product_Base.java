@@ -275,7 +275,7 @@ public abstract class Product_Base
             } else if (instance.getType().isCIType(CIProducts.ProductGeneric)) {
                 ret = Products.GENERICACTFAM.get();
             } else if (instance.getType().isCIType(CIProducts.ProductService)) {
-                ret = Products.SERVACTFAM.get();
+                ret = Products.SERV_ACTFAM.get();
             } else if (instance.getType().isCIType(CIProducts.ProductVariantBase)) {
                 ret = Products.VARIANTACTFAM.get();
             } else if (instance.getType().isCIType(CIProducts.ProductInfinite)) {
@@ -1290,7 +1290,7 @@ public abstract class Product_Base
             } else if (instance.getType().isCIType(CIProducts.ProductGeneric)) {
                 ret = Products.GENERICFAMPRE.get() == null ? ret : Products.GENERICFAMPRE.get() + ret;
             } else if (instance.getType().isCIType(CIProducts.ProductService)) {
-                ret = Products.SERVFAMPRE.get() == null ? ret : Products.SERVFAMPRE.get() + ret;
+                ret = Products.SERV_FAMPRE.get() == null ? ret : Products.SERV_FAMPRE.get() + ret;
             } else if (instance.getType().isCIType(CIProducts.ProductInfinite)) {
                 ret = Products.INFINITEFAMPRE.get() == null ? ret : Products.INFINITEFAMPRE.get() + ret;
             }
@@ -1558,7 +1558,7 @@ public abstract class Product_Base
         } else if (type.isCIType(CIProducts.ProductMaterial)) {
             descriptions = Products.MATERIALDESCR.get();
         } else if (type.isCIType(CIProducts.ProductService)) {
-            descriptions = Products.SERVDESCR.get();
+            descriptions = Products.SERV_DESCR.get();
         } else if (type.isCIType(CIProducts.ProductInfinite)) {
             descriptions = Products.INFINITEDESCR.get();
         } else {
