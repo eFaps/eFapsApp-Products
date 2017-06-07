@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
-  Copyright 2003 - 2015 The eFaps Team
+  Copyright 2003 - 2017 The eFaps Team
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@
                 <property name="FilterType03">Instance</property>
                 <property name="FilterType04">Instance</property>
                 <property name="FilterType05">Enum</property>
-                <property name="FilterDefault01">YEARS:-1</property>
+                <property name="FilterDefault01">MONTHS:-2</property>
                 <property name="FilterDefault02">TODAY</property>
                 <property name="FilterDefault03">-</property>
                 <property name="FilterDefault04">-</property>
@@ -88,7 +88,7 @@
                 <property name="FilterType04">Instance</property>
                 <property name="FilterType05">Enum</property>
                 <property name="FilterType06">Boolean</property>
-                <property name="FilterDefault01">YEARS:-1</property>
+                <property name="FilterDefault01">MONTHS:-2</property>
                 <property name="FilterDefault02">TODAY</property>
                 <property name="FilterDefault03">-</property>
                 <property name="FilterDefault04">-</property>
