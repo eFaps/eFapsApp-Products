@@ -32,7 +32,7 @@
             <execute program="org.efaps.esjp.products.PriceMassUpdate">
                 <property name="PriceListType">Products_ProductPricelistRetail</property>
             </execute>
-            <trigger program="org.efaps.esjp.admin.access.AccessOnField" method="configCheck"
+            <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI" method="configCheck"
                 name="Products_PriceMassUpdate.UI_ACCESSCHECK" event="UI_ACCESSCHECK">
                 <property name="SystemConfig">Products-Configuration</property>
                 <property name="Attribute">org.efaps.products.ActivatePriceMassUpdate</property>
