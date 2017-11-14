@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2015 The eFaps Team
+ * Copyright 2003 - 2017 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 
 package org.efaps.esjp.products;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ import org.efaps.esjp.ci.CIFormProducts;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.ci.CITableProducts;
 import org.efaps.esjp.common.AbstractCommon;
+import org.efaps.esjp.db.InstanceUtils;
 import org.efaps.esjp.erp.NumberFormatter;
 import org.efaps.esjp.products.util.Products;
 import org.efaps.ui.wicket.models.field.UIField;
@@ -52,6 +54,7 @@ import org.efaps.ui.wicket.models.objects.AbstractUIPageObject;
 import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
+
 /**
  * TODO description!
  *
@@ -81,7 +84,7 @@ public abstract class PriceMassUpdate_Base
         final Return ret = new Return();
         // get it form the context
         final String[] rows = Context.getThreadContext().getParameters().get("selectedRow");
-        final List<Instance> instances = new ArrayList<Instance>();
+        final List<Instance> instances = new ArrayList<>();
         if (rows != null) {
             for (final String row : rows) {
                 final Instance instance = Instance.get(row);
@@ -136,7 +139,7 @@ public abstract class PriceMassUpdate_Base
         throws EFapsException
     {
         final Return ret = new Return();
-        Map<Instance, String> values;
+        final Map<Instance, String> values;
         if (Context.getThreadContext().containsRequestAttribute(PriceMassUpdate_Base.REQUESTKEY)) {
             values = (Map<Instance, String>) Context.getThreadContext().getRequestAttribute(
                             PriceMassUpdate_Base.REQUESTKEY);
@@ -206,7 +209,6 @@ public abstract class PriceMassUpdate_Base
         return ret;
     }
 
-
     /**
      * @param _parameter Parameter as passed by the eFaps API
      * @return a DateTime
@@ -215,7 +217,7 @@ public abstract class PriceMassUpdate_Base
     protected DateTime getDate4CurrentPrice(final Parameter _parameter)
         throws EFapsException
     {
-        return new DateTime();
+        return new DateTime().withTimeAtStartOfDay();
     }
 
     /**
@@ -234,17 +236,16 @@ public abstract class PriceMassUpdate_Base
         final Map<String, String> rowid2oid = (Map<String, String>) _parameter.get(ParameterValues.OIDMAP4UI);
         for (int i = 0; i < rowIds.length; i++) {
             final String rowId = rowIds[i];
-            final Instance inst = Instance.get(rowid2oid.get(rowId));
-            if (inst.isValid() && !newPrices[i].isEmpty()) {
+            final Instance prodInst = Instance.get(rowid2oid.get(rowId));
+            if (prodInst.isValid() && !newPrices[i].isEmpty()) {
                 try {
                     final Number newPrice = formater.parse(newPrices[i]);
-
                     final String priceListType = getProperty(_parameter, "PriceListType");
-
-                    Update insert = null;
+                    Instance productPricelistInst = null;
                     if (Products.ACTIVATEPRICEGRP.get()) {
+                        // check if we want to update (meaning edited today)
                         final QueryBuilder queryBldr =  new QueryBuilder(Type.get(priceListType));
-                        queryBldr.addWhereAttrEqValue(CIProducts.ProductPricelistAbstract.ProductAbstractLink, inst);
+                        queryBldr.addWhereAttrEqValue(CIProducts.ProductPricelistAbstract.ProductAbstractLink, prodInst);
                         queryBldr.addWhereAttrEqValue(CIProducts.ProductPricelistAbstract.ValidFrom,
                                         getDate4ValidFrom(_parameter));
                         queryBldr.addWhereAttrEqValue(CIProducts.ProductPricelistAbstract.ValidUntil,
@@ -252,19 +253,55 @@ public abstract class PriceMassUpdate_Base
                         final InstanceQuery query = queryBldr.getQuery();
                         query.execute();
                         if (query.next()) {
-                            insert = new Update(query.getCurrentValue());
+                            productPricelistInst = query.getCurrentValue();
                         }
                     }
-                    if (insert == null) {
-                        insert = new Insert(Type.get(priceListType));
+                    if (InstanceUtils.isNotValid(productPricelistInst)) {
+                        MultiPrintQuery multi = null;
+                        if (Products.ACTIVATEPRICEGRP.get()) {
+                            //carry over
+                            final DateTime date = getDate4CurrentPrice(_parameter);
+                            final QueryBuilder attrQueryBldr = new QueryBuilder(Type.get(priceListType));
+                            attrQueryBldr.addWhereAttrEqValue(CIProducts.ProductPricelistAbstract.ProductAbstractLink,
+                                            prodInst);
+                            attrQueryBldr.addWhereAttrLessValue(CIProducts.ProductPricelistAbstract.ValidFrom,
+                                            date.plusSeconds(1));
+                            attrQueryBldr.addWhereAttrGreaterValue(CIProducts.ProductPricelistAbstract.ValidUntil,
+                                            date.minusSeconds(1));
+
+                            final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductPricelistPosition);
+                            queryBldr.addWhereAttrInQuery(CIProducts.ProductPricelistPosition.ProductPricelist,
+                                            attrQueryBldr.getAttributeQuery(CIProducts.ProductPricelistAbstract.ID));
+                            multi = queryBldr.getPrint();
+                            multi.addAttribute(CIProducts.ProductPricelistPosition.Price,
+                                            CIProducts.ProductPricelistPosition.CurrencyId,
+                                            CIProducts.ProductPricelistPosition.PriceGroupLink);
+                            multi.execute();
+                        }
+
+                        final Insert insert = new Insert(Type.get(priceListType));
+                        insert.add(CIProducts.ProductPricelistAbstract.ProductAbstractLink, prodInst);
+                        insert.add(CIProducts.ProductPricelistAbstract.ValidFrom, getDate4ValidFrom(_parameter));
+                        insert.add(CIProducts.ProductPricelistAbstract.ValidUntil, getDate4ValidUntil(_parameter));
+                        insert.execute();
+                        productPricelistInst = insert.getInstance();
+                        if (multi != null) {
+                            while (multi.next()) {
+                                final Insert carryOverInsert = new Insert(CIProducts.ProductPricelistPosition);
+                                carryOverInsert.add(CIProducts.ProductPricelistPosition.ProductPricelist,
+                                                productPricelistInst);
+                                carryOverInsert.add(CIProducts.ProductPricelistPosition.PriceGroupLink,
+                                        multi.<Long>getAttribute(CIProducts.ProductPricelistPosition.PriceGroupLink));
+                                carryOverInsert.add(CIProducts.ProductPricelistPosition.Price,
+                                            multi.<BigDecimal>getAttribute(CIProducts.ProductPricelistPosition.Price));
+                                carryOverInsert.add(CIProducts.ProductPricelistPosition.CurrencyId,
+                                            multi.<Long>getAttribute(CIProducts.ProductPricelistPosition.CurrencyId));
+                                carryOverInsert.execute();
+                            }
+                        }
                     }
 
-                    insert.add(CIProducts.ProductPricelistAbstract.ProductAbstractLink, inst);
-                    insert.add(CIProducts.ProductPricelistAbstract.ValidFrom, getDate4ValidFrom(_parameter));
-                    insert.add(CIProducts.ProductPricelistAbstract.ValidUntil, getDate4ValidUntil(_parameter));
-                    insert.execute();
-
-                    Update insert2 = null;
+                    Update update = null;
                     if (Products.ACTIVATEPRICEGRP.get()) {
                         final Instance pGroupInts = Instance.get(_parameter.getParameterValue(
                                         CIFormProducts.Products_PriceMassUpdateForm.priceGroupLink.name));
@@ -276,25 +313,25 @@ public abstract class PriceMassUpdate_Base
                             queryBldr.addWhereAttrIsNull(CIProducts.ProductPricelistPosition.PriceGroupLink);
                         }
                         queryBldr.addWhereAttrEqValue(CIProducts.ProductPricelistPosition.ProductPricelist,
-                                        insert.getInstance());
+                                        productPricelistInst);
                         final InstanceQuery query = queryBldr.getQuery();
                         query.execute();
                         if (query.next()) {
-                            insert2 = new Update(query.getCurrentValue());
+                            update = new Update(query.getCurrentValue());
                         }
                     }
-                    if (insert2 == null) {
-                        insert2 = new Insert(CIProducts.ProductPricelistPosition);
-                        insert2.add(CIProducts.ProductPricelistPosition.ProductPricelist, insert.getInstance());
+                    if (update == null) {
+                        update = new Insert(CIProducts.ProductPricelistPosition);
+                        update.add(CIProducts.ProductPricelistPosition.ProductPricelist, productPricelistInst);
                         final Instance pGroupInts = Instance.get(_parameter.getParameterValue(
                                         CIFormProducts.Products_PriceMassUpdateForm.priceGroupLink.name));
                         if (pGroupInts.isValid()) {
-                            insert2.add(CIProducts.ProductPricelistPosition.PriceGroupLink, pGroupInts);
+                            update.add(CIProducts.ProductPricelistPosition.PriceGroupLink, pGroupInts);
                         }
                     }
-                    insert2.add(CIProducts.ProductPricelistPosition.Price, newPrice);
-                    insert2.add(CIProducts.ProductPricelistPosition.CurrencyId, currencies[i]);
-                    insert2.execute();
+                    update.add(CIProducts.ProductPricelistPosition.Price, newPrice);
+                    update.add(CIProducts.ProductPricelistPosition.CurrencyId, currencies[i]);
+                    update.execute();
                 } catch (final ParseException e) {
                     throw new EFapsException(PriceMassUpdate.class, "invalidPrice", newPrices[i]);
                 }
