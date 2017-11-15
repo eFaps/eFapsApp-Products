@@ -129,10 +129,10 @@ public abstract class TerminateProductReport_Base
         }
 
         /* (non-Javadoc)
-         * @see org.efaps.esjp.common.jasperreport.AbstractDynamicReport_Base#addColumnDefintion(org.efaps.admin.event.Parameter, net.sf.dynamicreports.jasper.builder.JasperReportBuilder)
+         * @see org.efaps.esjp.common.jasperreport.AbstractDynamicReport_Base#addColumnDefinition(org.efaps.admin.event.Parameter, net.sf.dynamicreports.jasper.builder.JasperReportBuilder)
          */
         @Override
-        protected void addColumnDefintion(final Parameter _parameter,
+        protected void addColumnDefinition(final Parameter _parameter,
                                           final JasperReportBuilder _builder)
             throws EFapsException
         {
