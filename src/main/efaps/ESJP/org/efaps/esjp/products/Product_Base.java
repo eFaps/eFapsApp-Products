@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2015 The eFaps Team
+ * Copyright 2003 - 2017 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,9 +32,9 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.EnumUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StrSubstitutor;
+import org.apache.commons.text.StringEscapeUtils;
 import org.efaps.admin.common.NumberGenerator;
 import org.efaps.admin.common.SystemConfiguration;
 import org.efaps.admin.datamodel.Attribute;
@@ -687,7 +687,7 @@ public abstract class Product_Base
         throws EFapsException
     {
         final Return ret = new Return();
-         StringBuilder js = new StringBuilder();
+        StringBuilder js = new StringBuilder();
         final UIForm uiform = (UIForm) _parameter.get(ParameterValues.CLASS);
         final String sessKey =  uiform.getCallingCommand().getUUID() + "-" + UITable.UserCacheKey.FILTER.getValue();
         final String gridXKey =  uiform.getCallingCommand().getUUID() + "-" + UIGrid.CacheKey.DBFILTER.getValue();
@@ -710,7 +710,7 @@ public abstract class Product_Base
                                             .get(x.getFieldId()).getName().equals("productFamilyLink"))
                             .findFirst();
             if (optional.isPresent()) {
-                 oids = (String[]) ((IMapFilter) optional.get()).get("selectedRow");
+                oids = (String[]) ((IMapFilter) optional.get()).get("selectedRow");
             }
         }
 
@@ -719,8 +719,9 @@ public abstract class Product_Base
             final List<Instance> familyInsts = new ArrayList<>();
             for (final String oid : oids) {
                 final Instance instance = Instance.get(oid);
-                if (instance.isValid())
+                if (instance.isValid()) {
                     familyInsts.add(instance);
+                }
             }
             final List<Instance> tmpInsts = new ArrayList<>();
             tmpInsts.addAll(familyInsts);
@@ -745,6 +746,11 @@ public abstract class Product_Base
 
             js = InterfaceUtils.wrapInDojoRequire(_parameter, js, DojoLibs.QUERY, DojoLibs.DOMATTR, DojoLibs.ARRAY);
         }
+        js.append("_container_.onLoadDeferred.then(function() {\n")
+            .append("setTimeout(function(){\n")
+            .append("positionTableColumns(eFapsTable100);\n")
+            .append("}, 500);\n")
+            .append("});\n");
         ret.put(ReturnValues.SNIPLETT, InterfaceUtils.wrappInScriptTag(_parameter, js, true, 1000));
         return ret;
     }
