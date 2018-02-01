@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2016 The eFaps Team
+ * Copyright 2003 - 2018 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
  */
 
 package org.efaps.esjp.products.dashboard;
+
+import com.mchange.v1.lang.BooleanUtils;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -51,10 +53,8 @@ import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
 import org.joda.time.DurationFieldType;
 
-import com.mchange.v1.lang.BooleanUtils;
-
 /**
- * TODO comment!
+ * Dashboard panel that renders a stacked column for inventory.
  *
  * @author The eFaps Team
  */
@@ -306,8 +306,23 @@ public abstract class InventoryValuePanel_Base
                     }
                 }
             }
+            // ensure that all series have values for all
+            for (final Serie<Data> serie : series.values()) {
+                if (serie.getData().size() < xValue) {
+                    for (int i = 1; i < xValue + 1; i++) {
+                        final int idx = i;
+                        if (!serie.getData().stream()
+                                        .filter(data -> (data.getXValue().intValue() == idx))
+                                        .findFirst()
+                                        .isPresent()) {
+                            final Data data = new Data().setXValue(idx).setYValue(0).setSimple(false);
+                            data.setTooltip(serie.getName());
+                            serie.addData(data);
+                        }
+                    }
+                }
+            }
             xAxis.setLabels(Util.mapCollectionToObjectArray(labels));
-
             ret = chart.getHtmlSnipplet();
             cache(ret);
         }
