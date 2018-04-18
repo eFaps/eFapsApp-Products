@@ -22,7 +22,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -232,37 +231,10 @@ public abstract class TransactionResultReport_Base
                 }
                 final ComparatorChain<DataBean> chain = new ComparatorChain<>();
                 if (StorageDisplay.GROUP.equals(getStorageDisplay(_parameter))) {
-                    chain.addComparator(new Comparator<DataBean>()
-                    {
-
-                        @Override
-                        public int compare(final DataBean _bean0,
-                                           final DataBean _bean1)
-                        {
-                            return _bean0.getStorageName().compareTo(_bean1.getStorageName());
-                        }
-                    });
+                    chain.addComparator((_bean0, _bean1) -> _bean0.getStorageName().compareTo(_bean1.getStorageName()));
                 }
-                chain.addComparator(new Comparator<DataBean>()
-                {
-
-                    @Override
-                    public int compare(final DataBean _bean0,
-                                       final DataBean _bean1)
-                    {
-                        return _bean0.getDate().compareTo(_bean1.getDate());
-                    }
-                });
-                chain.addComparator(new Comparator<DataBean>()
-                {
-
-                    @Override
-                    public int compare(final DataBean _bean0,
-                                       final DataBean _bean1)
-                    {
-                        return _bean0.getPosition().compareTo(_bean1.getPosition());
-                    }
-                });
+                chain.addComparator((_bean0, _bean1) -> _bean0.getDate().compareTo(_bean1.getDate()));
+                chain.addComparator((_bean0, _bean1) -> _bean0.getPosition().compareTo(_bean1.getPosition()));
                 Collections.sort(beans, chain);
                 // after sorting add one transaction to show the previous total as a start value
                 final boolean initial = addInitial(_parameter, beans);
@@ -559,7 +531,8 @@ public abstract class TransactionResultReport_Base
             inventory.setShowStorage(true);
             if (filter.containsKey("dateTo")) {
                 final DateTime date = (DateTime) filter.get("dateTo");
-                inventory.setDate(date.withTimeAtStartOfDay().plusDays(1));
+                // to calculate backwards the start must be the exact date
+                inventory.setDate(date.withTimeAtStartOfDay());
             }
             final List<? extends InventoryBean> beans = inventory.getInventory(_parameter);
             for (final InventoryBean bean : beans) {
