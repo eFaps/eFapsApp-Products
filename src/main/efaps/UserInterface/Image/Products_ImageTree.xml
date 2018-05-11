@@ -2,7 +2,7 @@
 
 <!--
 
-  Copyright 2003 - 2009 The eFaps Team
+  Copyright 2003 - 2018 The eFaps Team
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -16,34 +16,21 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  Author:          The eFaps Team
-  Revision:        $Rev$
-  Last Changed:    $Date$
-  Last Changed By: $Author$
-
 -->
 
-<ui-menu xmlns="http://www.efaps.org/xsd"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-
-  <uuid>483bdbc1-0633-4228-8f16-faffb0b5dc83</uuid>
-  <file-application>eFapsApp-Products</file-application>
-  <file-revision>$Rev$</file-revision>
-
-  <definition>
-    <version-expression>(version==latest)</version-expression>
-    <name>Products_ImageTree</name>
-    <!-- targets -->
-    <target>
-      <menu>Products_ImageTree_Menu</menu>
-      <form>Products_ImageForm</form>
-    </target>
-    <!-- type tree for -->
-    <type>Products_ImageAbstract</type>
-
-    <!-- properties -->
-    <property name="Target">content</property>
-    <property name="TargetMode">view</property>
-  </definition>
+<ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>483bdbc1-0633-4228-8f16-faffb0b5dc83</uuid>
+    <file-application>eFapsApp-Products</file-application>
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <name>Products_ImageTree</name>
+        <target>
+            <menu>Products_ImageTree_Menu</menu>
+            <form>Products_ImageForm</form>
+        </target>
+        <type>Products_ImageAbstract</type>
+        <property name="Target">content</property>
+        <property name="TargetMode">view</property>
+    </definition>
 </ui-menu>

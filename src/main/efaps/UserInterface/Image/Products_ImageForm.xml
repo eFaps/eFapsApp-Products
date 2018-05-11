@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-  Copyright 2003 - 2016 The eFaps Team
+  Copyright 2003 - 2018 The eFaps Team
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -24,21 +24,14 @@
         <version-expression>(version==latest)</version-expression>
         <name>Products_ImageForm</name>
         <field name="upload">
+            <property name="UIType">UPLOAD</property>
             <property name="ModeCreate">EDITABLE</property>
-            <property name="ModeEdit">NONE</property>
             <property name="ModeView">NONE</property>
-            <property name="ModePrint">NONE</property>
-            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
             <property name="Label">Products_ImageForm.upload.Label</property>
-            <trigger name="Products_ImageForm.upload.UI_FIELD_VALUE" event="UI_FIELD_VALUE"
-                program="org.efaps.esjp.common.file.FileField"
-                method="getFieldValueUI">
-                <property name="FileNameField">description4Create</property>
-            </trigger>
         </field>
         <field name="image">
             <property name="Label">Products_ImageForm.image.Label</property>
-            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="UIType">SNIPPLET</property>
             <trigger name="Products_ImageForm.upload.UI_FIELD_VALUE" event="UI_FIELD_VALUE"
                 program="org.efaps.esjp.common.file.ImageField"
                 method="getViewFieldValueUI">
