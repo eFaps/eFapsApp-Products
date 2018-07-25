@@ -282,6 +282,13 @@ public final class Products
 
     /** See description. */
     @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute STANDARTACTNOTE = new BooleanSysConfAttribute()
+                    .sysConfUUID(Products.SYSCONFUUID)
+                    .key(Products.BASE + "Standart.ActivateNote")
+                    .description("Activate the note field for standart products.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
     public static final BooleanSysConfAttribute STANDARTACTCLASS = new BooleanSysConfAttribute()
                     .sysConfUUID(Products.SYSCONFUUID)
                     .key(Products.BASE + "Standart.ActivateClassification")

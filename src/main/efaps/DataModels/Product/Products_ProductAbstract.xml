@@ -115,6 +115,12 @@
             <sqlcolumn>CODE</sqlcolumn>
         </attribute>
         <attribute>
+            <name>Note</name>
+            <type>String</type>
+            <sqltable>Products_ProductSQLTable</sqltable>
+            <sqlcolumn>NOTE</sqlcolumn>
+        </attribute>
+        <attribute>
             <name>Creator</name>
             <type>CreatorLink</type>
             <sqltable>Products_ProductSQLTable</sqltable>
@@ -247,6 +253,12 @@
             <type>String</type>
             <sqltable>Products_ProductSQLTable</sqltable>
             <sqlcolumn>CODE</sqlcolumn>
+        </attribute>
+        <attribute>
+            <name>Note</name>
+            <type>String</type>
+            <sqltable>Products_ProductSQLTable</sqltable>
+            <sqlcolumn>NOTE</sqlcolumn>
         </attribute>
         <attribute>
             <name>Creator</name>

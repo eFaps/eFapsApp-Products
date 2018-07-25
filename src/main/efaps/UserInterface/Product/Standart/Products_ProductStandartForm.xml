@@ -125,6 +125,22 @@
                 <property name="Attribute">org.efaps.products.Standart.ActivateIndividual</property>
             </trigger>
         </field>
+        <field name="note">
+            <property name="Columns">100</property>
+            <property name="Rows">5</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ModeSearch">EDITABLE</property>
+            <property name="Attribute">Note</property>
+            <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                name="Products_ProductStandartForm.note.UI_ACCESSCHECK"
+                method="configCheck"
+                event="UI_ACCESSCHECK">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.Standart.ActivateNote</property>
+            </trigger>
+        </field>
         <field character="Group" name="createGroup">
             <property name="GroupCount">2</property>
         </field>
@@ -461,6 +477,22 @@
                 <!-- Products-Configuration -->
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Standart.ActivateIndividual</property>
+            </trigger>
+        </field>
+        <field name="note">
+            <property name="Columns">120</property>
+            <property name="Rows">5</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ModeSearch">EDITABLE</property>
+            <property name="Attribute">Note</property>
+            <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                name="Products_ProductStandartForm.note.UI_ACCESSCHECK"
+                method="configCheck"
+                event="UI_ACCESSCHECK">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.Standart.ActivateNote</property>
             </trigger>
         </field>
         <field character="Group" name="createGroup">
