@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2015 The eFaps Team
+ * Copyright 2003 - 2018 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,8 +36,6 @@ import org.efaps.esjp.products.ProductFamily_Base.NameDefintion;
 import org.efaps.util.cache.CacheReloadException;
 
 /**
- * TODO comment!
- *
  * @author The eFaps Team
  */
 @EFapsUUID("96b4a9bc-bfcf-41fa-9c03-4dbc6279cf63")
@@ -102,6 +100,13 @@ public final class Products
                     .sysConfUUID(Products.SYSCONFUUID)
                     .key(Products.BASE + "Family.Activate")
                     .description(" Activate the individual management menu in general.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute FAMILY_ACTIVATE_UNSPSC = new BooleanSysConfAttribute()
+                    .sysConfUUID(Products.SYSCONFUUID)
+                    .key(Products.BASE + "Family.ActivateUNSPSC")
+                    .description("Activate the use of UNSPSC.");
 
     /** See description. */
     @EFapsSysConfAttribute
