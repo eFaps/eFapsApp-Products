@@ -363,7 +363,7 @@
             </trigger>
         </field>
         <field name="description">
-            <property name="Columns">40</property>
+            <property name="Width">80</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
             <property name="ModeSearch">EDITABLE</property>
@@ -480,7 +480,7 @@
             </trigger>
         </field>
         <field name="note">
-            <property name="Columns">120</property>
+            <property name="Columns">100</property>
             <property name="Rows">5</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
