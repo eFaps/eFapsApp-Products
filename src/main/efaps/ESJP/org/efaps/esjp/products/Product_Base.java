@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2017 The eFaps Team
+ * Copyright 2003 - 2018 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,8 +33,8 @@ import java.util.UUID;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StrSubstitutor;
 import org.apache.commons.text.StringEscapeUtils;
+import org.apache.commons.text.StringSubstitutor;
 import org.efaps.admin.common.NumberGenerator;
 import org.efaps.admin.common.SystemConfiguration;
 import org.efaps.admin.datamodel.Attribute;
@@ -96,9 +96,9 @@ import org.efaps.esjp.erp.WarningUtil;
 import org.efaps.esjp.products.util.Products;
 import org.efaps.esjp.products.util.Products.ProductIndividual;
 import org.efaps.ui.wicket.models.objects.UIForm;
-import org.efaps.ui.wicket.models.objects.UIGrid;
 import org.efaps.ui.wicket.models.objects.UITable;
 import org.efaps.ui.wicket.models.objects.UITable.TableFilter;
+import org.efaps.ui.wicket.models.objects.grid.CacheKey;
 import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
@@ -690,7 +690,7 @@ public abstract class Product_Base
         StringBuilder js = new StringBuilder();
         final UIForm uiform = (UIForm) _parameter.get(ParameterValues.CLASS);
         final String sessKey =  uiform.getCallingCommand().getUUID() + "-" + UITable.UserCacheKey.FILTER.getValue();
-        final String gridXKey =  uiform.getCallingCommand().getUUID() + "-" + UIGrid.CacheKey.DBFILTER.getValue();
+        final String gridXKey =  uiform.getCallingCommand().getUUID() + "-" + CacheKey.DBFILTER.getValue();
         String[] oids = null;
         if (Context.getThreadContext().containsSessionAttribute(sessKey)) {
             @SuppressWarnings("unchecked")
@@ -1593,7 +1593,7 @@ public abstract class Product_Base
         final String fieldName = getProperty(_parameter, "FieldName", "description");
         final Return ret = new Return();
         final StringBuilder js = new StringBuilder();
-        js.append(getSetFieldValue(0, fieldName, StrSubstitutor.replace(text, valueMap).replace("  ", " ")));
+        js.append(getSetFieldValue(0, fieldName, StringSubstitutor.replace(text, valueMap).replace("  ", " ")));
         ret.put(ReturnValues.SNIPLETT, js.toString());
         return ret;
     }
