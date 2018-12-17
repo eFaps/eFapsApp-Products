@@ -45,7 +45,7 @@ public abstract class Products_Base
         throws EFapsException
     {
         checkAccess();
-        final Evaluator eval = EQL.print(CIProducts.ProductAbstract)
+        final Evaluator eval = EQL.printQuery(CIProducts.ProductAbstract)
             .attribute(CIProducts.ProductAbstract.Name, CIProducts.ProductAbstract.Description)
             .stmt()
             .evaluate();
