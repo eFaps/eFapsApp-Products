@@ -51,6 +51,12 @@
             <sqlcolumn>PRODID</sqlcolumn>
         </attribute>
         <attribute>
+            <name>Description</name>
+            <type>String</type>
+            <sqltable>Products_ProductPricelistSQLTable</sqltable>
+            <sqlcolumn>DESCR</sqlcolumn>
+        </attribute>
+        <attribute>
             <name>ValidFrom</name>
             <type>Date</type>
             <sqltable>Products_ProductPricelistSQLTable</sqltable>
