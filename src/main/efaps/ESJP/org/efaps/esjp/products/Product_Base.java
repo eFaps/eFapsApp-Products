@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -96,9 +97,12 @@ import org.efaps.esjp.erp.WarningUtil;
 import org.efaps.esjp.products.util.Products;
 import org.efaps.esjp.products.util.Products.ProductIndividual;
 import org.efaps.ui.wicket.models.objects.UIForm;
+import org.efaps.ui.wicket.models.objects.UIForm.ElementType;
 import org.efaps.ui.wicket.models.objects.UITable;
 import org.efaps.ui.wicket.models.objects.UITable.TableFilter;
 import org.efaps.ui.wicket.models.objects.grid.CacheKey;
+import org.efaps.ui.wicket.models.objects.grid.GridRow;
+import org.efaps.ui.wicket.models.objects.grid.UIFieldGrid;
 import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
@@ -715,7 +719,8 @@ public abstract class Product_Base
         }
 
         if (ArrayUtils.isNotEmpty(oids)) {
-            js.append("var selected = [");
+            final StringBuilder oidJs = new StringBuilder()
+                .append("var selected = [");
             final List<Instance> familyInsts = new ArrayList<>();
             for (final String oid : oids) {
                 final Instance instance = Instance.get(oid);
@@ -733,26 +738,54 @@ public abstract class Product_Base
                 if (first) {
                     first = false;
                 } else {
-                    js.append(",");
+                    oidJs.append(",");
                 }
-                js.append("'").append(inst.getOid()).append("'");
+                oidJs.append("'").append(inst.getOid()).append("'");
             }
-            js.append("];\n")
-                .append("var nl = query(\"[name='selectedRow']\").forEach(function(node){\n")
-                .append("if (array.indexOf(selected, node.value) > -1) {\n")
-                .append("domAttr.set(node, \"checked\", \"checked\");\n")
-                .append("};\n")
-                .append("});\n");
+            oidJs.append("];\n");
 
-            js = InterfaceUtils.wrapInDojoRequire(_parameter, js, DojoLibs.QUERY, DojoLibs.DOMATTR, DojoLibs.ARRAY);
+            if (ElementType.GRID.equals(uiform.getElements().get(0).getType())) {
+                final UIFieldGrid grid = (UIFieldGrid) uiform.getElements().get(0).getElement();
+                final List<GridRow> rows = grid.getValues();
+                final Map<Instance, String> inst2key = new HashMap<>();
+                tmpInsts.forEach(inst -> inst2key.put(inst, null));
+                eval(inst2key, rows, "");
+                js.append("var g = registry.byId('").append(grid.getMarkupId()).append("');\n");
+
+                for (final Entry<Instance, String> entry : inst2key.entrySet()) {
+                    js.append("g.select.row.selectById('").append(entry.getValue()).append("');\n");
+                }
+            } else {
+                js.append(oidJs)
+                    .append("var nl = query(\"[name='selectedRow']\").forEach(function(node){\n")
+                    .append("if (array.indexOf(selected, node.value) > -1) {\n")
+                    .append("domAttr.set(node, \"checked\", \"checked\");\n")
+                    .append("};\n")
+                    .append("});\n");
+            }
+            js = InterfaceUtils.wrapInDojoRequire(_parameter, js, DojoLibs.QUERY, DojoLibs.DOMATTR, DojoLibs.ARRAY,
+                            DojoLibs.REGISTRY);
         }
-        js.append("_container_.onLoadDeferred.then(function() {\n")
-            .append("setTimeout(function(){\n")
-            .append("positionTableColumns(eFapsTable100);\n")
-            .append("}, 500);\n")
-            .append("});\n");
+        if (!ElementType.GRID.equals(uiform.getElements().get(0).getType())) {
+            js.append("_container_.onLoadDeferred.then(function() {\n")
+                .append("setTimeout(function(){\n")
+                .append("positionTableColumns(eFapsTable100);\n")
+                .append("}, 500);\n")
+                .append("});\n");
+        }
         ret.put(ReturnValues.SNIPLETT, InterfaceUtils.wrappInScriptTag(_parameter, js, true, 1000));
         return ret;
+    }
+
+    protected void eval(final Map<Instance, String> _inst2key, final List<GridRow> _rows, final String _key) {
+        int i = 0;
+        for (final GridRow row : _rows) {
+            if (_inst2key.containsKey(row.getInstance())) {
+                _inst2key.put(row.getInstance(), _key.length() == 0 ? "" + i : _key + "-" + i);
+            }
+            eval(_inst2key, row.getChildren(), _key.length() == 0 ? "" + i : _key + "-" + i);
+            i++;
+        }
     }
 
     /**
