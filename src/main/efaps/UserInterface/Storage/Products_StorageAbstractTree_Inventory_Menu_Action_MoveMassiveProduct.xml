@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
 
- Copyright 2003 - 2016 The eFaps Team
+ Copyright 2003 - 2019 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -63,18 +63,7 @@
         </access>
         <target>
             <form>Products_InventoryMoveMassiveForm</form>
-            <execute method="moveInventory" program="org.efaps.esjp.products.Transaction">
-                <!-- property implemented module sales -->
-                <property name="TransactionDocument">53a57515-60cc-46d1-923e-e4a879054093</property>
-                <property name="UseNumberGenerator4Name">true</property>
-                <property name="StatusGroup">Sales_TransactionDocumentStatus</property>
-                <property name="Status">Open</property>
-                <!-- Sales-Configuration -->
-                <property name="JasperConfig">c9a1cbc3-fd35-4463-80d2-412422a3802f</property>
-                <property name="JasperConfigReport">org.efaps.sales.TransactionDocument.JasperReport</property>
-                <property name="JasperConfigMime">org.efaps.sales.TransactionDocument.Mime</property>
-                <property name="JasperReport">Sales_TransactionDocument</property>
-            </execute>
+            <execute method="moveInventory" program="org.efaps.esjp.products.Transaction"/>
             <validate method="validateMove" program="org.efaps.esjp.products.Transaction" index="0"/>
             <validate program="org.efaps.esjp.products.Storage"
                 method="validateClosureDate" index="1">

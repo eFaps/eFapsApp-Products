@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2015 The eFaps Team
+ * Copyright 2003 - 2019 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.UUID;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.efaps.admin.access.AccessTypeEnums;
@@ -45,6 +44,7 @@ import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
+import org.efaps.admin.program.esjp.Listener;
 import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
 import org.efaps.ci.CIAttribute;
 import org.efaps.ci.CIType;
@@ -59,18 +59,19 @@ import org.efaps.db.PrintQuery;
 import org.efaps.db.QueryBuilder;
 import org.efaps.db.SelectBuilder;
 import org.efaps.db.Update;
-import org.efaps.esjp.ci.CIERP;
 import org.efaps.esjp.ci.CIFormProducts;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.ci.CITableProducts;
 import org.efaps.esjp.common.parameter.ParameterUtil;
 import org.efaps.esjp.common.util.InterfaceUtils;
+import org.efaps.esjp.db.InstanceUtils;
 import org.efaps.esjp.erp.AbstractWarning;
 import org.efaps.esjp.erp.CommonDocument;
 import org.efaps.esjp.erp.IWarning;
 import org.efaps.esjp.erp.NumberFormatter;
 import org.efaps.esjp.erp.WarningUtil;
 import org.efaps.esjp.products.Inventory_Base.InventoryBean;
+import org.efaps.esjp.products.listener.IOnTransaction;
 import org.efaps.esjp.products.util.Products;
 import org.efaps.esjp.products.util.Products.ProductIndividual;
 import org.efaps.ui.wicket.util.DateUtil;
@@ -80,8 +81,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * TODO comment!
- *
  * @author The eFaps Team
  */
 @EFapsUUID("aa16287e-6148-41d2-a40f-05a65946ecfc")
@@ -193,8 +192,10 @@ public abstract class Transaction_Base
     public Return create(final Parameter _parameter)
         throws EFapsException
     {
-        final Type docType = getType4DocCreate(_parameter);
-        if (docType.isKindOf(CIProducts.TransactionIndividualAbstract)
+        final Return ret = new Return();
+        final List<Instance> transLists = new ArrayList<>();
+        final Type transactionType = getType4DocCreate(_parameter);
+        if (transactionType.isKindOf(CIProducts.TransactionIndividualAbstract)
                         && Boolean.parseBoolean(_parameter.getParameterValue(
                                         CIFormProducts.Products_TransactionIndividualForm.inout.name))) {
 
@@ -210,57 +211,19 @@ public abstract class Transaction_Base
             final Parameter parameter = ParameterUtil.clone(_parameter);
             ParameterUtil.setParameterValues(parameter, getFieldName4Attribute(_parameter,
                             CIFormProducts.Products_TransactionInOutForm.product.name), stockProdIns.getOid());
-            final CreatedDoc inoutDoc;
-            if (docType.isCIType(CIProducts.TransactionIndividualInbound)) {
-                inoutDoc = createDoc(parameter, CIProducts.TransactionInbound.getType());
+            if (transactionType.isCIType(CIProducts.TransactionIndividualInbound)) {
+                transLists.add(createTransaction(parameter, CIProducts.TransactionInbound.getType()));
             } else {
-                inoutDoc = createDoc(parameter,  CIProducts.TransactionOutbound.getType());
+                transLists.add(createTransaction(parameter,  CIProducts.TransactionOutbound.getType()));
             }
-            final CreatedDoc transDoc = createDocumentTransaction(_parameter, inoutDoc);
-            final CreatedDoc createDoc = createDoc(_parameter, docType);
-
-            if (transDoc.getInstance().isValid()) {
-                final Update update = new Update(createDoc.getInstance());
-                update.add(CIProducts.TransactionAbstract.Document, transDoc.getInstance().getId());
-                update.executeWithoutTrigger();
-            }
-
-        } else {
-            final CreatedDoc createDoc = createDoc(_parameter, docType);
-            createDocumentTransaction(_parameter, createDoc);
         }
-        return new Return();
-    }
-
-    /**
-     * Creates the document transaction.
-     *
-     * @param _parameter Parameter as passed by the eFaps API
-     * @param _createDoc the _create doc
-     * @return the created doc
-     * @throws EFapsException on error
-     */
-    protected CreatedDoc createDocumentTransaction(final Parameter _parameter,
-                                                   final CreatedDoc _createDoc)
-        throws EFapsException
-    {
-        CreatedDoc ret = null;
-        final String productDocumentType = _parameter.getParameterValue("productDocumentType");
-        if (productDocumentType != null) {
-            final Instance prodDocInst = Instance.get(productDocumentType);
-            if (prodDocInst.isValid() && (_createDoc.getInstance().getType().isCIType(CIProducts.TransactionInbound)
-                            || _createDoc.getInstance().getType().isCIType(CIProducts.TransactionOutbound))) {
-                ret = new TransactionDocument().createDoc(_parameter, _createDoc);
-                if (ret.getInstance().isValid()) {
-                    // Sales_Document2ProductDocumentType
-                    final Insert insert = new Insert(UUID.fromString("29438fb0-8b1f-4e4e-a409-812b2f9efdc0"));
-                    insert.add("DocumentLink", ret.getInstance().getId());
-                    insert.add("DocumentTypeLink", prodDocInst.getId());
-                    insert.execute();
-
-                    final Update update = new Update(_createDoc.getInstance());
-                    update.add(CIProducts.TransactionAbstract.Document, ret.getInstance().getId());
-                    update.executeWithoutTrigger();
+        transLists.add(createTransaction(_parameter, transactionType));
+        if (!transLists.isEmpty()) {
+            for (final IOnTransaction listener : Listener.get().<IOnTransaction>invoke(IOnTransaction.class)) {
+                final File file  = listener.createDocuments4Transactions(_parameter, transLists.toArray(new Instance[transLists.size()]));
+                if (file != null) {
+                    ret.put(ReturnValues.VALUES, file);
+                    ret.put(ReturnValues.TRUE, true);
                 }
             }
         }
@@ -271,37 +234,32 @@ public abstract class Transaction_Base
      * Creates the doc.
      *
      * @param _parameter Parameter as passed by the eFaps API
-     * @param _docType the _doc type
+     * @param _transactionType the ransaction type
      * @return the created doc
      * @throws EFapsException on error
      */
-    protected CreatedDoc createDoc(final Parameter _parameter,
-                                   final Type _docType)
+    protected Instance createTransaction(final Parameter _parameter,
+                                         final Type _transactionType)
         throws EFapsException
     {
-        final CreatedDoc createdDoc = new CreatedDoc();
-
-        final Insert insert = new Insert(_docType);
+        final Insert insert = new Insert(_transactionType);
 
         final String quantity = _parameter.getParameterValue(getFieldName4Attribute(_parameter,
                         CIFormProducts.Products_TransactionAbstractForm.quantity.name));
         if (quantity != null) {
             insert.add(CIProducts.TransactionAbstract.Quantity, quantity);
-            createdDoc.getValues().put(CIProducts.TransactionAbstract.Quantity.name, quantity);
         }
 
         final String uoM = _parameter.getParameterValue(getFieldName4Attribute(_parameter,
                         CIFormProducts.Products_TransactionAbstractForm.uoM.name));
         if (uoM != null) {
             insert.add(CIProducts.TransactionAbstract.UoM, uoM);
-            createdDoc.getValues().put(CIProducts.TransactionAbstract.UoM.name, uoM);
         }
 
         final String storage = _parameter.getParameterValue(getFieldName4Attribute(_parameter,
                         CIFormProducts.Products_TransactionInOutForm.storage.name));
         if (storage != null) {
             insert.add(CIProducts.TransactionAbstract.Storage, storage);
-            createdDoc.getValues().put(CIProducts.TransactionAbstract.Storage.name, storage);
         }
 
         final String product = _parameter.getParameterValue(getFieldName4Attribute(_parameter,
@@ -310,7 +268,6 @@ public abstract class Transaction_Base
             final Instance prodInst = Instance.get(product);
             if (prodInst.isValid()) {
                 insert.add(CIProducts.TransactionAbstract.Product, prodInst.getId());
-                createdDoc.getValues().put(CIProducts.TransactionAbstract.Product.name, prodInst.getId());
             }
         }
 
@@ -318,21 +275,16 @@ public abstract class Transaction_Base
                         CIFormProducts.Products_TransactionAbstractForm.description.name));
         if (description != null) {
             insert.add(CIProducts.TransactionAbstract.Description, description);
-            createdDoc.getValues().put(CIProducts.TransactionAbstract.Description.name, description);
         }
 
         final String date = _parameter.getParameterValue(getFieldName4Attribute(_parameter,
                         CIFormProducts.Products_TransactionAbstractForm.date.name));
         if (date != null) {
             insert.add(CIProducts.TransactionAbstract.Date, date);
-            createdDoc.getValues().put(CIProducts.TransactionAbstract.Date.name, date);
         }
-
-        add2DocCreate(_parameter, insert, createdDoc);
         insert.execute();
 
-        createdDoc.setInstance(insert.getInstance());
-        return createdDoc;
+        return insert.getInstance();
     }
 
     @Override
@@ -921,7 +873,7 @@ public abstract class Transaction_Base
 
         final String storateTo = multi.<String>getAttribute(CIProducts.StorageAbstract.Name);
 
-        final List<CreatedDoc> transLists = new ArrayList<>();
+        final List<Instance> transLists = new ArrayList<>();
         if (product != null && product.length > 0) {
             for (int x = 0; x < product.length; x++) {
                 final Instance prodInst = Instance.get(product[x]);
@@ -950,22 +902,22 @@ public abstract class Transaction_Base
                 final Instance prodInstTmp;
                 if (individual) {
                     prodInstTmp = prodPrint.getSelect(selProdInst);
-                    final CreatedDoc inbound = addTransactionProduct(CIProducts.TransactionIndividualInbound,
+                    final Instance inbound = addProductTransaction(CIProducts.TransactionIndividualInbound,
                                     quantity, storageToId, uoM[x], date, prodInst, newDesc);
 
-                    final CreatedDoc outbound = addTransactionProduct(CIProducts.TransactionIndividualOutbound,
+                    final Instance outbound = addProductTransaction(CIProducts.TransactionIndividualOutbound,
                                     quantity, storageFromInst.getId(), uoM[x], date, prodInst, newDesc);
                     transLists.add(inbound);
                     transLists.add(outbound);
                 } else {
                     prodInstTmp = prodInst;
                 }
-                final CreatedDoc inbound = addTransactionProduct(CIProducts.TransactionInbound,
+                final Instance inbound = addProductTransaction(CIProducts.TransactionInbound,
                                 quantity, storageToId, uoM[x], date, prodInstTmp, newDesc);
 
-                final CreatedDoc outbound = addTransactionProduct(CIProducts.TransactionOutbound,
+                final Instance outbound = addProductTransaction(CIProducts.TransactionOutbound,
                                 quantity, storageFromInst.getId(), uoM[x], date, prodInstTmp, newDesc);
-                if (inbound.getInstance().isValid() && outbound.getInstance().isValid()) {
+                if (InstanceUtils.isValid(inbound) && InstanceUtils.isValid(outbound)) {
                     transLists.add(inbound);
                     transLists.add(outbound);
                 }
@@ -973,15 +925,12 @@ public abstract class Transaction_Base
         }
 
         if (!transLists.isEmpty()) {
-            final CreatedDoc doc = addTransactionDocument2ConnectTransaction(_parameter,
-                            transLists.toArray(new CreatedDoc[transLists.size()]));
-            Context.getThreadContext().setSessionAttribute(NAMEKEY,
-                            doc.getValues().get(CIERP.DocumentAbstract.Name.name));
-
-            final File file = new TransactionDocument().createReport(_parameter, doc);
-            if (file != null) {
-                ret.put(ReturnValues.VALUES, file);
-                ret.put(ReturnValues.TRUE, true);
+            for (final IOnTransaction listener : Listener.get().<IOnTransaction>invoke(IOnTransaction.class)) {
+                final File file  = listener.createDocuments4Transactions(_parameter, transLists.toArray(new Instance[transLists.size()]));
+                if (file != null) {
+                    ret.put(ReturnValues.VALUES, file);
+                    ret.put(ReturnValues.TRUE, true);
+                }
             }
         }
         return ret;
@@ -1013,71 +962,24 @@ public abstract class Transaction_Base
      * @return the created doc
      * @throws EFapsException on error
      */
-    protected CreatedDoc addTransactionProduct(final CIType _ciType,
-                                               final Object... _values)
+    protected Instance addProductTransaction(final CIType _ciType,
+                                               final Object _quantity,
+                                               final Object _storage,
+                                               final Object _uoM,
+                                               final Object _date,
+                                               final Object _product,
+                                               final String _description)
         throws EFapsException
     {
-        final CreatedDoc createDoc = new CreatedDoc();
-
         final Insert insert = new Insert(_ciType);
-        insert.add(CIProducts.TransactionAbstract.Quantity, _values[0]);
-        createDoc.getValues().put(CIProducts.TransactionAbstract.Quantity.name, _values[0]);
-
-        insert.add(CIProducts.TransactionInOutAbstract.Storage, _values[1]);
-        createDoc.getValues().put(CIProducts.TransactionAbstract.Storage.name, _values[1]);
-
-        insert.add(CIProducts.TransactionInOutAbstract.UoM, _values[2]);
-        createDoc.getValues().put(CIProducts.TransactionAbstract.UoM.name, _values[2]);
-
-        insert.add(CIProducts.TransactionAbstract.Date, _values[3]);
-        createDoc.getValues().put(CIProducts.TransactionAbstract.Date.name, _values[3]);
-
-        insert.add(CIProducts.TransactionAbstract.Product, _values[4]);
-        createDoc.getValues().put(CIProducts.TransactionAbstract.Product.name, _values[4]);
-
-        insert.add(CIProducts.TransactionAbstract.Description, _values[5]);
-        createDoc.getValues().put(CIProducts.TransactionAbstract.Description.name, _values[5]);
-
+        insert.add(CIProducts.TransactionAbstract.Quantity, _quantity);
+        insert.add(CIProducts.TransactionInOutAbstract.Storage, _storage);
+        insert.add(CIProducts.TransactionInOutAbstract.UoM,_uoM);
+        insert.add(CIProducts.TransactionAbstract.Date, _date);
+        insert.add(CIProducts.TransactionAbstract.Product, _product);
+        insert.add(CIProducts.TransactionAbstract.Description, _description);
         insert.execute();
-        createDoc.setInstance(insert.getInstance());
-
-        return createDoc;
-    }
-
-    /**
-     * @param _parameter Parameter as passed by the eFaps API
-     * @param _transactions transaction
-     * @return createdoc for transactiondocument
-     * @throws EFapsException on error
-     */
-    protected CreatedDoc addTransactionDocument2ConnectTransaction(final Parameter _parameter,
-                                                                   final CreatedDoc... _transactions)
-        throws EFapsException
-    {
-        CreatedDoc ret = null;
-        final String productDocumentType = _parameter.getParameterValue("productDocumentType");
-        if (productDocumentType != null) {
-            final Instance prodDocInst = Instance.get(productDocumentType);
-            if (prodDocInst.isValid()) {
-                ret = new TransactionDocument().createDoc(_parameter, _transactions[0]);
-                if (ret.getInstance().isValid()) {
-                    // Sales_Document2ProductDocumentType
-                    final Insert insert = new Insert(UUID.fromString("29438fb0-8b1f-4e4e-a409-812b2f9efdc0"));
-                    insert.add("DocumentLink", ret.getInstance());
-                    insert.add("DocumentTypeLink", prodDocInst);
-                    insert.execute();
-
-                    if (_transactions != null && _transactions.length > 0) {
-                        for (final CreatedDoc trans : _transactions) {
-                            final Update update = new Update(trans.getInstance());
-                            update.add(CIProducts.TransactionAbstract.Document, ret.getInstance());
-                            update.executeWithoutTrigger();
-                        }
-                    }
-                }
-            }
-        }
-        return ret;
+        return insert.getInstance();
     }
 
     /**
@@ -1258,7 +1160,7 @@ public abstract class Transaction_Base
         final String[] uoMs = _parameter
                         .getParameterValues(CITableProducts.Products_InventorySet4ProductsTable.uoM.name);
 
-        final List<CreatedDoc> transLists = new ArrayList<>();
+        final List<Instance> transLists = new ArrayList<>();
         if (products != null) {
             for (int i = 0; i < products.length; i++) {
                 Instance productInst = Instance.get(products[i]);
@@ -1289,7 +1191,7 @@ public abstract class Transaction_Base
                             moveQty = quantity.subtract(currQuantity);
                             type = CIProducts.TransactionInbound;
                             if (individual) {
-                                final CreatedDoc trans = addTransactionProduct(CIProducts.TransactionIndividualInbound,
+                                final Instance trans = addProductTransaction(CIProducts.TransactionIndividualInbound,
                                             moveQty, storageInst, uoMId, date, productInst, descr);
                                 transLists.add(trans);
                                 productInst = new Product().getProduct4Individual(_parameter, productInst);
@@ -1298,28 +1200,25 @@ public abstract class Transaction_Base
                             moveQty = currQuantity.subtract(quantity);
                             type = CIProducts.TransactionOutbound;
                             if (individual) {
-                                final CreatedDoc trans = addTransactionProduct(CIProducts.TransactionIndividualOutbound,
+                                final Instance trans = addProductTransaction(CIProducts.TransactionIndividualOutbound,
                                             moveQty, storageInst, uoMId, date, productInst, descr);
                                 transLists.add(trans);
                                 productInst = new Product().getProduct4Individual(_parameter, productInst);
                             }
                         }
-                        final CreatedDoc trans = addTransactionProduct(type,
-                                        moveQty, storageInst, uoMId, date, productInst, descr);
+                        final Instance trans = addProductTransaction(type, moveQty, storageInst, uoMId, date, productInst, descr);
                         transLists.add(trans);
                     }
                 }
             }
         }
         if (!transLists.isEmpty()) {
-            final CreatedDoc doc = addTransactionDocument2ConnectTransaction(_parameter,
-                            transLists.toArray(new CreatedDoc[transLists.size()]));
-            Context.getThreadContext().setSessionAttribute(NAMEKEY,
-                            doc.getValues().get(CIERP.DocumentAbstract.Name.name));
-            final File file = new TransactionDocument().createReport(_parameter, doc);
-            if (file != null) {
-                ret.put(ReturnValues.VALUES, file);
-                ret.put(ReturnValues.TRUE, true);
+            for (final IOnTransaction listener : Listener.get().<IOnTransaction>invoke(IOnTransaction.class)) {
+                final File file  = listener.createDocuments4Transactions(_parameter, transLists.toArray(new Instance[transLists.size()]));
+                if (file != null) {
+                    ret.put(ReturnValues.VALUES, file);
+                    ret.put(ReturnValues.TRUE, true);
+                }
             }
         }
         return ret;
@@ -1422,10 +1321,10 @@ public abstract class Transaction_Base
 
         if (!ArrayUtils.isEmpty(products)) {
             final List<Map<String, Object>> list = new ArrayList<>();
-            for (int j = 0; j < products.length; j++) {
+            for (final String product : products) {
                 final Map<String, Object> map = new HashMap<>();
                 list.add(map);
-                final Instance productInst = Instance.get(products[j]);
+                final Instance productInst = Instance.get(product);
                 if (productInst != null && productInst.isValid()) {
                     final InventoryBean inventoryBean = Inventory.getInventory4Product(_parameter,
                                 _parameter.getInstance(), date, productInst);
@@ -1802,8 +1701,8 @@ public abstract class Transaction_Base
         public TransDateProd(final DateTime _date,
                              final Long _prodId)
         {
-            this.date = _date;
-            this.prodId = _prodId;
+            date = _date;
+            prodId = _prodId;
         }
 
         /**
@@ -1813,7 +1712,7 @@ public abstract class Transaction_Base
          */
         public DateTime getDate()
         {
-            return this.date;
+            return date;
         }
 
         /**
@@ -1823,79 +1722,7 @@ public abstract class Transaction_Base
          */
         public Long getProdId()
         {
-            return this.prodId;
-        }
-    }
-
-    /**
-     * The Class TransactionDocument.
-     */
-    public class TransactionDocument
-        extends CommonDocument
-    {
-
-        /**
-         * Instantiates a new transaction document.
-         */
-        public TransactionDocument()
-        {
-        }
-
-        /**
-         * Creates the doc.
-         *
-         * @param _parameter Parameter as passed by the eFaps API
-         * @param _createDoc the _create doc
-         * @return the created doc
-         * @throws EFapsException on error
-         */
-        public CreatedDoc createDoc(final Parameter _parameter,
-                                     final CreatedDoc _createDoc)
-            throws EFapsException
-        {
-            final CreatedDoc createdDoc = new CreatedDoc();
-            final Insert insert = new Insert(getType4DocCreate(_parameter));
-
-            final String name = getDocName4Create(_parameter);
-            if (name != null) {
-                insert.add(CIERP.DocumentAbstract.Name, name);
-                createdDoc.getValues().put(CIERP.DocumentAbstract.Name.name, name);
-            }
-
-            final Object date = _createDoc.getValues().get(CIProducts.TransactionAbstract.Date.name);
-            if (date != null) {
-                insert.add(CIERP.DocumentAbstract.Date, date);
-                createdDoc.getValues().put(CIERP.DocumentAbstract.Date.name, date);
-            }
-
-            addStatus2DocCreate(_parameter, insert, createdDoc);
-            add2DocCreate(_parameter, insert, createdDoc);
-            insert.execute();
-
-            createdDoc.setInstance(insert.getInstance());
-            return createdDoc;
-        }
-
-        @Override
-        public File createReport(final Parameter _parameter,
-                                 final CreatedDoc _createdDoc)
-            throws EFapsException
-        {
-            return super.createReport(_parameter, _createdDoc);
-        }
-
-        @Override
-        protected Type getType4DocCreate(final Parameter _parameter)
-            throws EFapsException
-        {
-            Type typeTransactionDoc = null;
-            final Map<?, ?> properties = (HashMap<?, ?>) _parameter.get(ParameterValues.PROPERTIES);
-            if (properties != null) {
-                if (properties.containsKey("TransactionDocument")) {
-                    typeTransactionDoc = Type.get(UUID.fromString((String) properties.get("TransactionDocument")));
-                }
-            }
-            return typeTransactionDoc;
+            return prodId;
         }
     }
 
