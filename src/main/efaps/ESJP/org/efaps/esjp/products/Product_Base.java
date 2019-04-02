@@ -273,9 +273,9 @@ public abstract class Product_Base
 
         if (instance != null && instance.getType() != null) {
             if (instance.getType().isCIType(CIProducts.ProductMaterial)) {
-                ret = Products.MATERIALACTFAM.get();
+                ret = Products.MATERIAL_ACTFAM.get();
             } else if (instance.getType().isCIType(CIProducts.ProductStandart)) {
-                ret = Products.STANDARTACTFAM.get();
+                ret = Products.STANDART_ACTFAM.get();
             } else if (instance.getType().isCIType(CIProducts.ProductGeneric)) {
                 ret = Products.GENERICACTFAM.get();
             } else if (instance.getType().isCIType(CIProducts.ProductService)) {
@@ -1296,6 +1296,15 @@ public abstract class Product_Base
         if (_parameter.getParameterValue(CIFormProducts.Products_ProductForm.name.name) != null) {
             ret = _parameter.getParameterValue(CIFormProducts.Products_ProductForm.name.name);
         } else if (isFamilyActivated(_parameter, _instance)) {
+            Instance instance = _instance;
+            if (instance == null) {
+                final Object obj = _parameter.get(ParameterValues.UIOBJECT);
+                if (obj instanceof AbstractCommand) {
+                    final Type type = ((AbstractCommand) obj).getTargetCreateType();
+                    instance = Instance.get(type, 0);
+                }
+            }
+
             final Instance famInst = Instance.get(_parameter.getParameterValue(
                             CIFormProducts.Products_ProductForm.productFamilyLink.name));
             String codePartFam = null;
@@ -1310,22 +1319,29 @@ public abstract class Product_Base
                 if (suffix == null) {
                     suffix = _parameter.getParameterValue(CIFormProducts.Products_ProductForm.nameSuffix4Edit.name);
                 }
-                ret = codePartFam + "." + suffix;
-            }
-
-            Instance instance = _instance;
-            if (instance == null) {
-                final Object obj = _parameter.get(ParameterValues.UIOBJECT);
-                if (obj instanceof AbstractCommand) {
-                    final Type type = ((AbstractCommand) obj).getTargetCreateType();
-                    instance = Instance.get(type, 0);
+                String format = null;
+                if (instance.getType().isCIType(CIProducts.ProductMaterial)) {
+                    format = Products.MATERIAL_NAMEFRMT.get();
+                } else if (instance.getType().isCIType(CIProducts.ProductStandart)) {
+                    format = Products.STANDART_NAMEFRMT.get();
+                } else if (instance.getType().isCIType(CIProducts.ProductGeneric)) {
+                    format = Products.GENERIC_NAMEFRMT.get();
+                } else if (instance.getType().isCIType(CIProducts.ProductService)) {
+                    format = Products.SERV_NAMEFRMT.get();
+                } else if (instance.getType().isCIType(CIProducts.ProductInfinite)) {
+                    format = Products.INFINITE_NAMEFRMT.get();
+                }
+                if (format == null) {
+                    ret = codePartFam + "." + suffix;
+                } else {
+                    ret = String.format(format, codePartFam, suffix);
                 }
             }
 
             if (instance.getType().isCIType(CIProducts.ProductMaterial)) {
-                ret = Products.MATERIALFAMPRE.get() == null ? ret : Products.MATERIALFAMPRE.get() + ret;
+                ret = Products.MATERIAL_FAMPRE.get() == null ? ret : Products.MATERIAL_FAMPRE.get() + ret;
             } else if (instance.getType().isCIType(CIProducts.ProductStandart)) {
-                ret = Products.STANDARTFAMPRE.get() == null ? ret : Products.STANDARTFAMPRE.get() + ret;
+                ret = Products.STANDART_FAMPRE.get() == null ? ret : Products.STANDART_FAMPRE.get() + ret;
             } else if (instance.getType().isCIType(CIProducts.ProductGeneric)) {
                 ret = Products.GENERICFAMPRE.get() == null ? ret : Products.GENERICFAMPRE.get() + ret;
             } else if (instance.getType().isCIType(CIProducts.ProductService)) {
@@ -1593,9 +1609,9 @@ public abstract class Product_Base
         }
         final Properties descriptions;
         if (type.isCIType(CIProducts.ProductStandart)) {
-            descriptions = Products.STANDARTDESCR.get();
+            descriptions = Products.STANDART_DESCR.get();
         } else if (type.isCIType(CIProducts.ProductMaterial)) {
-            descriptions = Products.MATERIALDESCR.get();
+            descriptions = Products.MATERIAL_DESCR.get();
         } else if (type.isCIType(CIProducts.ProductService)) {
             descriptions = Products.SERV_DESCR.get();
         } else if (type.isCIType(CIProducts.ProductInfinite)) {

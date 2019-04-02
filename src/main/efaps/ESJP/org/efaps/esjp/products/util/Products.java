@@ -200,6 +200,15 @@ public final class Products
 
     /** See description. */
     @EFapsSysConfAttribute
+    public static final StringSysConfAttribute GENERIC_NAMEFRMT = new StringSysConfAttribute()
+                    .sysConfUUID(Products.SYSCONFUUID)
+                    .key(Products.BASE + "Generic.NameFormat")
+                    .description("StringFormat to be used to create "
+                                    + "the name from FamilyCode (first Parameter) and Name (second Parameter)")
+                    .defaultValue("%s.%s");
+
+    /** See description. */
+    @EFapsSysConfAttribute
     public static final BooleanSysConfAttribute INDIVIDUAL_ACTARCHIVE = new BooleanSysConfAttribute()
                     .sysConfUUID(Products.SYSCONFUUID)
                     .key(Products.BASE + "Individual.ActivateArchives")
@@ -223,6 +232,15 @@ public final class Products
 
     /** See description. */
     @EFapsSysConfAttribute
+    public static final StringSysConfAttribute INFINITE_NAMEFRMT = new StringSysConfAttribute()
+                    .sysConfUUID(Products.SYSCONFUUID)
+                    .key(Products.BASE + "Infinite.NameFormat")
+                    .description("StringFormat to be used to create "
+                                    + "the name from FamilyCode (first Parameter) and Name (second Parameter)")
+                    .defaultValue("%s.%s");
+
+    /** See description. */
+    @EFapsSysConfAttribute
     public static final PropertiesSysConfAttribute INFINITEDESCR = new PropertiesSysConfAttribute()
                     .sysConfUUID(Products.SYSCONFUUID)
                     .key(Products.BASE + "Infinite.Descriptions")
@@ -230,7 +248,7 @@ public final class Products
 
     /** See description. */
     @EFapsSysConfAttribute
-    public static final BooleanSysConfAttribute ACTIVATEMATERIAL = new BooleanSysConfAttribute()
+    public static final BooleanSysConfAttribute ACTIVATE_MATERIAL = new BooleanSysConfAttribute()
                     .sysConfUUID(Products.SYSCONFUUID)
                     .key(Products.BASE + "Material.Activate")
                     .description("Activate the generic product management for materials.")
@@ -238,70 +256,79 @@ public final class Products
 
     /** See description. */
     @EFapsSysConfAttribute
-    public static final BooleanSysConfAttribute MATERIALISGENERIC = new BooleanSysConfAttribute()
+    public static final BooleanSysConfAttribute MATERIAL_ISGENERIC = new BooleanSysConfAttribute()
                     .sysConfUUID(Products.SYSCONFUUID)
                     .key(Products.BASE + "Material.IsGeneric")
                     .description("Activate the generic product management for materials.");
 
     /** See description. */
     @EFapsSysConfAttribute
-    public static final BooleanSysConfAttribute MATERIALACTFAM = new BooleanSysConfAttribute()
+    public static final BooleanSysConfAttribute MATERIAL_ACTFAM = new BooleanSysConfAttribute()
                     .sysConfUUID(Products.SYSCONFUUID)
                     .key(Products.BASE + "Material.ActivateFamilies")
                     .description("Activate the family management for materials.");
 
     /** See description. */
     @EFapsSysConfAttribute
-    public static final BooleanSysConfAttribute MATERIALACTCLASS = new BooleanSysConfAttribute()
+    public static final BooleanSysConfAttribute MATERIAL_ACTCLASS = new BooleanSysConfAttribute()
                     .sysConfUUID(Products.SYSCONFUUID)
                     .key(Products.BASE + "Material.ActivateClassification")
                     .description("Activate the classifcation for materials.");
 
     /** See description. */
     @EFapsSysConfAttribute
-    public static final BooleanSysConfAttribute MATERIALACTIND = new BooleanSysConfAttribute()
+    public static final BooleanSysConfAttribute MATERIAL_ACTIND = new BooleanSysConfAttribute()
                     .sysConfUUID(Products.SYSCONFUUID)
                     .key(Products.BASE + "Material.ActivateIndividual")
                     .description("Activate the family management for materials.");
 
     /** See description. */
     @EFapsSysConfAttribute
-    public static final StringSysConfAttribute MATERIALFAMPRE = new StringSysConfAttribute()
+    public static final StringSysConfAttribute MATERIAL_FAMPRE = new StringSysConfAttribute()
                     .sysConfUUID(Products.SYSCONFUUID)
                     .key(Products.BASE + "Material.FamiliesPrefix")
                     .description("Activate the family management for materials.");
 
     /** See description. */
     @EFapsSysConfAttribute
-    public static final PropertiesSysConfAttribute MATERIALDESCR = new PropertiesSysConfAttribute()
+    public static final StringSysConfAttribute MATERIAL_NAMEFRMT = new StringSysConfAttribute()
+                    .sysConfUUID(Products.SYSCONFUUID)
+                    .key(Products.BASE + "Material.NameFormat")
+                    .description("StringFormat to be used to create "
+                                    + "the name from FamilyCode (first Parameter) and Name (second Parameter)")
+                    .defaultValue("%s.%s");
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final PropertiesSysConfAttribute MATERIAL_DESCR = new PropertiesSysConfAttribute()
                     .sysConfUUID(Products.SYSCONFUUID)
                     .key(Products.BASE + "Material.Descriptions")
                     .description("Substitutor values: Default=${Name}, Products_ProductStandartClass=text ${name} .");
 
     /** See description. */
     @EFapsSysConfAttribute
-    public static final BooleanSysConfAttribute STANDARTACTFAM = new BooleanSysConfAttribute()
+    public static final BooleanSysConfAttribute STANDART_ACTFAM = new BooleanSysConfAttribute()
                     .sysConfUUID(Products.SYSCONFUUID)
                     .key(Products.BASE + "Standart.ActivateFamilies")
                     .description("Activate the family management for standart products.");
 
     /** See description. */
     @EFapsSysConfAttribute
-    public static final BooleanSysConfAttribute STANDARTACTNOTE = new BooleanSysConfAttribute()
+    public static final BooleanSysConfAttribute STANDART_ACTNOTE = new BooleanSysConfAttribute()
                     .sysConfUUID(Products.SYSCONFUUID)
                     .key(Products.BASE + "Standart.ActivateNote")
                     .description("Activate the note field for standart products.");
 
     /** See description. */
     @EFapsSysConfAttribute
-    public static final BooleanSysConfAttribute STANDARTACTCLASS = new BooleanSysConfAttribute()
+    public static final BooleanSysConfAttribute STANDART_ACTCLASS = new BooleanSysConfAttribute()
                     .sysConfUUID(Products.SYSCONFUUID)
                     .key(Products.BASE + "Standart.ActivateClassification")
                     .description("Activate the classifcation for standart products.");
 
     /** See description. */
     @EFapsSysConfAttribute
-    public static final BooleanSysConfAttribute STANDARTACTIND = new BooleanSysConfAttribute()
+    public static final BooleanSysConfAttribute STANDART_ACTIND = new BooleanSysConfAttribute()
                     .sysConfUUID(Products.SYSCONFUUID)
                     .key(Products.BASE + "Standart.ActivateIndividual")
                     .description("Activate the individual for standart products. "
@@ -309,17 +336,26 @@ public final class Products
 
     /** See description. */
     @EFapsSysConfAttribute
-    public static final PropertiesSysConfAttribute STANDARTDESCR = new PropertiesSysConfAttribute()
+    public static final PropertiesSysConfAttribute STANDART_DESCR = new PropertiesSysConfAttribute()
                     .sysConfUUID(Products.SYSCONFUUID)
                     .key(Products.BASE + "Standart.Descriptions")
                     .description("Substitutor values: Default=${Name}, Products_ProductStandartClass=text ${name} .");
 
     /** See description. */
     @EFapsSysConfAttribute
-    public static final StringSysConfAttribute STANDARTFAMPRE = new StringSysConfAttribute()
+    public static final StringSysConfAttribute STANDART_FAMPRE = new StringSysConfAttribute()
                     .sysConfUUID(Products.SYSCONFUUID)
                     .key(Products.BASE + "Standart.FamiliesPrefix")
                     .description("Activate the family management for standart products.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final StringSysConfAttribute STANDART_NAMEFRMT = new StringSysConfAttribute()
+                    .sysConfUUID(Products.SYSCONFUUID)
+                    .key(Products.BASE + "Standart.NameFormat")
+                    .description("StringFormat to be used to create "
+                                    + "the name from FamilyCode (first Parameter) and Name (second Parameter)")
+                    .defaultValue("%s.%s");
 
     /** See description. */
     @EFapsSysConfAttribute
@@ -356,6 +392,15 @@ public final class Products
                     .sysConfUUID(Products.SYSCONFUUID)
                     .key(Products.BASE + "Service.FamiliesPrefix")
                     .description("Activate the family management for materials.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final StringSysConfAttribute SERV_NAMEFRMT = new StringSysConfAttribute()
+                    .sysConfUUID(Products.SYSCONFUUID)
+                    .key(Products.BASE + "Service.NameFormat")
+                    .description("StringFormat to be used to create "
+                                    + "the name from FamilyCode (first Parameter) and Name (second Parameter)")
+                    .defaultValue("%s.%s");
 
     /** See description. */
     @EFapsSysConfAttribute
