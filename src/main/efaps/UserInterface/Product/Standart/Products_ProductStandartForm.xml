@@ -251,7 +251,7 @@
             </trigger>
         </field>
         <field name="nameSuffix">
-            <property name="Columns">8</property>
+            <property name="Width">16</property>
             <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
             <property name="ModeView">NONE</property>
             <property name="ModeEdit">NONE</property>
@@ -288,7 +288,7 @@
         </field>
         <field name="nameSuffix4Edit">
             <property name="Required">true</property>
-            <property name="Columns">8</property>
+            <property name="Width">16</property>
             <property name="Attribute">Name</property>
             <property name="Label">Products_ProductForm.nameSuffix.Label</property>
             <property name="ModeEdit">EDITABLE</property>
