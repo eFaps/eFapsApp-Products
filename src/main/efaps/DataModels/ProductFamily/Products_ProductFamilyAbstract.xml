@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
 
- Copyright 2003 - 2018 The eFaps Team
+ Copyright 2003 - 2019 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -43,10 +43,10 @@
             <sqlcolumn>ID</sqlcolumn>
         </attribute>
         <attribute>
-            <name>Company</name>
-            <type>CompanyLink</type>
+            <name>Association</name>
+            <type>AssociationLink</type>
             <sqltable>Products_ProductFamilySQLTable</sqltable>
-            <sqlcolumn>COMPANYID</sqlcolumn>
+            <sqlcolumn>ASSOCID</sqlcolumn>
         </attribute>
          <attribute>
             <name>ProductLineLink</name>

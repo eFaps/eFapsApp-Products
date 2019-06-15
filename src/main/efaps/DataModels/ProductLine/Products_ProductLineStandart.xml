@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
 
- Copyright 2003 - 2015 The eFaps Team
+ Copyright 2003 - 2019 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -19,23 +20,22 @@
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>6d2f2fba-80a8-4a13-b262-e501941ab607</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductLineStandart</name>
         <parent>Products_ProductLineAbstract</parent>
          <trigger program="org.efaps.esjp.common.cache.CacheUtils" method="cleanQueryCacheTrigger"
             name="Products_ProductLineStandart.INSERT_POST" event="INSERT_POST">
-            <property name="CacheName">org.efaps.esjp.products.ProductFamily.CacheKey</property>
+            <property name="CacheName">org.efaps.esjp.products.ProductLine.CacheKey</property>
         </trigger>
         <trigger program="org.efaps.esjp.common.cache.CacheUtils"
             method="cleanQueryCacheTrigger" name="Products_ProductLineStandart.UPDATE_POST"
             event="UPDATE_POST">
-            <property name="CacheName">org.efaps.esjp.products.ProductFamily.CacheKey</property>
+            <property name="CacheName">org.efaps.esjp.products.ProductLine.CacheKey</property>
         </trigger>
         <trigger program="org.efaps.esjp.common.cache.CacheUtils" method="cleanQueryCacheTrigger"
             name="Products_ProductLineStandart.DELETE_POST" event="DELETE_POST">
-            <property name="CacheName">org.efaps.esjp.products.ProductFamily.CacheKey</property>
+            <property name="CacheName">org.efaps.esjp.products.ProductLine.CacheKey</property>
         </trigger>
     </definition>
 </datamodel-type>

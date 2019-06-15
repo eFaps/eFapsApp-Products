@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
 
- Copyright 2003 - 2015 The eFaps Team
+ Copyright 2003 - 2019 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -19,7 +20,6 @@
 xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>3173c16d-b014-46c9-82fa-c888833a0199</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductLineAbstract</name>
@@ -43,12 +43,12 @@ xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.
             <sqlcolumn>ID</sqlcolumn>
         </attribute>
         <attribute>
-            <name>Company</name>
-            <type>CompanyLink</type>
+            <name>Association</name>
+            <type>AssociationLink</type>
             <sqltable>Products_ProductLineSQLTable</sqltable>
-            <sqlcolumn>COMPANYID</sqlcolumn>
+            <sqlcolumn>ASSOCID</sqlcolumn>
         </attribute>
-         <attribute>
+        <attribute>
             <name>CodePart</name>
             <type>String</type>
             <sqltable>Products_ProductLineSQLTable</sqltable>

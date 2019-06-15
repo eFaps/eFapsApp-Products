@@ -30,7 +30,7 @@
         <database>
             <table-name>T_PRODPRODUCT</table-name>
             <column name="TYPEID"       type="INTEGER"         not-null="true"/>
-            <column name="COMPANYID"    type="INTEGER"         not-null="true"/>
+            <column name="ASSOCID"      type="INTEGER"         not-null="true"/>
             <column name="NAME"         type="STRING_SHORT"    not-null="true"  length="255"/>
             <column name="DESCR"        type="STRING_SHORT"                     length="255"/>
             <column name="DIMID"        type="INTEGER"         not-null="true" />
@@ -46,7 +46,7 @@
             <column name="MODIFIED"     type="DATETIME"        not-null="true"/>
             <foreign name="T_PRODPRODUCT_FK_CRTR"       key="CREATOR"   reference="T_USERPERSON(ID)"/>
             <foreign name="T_PRODPRODUCT_FK_MDFR"       key="MODIFIER"  reference="T_USERPERSON(ID)"/>
-            <foreign name="T_PRODPRODUCT_FK_COMPANYID"  key="COMPANYID" reference="T_USERABSTRACT(ID)"/>
+            <foreign name="T_PRODPRODUCT_FK_ASSOCID"    key="ASSOCID"   reference="T_CMASSOC(ID)"/>
             <foreign name="T_PRODPRODUCT_FK_DIMID"      key="DIMID"     reference="T_DMDIM(ID)"/>
             <foreign name="T_PRODPRODUCT_FK_UOMID"      key="UOMID"     reference="T_DMUOM(ID)"/>
         </database>
@@ -62,7 +62,7 @@
         <database>
             <table-name>T_PRODPRODUCT</table-name>
             <column name="TYPEID"       type="INTEGER"          not-null="true"/>
-            <column name="COMPANYID"    type="INTEGER"          not-null="true"/>
+            <column name="ASSOCID"      type="INTEGER"          not-null="true"/>
             <column name="NAME"         type="STRING_SHORT"     not-null="true"     length="255"/>
             <column name="DESCR"        type="STRING_SHORT"                         length="255"/>
             <column name="DIMID"        type="INTEGER"          not-null="true" />
@@ -80,7 +80,7 @@
             <column name="MODIFIED"     type="DATETIME"         not-null="true"/>
             <foreign name="T_PRODPRODUCT_FK_CRTR"       key="CREATOR"   reference="T_USERPERSON(ID)"/>
             <foreign name="T_PRODPRODUCT_FK_MDFR"       key="MODIFIER"  reference="T_USERPERSON(ID)"/>
-            <foreign name="T_PRODPRODUCT_FK_COMPANYID"  key="COMPANYID" reference="T_USERABSTRACT(ID)"/>
+            <foreign name="T_PRODPRODUCT_FK_ASSOCID"    key="ASSOCID"   reference="T_CMASSOC(ID)"/>
             <foreign name="T_PRODPRODUCT_FK_DIMID"      key="DIMID"     reference="T_DMDIM(ID)"/>
             <foreign name="T_PRODPRODUCT_FK_UOMID"      key="UOMID"     reference="T_DMUOM(ID)"/>
         </database>
@@ -96,7 +96,7 @@
         <database>
             <table-name>T_PRODPRODUCT</table-name>
             <column name="TYPEID"       type="INTEGER"          not-null="true"/>
-            <column name="COMPANYID"    type="INTEGER"          not-null="true"/>
+            <column name="ASSOCID"      type="INTEGER"          not-null="true"/>
             <column name="NAME"         type="STRING_SHORT"     not-null="true"     length="255"/>
             <column name="DESCR"        type="STRING_SHORT"                         length="255"/>
             <column name="DIMID"        type="INTEGER"          not-null="true" />
@@ -114,10 +114,9 @@
             <column name="MODIFIED"     type="DATETIME"         not-null="true"/>
             <foreign name="T_PRODPRODUCT_FK_CRTR"       key="CREATOR"   reference="T_USERPERSON(ID)"/>
             <foreign name="T_PRODPRODUCT_FK_MDFR"       key="MODIFIER"  reference="T_USERPERSON(ID)"/>
-            <foreign name="T_PRODPRODUCT_FK_COMPANYID"  key="COMPANYID" reference="T_USERABSTRACT(ID)"/>
+            <foreign name="T_PRODPRODUCT_FK_ASSOCID"    key="ASSOCID"   reference="T_CMASSOC(ID)"/>
             <foreign name="T_PRODPRODUCT_FK_DIMID"      key="DIMID"     reference="T_DMDIM(ID)"/>
             <foreign name="T_PRODPRODUCT_FK_UOMID"      key="UOMID"     reference="T_DMUOM(ID)"/>
         </database>
     </definition>
-
 </datamodel-sqltable>
