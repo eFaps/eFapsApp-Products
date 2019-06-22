@@ -377,14 +377,21 @@ public final class Products
     public static final BooleanSysConfAttribute SERV_ACTIVATE = new BooleanSysConfAttribute()
                     .sysConfUUID(Products.SYSCONFUUID)
                     .key(Products.BASE + "Service.Activate")
-                    .description("Activate the family management for materials.");
+                    .description("Activate service products.");
 
     /** See description. */
     @EFapsSysConfAttribute
     public static final BooleanSysConfAttribute SERV_ACTFAM = new BooleanSysConfAttribute()
                     .sysConfUUID(Products.SYSCONFUUID)
                     .key(Products.BASE + "Service.ActivateFamilies")
-                    .description("Activate the family management for materials.");
+                    .description("Activate the family management for service.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute SERV_ACTCLASS = new BooleanSysConfAttribute()
+                    .sysConfUUID(Products.SYSCONFUUID)
+                    .key(Products.BASE + "Service.ActivateClassification")
+                    .description("Activate the classifcation for service products.");
 
     /** See description. */
     @EFapsSysConfAttribute
