@@ -35,7 +35,7 @@
         </field>
         <field name="js">
             <property name="UIType">SNIPPLET</property>
-            <property name="ModeView">HIDDEN</property>
+            <property name="ModeEdit">HIDDEN</property>
             <trigger event="UI_FIELD_VALUE"
                 method="getSetSelectedFamilyUIValue"
                 name="Products_ProductFamilyPickerForm.js.UI_FIELD_VALUE"
