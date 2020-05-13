@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
-  Copyright 2003 - 2015 The eFaps Team
+  Copyright 2003 - 2020 The eFaps Team
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -75,6 +75,7 @@
         </field>
         <field name="defaultUoM4View">
             <property name="Select">linkto[DefaultUoM].attribute[Name]</property>
+            <property name="Label">Products_ProductAbstract/DefaultUoM.Label</property>
             <property name="ModeEdit">NONE</property>
             <property name="ModeView">READONLY</property>
             <property name="Required">true</property>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
- Copyright 2003 - 2015 The eFaps Team
+ Copyright 2003 - 2020 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -39,6 +39,18 @@
             <property name="Attribute">Description</property>
             <property name="Label">Products_ProductNonStockTable/Description.Label</property>
             <property name="ModeSearch">READONLY</property>
+        </field>
+        <field name="barcode">
+            <property name="Attribute">Barcode</property>
+            <property name="Label">Products_ProductStandart/Barcode.Label</property>
+            <property name="ModeSearch">READONLY</property>
+            <trigger event="UI_ACCESSCHECK" method="configCheck"
+                name="Products_ProductStandartForm.barcode.UI_ACCESSCHECK"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.Standart.ActivateBarcode</property>
+            </trigger>
         </field>
          <field name="classification">
             <property name="Select">class.type</property>
@@ -117,13 +129,6 @@
             <property name="Attribute">Active</property>
             <property name="Label">Products_ProductNonStockTable/Active.Label</property>
             <property name="FilterType">PICKLIST</property>
-        </field>
-        <field name="buttonOpenInNewWindow">
-            <icon>eFapsActionNewWindow</icon>
-            <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
-            <property name="Target">popup</property>
-            <property name="SortAble">false</property>
-            <property name="Width">15px</property>
         </field>
     </definition>
 </ui-table>

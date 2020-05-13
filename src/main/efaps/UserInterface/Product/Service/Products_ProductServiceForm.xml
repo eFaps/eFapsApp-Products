@@ -76,6 +76,7 @@
         </field>
         <field name="defaultUoM4View">
             <property name="Select">linkto[DefaultUoM].attribute[Name]</property>
+            <property name="Label">Products_ProductAbstract/DefaultUoM.Label</property>
             <property name="ModeEdit">NONE</property>
             <property name="ModeView">READONLY</property>
             <property name="Required">true</property>
@@ -332,6 +333,7 @@
         </field>
         <field name="defaultUoM4View">
             <property name="Select">linkto[DefaultUoM].attribute[Name]</property>
+            <property name="Label">Products_ProductAbstract/DefaultUoM.Label</property>
             <property name="ModeEdit">NONE</property>
             <property name="ModeView">READONLY</property>
             <property name="Required">true</property>
