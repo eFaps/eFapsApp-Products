@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
 
- Copyright 2003 - 2009 The eFaps Team
+ Copyright 2003 - 2020 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -14,19 +15,15 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
- Author:          The eFaps Team
- Revision:        $Rev$
- Last Changed:    $Date$
- Last Changed By: $Author$
-
---><ui-table xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+-->
+<ui-table xmlns="http://www.efaps.org/xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>015e1aca-841d-4d6f-ab31-4950b501739f</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_InventoryTableFiltered</name>
-        <!-- fields -->
         <field name="quantity">
             <property name="Attribute">Quantity</property>
             <property name="Label">Products_Inventory/Quantity.Label</property>
@@ -47,9 +44,24 @@
             <property name="Label">Products_Inventory/Product.Label</property>
             <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
         </field>
-       <field name="productdesc">
+        <field name="productdesc">
             <property name="Select">linkto[Product].attribute[Description]</property>
             <property name="Label">Products_Inventory/Description.Label</property>
+        </field>
+        <field name="productFamilyLink">
+            <property name="Select">linkto[Product].linkto[ProductFamilyLink].instance</property>
+            <property name="Label">Products_ProductAbstract/ProductFamilyLink.Label</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
+            <trigger event="UI_FIELD_FORMAT" method="productFamilyFieldFormat"
+                name="Products_InventoryTableFiltered.productFamilyLink."
+                program="org.efaps.esjp.products.ProductFamily" />
+            <trigger event="UI_ACCESSCHECK" method="configCheck"
+                name="Products_InventoryTableFiltered.UI_ACCESSCHECK"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI">
+                    <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.Family.Activate</property>
+            </trigger>
         </field>
         <field name="storage">
             <property name="SelectAlternateOID">linkto[Storage].oid</property>
