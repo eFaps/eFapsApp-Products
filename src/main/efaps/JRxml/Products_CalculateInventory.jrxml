@@ -43,7 +43,7 @@
                 <textElement textAlignment="Right" verticalAlignment="Middle"/>
                 <textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
             </textField>
-            <textField isStretchWithOverflow="true" isBlankWhenNull="true">
+            <textField textAdjust="StretchHeight" isBlankWhenNull="true">
                 <reportElement x="0" y="0" width="200" height="14" isPrintWhenDetailOverflows="true" uuid="c9fa8981-83fe-476e-a679-1267727b91d6">
                     <property name="local_mesure_unitheight" value="pixel"/>
                     <property name="com.jaspersoft.studio.unit.height" value="px"/>
