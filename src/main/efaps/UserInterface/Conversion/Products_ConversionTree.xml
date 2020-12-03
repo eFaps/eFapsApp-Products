@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
-  Copyright 2003 - 2016 The eFaps Team
+  Copyright 2003 - 2020 The eFaps Team
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -15,28 +15,20 @@
   limitations under the License.
 
 -->
-<datamodel-dimension
-    xmlns="http://www.efaps.org/xsd"
+<ui-menu xmlns="http://www.efaps.org/xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>bc921c98-9e50-4614-a9c4-83a22fca3105</uuid>
+    <uuid>35cf3b17-1d4c-4241-be47-ff16396e8e1d</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Weight</name>
-        <description>Length</description>
-        <uom>
-            <base>true</base>
-            <symbol>kg</symbol>
-            <name>kilogram</name>
-            <numerator>1</numerator>
-            <denominator>1</denominator>
-        </uom>
-        <uom>
-            <symbol>g</symbol>
-            <name>gram</name>
-            <numerator>1000</numerator>
-            <denominator>1</denominator>
-        </uom>
+        <name>Products_ConversionTree</name>
+        <target>
+            <menu>Products_ConversionTree_Menu</menu>
+            <form>Products_ConversionForm</form>
+        </target>
+        <type>Products_Conversion</type>
+        <property name="Target">content</property>
+        <property name="TargetMode">view</property>
     </definition>
-</datamodel-dimension>
+</ui-menu>

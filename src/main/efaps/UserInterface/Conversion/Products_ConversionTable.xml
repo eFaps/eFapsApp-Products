@@ -34,6 +34,7 @@
         <field name="fromUoM">
             <property name="Label">Products_Conversion/FromUoM.Label</property>
             <property name="Select">linkto[FromUoM].attribute[Name]</property>
+            <property name="HRef">TREE</property>
         </field>
         <field name="toQuantity">
             <property name="Label">Products_Conversion/ToQuantity.Label</property>

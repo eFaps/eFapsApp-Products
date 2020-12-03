@@ -24,6 +24,7 @@ import java.util.UUID;
 
 import org.efaps.admin.datamodel.Dimension;
 import org.efaps.admin.datamodel.Dimension.UoM;
+import org.efaps.admin.datamodel.ui.UIValue;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
 import org.efaps.admin.event.Return;
@@ -50,15 +51,19 @@ public abstract class Conversion_Base
     {
         final var instance = (Instance) _parameter.get(ParameterValues.CALL_INSTANCE);
         final List<DropDownPosition> values = new ArrayList<>();
+        Long uomId = null;
         if (InstanceUtils.isKindOf(instance, CIProducts.ProductAbstract)) {
             final var eval = EQL.builder().print(instance).attribute(CIProducts.ProductAbstract.DefaultUoM).evaluate();
-            final Long defaultUoM = eval.get(CIProducts.ProductAbstract.DefaultUoM);
-            if (defaultUoM != null) {
-                final Dimension dim = Dimension.getUoM(defaultUoM).getDimension();
-                for (final UoM uoM : dim.getUoMs()) {
-                    values.add(new DropDownPosition(uoM.getId(), uoM.getName())
-                                    .setSelected(dim.getBaseUoM() != null && dim.getBaseUoM().getId() == defaultUoM));
-                }
+            uomId = eval.get(CIProducts.ProductAbstract.DefaultUoM);
+        } else if (InstanceUtils.isType(instance, CIProducts.Conversion)) {
+            final var value = (UIValue) _parameter.get(ParameterValues.UIOBJECT);
+            uomId = (Long) value.getDbValue();
+        }
+        if (uomId != null) {
+            final Dimension dim = Dimension.getUoM(uomId).getDimension();
+            for (final UoM uoM : dim.getUoMs()) {
+                values.add(new DropDownPosition(uoM.getId(), uoM.getName())
+                                .setSelected(dim.getBaseUoM() != null && dim.getBaseUoM().getId() == uomId));
             }
         }
         final Return ret = new Return();
@@ -69,8 +74,16 @@ public abstract class Conversion_Base
     public Return toUoMFieldValue(final Parameter _parameter)
         throws EFapsException
     {
-        final Instance instance = (Instance) _parameter.get(ParameterValues.CALL_INSTANCE);
+        var instance = (Instance) _parameter.get(ParameterValues.CALL_INSTANCE);
         Properties props;
+        long uomId = 0;
+        if (InstanceUtils.isType(instance, CIProducts.Conversion)) {
+            final var eval = EQL.builder().print(instance).linkto(CIProducts.Conversion.ProductLink).as("ProdInst")
+                            .instance().evaluate();
+            instance = eval.get("ProdInst");
+            final var value = (UIValue) _parameter.get(ParameterValues.UIOBJECT);
+            uomId = (Long) value.getDbValue();
+        }
         if (InstanceUtils.isType(instance, CIProducts.ProductStandart)) {
             props = Products.STANDART_CONV.get();
         } else {
@@ -83,11 +96,11 @@ public abstract class Conversion_Base
                                 : Dimension.get(dimKey);
                 if (dim != null) {
                     for (final UoM uoM : dim.getUoMs()) {
-                        values.add(new DropDownPosition(uoM.getId(), dim.getName() + " - " + uoM.getName()));
+                        values.add(new DropDownPosition(uoM.getId(), dim.getName() + " - " + uoM.getName())
+                                        .setSelected(uoM.getId() == uomId));
                     }
                 }
             }
-
         }
         final Return ret = new Return();
         ret.put(ReturnValues.VALUES, values);
