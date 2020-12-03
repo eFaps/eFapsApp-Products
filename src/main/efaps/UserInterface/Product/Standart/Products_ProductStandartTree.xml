@@ -28,6 +28,7 @@
         </target>
         <type>Products_ProductStandart</type>
         <childs>
+            <child>Products_ProductStandartTree_Conversion</child>
             <child>Products_ProductTree_PricelistRetail</child>
             <child>Products_ProductTree_PricelistMinRetail</child>
             <child>Products_ProductTree_PricelistPurchase</child>

@@ -341,6 +341,14 @@ public final class Products
 
     /** See description. */
     @EFapsSysConfAttribute
+    public static final PropertiesSysConfAttribute STANDART_CONV = new PropertiesSysConfAttribute()
+                    .sysConfUUID(Products.SYSCONFUUID)
+                    .key(Products.BASE + "Standart.Conversion")
+                    .addDefaultValue("Dimension01", "bc921c98-9e50-4614-a9c4-83a22fca3105")
+                    .description("Activate the conversion management for standart products.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
     public static final PropertiesSysConfAttribute STANDART_DESCR = new PropertiesSysConfAttribute()
                     .sysConfUUID(Products.SYSCONFUUID)
                     .key(Products.BASE + "Standart.Descriptions")

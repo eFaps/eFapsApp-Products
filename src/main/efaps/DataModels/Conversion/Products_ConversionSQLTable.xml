@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+
+ Copyright 2003 - 2020 The eFaps Team
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+
+-->
+<datamodel-sqltable xmlns="http://www.efaps.org/xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>1df46a65-bfd3-45c8-b87f-67cc2341444b</uuid>
+    <file-application>eFapsApp-Products</file-application>
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <name>Products_ConversionSQLTable</name>
+        <typeid-column>TYPEID</typeid-column>
+        <database>
+            <table-name>T_PRODCONV</table-name>
+            <column name="TYPEID"       type="INTEGER"  not-null="true" />
+            <column name="PRODID"       type="INTEGER"  not-null="true" />
+            <column name="FROMQTY"      type="INTEGER"  not-null="true" />
+            <column name="FROMUOMID"    type="INTEGER"  not-null="true" />
+            <column name="TOQTY"        type="INTEGER"  not-null="true" />
+            <column name="TOUOMID"      type="INTEGER"  not-null="true" />
+            <column name="CONVTYPE"     type="INTEGER"  not-null="true" />
+            <column name="DESCR"        type="STRING_SHORT"             length="256"/>
+            <column name="CREATOR"      type="INTEGER"  not-null="true" />
+            <column name="CREATED"      type="DATETIME" not-null="true" />
+            <column name="MODIFIER"     type="INTEGER"  not-null="true" />
+            <column name="MODIFIED"     type="DATETIME" not-null="true" />
+            <foreign name="T_PRODCONV_FK_CREATOR"   key="CREATOR"   reference="T_USERPERSON(ID)" />
+            <foreign name="T_PRODCONV_FK_MODIFIER"  key="MODIFIER"  reference="T_USERPERSON(ID)" />
+            <foreign name="T_PRODCONV_FK_FROMUOMID" key="FROMUOMID" reference="T_DMUOM(ID)" />
+            <foreign name="T_PRODCONV_FK_TOUOMID"   key="TOUOMID"   reference="T_DMUOM(ID)" />
+        </database>
+    </definition>
+</datamodel-sqltable>
