@@ -14,28 +14,14 @@
  * limitations under the License.
  *
  */
+package org.efaps.esjp.products.eql;
 
-package org.efaps.esjp.products;
-
-import java.math.BigDecimal;
-
-import org.efaps.admin.datamodel.Dimension.UoM;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
-import org.efaps.db.Instance;
-import org.efaps.esjp.products.util.ConversionType;
-import org.efaps.util.EFapsException;
 
-@EFapsUUID("f4ccdc1a-3a81-4b11-bb4f-548afe085e9b")
+@EFapsUUID("a1f1668b-9bdf-49f3-b2b3-aae3815a9fae")
 @EFapsApplication("eFapsApp-Products")
-public class Conversion
-    extends Conversion_Base
+public class ConversionSelect
+    extends ConversionSelect_Base
 {
-
-    public static ConversionValue convert(final ConversionType conversionType, final Instance _productInstance,
-                                          final BigDecimal _quantity, final UoM _uoM)
-        throws EFapsException
-    {
-        return Conversion_Base.convert(conversionType, _productInstance, _quantity, _uoM);
-    }
 }

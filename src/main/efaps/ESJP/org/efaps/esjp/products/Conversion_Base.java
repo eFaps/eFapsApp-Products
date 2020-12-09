@@ -17,6 +17,8 @@
 
 package org.efaps.esjp.products;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -37,6 +39,7 @@ import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.properties.PropertiesUtil;
 import org.efaps.esjp.common.uiform.Field_Base.DropDownPosition;
 import org.efaps.esjp.db.InstanceUtils;
+import org.efaps.esjp.products.util.ConversionType;
 import org.efaps.esjp.products.util.Products;
 import org.efaps.util.EFapsException;
 import org.efaps.util.UUIDUtil;
@@ -105,5 +108,72 @@ public abstract class Conversion_Base
         final Return ret = new Return();
         ret.put(ReturnValues.VALUES, values);
         return ret;
+    }
+
+    protected static ConversionValue convert(final ConversionType _conversionType, final Instance _productInstance,
+                                             final BigDecimal _quantity, final UoM _uoM)
+        throws EFapsException
+    {
+        ConversionValue ret = null;
+        final var eval = EQL.builder()
+            .print()
+            .query(CIProducts.Conversion)
+            .where()
+                .attribute(CIProducts.Conversion.ConversionType).eq(1)
+                .and()
+                .attribute(CIProducts.Conversion.ProductLink).eq(_productInstance)
+            .select()
+                .attribute(CIProducts.Conversion.FromQuantity)
+                .attribute(CIProducts.Conversion.FromUoM)
+                .attribute(CIProducts.Conversion.ToQuantity)
+                .attribute(CIProducts.Conversion.ToUoM)
+             .limit(1)
+             .evaluate();
+        if (eval.next()) {
+            final Integer fromInt = eval.get(CIProducts.Conversion.FromQuantity);
+            final Long fromUoMID = eval.get(CIProducts.Conversion.FromUoM);
+            final Integer toInt = eval.get(CIProducts.Conversion.ToQuantity);
+            final Long toUoMID = eval.get(CIProducts.Conversion.ToUoM);
+
+            final var fromUoM = Dimension.getUoM(fromUoMID);
+            final var toUoM = Dimension.getUoM(toUoMID);
+            // base UoM and the used UoM are the same
+            if (fromUoM.equals(_uoM)) {
+                final var from  = new BigDecimal(fromInt);
+                final var to  = new BigDecimal(toInt);
+                final var multiplier = to.divide(from, 8, RoundingMode.HALF_UP);
+                var value = _quantity.multiply(multiplier);
+                if (!toUoM.equals(toUoM.getDimension().getBaseUoM())) {
+                    value = value.multiply(new BigDecimal(toUoM.getDenominator())).divide(
+                                    new BigDecimal(toUoM.getNumerator()), 8, RoundingMode.HALF_UP);
+                }
+                ret = new ConversionValue(value, toUoM);
+            }
+        }
+        return ret;
+    }
+
+    public static class ConversionValue
+    {
+
+        private final BigDecimal value;
+        private final UoM uoM;
+
+        public ConversionValue(final BigDecimal _value,
+                               final UoM _uoM)
+        {
+            value = _value;
+            uoM = _uoM;
+        }
+
+        public BigDecimal getValue()
+        {
+            return value;
+        }
+
+        public UoM getUoM()
+        {
+            return uoM;
+        }
     }
 }
