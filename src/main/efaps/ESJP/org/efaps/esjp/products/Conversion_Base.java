@@ -43,11 +43,14 @@ import org.efaps.esjp.products.util.ConversionType;
 import org.efaps.esjp.products.util.Products;
 import org.efaps.util.EFapsException;
 import org.efaps.util.UUIDUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @EFapsUUID("c635be92-213a-4f5c-89fe-d5b37b11bc85")
 @EFapsApplication("eFapsApp-Products")
 public abstract class Conversion_Base
 {
+    private static final Logger LOG = LoggerFactory.getLogger(Conversion.class);
 
     public Return fromUoMFieldValue(final Parameter _parameter)
         throws EFapsException
@@ -137,16 +140,28 @@ public abstract class Conversion_Base
 
             final var fromUoM = Dimension.getUoM(fromUoMID);
             final var toUoM = Dimension.getUoM(toUoMID);
+            BigDecimal from = null;
             // base UoM and the used UoM are the same
             if (fromUoM.equals(_uoM)) {
-                final var from  = new BigDecimal(fromInt);
-                final var to  = new BigDecimal(toInt);
+                from = new BigDecimal(fromInt);
+            } else {
+                if (fromUoM.getDimId() == _uoM.getDimId()) {
+                    from = new BigDecimal(fromInt);
+                    from = from.multiply(new BigDecimal(_uoM.getNumerator())).divide(
+                                    new BigDecimal(_uoM.getDenominator()), RoundingMode.HALF_UP);
+                } else {
+                    LOG.error("Invalid conversion definition for {}", _productInstance);
+                }
+            }
+            if (from != null) {
+                final var to = new BigDecimal(toInt);
                 final var multiplier = to.divide(from, 8, RoundingMode.HALF_UP);
                 var value = _quantity.multiply(multiplier);
                 if (!toUoM.equals(toUoM.getDimension().getBaseUoM())) {
                     value = value.multiply(new BigDecimal(toUoM.getDenominator())).divide(
                                     new BigDecimal(toUoM.getNumerator()), 8, RoundingMode.HALF_UP);
                 }
+
                 ret = new ConversionValue(value, toUoM);
             }
         }
