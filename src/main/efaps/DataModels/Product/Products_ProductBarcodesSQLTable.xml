@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
  Copyright 2003 - 2021 The eFaps Team
 
@@ -16,19 +15,19 @@
  limitations under the License.
 
 -->
-<ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<datamodel-sqltable xmlns="http://www.efaps.org/xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>c915f110-9aab-4726-bef5-9565004135fd</uuid>
+    <uuid>f8568e85-956d-45c6-955f-458597099b5f</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_AttributeDefinitionMyDesk_Menu_Action</name>
-        <childs>
-            <child>Products_AttributeDefinitionMyDesk_Menu_Action_CreateBrandAttr</child>
-            <child>Products_AttributeDefinitionMyDesk_Menu_Action_CreateBarcodeType</child>
-        </childs>
-        <parents>
-            <parent>ERP_AttributeDefinitionMyDesk_Menu</parent>
-        </parents>
+        <name>Products_ProductBarcodesSQLTable</name>
+        <database>
+            <table-name>T_PRODBARCODE</table-name>
+            <column name="RELID"            type="INTEGER"                      not-null="true"/>
+            <column name="BARCODETYPEID"    type="INTEGER"                      not-null="true"/>
+            <column name="CODE"             type="STRING_SHORT" length="128"    not-null="true"/>
+        </database>
     </definition>
-</ui-menu>
+</datamodel-sqltable>

@@ -38,19 +38,6 @@
                 <property name="Attribute">org.efaps.products.Standart.ActivateClassification</property>
             </trigger>
         </field>
-        <field character="Group" name="nameGroup">
-            <property name="ModeCreate">READONLY</property>
-            <property name="ModeEdit">READONLY</property>
-            <property name="GroupCount">2</property>
-            <trigger event="UI_ACCESSCHECK" method="configCheck"
-                name="Products_ProductStandartForm.barcode.UI_ACCESSCHECK.1"
-                program="org.efaps.esjp.admin.access.AccessCheck4UI"
-                index="1">
-                <!-- Products-Configuration -->
-                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
-                <property name="Attribute">org.efaps.products.Standart.ActivateBarcode</property>
-            </trigger>
-        </field>
         <field name="name">
             <property name="Columns">40</property>
             <property name="ModeCreate">EDITABLE</property>
@@ -59,17 +46,19 @@
             <property name="Attribute">Name</property>
             <property name="Required">true</property>
         </field>
-        <field name="barcode">
-            <property name="Attribute">Barcode</property>
+        <field name="barcodes" character="Set">
+            <property name="Attribute">Barcodes</property>
+            <property name="Label">Products_ProductForm.barcodes.Label</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+            <property name="Order">BarcodeType|Code</property>
             <trigger event="UI_ACCESSCHECK" method="configCheck"
-                name="Products_ProductStandartForm.barcode.UI_ACCESSCHECK.1"
+                name="Products_ProductStandartForm.barcodes.UI_ACCESSCHECK.1"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI"
                 index="1">
                 <!-- Products-Configuration -->
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
-                <property name="Attribute">org.efaps.products.Standart.ActivateBarcode</property>
+                <property name="Attribute">org.efaps.products.Standart.ActivateBarcodes</property>
             </trigger>
         </field>
         <field name="description">
@@ -370,34 +359,25 @@
                 <property name="Inverse">true</property>
             </trigger>
         </field>
-        <field character="Group" name="nameGroup4View">
-            <property name="ModeEdit">NONE</property>
-            <property name="GroupCount">2</property>
-            <trigger event="UI_ACCESSCHECK" method="configCheck"
-                name="Products_ProductStandartForm.barcode.UI_ACCESSCHECK"
-                program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                <!-- Products-Configuration -->
-                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
-                <property name="Attribute">org.efaps.products.Standart.ActivateBarcode</property>
-            </trigger>
-        </field>
         <field name="name4view">
             <property name="ModeEdit">NONE</property>
             <property name="ModeSearch">NONE</property>
             <property name="ModeView">READONLY</property>
             <property name="Attribute">Name</property>
         </field>
-         <field name="barcode">
-            <property name="Attribute">Barcode</property>
+         <field name="barcodes" character="Set">
+            <property name="Attribute">Barcodes</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+            <property name="Order">BarcodeType|Code</property>
+            <property name="Label">Products_ProductForm.barcodes.Label</property>
             <trigger event="UI_ACCESSCHECK" method="configCheck"
-                name="Products_ProductStandartForm.barcode.UI_ACCESSCHECK.1"
+                name="Products_ProductStandartForm.barcodes.UI_ACCESSCHECK.1"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI"
                 index="1">
                 <!-- Products-Configuration -->
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
-                <property name="Attribute">org.efaps.products.Standart.ActivateBarcode</property>
+                <property name="Attribute">org.efaps.products.Standart.ActivateBarcodes</property>
             </trigger>
         </field>
         <field character="Group" name="descriptionGroup">

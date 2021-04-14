@@ -319,10 +319,10 @@ public final class Products
                     .key(Products.BASE + "Standart.ActivateNote")
                     .description("Activate the note field for standart products.");
     @EFapsSysConfAttribute
-    public static final BooleanSysConfAttribute STANDART_ACTBARCODE = new BooleanSysConfAttribute()
+    public static final BooleanSysConfAttribute STANDART_ACTBARCODES = new BooleanSysConfAttribute()
                     .sysConfUUID(Products.SYSCONFUUID)
-                    .key(Products.BASE + "Standart.ActivateBarcode")
-                    .description("Activate the Barcode field for standart products.");
+                    .key(Products.BASE + "Standart.ActivateBarcodes")
+                    .description("Activate the Barcodes field set for standart products.");
 
     /** See description. */
     @EFapsSysConfAttribute

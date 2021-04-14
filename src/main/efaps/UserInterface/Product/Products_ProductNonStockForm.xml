@@ -368,11 +368,5 @@
                 <property name="TargetField">uUID</property>
             </trigger>
         </field>
-        <field name="barcode">
-            <property name="Attribute">Barcode</property>
-            <property name="ModeCreate">EDITABLE</property>
-            <property name="ModeEdit">EDITABLE</property>
-            <property name="Required">true</property>
-        </field>
     </definition>
 </ui-form>

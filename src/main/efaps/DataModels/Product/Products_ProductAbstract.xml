@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
 
- Copyright 2003 - 2016 The eFaps Team
+ Copyright 2003 - 2021 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -17,7 +16,6 @@
  limitations under the License.
 
 -->
-
 <datamodel-type  xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>29c61210-5e44-453b-a171-95993c95da36</uuid>
@@ -109,12 +107,6 @@
             <sqlcolumn>FAMILYID</sqlcolumn>
         </attribute>
         <attribute>
-            <name>Barcode</name>
-            <type>String</type>
-            <sqltable>Products_ProductSQLTable</sqltable>
-            <sqlcolumn>CODE</sqlcolumn>
-        </attribute>
-        <attribute>
             <name>Note</name>
             <type>String</type>
             <sqltable>Products_ProductSQLTable</sqltable>
@@ -126,6 +118,38 @@
             <sqltable>Products_ProductSQLTable</sqltable>
             <sqlcolumn>CREATOR</sqlcolumn>
         </attribute>
+        <attributeset>
+            <name>Barcodes</name>
+            <type>MultiLineArray</type>
+            <sqltable>Products_ProductBarcodesSQLTable</sqltable>
+            <sqlcolumn>RELID</sqlcolumn>
+            <uuid>6dd3e645-e492-4022-81ea-ef403274afe9</uuid>
+            <attribute>
+                <name>ID</name>
+                <type>Long</type>
+                <sqltable>Products_ProductBarcodesSQLTable</sqltable>
+                <sqlcolumn>ID</sqlcolumn>
+            </attribute>
+            <attribute>
+                <name>BarcodeType</name>
+                <type>LinkWithRanges</type>
+                <typelink>Products_AttributeDefinitionBarcodeType</typelink>
+                <sqltable>Products_ProductBarcodesSQLTable</sqltable>
+                <sqlcolumn>BARCODETYPEID</sqlcolumn>
+                <trigger name="Contacts_Class.PhoneSet.Description4Phone"
+                        event="RANGE_VALUE"
+                        program="org.efaps.esjp.admin.datamodel.RangesValue">
+                    <property name="Value">Value</property>
+                    <property name="Type">Products_AttributeDefinitionBarcodeType</property>
+                </trigger>
+            </attribute>
+            <attribute>
+                <name>Code</name>
+                <type>String</type>
+                <sqltable>Products_ProductBarcodesSQLTable</sqltable>
+                <sqlcolumn>CODE</sqlcolumn>
+            </attribute>
+        </attributeset>
         <attribute>
             <name>Created</name>
             <type>Created</type>
@@ -249,17 +273,43 @@
             <sqlcolumn>TAXCATID</sqlcolumn>
         </attribute>
         <attribute>
-            <name>Barcode</name>
-            <type>String</type>
-            <sqltable>Products_ProductSQLTable</sqltable>
-            <sqlcolumn>CODE</sqlcolumn>
-        </attribute>
-        <attribute>
             <name>Note</name>
             <type>String</type>
             <sqltable>Products_ProductSQLTable</sqltable>
             <sqlcolumn>NOTE</sqlcolumn>
         </attribute>
+        <attributeset>
+            <name>Barcodes</name>
+            <type>MultiLineArray</type>
+            <sqltable>Products_ProductBarcodesSQLTable</sqltable>
+            <sqlcolumn>RELID</sqlcolumn>
+            <uuid>6dd3e645-e492-4022-81ea-ef403274afe9</uuid>
+            <attribute>
+                <name>ID</name>
+                <type>Long</type>
+                <sqltable>Products_ProductBarcodesSQLTable</sqltable>
+                <sqlcolumn>ID</sqlcolumn>
+            </attribute>
+            <attribute>
+                <name>BarcodeType</name>
+                <type>LinkWithRanges</type>
+                <typelink>Products_AttributeDefinitionBarcodeType</typelink>
+                <sqltable>Products_ProductBarcodesSQLTable</sqltable>
+                <sqlcolumn>BARCODETYPEID</sqlcolumn>
+                <trigger name="Contacts_Class.PhoneSet.Description4Phone"
+                        event="RANGE_VALUE"
+                        program="org.efaps.esjp.admin.datamodel.RangesValue">
+                    <property name="Value">Value</property>
+                    <property name="Type">Products_AttributeDefinitionBarcodeType</property>
+                </trigger>
+            </attribute>
+            <attribute>
+                <name>Code</name>
+                <type>String</type>
+                <sqltable>Products_ProductBarcodesSQLTable</sqltable>
+                <sqlcolumn>CODE</sqlcolumn>
+            </attribute>
+        </attributeset>
         <attribute>
             <name>Creator</name>
             <type>CreatorLink</type>

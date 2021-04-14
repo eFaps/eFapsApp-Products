@@ -40,18 +40,6 @@
             <property name="Label">Products_ProductNonStockTable/Description.Label</property>
             <property name="ModeSearch">READONLY</property>
         </field>
-        <field name="barcode">
-            <property name="Attribute">Barcode</property>
-            <property name="Label">Products_ProductStandart/Barcode.Label</property>
-            <property name="ModeSearch">READONLY</property>
-            <trigger event="UI_ACCESSCHECK" method="configCheck"
-                name="Products_ProductStandartForm.barcode.UI_ACCESSCHECK"
-                program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                <!-- Products-Configuration -->
-                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
-                <property name="Attribute">org.efaps.products.Standart.ActivateBarcode</property>
-            </trigger>
-        </field>
          <field name="classification">
             <property name="Select">class.type</property>
             <property name="Label">Products_ProductNonStockTable.classification.Label</property>

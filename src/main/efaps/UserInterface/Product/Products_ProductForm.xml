@@ -49,19 +49,6 @@
             <property name="Attribute">Description</property>
             <property name="Required">true</property>
         </field>
-        <field name="barcode">
-            <property name="ModeCreate">EDITABLE</property>
-            <property name="ModeEdit">EDITABLE</property>
-            <property name="ModeSearch">EDITABLE</property>
-            <property name="Attribute">Barcode</property>
-            <trigger event="UI_ACCESSCHECK" method="configCheck"
-                name="Products_ProductForm.barcode.UI_ACCESSCHECK"
-                program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                <!-- Products-Configuration -->
-                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
-                <property name="Attribute">org.efaps.products.ActivateBarcode</property>
-            </trigger>
-        </field>
         <field name="dimension">
             <property name="Attribute">Dimension</property>
             <property name="ModeCreate">EDITABLE</property>
@@ -320,19 +307,6 @@
             <property name="Attribute">Description</property>
             <property name="Required">true</property>
         </field>
-        <field name="barcode">
-            <property name="ModeCreate">EDITABLE</property>
-            <property name="ModeEdit">EDITABLE</property>
-            <property name="ModeSearch">EDITABLE</property>
-            <property name="Attribute">Barcode</property>
-            <trigger event="UI_ACCESSCHECK" method="configCheck"
-                name="Products_ProductForm.barcode.UI_ACCESSCHECK"
-                program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                <!-- Products-Configuration -->
-                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
-                <property name="Attribute">org.efaps.products.ActivateBarcode</property>
-            </trigger>
-        </field>
         <field name="dimension">
             <property name="Attribute">Dimension</property>
             <property name="ModeCreate">EDITABLE</property>
@@ -545,12 +519,6 @@
                 method="createUUID">
                 <property name="TargetField">uUID</property>
              </trigger>
-        </field>
-        <field name="barcode">
-            <property name="Attribute">Barcode</property>
-            <property name="ModeCreate">EDITABLE</property>
-            <property name="ModeEdit">EDITABLE</property>
-            <property name="Required">true</property>
         </field>
         <field name="createGroup" character="Group">
             <property name="GroupCount">2</property>
