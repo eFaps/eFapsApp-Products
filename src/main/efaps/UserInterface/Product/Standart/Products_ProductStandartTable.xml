@@ -118,5 +118,18 @@
             <property name="Label">Products_ProductNonStockTable/Active.Label</property>
             <property name="FilterType">PICKLIST</property>
         </field>
+        <field name="barcodes">
+            <property name="Select">linkfrom[Products_ProductAbstract:Barcodes#Barcodes].attribute[Code]</property>
+            <property name="Label">Products_ProductForm.barcodes.Label</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
+            <trigger event="UI_ACCESSCHECK" method="configCheck"
+                name="Products_ProductStandartTable.barcodes.UI_ACCESSCHECK.1"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                index="1">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.Standart.ActivateBarcodes</property>
+            </trigger>
+        </field>
     </definition>
 </ui-table>
