@@ -31,12 +31,12 @@ import java.util.Properties;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.imaging.ImageFormats;
+import org.apache.commons.imaging.ImageInfo;
+import org.apache.commons.imaging.ImageReadException;
+import org.apache.commons.imaging.ImageWriteException;
+import org.apache.commons.imaging.Imaging;
 import org.apache.commons.io.IOUtils;
-import org.apache.sanselan.ImageFormat;
-import org.apache.sanselan.ImageInfo;
-import org.apache.sanselan.ImageReadException;
-import org.apache.sanselan.ImageWriteException;
-import org.apache.sanselan.Sanselan;
 import org.efaps.admin.datamodel.Type;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
@@ -317,22 +317,22 @@ public abstract class Image_Base
         final File ret;
         try {
             final byte[] bytes = IOUtils.toByteArray(_imageStream);
-            final ImageInfo info = Sanselan.getImageInfo(new ByteArrayInputStream(bytes), _imageName);
-            ret = new FileUtil().getFile(_prefix + _imageName, info.getFormat().extension);
+            final ImageInfo info = Imaging.getImageInfo(new ByteArrayInputStream(bytes), _imageName);
+            ret = new FileUtil().getFile(_prefix + _imageName, info.getFormat().getExtension());
 
             final FileOutputStream os = new FileOutputStream(ret);
 
-            if (info.getFormat().equals(ImageFormat.IMAGE_FORMAT_JPEG)) {
+            if (info.getFormat().equals(ImageFormats.JPEG)) {
                 final BufferedImage img = ImageIO.read(new ByteArrayInputStream(bytes));
                 final ResampleOp resampleOp = new ResampleOp(_dim);
                 final BufferedImage rescaledTomato = resampleOp.filter(img, null);
                 ImageIO.write(rescaledTomato, "jpg", os);
             } else {
-                final BufferedImage image = Sanselan.getBufferedImage(new ByteArrayInputStream(bytes));
+                final BufferedImage image = Imaging.getBufferedImage(new ByteArrayInputStream(bytes));
                 final ResampleOp resampleOp = new ResampleOp(_dim);
                 // resampleOp.setUnsharpenMask(AdvancedResizeOp.UnsharpenMask.Normal);
                 final BufferedImage rescaledTomato = resampleOp.filter(image, null);
-                Sanselan.writeImage(rescaledTomato, os, info.getFormat(), new HashMap());
+                Imaging.writeImage(rescaledTomato, os, info.getFormat(), new HashMap<>());
             }
         } catch (final ImageReadException e) {
             throw new EFapsException(this.getClass(), "createNewImage", e, _parameter);
@@ -383,7 +383,7 @@ public abstract class Image_Base
         final Checkin checkin = new Checkin(_imageInst);
         try {
             checkin.execute(_fileItem.getName(), _fileItem.getInputStream(), (int) _fileItem.getSize());
-            final ImageInfo info = Sanselan.getImageInfo(_fileItem.getInputStream(), _fileItem.getName());
+            final ImageInfo info = Imaging.getImageInfo(_fileItem.getInputStream(), _fileItem.getName());
             updateImage(_parameter, _imageInst, info);
         } catch (final IOException e) {
             throw new EFapsException(this.getClass(), "uploadImage", e, _parameter);
@@ -408,7 +408,7 @@ public abstract class Image_Base
         try {
             final FileInputStream in = new FileInputStream(_file);
             checkin.execute(_file.getName(), in, ((Long) _file.length()).intValue());
-            final ImageInfo info = Sanselan.getImageInfo(_file);
+            final ImageInfo info = Imaging.getImageInfo(_file);
             updateImage(_parameter, _imageInst, info);
         } catch (final IOException e) {
             throw new EFapsException(this.getClass(), "uploadImage", e, _parameter);
@@ -438,7 +438,7 @@ public abstract class Image_Base
         update.add(CIProducts.ImageAbstract.WidthInch, _info.getPhysicalWidthInch());
         update.add(CIProducts.ImageAbstract.NumberOfImages, _info.getNumberOfImages());
         update.add(CIProducts.ImageAbstract.Format, _info.getFormatName());
-        update.add(CIProducts.ImageAbstract.ColorType, _info.getColorTypeDescription());
+        update.add(CIProducts.ImageAbstract.ColorType, _info.getColorType().toString());
         update.execute();
     }
 
