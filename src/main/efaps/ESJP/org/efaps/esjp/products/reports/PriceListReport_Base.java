@@ -180,7 +180,7 @@ public abstract class PriceListReport_Base
             final var props = Products.REPPRICELIST.get();
             showClass = "true".equalsIgnoreCase(props.getProperty("ShowClassification", "true"));
             showFamily = "true".equalsIgnoreCase(props.getProperty("ShowFamily", "true"));
-            showBarcodes = "true".equalsIgnoreCase(props.getProperty("ShowBarcodes", "true"));
+            showBarcodes = "true".equalsIgnoreCase(props.getProperty("ShowBarcodes", "false"));
             activeProductsOnly = "true".equalsIgnoreCase(props.getProperty("ActiveProductsOnly", "true"));
         }
 
@@ -324,11 +324,13 @@ public abstract class PriceListReport_Base
                                             .attribute("Value");
                             barcodePrint.addSelect(selBarcodeType);
                             barcodePrint.executeWithoutAccessCheck();
-                            final var barcodes = new ArrayList<>();
-                            map.put("productBarcodes", barcodes);
+                            final var codes = new ArrayList<>();
+                            final var types = new ArrayList<>();
+                            map.put("productBarcodes", codes);
+                            map.put("productBarcodeTypes", types);
                             while (barcodePrint.next()) {
-                                barcodes.add(barcodePrint.getSelect(selBarcodeType)
-                                                + ": " + barcodePrint.getAttribute("Code"));
+                                codes.add(barcodePrint.getAttribute("Code"));
+                                types.add(barcodePrint.getSelect(selBarcodeType));
                             }
                         }
                     }
@@ -368,6 +370,10 @@ public abstract class PriceListReport_Base
                             .getProperty(PriceListReport.class.getName() + ".productName"), "productName",
                             DynamicReports.type.stringType());
             @SuppressWarnings("rawtypes")
+            final TextColumnBuilder<List> productBarcodeTypes = DynamicReports.col.column(DBProperties
+                            .getProperty(PriceListReport.class.getName() + ".productBarcodeTypes"), "productBarcodeTypes",
+                            DynamicReports.type.listType());
+            @SuppressWarnings("rawtypes")
             final TextColumnBuilder<List> productBarcodes = DynamicReports.col.column(DBProperties
                             .getProperty(PriceListReport.class.getName() + ".productBarcodes"), "productBarcodes",
                             DynamicReports.type.listType());
@@ -395,8 +401,11 @@ public abstract class PriceListReport_Base
             grid.add(productName);
             _builder.addColumn(productName);
             if (isShowBarcodes()) {
-                grid.add(productBarcodes);
-                _builder.addColumn(productBarcodes);
+                final ColumnTitleGroupBuilder titleGroup = DynamicReports.grid.titleGroup(DBProperties
+                                .getProperty(PriceListReport.class.getName() + ".productBarcodesTitle"),
+                                productBarcodeTypes, productBarcodes);
+                grid.add(titleGroup);
+                _builder.addColumn(productBarcodeTypes, productBarcodes);
             }
             grid.add(productDescr);
             _builder.addColumn(productDescr);
