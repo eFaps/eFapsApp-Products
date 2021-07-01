@@ -471,6 +471,7 @@ public final class Products
                     .key(Products.BASE + "report.PriceListReport")
                     .addDefaultValue("ShowClassification", "true")
                     .addDefaultValue("ShowFamily", "false")
+                    .addDefaultValue("ShowBarcodes", "false")
                     .addDefaultValue("ActiveProductsOnly", "true")
                     .addDefaultValue("Type", "Products_ProductPricelistRetail")
                     .description("Configuration for PriceListReport.");

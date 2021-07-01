@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2016 The eFaps Team
+ * Copyright 2003 - 2021 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -30,6 +29,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
+import org.efaps.admin.datamodel.AttributeSet;
 import org.efaps.admin.datamodel.Classification;
 import org.efaps.admin.datamodel.Dimension;
 import org.efaps.admin.datamodel.Type;
@@ -58,6 +58,7 @@ import org.joda.time.DateTime;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.builder.DynamicReports;
+import net.sf.dynamicreports.report.builder.column.ColumnBuilder;
 import net.sf.dynamicreports.report.builder.column.ComponentColumnBuilder;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.builder.grid.ColumnGridComponentBuilder;
@@ -66,7 +67,6 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRRewindableDataSource;
 import net.sf.jasperreports.engine.data.JRMapCollectionDataSource;
-
 
 /**
  * TODO comment!
@@ -159,25 +159,29 @@ public abstract class PriceListReport_Base
         /** The show family. */
         private boolean showFamily;
 
+        private boolean showBarcodes;
+
         /**
-         * @param _parameter     Parameter as passed from the eFaps API
-         * @param _report       Report this class is used in
+         * @param _parameter Parameter as passed from the eFaps API
+         * @param _report Report this class is used in
          * @throws EFapsException on error
          */
         public DynPriceListReport(final Parameter _parameter,
                                   final PriceListReport_Base _report)
             throws EFapsException
         {
-            this.filteredReport = _report;
+            filteredReport = _report;
             final Map<Integer, String> typesMap = analyseProperty(_parameter, "Type");
             for (final Entry<Integer, String> typeEntry : typesMap.entrySet()) {
                 final String typeStr = typeEntry.getValue();
                 final Type type = isUUID(typeStr) ? Type.get(UUID.fromString(typeStr)) : Type.get(typeStr);
-                this.types.add(type);
+                types.add(type);
             }
-            this.showClass = !"false".equalsIgnoreCase(getProperty(_parameter, "ShowClassification"));
-            this.showFamily = "true".equalsIgnoreCase(getProperty(_parameter, "ShowFamily"));
-            this.activeProductsOnly = "true".equalsIgnoreCase(getProperty(_parameter, "ActiveProductsOnly"));
+            final var props = Products.REPPRICELIST.get();
+            showClass = "true".equalsIgnoreCase(props.getProperty("ShowClassification", "true"));
+            showFamily = "true".equalsIgnoreCase(props.getProperty("ShowFamily", "true"));
+            showBarcodes = "true".equalsIgnoreCase(props.getProperty("ShowBarcodes", "true"));
+            activeProductsOnly = "true".equalsIgnoreCase(props.getProperty("ActiveProductsOnly", "true"));
         }
 
         /**
@@ -189,7 +193,7 @@ public abstract class PriceListReport_Base
                                                  final QueryBuilder _queryBldr)
             throws EFapsException
         {
-            final Map<String, Object> filter = this.filteredReport.getFilterMap(_parameter);
+            final Map<String, Object> filter = filteredReport.getFilterMap(_parameter);
             final DateTime date;
             if (filter.containsKey("date")) {
                 date = (DateTime) filter.get("date");
@@ -307,6 +311,26 @@ public abstract class PriceListReport_Base
                                 map.put("productFamily", new ProductFamily().getName(_parameter, famInst));
                             }
                         }
+                        if (isShowBarcodes()) {
+                            final var attrSet = AttributeSet.find(CIProducts.ProductAbstract.getType().getName(),
+                                            CIProducts.ProductAbstract.Barcodes.name);
+                            // attrSet.getType();
+                            final QueryBuilder barcodeQueryBldr = new QueryBuilder(attrSet);
+                            barcodeQueryBldr.addWhereAttrEqValue(attrSet.getAttributeName(), prodInst);
+
+                            final var barcodePrint = barcodeQueryBldr.getPrint();
+                            barcodePrint.addAttribute("Code");
+                            final SelectBuilder selBarcodeType = SelectBuilder.get().linkto("BarcodeType")
+                                            .attribute("Value");
+                            barcodePrint.addSelect(selBarcodeType);
+                            barcodePrint.executeWithoutAccessCheck();
+                            final var barcodes = new ArrayList<>();
+                            map.put("productBarcodes", barcodes);
+                            while (barcodePrint.next()) {
+                                barcodes.add(barcodePrint.getSelect(selBarcodeType)
+                                                + ": " + barcodePrint.getAttribute("Code"));
+                            }
+                        }
                     }
                     String key = "";
                     if (Products.ACTIVATEPRICEGRP.get()) {
@@ -317,32 +341,36 @@ public abstract class PriceListReport_Base
                     map.put("price-" + listTypeInst.getType().getId() + "-" + key, multi.getAttribute(
                                     CIProducts.ProductPricelistPosition.Price));
                     map.put("currency-" + listTypeInst.getType().getId() + "-" + key, multi.getSelect(selCurrency));
+
+                    add2Value(prodInst, map);
                 }
 
                 final List<Map<String, ?>> lstVal = new ArrayList<>(values.values());
-                Collections.sort(lstVal, new Comparator<Map<String, ?>>()
-                {
-                    @Override
-                    public int compare(final Map<String, ?> _o1,
-                                       final Map<String, ?> _o2)
-                    {
-                        return _o1.get("productName").toString().compareTo(_o2.get("productName").toString());
-                    }
-                });
+                Collections.sort(lstVal, (_o1, _o2) -> _o1.get("productName").toString()
+                                .compareTo(_o2.get("productName").toString()));
                 ret = new JRMapCollectionDataSource(lstVal);
                 getFilteredReport().cache(_parameter, ret);
             }
             return ret;
         }
 
+        protected void add2Value(final Instance _productInst, final Map<String, Object> _map)
+            throws EFapsException
+        {
+        }
+
         @Override
         protected void addColumnDefinition(final Parameter _parameter,
-                                          final JasperReportBuilder _builder)
+                                           final JasperReportBuilder _builder)
             throws EFapsException
         {
             final TextColumnBuilder<String> productName = DynamicReports.col.column(DBProperties
                             .getProperty(PriceListReport.class.getName() + ".productName"), "productName",
                             DynamicReports.type.stringType());
+            @SuppressWarnings("rawtypes")
+            final TextColumnBuilder<List> productBarcodes = DynamicReports.col.column(DBProperties
+                            .getProperty(PriceListReport.class.getName() + ".productBarcodes"), "productBarcodes",
+                            DynamicReports.type.listType());
             final TextColumnBuilder<String> productDescr = DynamicReports.col.column(DBProperties
                             .getProperty(PriceListReport.class.getName() + ".productDescr"), "productDescr",
                             DynamicReports.type.stringType()).setWidth(350);
@@ -365,8 +393,13 @@ public abstract class PriceListReport_Base
                 grid.add(linkColumn);
             }
             grid.add(productName);
+            _builder.addColumn(productName);
+            if (isShowBarcodes()) {
+                grid.add(productBarcodes);
+                _builder.addColumn(productBarcodes);
+            }
             grid.add(productDescr);
-            _builder.addColumn(productName, productDescr);
+            _builder.addColumn(productDescr);
             if (isShowClass()) {
                 grid.add(productClass);
                 _builder.addColumn(productClass);
@@ -400,7 +433,7 @@ public abstract class PriceListReport_Base
                 }
             }
 
-            for (final Type type : this.types) {
+            for (final Type type : types) {
                 final String title = DBProperties.getProperty(PriceListReport.class.getName() + "ColumnGroup." + type
                                 .getName());
                 final Set<Instance> priceGrpSet = priceGrpMap.get(type.getId());
@@ -419,14 +452,19 @@ public abstract class PriceListReport_Base
                         }
 
                         final TextColumnBuilder<BigDecimal> price = DynamicReports.col.column(DBProperties.getProperty(
-                                        PriceListReport.class.getName() + ".price"), "price-" + type.getId() + "-"
-                                                        + key, DynamicReports.type.bigDecimalType());
+                                        PriceListReport.class.getName() + ".price"),
+                                        "price-" + type.getId() + "-"
+                                                        + key,
+                                        DynamicReports.type.bigDecimalType());
                         final TextColumnBuilder<String> currency = DynamicReports.col.column(DBProperties.getProperty(
-                                        PriceListReport.class.getName() + ".currency"), "currency-" + type.getId() + "-"
-                                                        + key, DynamicReports.type.stringType()).setWidth(50);
-                        _builder.addColumn(price, currency);
-                        final ColumnTitleGroupBuilder subTitleGroup = DynamicReports.grid.titleGroup(subTitle, price,
-                                        currency);
+                                        PriceListReport.class.getName() + ".currency"),
+                                        "currency-" + type.getId() + "-"
+                                                        + key,
+                                        DynamicReports.type.stringType()).setWidth(50);
+
+                        final var colsBldrs = add2PriceColumnBldrs(price, currency);
+                        _builder.addColumn(colsBldrs);
+                        final ColumnTitleGroupBuilder subTitleGroup = DynamicReports.grid.titleGroup(subTitle, colsBldrs);
                         titleGroup.add(subTitleGroup);
                     }
                 } else {
@@ -436,12 +474,19 @@ public abstract class PriceListReport_Base
                     final TextColumnBuilder<String> currency = DynamicReports.col.column(DBProperties.getProperty(
                                     PriceListReport.class.getName() + ".currency"), "currency-" + type.getId() + "-",
                                     DynamicReports.type.stringType()).setWidth(50);
-                    final ColumnTitleGroupBuilder titleGroup = DynamicReports.grid.titleGroup(title, price, currency);
+                    final var colsBldrs = add2PriceColumnBldrs(price, currency);
+                    final ColumnTitleGroupBuilder titleGroup = DynamicReports.grid.titleGroup(title, colsBldrs);
                     grid.add(titleGroup);
-                    _builder.addColumn(price, currency);
+                    _builder.addColumn(colsBldrs);
                 }
             }
             _builder.columnGrid(grid.toArray(new ColumnGridComponentBuilder[grid.size()]));
+        }
+
+        protected ColumnBuilder<?, ?>[] add2PriceColumnBldrs(final TextColumnBuilder<BigDecimal> price,
+                                                             final TextColumnBuilder<String> currency)
+        {
+            return new ColumnBuilder[] { price, currency };
         }
 
         /**
@@ -451,7 +496,7 @@ public abstract class PriceListReport_Base
          */
         public boolean isShowClass()
         {
-            return this.showClass;
+            return showClass;
         }
 
         /**
@@ -461,7 +506,7 @@ public abstract class PriceListReport_Base
          */
         public void setShowClass(final boolean _showClass)
         {
-            this.showClass = _showClass;
+            showClass = _showClass;
         }
 
         /**
@@ -471,17 +516,18 @@ public abstract class PriceListReport_Base
          */
         public boolean isActiveProductsOnly()
         {
-            return this.activeProductsOnly;
+            return activeProductsOnly;
         }
 
         /**
          * Setter method for instance variable {@link #activeProductsOnly}.
          *
-         * @param _activeProductsOnly value for instance variable {@link #activeProductsOnly}
+         * @param _activeProductsOnly value for instance variable
+         *            {@link #activeProductsOnly}
          */
         public void setActiveProductsOnly(final boolean _activeProductsOnly)
         {
-            this.activeProductsOnly = _activeProductsOnly;
+            activeProductsOnly = _activeProductsOnly;
         }
 
         /**
@@ -491,7 +537,7 @@ public abstract class PriceListReport_Base
          */
         public PriceListReport_Base getFilteredReport()
         {
-            return this.filteredReport;
+            return filteredReport;
         }
 
         /**
@@ -501,7 +547,7 @@ public abstract class PriceListReport_Base
          */
         public boolean isShowFamily()
         {
-            return this.showFamily;
+            return showFamily;
         }
 
         /**
@@ -511,7 +557,17 @@ public abstract class PriceListReport_Base
          */
         public void setShowFamily(final boolean _showFamily)
         {
-            this.showFamily = _showFamily;
+            showFamily = _showFamily;
+        }
+
+        public boolean isShowBarcodes()
+        {
+            return showBarcodes;
+        }
+
+        public void setShowBarcodes(final boolean showBarcodes)
+        {
+            this.showBarcodes = showBarcodes;
         }
     }
 }
