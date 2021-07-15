@@ -180,7 +180,7 @@ public abstract class PriceListReport_Base
             final var props = Products.REPPRICELIST.get();
             showClass = "true".equalsIgnoreCase(props.getProperty("ShowClassification", "true"));
             showFamily = "true".equalsIgnoreCase(props.getProperty("ShowFamily", "true"));
-            showBarcodes = "true".equalsIgnoreCase(props.getProperty("ShowBarcodes", "false"));
+            showBarcodes = Products.REPPRICELIST_ACTBARCODE.get();
             activeProductsOnly = "true".equalsIgnoreCase(props.getProperty("ActiveProductsOnly", "true"));
         }
 
@@ -224,6 +224,7 @@ public abstract class PriceListReport_Base
             throws EFapsException
         {
             final JRRewindableDataSource ret;
+            final Map<String, Object> filterMap = getFilteredReport().getFilterMap(_parameter);
             if (getFilteredReport().isCached(_parameter)) {
                 ret = getFilteredReport().getDataSourceFromCache(_parameter);
                 try {
@@ -290,8 +291,8 @@ public abstract class PriceListReport_Base
                     if (values.containsKey(prodInst)) {
                         map = (Map<String, Object>) values.get(prodInst);
                     } else {
+                        boolean skip = false;
                         map = new HashMap<String, Object>();
-                        values.put(prodInst, map);
                         map.put("productOID", prodInst.getOid());
                         map.put("productName", multi.getSelect(selProdName));
                         map.put("productDescr", multi.getSelect(selProdDescr));
@@ -311,7 +312,9 @@ public abstract class PriceListReport_Base
                                 map.put("productFamily", new ProductFamily().getName(_parameter, famInst));
                             }
                         }
-                        if (isShowBarcodes()) {
+                        if (isShowBarcodes() && filterMap.containsKey("barCodeType")) {
+                            final AttrDefFilterValue filter = (AttrDefFilterValue) filterMap.get("barCodeType");
+                            final Set<Instance> selectedTypes = filter.getObject() == null ? Collections.emptySet() :filter.getObject();
                             final var attrSet = AttributeSet.find(CIProducts.ProductAbstract.getType().getName(),
                                             CIProducts.ProductAbstract.Barcodes.name);
                             // attrSet.getType();
@@ -322,16 +325,25 @@ public abstract class PriceListReport_Base
                             barcodePrint.addAttribute("Code");
                             final SelectBuilder selBarcodeType = SelectBuilder.get().linkto("BarcodeType")
                                             .attribute("Value");
-                            barcodePrint.addSelect(selBarcodeType);
+                            final SelectBuilder selBarcodeTypeInstance = SelectBuilder.get().linkto("BarcodeType")
+                                            .instance();
+                            barcodePrint.addSelect(selBarcodeType, selBarcodeTypeInstance);
                             barcodePrint.executeWithoutAccessCheck();
                             final var codes = new ArrayList<>();
                             final var types = new ArrayList<>();
                             map.put("productBarcodes", codes);
                             map.put("productBarcodeTypes", types);
                             while (barcodePrint.next()) {
-                                codes.add(barcodePrint.getAttribute("Code"));
-                                types.add(barcodePrint.getSelect(selBarcodeType));
+                                final Instance barcodeTypeInstance = barcodePrint.getSelect(selBarcodeTypeInstance);
+                                if (selectedTypes.contains(barcodeTypeInstance)) {
+                                    codes.add(barcodePrint.getAttribute("Code"));
+                                    types.add(barcodePrint.getSelect(selBarcodeType));
+                                }
                             }
+                            skip = codes.isEmpty() && !selectedTypes.isEmpty();
+                        }
+                        if (!skip) {
+                            values.put(prodInst, map);
                         }
                     }
                     String key = "";

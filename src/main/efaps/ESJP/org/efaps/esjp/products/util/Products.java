@@ -471,10 +471,16 @@ public final class Products
                     .key(Products.BASE + "report.PriceListReport")
                     .addDefaultValue("ShowClassification", "true")
                     .addDefaultValue("ShowFamily", "false")
-                    .addDefaultValue("ShowBarcodes", "false")
                     .addDefaultValue("ActiveProductsOnly", "true")
                     .addDefaultValue("Type", "Products_ProductPricelistRetail")
                     .description("Configuration for PriceListReport.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute REPPRICELIST_ACTBARCODE = new BooleanSysConfAttribute()
+                    .sysConfUUID(Products.SYSCONFUUID)
+                    .key(Products.BASE + "report.PriceListReport.ActivateBarcodes")
+                    .description("Activate Barcodes for PriceListReport.");
 
     /** See description. */
     @EFapsSysConfLink
