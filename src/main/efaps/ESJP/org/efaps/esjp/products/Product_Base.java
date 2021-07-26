@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2018 The eFaps Team
+ * Copyright 2003 - 2021 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -284,6 +284,8 @@ public abstract class Product_Base
                 ret = Products.VARIANTACTFAM.get();
             } else if (instance.getType().isCIType(CIProducts.ProductInfinite)) {
                 ret = Products.INFINITEACTFAM.get();
+            } else if (instance.getType().isCIType(CIProducts.ProductSalesPartList)) {
+                ret = Products.SALESPARTLIST_ACTFAM.get();
             }
         }
         return ret;

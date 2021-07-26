@@ -29,15 +29,15 @@
         </access>
         <target>
             <form>Products_ProductSalesPartListForm</form>
-            <execute
-                program="org.efaps.esjp.common.uiform.Create" />
+            <execute program="org.efaps.esjp.products.Product"
+                method="create" />
             <validate method="validate"
                 program="org.efaps.esjp.products.Product" />
         </target>
         <property name="Target">modal</property>
         <property name="TargetCreateType">Products_ProductSalesPartList</property>
         <property name="TargetMode">create</property>
-        <property name="WindowHeight">460</property>
-        <property name="WindowWidth">515</property>
+        <property name="WindowHeight">600</property>
+        <property name="WindowWidth">1000</property>
     </definition>
 </ui-command>

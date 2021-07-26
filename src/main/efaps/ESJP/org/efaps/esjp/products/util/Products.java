@@ -318,6 +318,7 @@ public final class Products
                     .sysConfUUID(Products.SYSCONFUUID)
                     .key(Products.BASE + "Standart.ActivateNote")
                     .description("Activate the note field for standart products.");
+
     @EFapsSysConfAttribute
     public static final BooleanSysConfAttribute STANDART_ACTBARCODES = new BooleanSysConfAttribute()
                     .sysConfUUID(Products.SYSCONFUUID)
@@ -398,6 +399,12 @@ public final class Products
                     .sysConfUUID(Products.SYSCONFUUID)
                     .key(Products.BASE + "SalesPartList.ActivateFamilies")
                     .description("Activate the family management for SalesPartList.");
+
+    @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute SALESPARTLIST_ACTBARCODES = new BooleanSysConfAttribute()
+                    .sysConfUUID(Products.SYSCONFUUID)
+                    .key(Products.BASE + "SalesPartList.ActivateBarcodes")
+                    .description("Activate the Barcodes field set for SalesPartList.");
 
     /** See description. */
     @EFapsSysConfAttribute

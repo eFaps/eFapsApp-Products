@@ -34,13 +34,48 @@
             <property name="Attribute">Name</property>
             <property name="Required">true</property>
         </field>
+        <field name="barcodes" character="Set">
+            <property name="Attribute">Barcodes</property>
+            <property name="Label">Products_ProductForm.barcodes.Label</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="Order">BarcodeType|Code</property>
+            <trigger event="UI_ACCESSCHECK" method="configCheck"
+                name="Products_ProductSalesPartListForm.barcodes.UI_ACCESSCHECK.1"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                index="1">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.SalesPartList.ActivateBarcodes</property>
+            </trigger>
+        </field>
         <field name="description">
-            <property name="Columns">40</property>
+            <property name="Width">80</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
             <property name="ModeSearch">EDITABLE</property>
             <property name="Attribute">Description</property>
             <property name="Required">true</property>
+        </field>
+        <field name="image">
+            <property name="Label">Products_ProductForm.image.Label</property>
+            <property name="ModeEdit">NONE</property>
+            <property name="UIType">SNIPPLET</property>
+            <trigger event="UI_FIELD_VALUE"
+                method="getImageFieldValueUI"
+                name="Products_ImageForm.image.UI_FIELD_VALUE"
+                program="org.efaps.esjp.products.Image">
+                <property name="max-width">200px</property>
+                <property name="max-height">200px</property>
+                <property name="RelationType">Products_Product2ImageThumbnail</property>
+            </trigger>
+            <trigger event="UI_ACCESSCHECK" method="configCheck"
+                name="Products_ProductSalesPartListForm.image.UI_ACCESSCHECK"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="AttributeExists">org.efaps.products.SalesPartList.Image</property>
+            </trigger>
         </field>
         <field name="dimension">
             <property name="Attribute">Dimension</property>
@@ -65,6 +100,7 @@
         </field>
         <field name="defaultUoM4View">
             <property name="Select">linkto[DefaultUoM].attribute[Name]</property>
+            <property name="Label">Products_ProductAbstract/DefaultUoM.Label</property>
             <property name="ModeEdit">NONE</property>
             <property name="ModeView">READONLY</property>
             <property name="Required">true</property>
@@ -73,6 +109,23 @@
             <property name="Attribute">Active</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+            <property name="Required">true</property>
+        </field>
+        <field name="note">
+            <property name="Columns">100</property>
+            <property name="Rows">5</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ModeSearch">EDITABLE</property>
+            <property name="Attribute">Note</property>
+            <trigger
+                program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                name="Products_ProductSalesPartListForm.note.UI_ACCESSCHECK"
+                method="configCheck" event="UI_ACCESSCHECK">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.SalesPartList.ActivateNote</property>
+            </trigger>
         </field>
         <field character="Group" name="createGroup">
             <property name="GroupCount">2</property>
@@ -172,12 +225,13 @@
             </trigger>
         </field>
         <field name="nameSuffix">
-            <property name="Columns">8</property>
+            <property name="Width">16</property>
             <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
             <property name="ModeView">NONE</property>
             <property name="ModeEdit">NONE</property>
             <property name="Label">Products_ProductForm.nameSuffix.Label</property>
             <property name="ModeCreate">EDITABLE</property>
+            <property name="Required">true</property>
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductSalesPartListForm.nameSuffix.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
@@ -209,7 +263,7 @@
         </field>
         <field name="nameSuffix4Edit">
             <property name="Required">true</property>
-            <property name="Columns">8</property>
+            <property name="Width">16</property>
             <property name="Attribute">Name</property>
             <property name="Label">Products_ProductForm.nameSuffix.Label</property>
             <property name="ModeEdit">EDITABLE</property>
@@ -231,7 +285,7 @@
                 <property name="Attribute">org.efaps.products.SalesPartList.ActivateFamilies</property>
             </trigger>
         </field>
-        <field character="Picker" name="updateButton">
+        <field character="Picker" name="familyPicker">
             <property name="ModeCreate">READONLY</property>
             <property name="ModeView">NONE</property>
             <property name="ModeEdit">READONLY</property>
@@ -248,7 +302,6 @@
                 <property name="Attribute">org.efaps.products.SalesPartList.ActivateFamilies</property>
             </trigger>
         </field>
-
         <field name="name">
             <property name="Columns">40</property>
             <property name="ModeCreate">EDITABLE</property>
@@ -272,13 +325,61 @@
             <property name="ModeView">READONLY</property>
             <property name="Attribute">Name</property>
         </field>
+        <field name="barcodes" character="Set">
+            <property name="Attribute">Barcodes</property>
+            <property name="Label">Products_ProductForm.barcodes.Label</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="Order">BarcodeType|Code</property>
+            <trigger event="UI_ACCESSCHECK" method="configCheck"
+                name="Products_ProductSalesPartListForm.barcodes.UI_ACCESSCHECK.1"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                index="1">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.SalesPartList.ActivateBarcodes</property>
+            </trigger>
+        </field>
+        <field character="Group" name="descriptionGroup">
+            <property name="GroupCount">2</property>
+            <property name="ModeCreate">READONLY</property>
+            <property name="ModeEdit">READONLY</property>
+            <property name="ModeView">NONE</property>
+            <trigger event="UI_ACCESSCHECK" method="configCheck"
+                name="Products_ProductSalesPartListForm.descriptionGroup.UI_ACCESSCHECK"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="AttributeExists">org.efaps.products.SalesPartList.Descriptions</property>
+            </trigger>
+        </field>
         <field name="description">
-            <property name="Columns">40</property>
+            <property name="Width">80</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
             <property name="ModeSearch">EDITABLE</property>
             <property name="Attribute">Description</property>
             <property name="Required">true</property>
+        </field>
+        <field name="image">
+            <property name="Label">Products_ProductForm.image.Label</property>
+            <property name="ModeEdit">NONE</property>
+            <property name="UIType">SNIPPLET</property>
+            <trigger event="UI_FIELD_VALUE"
+                method="getImageFieldValueUI"
+                name="Products_ImageForm.image.UI_FIELD_VALUE"
+                program="org.efaps.esjp.products.Image">
+                <property name="max-width">200px</property>
+                <property name="max-height">200px</property>
+                <property name="RelationType">Products_Product2ImageThumbnail</property>
+            </trigger>
+            <trigger event="UI_ACCESSCHECK" method="configCheck"
+                name="Products_ProductSalesPartListForm.image.UI_ACCESSCHECK"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="AttributeExists">org.efaps.products.SalesPartList.Image</property>
+            </trigger>
         </field>
         <field name="dimension">
             <property name="Attribute">Dimension</property>
@@ -296,6 +397,7 @@
             <property name="ModeView">NONE</property>
             <property name="Required">true</property>
             <property name="UIType">DROPDOWN</property>
+            <property name="Label">Products_ProductAbstract/DefaultUoM.Label</property>
             <trigger event="UI_FIELD_VALUE"
                 method="defaultUoMFieldValue"
                 name="Products_ProductForm.defaultUoM.UI_FIELD_VALUE"
@@ -303,6 +405,7 @@
         </field>
         <field name="defaultUoM4View">
             <property name="Select">linkto[DefaultUoM].attribute[Name]</property>
+            <property name="Label">Products_ProductAbstract/DefaultUoM.Label</property>
             <property name="ModeEdit">NONE</property>
             <property name="ModeView">READONLY</property>
             <property name="Required">true</property>
@@ -311,6 +414,23 @@
             <property name="Attribute">Active</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+            <property name="Required">true</property>
+        </field>
+        <field name="note">
+            <property name="Columns">100</property>
+            <property name="Rows">5</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ModeSearch">EDITABLE</property>
+            <property name="Attribute">Note</property>
+            <trigger
+                program="org.efaps.esjp.admin.access.AccessCheck4UI"
+                name="Products_ProductSalesPartListForm.note.UI_ACCESSCHECK"
+                method="configCheck" event="UI_ACCESSCHECK">
+                <!-- Products-Configuration -->
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.SalesPartList.ActivateNote</property>
+            </trigger>
         </field>
         <field name="salesUnit">
             <property name="Attribute">SalesUnit</property>
@@ -319,6 +439,7 @@
             <property name="ModeView">NONE</property>
             <property name="ModePrint">NONE</property>
             <property name="Required">true</property>
+            <property name="Columns">4</property>
         </field>
         <field name="salesUnit4Read">
             <property name="Select">attribute[SalesUnit].format[0.####]</property>
