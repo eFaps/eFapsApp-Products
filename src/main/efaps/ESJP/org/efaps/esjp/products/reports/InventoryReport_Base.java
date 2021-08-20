@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2016 The eFaps Team
+ * Copyright 2003 - 2021 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,12 +21,13 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.comparators.ComparatorChain;
+import org.efaps.admin.datamodel.Dimension;
 import org.efaps.admin.datamodel.Type;
 import org.efaps.admin.dbproperty.DBProperties;
 import org.efaps.admin.event.Parameter;
@@ -36,6 +37,7 @@ import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Instance;
+import org.efaps.eql.EQL;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.jasperreport.AbstractDynamicReport;
 import org.efaps.esjp.common.jasperreport.AbstractDynamicReport_Base;
@@ -65,11 +67,6 @@ import net.sf.jasperreports.engine.JRRewindableDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.data.JRMapCollectionDataSource;
 
-/**
- * TODO comment!
- *
- * @author The eFaps Team
- */
 @EFapsUUID("db37f9fd-a5ce-4feb-8c07-8932da68228a")
 @EFapsApplication("eFapsApp-Products")
 public abstract class InventoryReport_Base
@@ -197,7 +194,7 @@ public abstract class InventoryReport_Base
          */
         public DynInventoryReport(final FilteredReport _filteredReport)
         {
-            this.filteredReport = _filteredReport;
+            filteredReport = _filteredReport;
         }
 
         @Override
@@ -205,8 +202,8 @@ public abstract class InventoryReport_Base
             throws EFapsException
         {
             final JRRewindableDataSource ret;
-            if (this.filteredReport.isCached(_parameter)) {
-                ret = this.filteredReport.getDataSourceFromCache(_parameter);
+            if (filteredReport.isCached(_parameter)) {
+                ret = filteredReport.getDataSourceFromCache(_parameter);
                 try {
                     ret.moveFirst();
                 } catch (final JRException e) {
@@ -218,9 +215,9 @@ public abstract class InventoryReport_Base
                     ret = new JRMapCollectionDataSource(source);
                 } else {
                     Collections.sort(getBeans(_parameter, null), getComparator(_parameter));
-                    ret = new JRBeanCollectionDataSource(this.beans);
+                    ret = new JRBeanCollectionDataSource(beans);
                 }
-                this.filteredReport.cache(_parameter, ret);
+                filteredReport.cache(_parameter, ret);
             }
             return ret;
         }
@@ -348,27 +345,9 @@ public abstract class InventoryReport_Base
         {
             final ComparatorChain<InventoryBean> ret = new ComparatorChain<>();
             if (StorageDisplay.ROW.equals(getStorageDisplay(_parameter))) {
-                ret.addComparator(new Comparator<InventoryBean>()
-                {
-
-                    @Override
-                    public int compare(final InventoryBean _arg0,
-                                       final InventoryBean _arg1)
-                    {
-                        return _arg0.getStorage().compareTo(_arg1.getStorage());
-                    }
-                });
+                ret.addComparator((_arg0, _arg1) -> _arg0.getStorage().compareTo(_arg1.getStorage()));
             }
-            ret.addComparator(new Comparator<InventoryBean>()
-            {
-
-                @Override
-                public int compare(final InventoryBean _arg0,
-                                   final InventoryBean _arg1)
-                {
-                    return _arg0.getProdName().compareTo(_arg1.getProdName());
-                }
-            });
+            ret.addComparator((_arg0, _arg1) -> _arg0.getProdName().compareTo(_arg1.getProdName()));
             return ret;
         }
 
@@ -533,6 +512,12 @@ public abstract class InventoryReport_Base
             throws EFapsException
         {
             return ((InventoryReport_Base) getFilteredReport()).getFilterMap(_parameter);
+        }
+
+        protected boolean showZeroStock(final Parameter _parameter)
+            throws EFapsException
+        {
+            return (Boolean) getFilterMap(_parameter).get("showZeroStock");
         }
 
         @Override
@@ -703,7 +688,7 @@ public abstract class InventoryReport_Base
          */
         public FilteredReport getFilteredReport()
         {
-            return this.filteredReport;
+            return filteredReport;
         }
 
         /**
@@ -719,7 +704,7 @@ public abstract class InventoryReport_Base
                                             final Inventory _inventory)
             throws EFapsException
         {
-            if (this.beans == null) {
+            if (beans == null) {
                 final Inventory inventory;
                 if (_inventory == null) {
                     inventory = getInventoryObject(_parameter);
@@ -731,9 +716,34 @@ public abstract class InventoryReport_Base
                 } else {
                     inventory = _inventory;
                 }
-                this.beans = (List<InventoryBean>) inventory.getInventory(_parameter);
+                beans = (List<InventoryBean>) inventory.getInventory(_parameter);
             }
-            return this.beans;
+            if (showZeroStock(_parameter)) {
+                final var prod2inv = beans.stream().collect(Collectors.toMap(bean -> bean.getProdInstance(), bean -> bean));
+                final var eval = EQL.builder().print()
+                                .query(CIProducts.StoreableProductAbstract)
+                                .where()
+                                .attribute(CIProducts.StoreableProductAbstract.Active).eq("true")
+                                .select()
+                                .attribute(CIProducts.StoreableProductAbstract.Name)
+                                .attribute(CIProducts.StoreableProductAbstract.Description)
+                                .attribute(CIProducts.StoreableProductAbstract.DefaultUoM)
+                                .evaluate();
+                while (eval.next()) {
+                    final var prodInst = eval.inst();
+                    if (!prod2inv.containsKey(prodInst)) {
+                        final var bean = new InventoryBean();
+                        bean.setProdInstance(prodInst);
+                        bean.setProdName(eval.get(CIProducts.StoreableProductAbstract.Name));
+                        bean.setProdDescr(eval.get(CIProducts.StoreableProductAbstract.Description));
+                        bean.setUoM(Dimension.getUoM( eval.get(CIProducts.StoreableProductAbstract.DefaultUoM)));
+                        bean.setStorage("");
+                        prod2inv.put(prodInst, bean);
+                    }
+                }
+                beans = new ArrayList<InventoryBean>(prod2inv.values());
+            }
+            return beans;
         }
 
         /**
@@ -743,7 +753,7 @@ public abstract class InventoryReport_Base
          */
         public void setBeans(final List<InventoryBean> _beans)
         {
-            this.beans = _beans;
+            beans = _beans;
         }
     }
 
@@ -794,7 +804,7 @@ public abstract class InventoryReport_Base
          */
         public ReportInventoryBean(final Instance _treeViewInst)
         {
-            this.treeViewInst = _treeViewInst;
+            treeViewInst = _treeViewInst;
         }
 
         @Override
@@ -827,7 +837,7 @@ public abstract class InventoryReport_Base
          */
         public Instance getTreeViewInst()
         {
-            return this.treeViewInst;
+            return treeViewInst;
         }
     }
 }
