@@ -113,6 +113,19 @@ public abstract class InventoryReport_Base
     }
 
     /**
+     * The Enum ClassDisplay.
+     */
+    public enum FamilyDisplay
+    {
+        /** Show no classification. */
+        NONE,
+        /** Show as column. */
+        COLUMN,
+        /** Show as group. */
+        GROUP;
+    }
+
+    /**
      * The Enum TypeDisplay.
      */
     public enum IndividualDisplay
@@ -243,7 +256,12 @@ public abstract class InventoryReport_Base
                     quantity = BigDecimal.ZERO;
                     ret.add(map);
                     map.put("prodType", bean.getProdType());
-                    map.put("prodClass", bean.getProdClass(Products.REPINVENTORYCLASSLEVEL.get()));
+                    if (Products.REPINVENTORY_CLASSACTIVATE.get()) {
+                        map.put("prodClass", bean.getProdClass(Products.REPINVENTORY_CLASSLEVEL.get()));
+                    }
+                    if (Products.REPINVENTORY_FAMILYACTIVATE.get()) {
+                        map.put("prodFamily", bean.getProdFamily());
+                    }
                     map.put("prodName", bean.getProdName());
                     map.put("prodDescr", bean.getProdDescr());
                     map.put("prodOID", bean.getProdOID());
@@ -411,6 +429,19 @@ public abstract class InventoryReport_Base
             return ret;
         }
 
+        protected FamilyDisplay getFamilyDisplay(final Parameter _parameter)
+            throws EFapsException
+        {
+            final EnumFilterValue filter = (EnumFilterValue) getFilterMap(_parameter).get("familyDisplay");
+            final FamilyDisplay ret;
+            if (filter != null) {
+                ret = (FamilyDisplay) filter.getObject();
+            } else {
+                ret = FamilyDisplay.NONE;
+            }
+            return ret;
+        }
+
         /**
          * Gets the storage display.
          *
@@ -554,17 +585,36 @@ public abstract class InventoryReport_Base
                 }
             }
             ColumnGroupBuilder classGroup = null;
-            if (!ClassDisplay.NONE.equals(getClassDisplay(_parameter))) {
-                final TextColumnBuilder<String> classColumn = DynamicReports.col.column(DBProperties
-                                .getProperty(InventoryReport.class.getName() + ".Column.prodClass"),
-                                "prodClass", DynamicReports.type.stringType()).setWidth(250);
-                _builder.addColumn(classColumn);
+            if (Products.REPINVENTORY_CLASSACTIVATE.get()) {
+                if (!ClassDisplay.NONE.equals(getClassDisplay(_parameter))) {
+                    final TextColumnBuilder<String> classColumn = DynamicReports.col.column(DBProperties
+                                    .getProperty(InventoryReport.class.getName() + ".Column.prodClass"),
+                                    "prodClass", DynamicReports.type.stringType()).setWidth(250);
+                    _builder.addColumn(classColumn);
 
-                if (ClassDisplay.GROUP.equals(getClassDisplay(_parameter))) {
-                    classGroup = DynamicReports.grp.group(classColumn);
-                    _builder.groupBy(classGroup);
-                } else if (StorageDisplay.COLUMN.equals(getStorageDisplay(_parameter))) {
-                    prodGroup.add(classColumn);
+                    if (ClassDisplay.GROUP.equals(getClassDisplay(_parameter))) {
+                        classGroup = DynamicReports.grp.group(classColumn);
+                        _builder.groupBy(classGroup);
+                    } else if (StorageDisplay.COLUMN.equals(getStorageDisplay(_parameter))) {
+                        prodGroup.add(classColumn);
+                    }
+                }
+            }
+
+            ColumnGroupBuilder familyGroup = null;
+            if (Products.REPINVENTORY_FAMILYACTIVATE.get()) {
+                if (!FamilyDisplay.NONE.equals(getFamilyDisplay(_parameter))) {
+                    final TextColumnBuilder<String> familyColumn = DynamicReports.col.column(DBProperties
+                                    .getProperty(InventoryReport.class.getName() + ".Column.prodFamily"),
+                                    "prodFamily", DynamicReports.type.stringType()).setWidth(250);
+                    _builder.addColumn(familyColumn);
+
+                    if (FamilyDisplay.GROUP.equals(getFamilyDisplay(_parameter))) {
+                        familyGroup = DynamicReports.grp.group(familyColumn);
+                        _builder.groupBy(familyGroup);
+                    } else if (StorageDisplay.COLUMN.equals(getStorageDisplay(_parameter))) {
+                        prodGroup.add(familyColumn);
+                    }
                 }
             }
 
@@ -648,8 +698,11 @@ public abstract class InventoryReport_Base
                 if (TypeDisplay.GROUP.equals(getTypeDisplay(_parameter))) {
                     _builder.addSubtotalAtGroupFooter(typeGroup, DynamicReports.sbt.sum(totalColumn));
                 }
-                if (ClassDisplay.GROUP.equals(getClassDisplay(_parameter))) {
+                if (classGroup != null && ClassDisplay.GROUP.equals(getClassDisplay(_parameter))) {
                     _builder.addSubtotalAtGroupFooter(classGroup, DynamicReports.sbt.sum(totalColumn));
+                }
+                if (familyGroup != null && FamilyDisplay.GROUP.equals(getFamilyDisplay(_parameter))) {
+                    _builder.addSubtotalAtGroupFooter(familyGroup, DynamicReports.sbt.sum(totalColumn));
                 }
                 if (StorageDisplay.ROW.equals(getStorageDisplay(_parameter))) {
                     _builder.addSubtotalAtGroupFooter(storageSumGroup, DynamicReports.sbt.sum(totalColumn));
@@ -811,7 +864,14 @@ public abstract class InventoryReport_Base
         public String getProdClass()
             throws EFapsException
         {
-            return super.getProdClass(Products.REPINVENTORYCLASSLEVEL.get());
+            return super.getProdClass(Products.REPINVENTORY_CLASSLEVEL.get());
+        }
+
+        @Override
+        public String getProdFamily()
+            throws EFapsException
+        {
+            return super.getProdFamily();
         }
 
         /**

@@ -466,10 +466,25 @@ public final class Products
 
     /** See description. */
     @EFapsSysConfAttribute
-    public static final IntegerSysConfAttribute REPINVENTORYCLASSLEVEL = new IntegerSysConfAttribute()
+    public static final BooleanSysConfAttribute REPINVENTORY_CLASSACTIVATE = new BooleanSysConfAttribute()
+                    .sysConfUUID(Products.SYSCONFUUID)
+                    .defaultValue(true)
+                    .key(Products.BASE + "report.InventoryReport.Classification.Activate")
+                    .description("Activate Classification for the InventoryReport.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final IntegerSysConfAttribute REPINVENTORY_CLASSLEVEL = new IntegerSysConfAttribute()
                     .sysConfUUID(Products.SYSCONFUUID)
                     .key(Products.BASE + "report.InventoryReport.ClassificationLevel")
                     .description("Level of Classification to present.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute REPINVENTORY_FAMILYACTIVATE = new BooleanSysConfAttribute()
+                    .sysConfUUID(Products.SYSCONFUUID)
+                    .key(Products.BASE + "report.InventoryReport.Family.Activate")
+                    .description("Activate Classification for the InventoryReport.");
 
     /** See description. */
     @EFapsSysConfAttribute

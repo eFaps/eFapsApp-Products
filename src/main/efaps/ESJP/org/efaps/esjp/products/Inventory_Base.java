@@ -47,6 +47,7 @@ import org.efaps.db.SelectBuilder;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.AbstractCommon;
 import org.efaps.esjp.common.eql.ClassSelect;
+import org.efaps.esjp.common.parameter.ParameterUtil;
 import org.efaps.esjp.db.InstanceUtils;
 import org.efaps.esjp.erp.CurrencyInst;
 import org.efaps.esjp.products.Cost_Base.CostBean;
@@ -403,10 +404,10 @@ public abstract class Inventory_Base
      */
     public boolean isShowStorage()
     {
-        if (this.showStorage == null) {
+        if (showStorage == null) {
             setShowStorage(!getStorageInsts().isEmpty());
         }
-        return this.showStorage;
+        return showStorage;
     }
 
     /**
@@ -416,7 +417,7 @@ public abstract class Inventory_Base
      */
     public void setShowStorage(final boolean _showStorage)
     {
-        this.showStorage = _showStorage;
+        showStorage = _showStorage;
     }
 
     /**
@@ -426,7 +427,7 @@ public abstract class Inventory_Base
      */
     public List<Instance> getStorageInsts()
     {
-        return this.storageInsts;
+        return storageInsts;
     }
 
     /**
@@ -437,7 +438,7 @@ public abstract class Inventory_Base
      */
     public Inventory setStorageInsts(final List<Instance> _storageInsts)
     {
-        this.storageInsts = _storageInsts;
+        storageInsts = _storageInsts;
         return (Inventory) this;
     }
 
@@ -448,7 +449,7 @@ public abstract class Inventory_Base
      */
     public boolean isEvaluateCost()
     {
-        return getCurrencyInst() != null && this.currencyInst.isValid();
+        return getCurrencyInst() != null && currencyInst.isValid();
     }
 
     /**
@@ -459,7 +460,7 @@ public abstract class Inventory_Base
      */
     public Inventory setCurrencyInst(final Instance _currencyInst)
     {
-        this.currencyInst = _currencyInst;
+        currencyInst = _currencyInst;
         return (Inventory) this;
     }
 
@@ -470,7 +471,7 @@ public abstract class Inventory_Base
      */
     public Instance getCurrencyInst()
     {
-        return this.currencyInst;
+        return currencyInst;
     }
 
     /**
@@ -480,7 +481,7 @@ public abstract class Inventory_Base
      */
     public boolean isShowProdClass()
     {
-        return this.showProdClass;
+        return showProdClass;
     }
 
     /**
@@ -491,7 +492,7 @@ public abstract class Inventory_Base
      */
     public Inventory setShowProdClass(final boolean _showProdClass)
     {
-        this.showProdClass = _showProdClass;
+        showProdClass = _showProdClass;
         return (Inventory) this;
     }
 
@@ -512,7 +513,7 @@ public abstract class Inventory_Base
      */
     public Instance getAlternativeCurrencyInst()
     {
-        return this.alternativeCurrencyInst;
+        return alternativeCurrencyInst;
     }
 
     /**
@@ -523,7 +524,7 @@ public abstract class Inventory_Base
      */
     public Inventory setAlternativeCurrencyInst(final Instance _alternativeCurrencyInst)
     {
-        this.alternativeCurrencyInst = _alternativeCurrencyInst;
+        alternativeCurrencyInst = _alternativeCurrencyInst;
         return (Inventory) this;
     }
 
@@ -532,7 +533,7 @@ public abstract class Inventory_Base
      */
     public boolean isCalculateInventory()
     {
-        return this.date != null && this.date.toLocalDate().isBefore(DateTime.now().toLocalDate());
+        return date != null && date.toLocalDate().isBefore(DateTime.now().toLocalDate());
     }
 
     /**
@@ -542,7 +543,7 @@ public abstract class Inventory_Base
      */
     public DateTime getDate()
     {
-        return this.date;
+        return date;
     }
 
     /**
@@ -553,7 +554,7 @@ public abstract class Inventory_Base
      */
     public Inventory setDate(final DateTime _date)
     {
-        this.date = _date;
+        date = _date;
         return (Inventory) this;
     }
 
@@ -698,13 +699,13 @@ public abstract class Inventory_Base
          */
         public ProductPredicate(final Instance _productInstance)
         {
-            this.productInstance = _productInstance;
+            productInstance = _productInstance;
         }
 
         @Override
         public boolean evaluate(final InventoryBean _inventoryBean)
         {
-            return this.productInstance.equals(_inventoryBean.getProdInstance());
+            return productInstance.equals(_inventoryBean.getProdInstance());
         }
     }
 
@@ -725,13 +726,13 @@ public abstract class Inventory_Base
          */
         public StoragePredicate(final Instance _storageInstance)
         {
-            this.storageInstance = _storageInstance;
+            storageInstance = _storageInstance;
         }
 
         @Override
         public boolean evaluate(final InventoryBean _inventoryBean)
         {
-            return this.storageInstance.equals(_inventoryBean.getStorageInstance());
+            return storageInstance.equals(_inventoryBean.getStorageInstance());
         }
     }
 
@@ -764,7 +765,7 @@ public abstract class Inventory_Base
          */
         public Instance getInstance()
         {
-            return this.instance;
+            return instance;
         }
 
         /**
@@ -775,7 +776,7 @@ public abstract class Inventory_Base
          */
         public TransactionBean setInstance(final Instance _instance)
         {
-            this.instance = _instance;
+            instance = _instance;
             return this;
         }
 
@@ -786,7 +787,7 @@ public abstract class Inventory_Base
          */
         public BigDecimal getQuantity()
         {
-            return this.quantity;
+            return quantity;
         }
 
         /**
@@ -797,7 +798,7 @@ public abstract class Inventory_Base
          */
         public TransactionBean setQuantity(final BigDecimal _quantity)
         {
-            this.quantity = _quantity;
+            quantity = _quantity;
             return this;
         }
 
@@ -808,7 +809,7 @@ public abstract class Inventory_Base
          */
         public UoM getUoM()
         {
-            return this.uoM;
+            return uoM;
         }
 
         /**
@@ -819,7 +820,7 @@ public abstract class Inventory_Base
          */
         public TransactionBean setUoM(final UoM _uoM)
         {
-            this.uoM = _uoM;
+            uoM = _uoM;
             return this;
         }
 
@@ -830,7 +831,7 @@ public abstract class Inventory_Base
          */
         public Instance getProdInstance()
         {
-            return this.prodInstance;
+            return prodInstance;
         }
 
         /**
@@ -842,7 +843,7 @@ public abstract class Inventory_Base
          */
         public TransactionBean setProdInstance(final Instance _prodInstance)
         {
-            this.prodInstance = _prodInstance;
+            prodInstance = _prodInstance;
             return this;
         }
 
@@ -853,7 +854,7 @@ public abstract class Inventory_Base
          */
         public Instance getStorageInstance()
         {
-            return this.storageInstance;
+            return storageInstance;
         }
 
         /**
@@ -865,7 +866,7 @@ public abstract class Inventory_Base
          */
         public TransactionBean setStorageInstance(final Instance _storageInstance)
         {
-            this.storageInstance = _storageInstance;
+            storageInstance = _storageInstance;
             return this;
         }
     }
@@ -918,7 +919,7 @@ public abstract class Inventory_Base
         protected void initialize()
         {
             try {
-                if (getProdInstance() != null && getProdInstance().isValid() && this.prodName == null) {
+                if (getProdInstance() != null && getProdInstance().isValid() && prodName == null) {
                     final PrintQuery print = CachedPrintQuery.get4Request(getProdInstance());
                     print.addAttribute(CIProducts.ProductAbstract.Name, CIProducts.ProductAbstract.Description,
                                     CIProducts.ProductAbstract.Dimension);
@@ -928,7 +929,7 @@ public abstract class Inventory_Base
                     setUoM(Dimension.get(print.<Long>getAttribute(CIProducts.ProductAbstract.Dimension)).getBaseUoM());
                 }
 
-                if (getStorageInstance() != null && getStorageInstance().isValid() && this.storage == null) {
+                if (getStorageInstance() != null && getStorageInstance().isValid() && storage == null) {
                     final PrintQuery print = CachedPrintQuery.get4Request(getStorageInstance());
                     print.addAttribute(CIProducts.StorageAbstract.Name);
                     print.execute();
@@ -963,13 +964,13 @@ public abstract class Inventory_Base
             throws EFapsException
         {
             if (_costBean != null) {
-                this.costBean = _costBean;
+                costBean = _costBean;
                 if (_currencyInst != null && _currencyInst.isValid()) {
-                    this.currency = CurrencyInst.get(_currencyInst).getSymbol();
-                    this.cost = getCostBean().getCost4Currency(_parameter, _currencyInst);
+                    currency = CurrencyInst.get(_currencyInst).getSymbol();
+                    cost = getCostBean().getCost4Currency(_parameter, _currencyInst);
                 } else {
-                    this.currency = CurrencyInst.get(getCostBean().getCurrencyInstance()).getSymbol();
-                    this.cost = getCostBean().getCost();
+                    currency = CurrencyInst.get(getCostBean().getCurrencyInstance()).getSymbol();
+                    cost = getCostBean().getCost();
                 }
             }
         }
@@ -981,7 +982,7 @@ public abstract class Inventory_Base
          */
         public BigDecimal getQuantity()
         {
-            return this.quantity;
+            return quantity;
         }
 
         /**
@@ -991,7 +992,7 @@ public abstract class Inventory_Base
          */
         public void addReserved(final BigDecimal _reserved)
         {
-            this.reserved = this.reserved.add(_reserved);
+            reserved = reserved.add(_reserved);
 
         }
 
@@ -1002,7 +1003,7 @@ public abstract class Inventory_Base
          */
         public void addQuantity(final BigDecimal _quantity)
         {
-            this.quantity = this.quantity.add(_quantity);
+            quantity = quantity.add(_quantity);
         }
 
         /**
@@ -1032,7 +1033,7 @@ public abstract class Inventory_Base
          */
         public void setQuantity(final BigDecimal _quantity)
         {
-            this.quantity = _quantity;
+            quantity = _quantity;
         }
 
         /**
@@ -1042,7 +1043,7 @@ public abstract class Inventory_Base
          */
         public BigDecimal getReserved()
         {
-            return this.reserved;
+            return reserved;
         }
 
         /**
@@ -1052,7 +1053,7 @@ public abstract class Inventory_Base
          */
         public void setReserved(final BigDecimal _reserved)
         {
-            this.reserved = _reserved;
+            reserved = _reserved;
         }
 
         /**
@@ -1063,7 +1064,7 @@ public abstract class Inventory_Base
         public String getUoM()
         {
             initialize();
-            return this.uoM.getName();
+            return uoM.getName();
         }
 
         /**
@@ -1074,7 +1075,7 @@ public abstract class Inventory_Base
         public Long getUoMId()
         {
             initialize();
-            return this.uoM.getId();
+            return uoM.getId();
         }
 
         /**
@@ -1084,7 +1085,7 @@ public abstract class Inventory_Base
          */
         public void setUoM(final UoM _uoM)
         {
-            this.uoM = _uoM;
+            uoM = _uoM;
         }
 
         /**
@@ -1095,7 +1096,7 @@ public abstract class Inventory_Base
         public String getProdName()
         {
             initialize();
-            return this.prodName;
+            return prodName;
         }
 
         /**
@@ -1105,7 +1106,7 @@ public abstract class Inventory_Base
          */
         public void setProdName(final String _prodName)
         {
-            this.prodName = _prodName;
+            prodName = _prodName;
         }
 
         /**
@@ -1116,7 +1117,7 @@ public abstract class Inventory_Base
         public String getProdDescr()
         {
             initialize();
-            return this.prodDescr;
+            return prodDescr;
         }
 
         /**
@@ -1126,7 +1127,7 @@ public abstract class Inventory_Base
          */
         public void setProdDescr(final String _prodDescr)
         {
-            this.prodDescr = _prodDescr;
+            prodDescr = _prodDescr;
         }
 
         /**
@@ -1137,7 +1138,7 @@ public abstract class Inventory_Base
         public String getStorage()
         {
             initialize();
-            return this.storage;
+            return storage;
         }
 
         /**
@@ -1147,7 +1148,7 @@ public abstract class Inventory_Base
          */
         public void setStorage(final String _storage)
         {
-            this.storage = _storage;
+            storage = _storage;
         }
 
         /**
@@ -1157,7 +1158,7 @@ public abstract class Inventory_Base
          */
         public BigDecimal getCost()
         {
-            return this.cost;
+            return cost;
         }
 
         /**
@@ -1167,7 +1168,7 @@ public abstract class Inventory_Base
          */
         public void setCost(final BigDecimal _cost)
         {
-            this.cost = _cost;
+            cost = _cost;
         }
 
         /**
@@ -1177,7 +1178,7 @@ public abstract class Inventory_Base
          */
         public String getCurrency()
         {
-            return this.currency;
+            return currency;
         }
 
         /**
@@ -1187,7 +1188,7 @@ public abstract class Inventory_Base
          */
         public void setCurrency(final String _currency)
         {
-            this.currency = _currency;
+            currency = _currency;
         }
 
         /**
@@ -1197,7 +1198,7 @@ public abstract class Inventory_Base
          */
         public Instance getProdInstance()
         {
-            return this.prodInstance;
+            return prodInstance;
         }
 
         /**
@@ -1228,7 +1229,7 @@ public abstract class Inventory_Base
          */
         public void setProdInstance(final Instance _prodInstance)
         {
-            this.prodInstance = _prodInstance;
+            prodInstance = _prodInstance;
         }
 
         /**
@@ -1238,7 +1239,13 @@ public abstract class Inventory_Base
          */
         public CostBean getCostBean()
         {
-            return this.costBean;
+            return costBean;
+        }
+
+        public String getProdFamily()
+            throws EFapsException
+        {
+            return new ProductFamily().getName(ParameterUtil.instance(), prodInstance);
         }
 
         /**
@@ -1293,7 +1300,7 @@ public abstract class Inventory_Base
         public List<Classification> getProdClasslist()
         {
             initialize();
-            return this.prodClasslist;
+            return prodClasslist;
         }
 
         /**
@@ -1304,7 +1311,7 @@ public abstract class Inventory_Base
          */
         public void setProdClasslist(final List<Classification> _prodClasslist)
         {
-            this.prodClasslist = _prodClasslist;
+            prodClasslist = _prodClasslist;
         }
 
         /**
@@ -1314,7 +1321,7 @@ public abstract class Inventory_Base
          */
         public Instance getStorageInstance()
         {
-            return this.storageInstance;
+            return storageInstance;
         }
 
         /**
@@ -1325,7 +1332,7 @@ public abstract class Inventory_Base
          */
         public void setStorageInstance(final Instance _storageInstance)
         {
-            this.storageInstance = _storageInstance;
+            storageInstance = _storageInstance;
         }
     }
 }
