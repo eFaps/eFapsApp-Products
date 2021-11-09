@@ -69,7 +69,7 @@ public abstract class ProductFamily_Base
      *
      * @author The eFaps Team
      */
-    public enum NameDefintion
+    public enum NameDefinition
     {
         /** The whole path is shown. */
         ALL,
@@ -357,8 +357,8 @@ public abstract class ProductFamily_Base
                         ?  Boolean.parseBoolean(getProperty(_parameter, "NameIncludeLine"))
                         :  Products.FAMILY_NAMEINCLLINE.get();
 
-        final NameDefintion nameDef = containsProperty(_parameter, "NameDefintion")
-                        ?  EnumUtils.getEnum(NameDefintion.class, getProperty(_parameter, "NameDefintion"))
+        final NameDefinition nameDef = containsProperty(_parameter, "NameDefinition")
+                        ?  EnumUtils.getEnum(NameDefinition.class, getProperty(_parameter, "NameDefinition"))
                         :  Products.FAMILY_NAMEDEF.get();
 
         Instance inst = _inst;

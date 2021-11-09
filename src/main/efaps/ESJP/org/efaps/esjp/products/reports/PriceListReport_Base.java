@@ -49,6 +49,7 @@ import org.efaps.db.SelectBuilder;
 import org.efaps.esjp.ci.CIERP;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.jasperreport.AbstractDynamicReport;
+import org.efaps.esjp.common.parameter.ParameterUtil;
 import org.efaps.esjp.db.InstanceUtils;
 import org.efaps.esjp.erp.FilteredReport;
 import org.efaps.esjp.products.ProductFamily;
@@ -309,7 +310,21 @@ public abstract class PriceListReport_Base
                         if (isShowFamily()) {
                             final Instance famInst = multi.getSelect(selFamInst);
                             if (InstanceUtils.isValid(famInst)) {
-                                map.put("productFamily", new ProductFamily().getName(_parameter, famInst));
+                                final var props = Products.REPPRICELIST.get();
+                                final var parameter = ParameterUtil.clone(_parameter);
+                                if (props.containsKey("NameDefinition")) {
+                                    ParameterUtil.setProperty(parameter, "NameDefinition",
+                                                    props.getProperty("NameDefinition"));
+                                }
+                                if (props.containsKey("NameIncludeLine")) {
+                                    ParameterUtil.setProperty(parameter, "NameIncludeLine",
+                                                    props.getProperty("NameIncludeLine"));
+                                }
+                                if (props.containsKey("NameSeparator")) {
+                                    ParameterUtil.setProperty(parameter, "NameSeparator",
+                                                    props.getProperty("NameSeparator"));
+                                }
+                                map.put("productFamily", new ProductFamily().getName(parameter, famInst));
                             }
                         }
                         if (isShowBarcodes() && filterMap.containsKey("barCodeType")) {

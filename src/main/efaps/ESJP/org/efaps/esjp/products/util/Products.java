@@ -32,7 +32,7 @@ import org.efaps.esjp.admin.common.systemconfiguration.IntegerSysConfAttribute;
 import org.efaps.esjp.admin.common.systemconfiguration.PropertiesSysConfAttribute;
 import org.efaps.esjp.admin.common.systemconfiguration.StringSysConfAttribute;
 import org.efaps.esjp.admin.common.systemconfiguration.SysConfLink;
-import org.efaps.esjp.products.ProductFamily_Base.NameDefintion;
+import org.efaps.esjp.products.ProductFamily_Base.NameDefinition;
 import org.efaps.util.cache.CacheReloadException;
 
 /**
@@ -134,11 +134,11 @@ public final class Products
 
     /** See description. */
     @EFapsSysConfAttribute
-    public static final EnumSysConfAttribute<NameDefintion> FAMILY_NAMEDEF = new EnumSysConfAttribute<NameDefintion>()
+    public static final EnumSysConfAttribute<NameDefinition> FAMILY_NAMEDEF = new EnumSysConfAttribute<NameDefinition>()
                     .sysConfUUID(Products.SYSCONFUUID)
                     .key(Products.BASE + "Family.NameDefinition")
-                    .clazz(NameDefintion.class)
-                    .defaultValue(NameDefintion.ALL)
+                    .clazz(NameDefinition.class)
+                    .defaultValue(NameDefinition.ALL)
                     .description("Name Definition");
 
     /** See description. */
