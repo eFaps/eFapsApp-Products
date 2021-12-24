@@ -101,6 +101,7 @@ public abstract class Inventory_Base
      */
     private DateTime date;
 
+    private boolean forceDate = false;
     /**
      * @param _parameter Parameter as passed by the eFaps API
      * @return list of beans
@@ -285,8 +286,11 @@ public abstract class Inventory_Base
         if (!getStorageInsts().isEmpty()) {
             _queryBldr.addWhereAttrEqValue(CIProducts.TransactionAbstract.Storage, getStorageInsts().toArray());
         }
-        //transaction are all exactly at 00:00 date ==> all transaction up to this date must be included
-        _queryBldr.addWhereAttrGreaterValue(CIProducts.TransactionAbstract.Date, getDate().plusDays(1).minusMinutes(1));
+        // if not forced Date
+        // transaction are all exactly at 00:00 date ==> all transaction up to
+        // this date must be included
+        _queryBldr.addWhereAttrGreaterValue(CIProducts.TransactionAbstract.Date,
+                        forceDate ? getDate() : getDate().plusDays(1).minusMinutes(1));
     }
 
     /**
@@ -556,6 +560,18 @@ public abstract class Inventory_Base
     {
         date = _date;
         return (Inventory) this;
+    }
+
+    /**
+     * Setter method for instance variable {@link #date}.
+     *
+     * @param _date value for instance variable {@link #date}
+     * @return the inventory
+     */
+    public Inventory setDate(final DateTime _date, final boolean forceDate)
+    {
+        this.forceDate = forceDate;
+        return setDate(_date);
     }
 
     /**
