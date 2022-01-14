@@ -548,7 +548,9 @@ public abstract class InventoryReport_Base
         protected boolean showZeroStock(final Parameter _parameter)
             throws EFapsException
         {
-            return (Boolean) getFilterMap(_parameter).get("showZeroStock");
+            return getFilterMap(_parameter).containsKey("showZeroStock")
+                            ? (Boolean) getFilterMap(_parameter).get("showZeroStock")
+                            : false;
         }
 
         @Override
