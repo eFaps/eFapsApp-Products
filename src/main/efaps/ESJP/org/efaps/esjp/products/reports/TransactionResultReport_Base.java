@@ -19,6 +19,7 @@ package org.efaps.esjp.products.reports;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,6 +30,7 @@ import java.util.Map;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.comparators.ComparatorChain;
 import org.apache.commons.collections4.iterators.ReverseListIterator;
+import org.efaps.admin.datamodel.Dimension;
 import org.efaps.admin.datamodel.Status;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Parameter.ParameterValues;
@@ -167,7 +169,7 @@ public abstract class TransactionResultReport_Base
          */
         public DynTransactionResultReport(final TransactionResultReport_Base _filteredReport)
         {
-            this.filteredReport = _filteredReport;
+            filteredReport = _filteredReport;
         }
 
         @Override
@@ -209,15 +211,20 @@ public abstract class TransactionResultReport_Base
                 multi.addSelect(selDocInst, selDocStatus, selDocName, selDocContactName, selStorageName, selStorageInst,
                                 selProdName);
                 multi.addAttribute(CIProducts.TransactionAbstract.Quantity, CIProducts.TransactionAbstract.Description,
-                                CIProducts.TransactionAbstract.Date, CIProducts.TransactionAbstract.Position);
+                                CIProducts.TransactionAbstract.Date, CIProducts.TransactionAbstract.Position,
+                                CIProducts.TransactionAbstract.UoM);
                 multi.execute();
                 while (multi.next()) {
                     if (isValidStatus(_parameter, multi.<Status>getSelect(selDocStatus))) {
+                        final var quantity = multi.<BigDecimal>getAttribute(CIProducts.TransactionAbstract.Quantity);
+                        final var uom = Dimension.getUoM(multi.<Long>getAttribute(CIProducts.TransactionAbstract.UoM));
+                        final var transactQuantiy = quantity.multiply(new BigDecimal(uom.getNumerator())).divide(
+                                        new BigDecimal(uom.getDenominator()), RoundingMode.HALF_UP);
                         final DataBean bean = getDataBean()
                                 .setTransInst(multi.getCurrentInstance())
                                 .setDate(multi.<DateTime>getAttribute(CIProducts.TransactionAbstract.Date))
                                 .setPosition(multi.<Integer>getAttribute(CIProducts.TransactionAbstract.Position))
-                                .setQuantity(multi.<BigDecimal>getAttribute(CIProducts.TransactionAbstract.Quantity))
+                                .setQuantity(transactQuantiy)
                                 .setDescription(multi.<String>getAttribute(CIProducts.TransactionAbstract.Description))
                                 .setDocInst(multi.<Instance>getSelect(selDocInst))
                                 .setDocName(multi.<String>getSelect(selDocName))
@@ -328,15 +335,20 @@ public abstract class TransactionResultReport_Base
                                 .attribute(CIProducts.ProductAbstract.Name);
                 multi.addSelect(selStorageName, selStorageInst, selProdName, selDocStatus);
                 multi.addAttribute(CIProducts.TransactionAbstract.Quantity, CIProducts.TransactionAbstract.Description,
-                                CIProducts.TransactionAbstract.Date, CIProducts.TransactionAbstract.Position);
+                                CIProducts.TransactionAbstract.Date, CIProducts.TransactionAbstract.Position,
+                                CIProducts.TransactionAbstract.UoM);
                 multi.setEnforceSorted(true);
                 multi.execute();
                 while (multi.next()) {
                     if (isValidStatus(_parameter, multi.<Status>getSelect(selDocStatus))) {
+                        final var quantity = multi.<BigDecimal>getAttribute(CIProducts.TransactionAbstract.Quantity);
+                        final var uom = Dimension.getUoM(multi.<Long>getAttribute(CIProducts.TransactionAbstract.UoM));
+                        final var transactQuantiy = quantity.multiply(new BigDecimal(uom.getNumerator())).divide(
+                                        new BigDecimal(uom.getDenominator()), RoundingMode.HALF_UP);
                         final DataBean bean = getDataBean()
                             .setTransInst(multi.getCurrentInstance())
                             .setDate(multi.<DateTime>getAttribute(CIProducts.TransactionAbstract.Date))
-                            .setQuantity(multi.<BigDecimal>getAttribute(CIProducts.TransactionAbstract.Quantity))
+                            .setQuantity(transactQuantiy)
                             .setStorageName(multi.<String>getSelect(selStorageName))
                             .setStorageInst(multi.<Instance>getSelect(selStorageInst))
                             .setProdName(multi.<String>getSelect(selProdName));
@@ -360,7 +372,7 @@ public abstract class TransactionResultReport_Base
         protected boolean isIndividual(final Parameter _parameter)
             throws EFapsException
         {
-            if (this.individual == null) {
+            if (individual == null) {
                 final Parameter parameter = ParameterUtil.clone(_parameter);
                 ParameterUtil.setProperty(parameter, "Individual01", "BATCH");
                 ParameterUtil.setProperty(parameter, "Individual02", "INDIVIDUAL");
@@ -368,15 +380,15 @@ public abstract class TransactionResultReport_Base
                 if (ret.contains(ReturnValues.TRUE)) {
                     final Map<String, Object> filter = getFilteredReport().getFilterMap(_parameter);
                     if (filter.containsKey("individual")) {
-                        this.individual = (Boolean) filter.get("individual");
+                        individual = (Boolean) filter.get("individual");
                     } else {
-                        this.individual = false;
+                        individual = false;
                     }
                 } else {
-                    this.individual = false;
+                    individual = false;
                 }
             }
-            return this.individual;
+            return individual;
         }
 
         /**
@@ -551,53 +563,53 @@ public abstract class TransactionResultReport_Base
         {
             if (!StorageDisplay.NONE.equals(getStorageDisplay(_parameter))) {
                 final TextColumnBuilder<String> storageColumn = DynamicReports.col.column(
-                                this.filteredReport.getDBProperty("Column.StorageName"),
+                                filteredReport.getDBProperty("Column.StorageName"),
                                 "storageName", DynamicReports.type.stringType());
                 _builder.addColumn(storageColumn);
                 if (StorageDisplay.GROUP.equals(getStorageDisplay(_parameter))) {
-                    this.storageGroup = DynamicReports.grp.group(storageColumn);
-                    _builder.groupBy(this.storageGroup);
+                    storageGroup = DynamicReports.grp.group(storageColumn);
+                    _builder.groupBy(storageGroup);
                 }
             }
 
             final TextColumnBuilder<DateTime> dateColumn = DynamicReports.col.column(
-                            this.filteredReport.getDBProperty("Column.Date"),
+                            filteredReport.getDBProperty("Column.Date"),
                             "date", DateTimeDate.get());
             _builder.addColumn(dateColumn);
 
             if (isIndividual(_parameter)) {
                 final TextColumnBuilder<String> prodNameColumn = DynamicReports.col.column(
-                                this.filteredReport.getDBProperty("Column.ProdName"),
+                                filteredReport.getDBProperty("Column.ProdName"),
                                 "prodName", DynamicReports.type.stringType());
                 _builder.addColumn(prodNameColumn);
             }
 
             final TextColumnBuilder<BigDecimal> inColumn = DynamicReports.col.column(
-                            this.filteredReport.getDBProperty("Column.Incoming"),
+                            filteredReport.getDBProperty("Column.Incoming"),
                             "incoming", DynamicReports.type.bigDecimalType());
 
             final TextColumnBuilder<BigDecimal> outColumn = DynamicReports.col.column(
-                            this.filteredReport.getDBProperty("Column.Outgoing"),
+                            filteredReport.getDBProperty("Column.Outgoing"),
                             "outgoing", DynamicReports.type.bigDecimalType());
 
             final TextColumnBuilder<BigDecimal> totalColumn = DynamicReports.col.column(
-                            this.filteredReport.getDBProperty("Column.Total"),
+                            filteredReport.getDBProperty("Column.Total"),
                             "total", DynamicReports.type.bigDecimalType());
 
             final TextColumnBuilder<String> docContactNameColumn = DynamicReports.col.column(
-                            this.filteredReport.getDBProperty("Column.DocContactName"),
+                            filteredReport.getDBProperty("Column.DocContactName"),
                             "docContactName", DynamicReports.type.stringType()).setWidth(200);
 
             final TextColumnBuilder<String> docNameColumn = DynamicReports.col.column(
-                            this.filteredReport.getDBProperty("Column.DocName"),
+                            filteredReport.getDBProperty("Column.DocName"),
                             "docName", DynamicReports.type.stringType());
 
             final TextColumnBuilder<String> docTypeColumn = DynamicReports.col.column(
-                            this.filteredReport.getDBProperty("Column.DocType"),
+                            filteredReport.getDBProperty("Column.DocType"),
                             "docType", DynamicReports.type.stringType());
 
             final TextColumnBuilder<String> descrColumn = DynamicReports.col.column(
-                            this.filteredReport.getDBProperty("Column.Description"),
+                            filteredReport.getDBProperty("Column.Description"),
                             "description", DynamicReports.type.stringType()).setWidth(200);
 
             final AggregationSubtotalBuilder<BigDecimal> incomingSum = DynamicReports.sbt.sum("incoming",
@@ -610,7 +622,7 @@ public abstract class TransactionResultReport_Base
                             docNameColumn, descrColumn)
                             .addSubtotalAtSummary(incomingSum, outgoingSum, totalSum);
 
-            if (this.storageGroup != null) {
+            if (storageGroup != null) {
                 final AggregationSubtotalBuilder<BigDecimal> incomingSum4Grp = DynamicReports.sbt.sum("incoming",
                                 BigDecimal.class, inColumn);
                 final AggregationSubtotalBuilder<BigDecimal> outgoingSum4Grp = DynamicReports.sbt.sum("outgoing",
@@ -618,7 +630,7 @@ public abstract class TransactionResultReport_Base
                 final AggregationSubtotalBuilder<Object> totalSum4Grp = DynamicReports.sbt.aggregate(
                                 new TotalExpression(true),
                                 totalColumn, Calculation.NOTHING).setDataType(DynamicReports.type.bigDecimalType());
-                _builder.subtotalsAtGroupFooter(this.storageGroup, incomingSum4Grp, outgoingSum4Grp, totalSum4Grp);
+                _builder.subtotalsAtGroupFooter(storageGroup, incomingSum4Grp, outgoingSum4Grp, totalSum4Grp);
             }
             _builder.addField("storageInst", Instance.class);
         }
@@ -651,7 +663,7 @@ public abstract class TransactionResultReport_Base
          */
         public FilteredReport getFilteredReport()
         {
-            return this.filteredReport;
+            return filteredReport;
         }
 
 
@@ -662,7 +674,7 @@ public abstract class TransactionResultReport_Base
          */
         protected ColumnGroupBuilder getStorageGroup()
         {
-            return this.storageGroup;
+            return storageGroup;
         }
     }
 
@@ -751,7 +763,7 @@ public abstract class TransactionResultReport_Base
         {
             final BigDecimal ret;
             if (isTransOut()) {
-                ret = this.quantity;
+                ret = quantity;
             } else {
                 ret = null;
             }
@@ -769,7 +781,7 @@ public abstract class TransactionResultReport_Base
             if (isTransOut()) {
                 ret = null;
             } else {
-                ret = this.quantity;
+                ret = quantity;
             }
             return ret;
         }
@@ -781,9 +793,9 @@ public abstract class TransactionResultReport_Base
          */
         public BigDecimal getQuantity()
         {
-            BigDecimal ret = this.quantity;
-            if (isTransOut() && this.quantity != null) {
-                ret = this.quantity.negate();
+            BigDecimal ret = quantity;
+            if (isTransOut() && quantity != null) {
+                ret = quantity.negate();
             }
             return ret;
         }
@@ -796,7 +808,7 @@ public abstract class TransactionResultReport_Base
          */
         public DataBean setQuantity(final BigDecimal _quantity)
         {
-            this.quantity = _quantity;
+            quantity = _quantity;
             return this;
         }
 
@@ -807,7 +819,7 @@ public abstract class TransactionResultReport_Base
          */
         public String getDescription()
         {
-            return this.description;
+            return description;
         }
 
         /**
@@ -818,7 +830,7 @@ public abstract class TransactionResultReport_Base
          */
         public DataBean setDescription(final String _description)
         {
-            this.description = _description;
+            description = _description;
             return this;
         }
 
@@ -829,7 +841,7 @@ public abstract class TransactionResultReport_Base
          */
         public DateTime getDate()
         {
-            return this.date;
+            return date;
         }
 
         /**
@@ -840,7 +852,7 @@ public abstract class TransactionResultReport_Base
          */
         public DataBean setDate(final DateTime _date)
         {
-            this.date = _date;
+            date = _date;
             return this;
         }
 
@@ -851,7 +863,7 @@ public abstract class TransactionResultReport_Base
          */
         public Instance getTransInst()
         {
-            return this.transInst;
+            return transInst;
         }
 
         /**
@@ -862,7 +874,7 @@ public abstract class TransactionResultReport_Base
          */
         public DataBean setTransInst(final Instance _transInst)
         {
-            this.transInst = _transInst;
+            transInst = _transInst;
             return this;
         }
 
@@ -873,7 +885,7 @@ public abstract class TransactionResultReport_Base
          */
         public BigDecimal getTotal()
         {
-            return this.total;
+            return total;
         }
 
         /**
@@ -884,7 +896,7 @@ public abstract class TransactionResultReport_Base
          */
         public DataBean setTotal(final BigDecimal _total)
         {
-            this.total = _total;
+            total = _total;
             return this;
         }
 
@@ -895,7 +907,7 @@ public abstract class TransactionResultReport_Base
          */
         public Integer getPosition()
         {
-            return this.position;
+            return position;
         }
 
         /**
@@ -906,7 +918,7 @@ public abstract class TransactionResultReport_Base
          */
         public DataBean setPosition(final Integer _position)
         {
-            this.position = _position;
+            position = _position;
             return this;
         }
 
@@ -917,7 +929,7 @@ public abstract class TransactionResultReport_Base
          */
         public String getDocName()
         {
-            return this.docName;
+            return docName;
         }
 
         /**
@@ -928,7 +940,7 @@ public abstract class TransactionResultReport_Base
          */
         public DataBean setDocName(final String _docName)
         {
-            this.docName = _docName;
+            docName = _docName;
             return this;
         }
 
@@ -939,7 +951,7 @@ public abstract class TransactionResultReport_Base
          */
         public Instance getDocInst()
         {
-            return this.docInst;
+            return docInst;
         }
 
         /**
@@ -950,7 +962,7 @@ public abstract class TransactionResultReport_Base
          */
         public DataBean setDocInst(final Instance _docInst)
         {
-            this.docInst = _docInst;
+            docInst = _docInst;
             return this;
         }
 
@@ -961,7 +973,7 @@ public abstract class TransactionResultReport_Base
          */
         public String getDocContactName()
         {
-            return this.docContactName;
+            return docContactName;
         }
 
         /**
@@ -972,7 +984,7 @@ public abstract class TransactionResultReport_Base
          */
         public DataBean setDocContactName(final String _docContactName)
         {
-            this.docContactName = _docContactName;
+            docContactName = _docContactName;
             return this;
         }
 
@@ -983,7 +995,7 @@ public abstract class TransactionResultReport_Base
          */
         public String getStorageName()
         {
-            return this.storageName;
+            return storageName;
         }
 
         /**
@@ -994,7 +1006,7 @@ public abstract class TransactionResultReport_Base
          */
         public DataBean setStorageName(final String _storage)
         {
-            this.storageName = _storage;
+            storageName = _storage;
             return this;
         }
 
@@ -1005,7 +1017,7 @@ public abstract class TransactionResultReport_Base
          */
         public Instance getStorageInst()
         {
-            return this.storageInst;
+            return storageInst;
         }
 
         /**
@@ -1016,7 +1028,7 @@ public abstract class TransactionResultReport_Base
          */
         public DataBean setStorageInst(final Instance _storageInst)
         {
-            this.storageInst = _storageInst;
+            storageInst = _storageInst;
             return this;
         }
 
@@ -1027,7 +1039,7 @@ public abstract class TransactionResultReport_Base
          */
         public String getProdName()
         {
-            return this.prodName;
+            return prodName;
         }
 
         /**
@@ -1038,7 +1050,7 @@ public abstract class TransactionResultReport_Base
          */
         public DataBean setProdName(final String _prodName)
         {
-            this.prodName = _prodName;
+            prodName = _prodName;
             return this;
         }
 
@@ -1049,7 +1061,7 @@ public abstract class TransactionResultReport_Base
          */
         public Map<Instance, BigDecimal> getInventoryMap()
         {
-            return this.inventoryMap;
+            return inventoryMap;
         }
 
         /**
@@ -1059,7 +1071,7 @@ public abstract class TransactionResultReport_Base
          */
         public void setInventoryMap(final Map<Instance, BigDecimal> _inventoryMap)
         {
-            this.inventoryMap = _inventoryMap;
+            inventoryMap = _inventoryMap;
         }
 
         /**
@@ -1069,7 +1081,7 @@ public abstract class TransactionResultReport_Base
          */
         public BigDecimal getInventory()
         {
-            return this.inventory;
+            return inventory;
         }
 
         /**
@@ -1079,7 +1091,7 @@ public abstract class TransactionResultReport_Base
          */
         public void setInventory(final BigDecimal _inventory)
         {
-            this.inventory = _inventory;
+            inventory = _inventory;
         }
     }
 
@@ -1102,14 +1114,14 @@ public abstract class TransactionResultReport_Base
          */
         public TotalExpression(final boolean _group)
         {
-            this.group = _group;
+            group = _group;
         }
 
         @Override
         public BigDecimal evaluate(final ReportParameters _reportParameters)
         {
             final BigDecimal ret;
-            if (this.group) {
+            if (group) {
                 final Map<Instance, BigDecimal> inventorymap = _reportParameters.getValue("InventoryMap");
                 final Object storageInst = _reportParameters.getFieldValue("storageInst");
                 ret = inventorymap.get(storageInst);
