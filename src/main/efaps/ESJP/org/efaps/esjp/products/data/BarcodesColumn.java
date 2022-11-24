@@ -30,7 +30,7 @@ import org.efaps.eql.EQL;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.AbstractCommon;
 import org.efaps.esjp.data.IColumnValidate;
-import org.efaps.esjp.data.IOnInstance;
+import org.efaps.esjp.data.IOnRow;
 import org.efaps.esjp.data.jaxb.AbstractDef;
 import org.efaps.esjp.data.jaxb.AttrDef;
 import org.efaps.esjp.data.jaxb.AttrSetDef;
@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 @EFapsApplication("eFapsApp-Products")
 public class BarcodesColumn
     extends AbstractCommon
-    implements IColumnValidate, IOnInstance
+    implements IColumnValidate, IOnRow
 {
 
     private static final Logger LOG = LoggerFactory.getLogger(BarcodesColumn.class);
