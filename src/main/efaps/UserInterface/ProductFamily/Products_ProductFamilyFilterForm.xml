@@ -26,6 +26,7 @@
         <field name="stctBrws" character="Target" >
             <property name="TargetStructurBrowserField">name</property>
             <property name="TargetShowCheckBoxes">true</property>
+            <property name="GridxSelectRowTreeMode">true</property>
             <table>Products_ProductFamilyFilterTable</table>
             <evaluate program="org.efaps.esjp.products.ProductFamilyStructurBrowser">
                 <property name="Type">Products_ProductFamilyRoot</property>
