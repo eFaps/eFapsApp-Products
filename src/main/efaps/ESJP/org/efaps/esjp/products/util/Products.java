@@ -20,7 +20,9 @@ package org.efaps.esjp.products.util;
 import java.util.UUID;
 
 import org.efaps.admin.common.SystemConfiguration;
+import org.efaps.admin.datamodel.IBitEnum;
 import org.efaps.admin.datamodel.IEnum;
+import org.efaps.admin.datamodel.attributetype.BitEnumType;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.api.annotation.EFapsSysConfAttribute;
@@ -594,6 +596,24 @@ public final class Products
         }
     }
 
+    public enum ConfigBOM
+                    implements IBitEnum
+    {
+
+        OPTIONAL;
+
+        @Override
+        public int getInt()
+        {
+            return BitEnumType.getInt4Index(ordinal());
+        }
+
+        @Override
+        public int getBitIndex()
+        {
+            return ordinal();
+        }
+    }
 
     /**
      * @return the SystemConfigruation for Sales
