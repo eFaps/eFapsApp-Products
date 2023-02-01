@@ -21,6 +21,7 @@
 package org.efaps.esjp.products;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,7 +41,9 @@ import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.QueryBuilder;
 import org.efaps.db.SelectBuilder;
 import org.efaps.db.Update;
+import org.efaps.eql.EQL;
 import org.efaps.esjp.ci.CIProducts;
+import org.efaps.esjp.common.uiform.Field;
 import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
 
@@ -48,7 +51,7 @@ import org.efaps.util.EFapsException;
  * TODO comment!
  *
  * @author The eFaps Team
- * 
+ *
  */
 @EFapsUUID("82271caf-5d4e-4ec9-bb99-8cbfaff5f8a7")
 @EFapsApplication("eFapsApp-Products")
@@ -83,6 +86,28 @@ public abstract class BOM_Base
         return new Return();
     }
 
+    public Return getGroupOptionListFieldValue(Parameter parameter)
+        throws EFapsException
+    {
+        return new Field()
+        {
+
+            @Override
+            protected void add2QueryBuilder4List(Parameter parameter,
+                                                 QueryBuilder queryBldr)
+                throws EFapsException
+            {
+                final var eval = EQL.builder()
+                                .print(parameter.getInstance())
+                                .linkto(CIProducts.BOMAbstract.FromAbstract)
+                                .instance().as("prodInst")
+                                .evaluate();
+                final Instance prodInst = eval.get("prodInst");
+                queryBldr.addWhereAttrEqValue(CIProducts.BOMGroupAbstract.ProductAbstractLink, prodInst);
+            }
+        }.getOptionListFieldValue(parameter);
+    }
+
     /**
      * @param _parameter Parameter as passed by the eFaps API
      * @return new empty Return
@@ -114,8 +139,8 @@ public abstract class BOM_Base
         // if an uom is given ensure that is normed on base
         if (_uoM != null && !_uoM.equals(_uoM.getDimension().getBaseUoM())) {
             quantity = quantity.multiply(new BigDecimal(_uoM.getDenominator()))
-                            .setScale(8, BigDecimal.ROUND_HALF_UP)
-                            .divide(new BigDecimal(_uoM.getNumerator()), BigDecimal.ROUND_HALF_UP);
+                            .setScale(8, RoundingMode.HALF_UP)
+                            .divide(new BigDecimal(_uoM.getNumerator()), RoundingMode.HALF_UP);
 
         }
         return getBOMProducts(_parameter, _prodInst, quantity);
@@ -182,6 +207,8 @@ public abstract class BOM_Base
     {
         return new ProductBOMBean();
     }
+
+
 
     public static class ProductBOMBean
     {

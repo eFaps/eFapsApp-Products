@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
 
- Copyright 2003 - 2021 The eFaps Team
+ Copyright 2003 - 2023 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -17,22 +16,15 @@
  limitations under the License.
 
 -->
-
-<ui-menu xmlns="http://www.efaps.org/xsd"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>9cdcef46-3346-4417-81e9-719bc6727d9b</uuid>
+    <uuid>5b5a232c-73e7-4f22-a270-d8868bd31bc0</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductTree_BOM_Menu_Action</name>
+        <name>Products_BOMGroupConfigurationTree_Menu</name>
         <childs>
-            <child>Products_ProductTree_BOM_Menu_Action_AddExistingAsSalesBOM</child>
-            <child>Products_ProductTree_BOM_Menu_Action_AddExistingAlternativeBOM</child>
-            <child>Products_ProductTree_BOM_Menu_Action_AddExistingAsPackagingBOM</child>
-            <child>Products_ProductTree_BOM_Menu_Action_AddExistingAsConfigurationBOM</child>
-            <child>Products_ProductTree_BOM_Menu_Action_EditBOMQuantity</child>
-            <child>Products_ProductTree_BOM_Menu_Action_Disconnect</child>
+            <child>Products_BOMGroupConfigurationTree_Menu_Action</child>
         </childs>
     </definition>
 </ui-menu>

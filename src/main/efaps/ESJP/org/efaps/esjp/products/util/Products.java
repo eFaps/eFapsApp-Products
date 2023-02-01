@@ -327,6 +327,12 @@ public final class Products
                     .key(Products.BASE + "Standart.ActivateBarcodes")
                     .description("Activate the Barcodes field set for standart products.");
 
+    @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute STANDART_ACTCONFBOM = new BooleanSysConfAttribute()
+                    .sysConfUUID(Products.SYSCONFUUID)
+                    .key(Products.BASE + "Standart.ActivateConfigurationBOM")
+                    .description("Activate the ConfigurationBOM for standart products.");
+
     /** See description. */
     @EFapsSysConfAttribute
     public static final BooleanSysConfAttribute STANDART_ACTCLASS = new BooleanSysConfAttribute()
@@ -596,11 +602,12 @@ public final class Products
         }
     }
 
-    public enum ConfigBOM
-                    implements IBitEnum
+    public enum BOMGroupConfig
+      implements IBitEnum
     {
 
-        OPTIONAL;
+        OPTIONAL,
+        ONLYONE;
 
         @Override
         public int getInt()

@@ -84,6 +84,13 @@
             <sqlcolumn>TOID</sqlcolumn>
         </attribute>
         <attribute>
+            <name>BOMGroupAbstractLink</name>
+            <type>Link</type>
+            <typelink>Products_BOMGroupAbstract</typelink>
+            <sqltable>Products_BOMSQLTable</sqltable>
+            <sqlcolumn>GROUPID</sqlcolumn>
+        </attribute>
+        <attribute>
             <name>Position</name>
             <type>Integer</type>
             <sqltable>Products_BOMSQLTable</sqltable>

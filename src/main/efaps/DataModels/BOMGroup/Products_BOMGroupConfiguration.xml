@@ -17,33 +17,27 @@
 
 -->
 <datamodel-type xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>0bc1a6d9-e374-4a2b-8dd5-8eabfd01a3e0</uuid>
+xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>17cd5992-776c-4337-9aa9-8805be72ec9d</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ConfigurationBOM</name>
-        <parent>Products_BOMAbstract</parent>
+        <name>Products_BOMGroupConfiguration</name>
+        <parent>Products_BOMGroupAbstract</parent>
         <attribute>
-            <name>From</name>
+            <name>ProductLink</name>
             <type>Link</type>
             <typelink>Products_ProductAbstract</typelink>
-            <sqltable>Products_BOMSQLTable</sqltable>
-            <sqlcolumn>FROMID</sqlcolumn>
+            <sqltable>Products_ProductGenericDependendSQLTable</sqltable>
+            <sqlcolumn>PRODUCTID</sqlcolumn>
         </attribute>
-        <attribute>
-            <name>To</name>
-            <type>Link</type>
-            <typelink>Products_ProductAbstract</typelink>
-            <sqltable>Products_BOMSQLTable</sqltable>
-            <sqlcolumn>TOID</sqlcolumn>
-        </attribute>
-        <attribute>
-            <name>BOMGroupConfigurationLink</name>
-            <type>Link</type>
-            <typelink>Products_BOMGroupConfiguration</typelink>
-            <sqltable>Products_BOMSQLTable</sqltable>
-            <sqlcolumn>GROUPID</sqlcolumn>
+         <attribute>
+            <name>Config</name>
+            <type>BitEnum</type>
+            <className>org.efaps.esjp.products.util.Products$BOMGroupConfig</className>
+            <sqltable>Products_ProductGenericDependendSQLTable</sqltable>
+            <sqlcolumn>INT1</sqlcolumn>
+            <defaultvalue>0</defaultvalue>
         </attribute>
     </definition>
 </datamodel-type>
