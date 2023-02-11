@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
 
  Copyright 2003 - 2015 The eFaps Team
@@ -17,7 +16,6 @@
  limitations under the License.
 
 -->
-
 <datamodel-type xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>eaf2397c-3a3a-4201-a458-ad3b0bbd0989</uuid>
@@ -63,7 +61,7 @@
                 <property name="Type">ERP_Currency</property>
             </trigger>
         </attribute>
-          <attribute>
+        <attribute>
             <name>PriceGroupLink</name>
             <type>Link</type>
             <typelink>Products_PriceGroupAbstract</typelink>
@@ -109,5 +107,17 @@
         <trigger program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType"
             name="Products_ProductPricelistPosition.ACCESSCHECK"
             event="ACCESSCHECK" />
+        <trigger program="org.efaps.esjp.common.cache.CacheUtils" method="cleanQueryCacheTrigger"
+            index="2" name="Products_ProductPricelistPosition.INSERT_POST" event="INSERT_POST">
+            <property name="CacheName">org.efaps.esjp.sales.PriceUtil.CacheKey</property>
+        </trigger>
+        <trigger program="org.efaps.esjp.common.cache.CacheUtils" method="cleanQueryCacheTrigger"
+            name="Products_ProductPricelistPosition.UPDATE_POST" event="UPDATE_POST">
+            <property name="CacheName">org.efaps.esjp.sales.PriceUtil.CacheKey</property>
+        </trigger>
+        <trigger program="org.efaps.esjp.common.cache.CacheUtils" method="cleanQueryCacheTrigger"
+            name="Products_ProductPricelistPosition.DELETE_POST" event="DELETE_POST">
+            <property name="CacheName">org.efaps.esjp.sales.PriceUtil.CacheKey</property>
+        </trigger>
     </definition>
 </datamodel-type>

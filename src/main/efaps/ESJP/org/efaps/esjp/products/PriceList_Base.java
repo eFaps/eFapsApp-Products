@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2015 The eFaps Team
+ * Copyright 2003 - 2023 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,6 +47,7 @@ import org.efaps.db.Update;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.uitable.MultiPrint;
 import org.efaps.esjp.products.util.Products;
+import org.efaps.util.DateTimeUtil;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -109,7 +110,7 @@ public abstract class PriceList_Base
             name2Value.put(attr.getName(), (Object[]) entry.getValue());
         }
         final Object from = name2Value.get(CIProducts.ProductPricelistAbstract.ValidFrom.name)[0];
-        final DateTime date = new DateTime(from);
+        final var date = DateTimeUtil.toDateTime(from);
 
         final Map<?, ?> properties = (Map<?, ?>) _parameter.get(ParameterValues.PROPERTIES);
         if (properties.containsKey("Type")) {
