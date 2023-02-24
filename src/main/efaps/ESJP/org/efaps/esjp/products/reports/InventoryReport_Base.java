@@ -38,6 +38,7 @@ import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Instance;
 import org.efaps.eql.EQL;
+import org.efaps.esjp.ci.CIMsgProducts;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.jasperreport.AbstractDynamicReport;
 import org.efaps.esjp.common.jasperreport.AbstractDynamicReport_Base;
@@ -266,7 +267,6 @@ public abstract class InventoryReport_Base
                     map.put("prodDescr", bean.getProdDescr());
                     map.put("prodOID", bean.getProdOID());
                     map.put("currency", bean.getCurrency());
-                    map.put("prodName", bean.getProdName());
                     map.put("cost", bean.getCost());
                     map.put("uoM", bean.getUoM());
                 }
@@ -640,7 +640,7 @@ public abstract class InventoryReport_Base
 
             final TextColumnBuilder<String> prodNameColumn = DynamicReports.col.column(DBProperties
                             .getProperty(InventoryReport.class.getName() + ".Column.prodName"),
-                            "prodName", DynamicReports.type.stringType());
+                            "prodSlug", DynamicReports.type.stringType());
             final TextColumnBuilder<String> prodDescrColumn = DynamicReports.col.column(DBProperties
                             .getProperty(InventoryReport.class.getName() + ".Column.prodDescr"),
                             "prodDescr", DynamicReports.type.stringType()).setWidth(200);
@@ -780,15 +780,17 @@ public abstract class InventoryReport_Base
                                 .where()
                                 .attribute(CIProducts.StoreableProductAbstract.Active).eq("true")
                                 .select()
-                                .attribute(CIProducts.StoreableProductAbstract.Name)
                                 .attribute(CIProducts.StoreableProductAbstract.Description)
+                                .attribute(CIProducts.StoreableProductAbstract.Name)
                                 .attribute(CIProducts.StoreableProductAbstract.DefaultUoM)
+                                .msgPhrase(CIMsgProducts.SlugMsgPhrase).as("slug")
                                 .evaluate();
                 while (eval.next()) {
                     final var prodInst = eval.inst();
                     if (!prod2inv.containsKey(prodInst)) {
                         final var bean = new InventoryBean();
                         bean.setProdInstance(prodInst);
+                        bean.setProdSlug(eval.get("slug"));
                         bean.setProdName(eval.get(CIProducts.StoreableProductAbstract.Name));
                         bean.setProdDescr(eval.get(CIProducts.StoreableProductAbstract.Description));
                         bean.setUoM(Dimension.getUoM( eval.get(CIProducts.StoreableProductAbstract.DefaultUoM)));
@@ -796,7 +798,7 @@ public abstract class InventoryReport_Base
                         prod2inv.put(prodInst, bean);
                     }
                 }
-                beans = new ArrayList<InventoryBean>(prod2inv.values());
+                beans = new ArrayList<>(prod2inv.values());
             }
             return beans;
         }

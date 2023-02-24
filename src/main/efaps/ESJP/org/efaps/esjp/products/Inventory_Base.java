@@ -44,6 +44,7 @@ import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.PrintQuery;
 import org.efaps.db.QueryBuilder;
 import org.efaps.db.SelectBuilder;
+import org.efaps.esjp.ci.CIMsgProducts;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.AbstractCommon;
 import org.efaps.esjp.common.eql.ClassSelect;
@@ -134,6 +135,7 @@ public abstract class Inventory_Base
             multi.addSelect(selProdClass);
         }
         multi.addSelect(selProdInst, selProdName, selProdDescr);
+        multi.addMsgPhrase(selProd, CIMsgProducts.SlugMsgPhrase);
         multi.addAttribute(CIProducts.InventoryAbstract.Quantity, CIProducts.InventoryAbstract.UoM,
                         CIProducts.InventoryAbstract.Reserved);
         multi.execute();
@@ -146,6 +148,7 @@ public abstract class Inventory_Base
                 bean.setProdInstance(multi.<Instance>getSelect(selProdInst));
                 bean.setProdDescr(multi.<String>getSelect(selProdDescr));
                 bean.setProdName(multi.<String>getSelect(selProdName));
+                bean.setProdSlug(multi.getMsgPhrase(selProd, CIMsgProducts.SlugMsgPhrase));
                 bean.setUoM(Dimension.getUoM(multi.<Long>getAttribute(CIProducts.InventoryAbstract.UoM)));
                 if (isShowProdClass()) {
                     bean.setProdClasslist(multi.<List<Classification>>getSelect(selProdClass));
@@ -160,6 +163,7 @@ public abstract class Inventory_Base
                     bean.setProdInstance(multi.<Instance>getSelect(selProdInst));
                     bean.setProdDescr(multi.<String>getSelect(selProdDescr));
                     bean.setProdName(multi.<String>getSelect(selProdName));
+                    bean.setProdSlug(multi.getMsgPhrase(selProd, CIMsgProducts.SlugMsgPhrase));
                     bean.setUoM(Dimension.getUoM(multi.<Long>getAttribute(CIProducts.InventoryAbstract.UoM)));
                     if (isShowProdClass()) {
                         bean.setProdClasslist(multi.<List<Classification>>getSelect(selProdClass));
@@ -908,6 +912,8 @@ public abstract class Inventory_Base
         /** The prod name. */
         private String prodName;
 
+        private String prodSlug;
+
         /** The prod descr. */
         private String prodDescr;
 
@@ -1123,6 +1129,17 @@ public abstract class Inventory_Base
         public void setProdName(final String _prodName)
         {
             prodName = _prodName;
+        }
+
+        public String getProdSlug()
+        {
+            return prodSlug;
+        }
+
+
+        public void setProdSlug(String prodSlug)
+        {
+            this.prodSlug = prodSlug;
         }
 
         /**
