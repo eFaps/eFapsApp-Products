@@ -49,6 +49,13 @@
             <sqltable>Products_ProductGenericDependendSQLTable</sqltable>
             <sqlcolumn>PRODUCTID</sqlcolumn>
         </attribute>
+          <attribute>
+            <name>Weight</name>
+            <type>Integer</type>
+            <sqltable>Products_ProductGenericDependendSQLTable</sqltable>
+            <sqlcolumn>INT2</sqlcolumn>
+            <defaultvalue>1</defaultvalue>
+        </attribute>
         <attribute>
             <name>Name</name>
             <type>String</type>

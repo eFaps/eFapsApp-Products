@@ -27,6 +27,10 @@
             <property name="Attribute">Type</property>
             <property name="HRef">TREE</property>
         </field>
+        <field name="weight">
+            <property name="Label">Products_BOMGroupAbstract/Weight.Label</property>
+            <property name="Attribute">Weight</property>
+        </field>
         <field name="name">
             <property name="Label">Products_BOMGroupAbstract/Name.Label</property>
             <property name="Attribute">Name</property>

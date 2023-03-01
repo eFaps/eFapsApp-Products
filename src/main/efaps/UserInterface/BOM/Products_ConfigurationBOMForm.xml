@@ -58,6 +58,11 @@
             <property name="Attribute">Quantity</property>
             <property name="Label">Products_BOMAbstract/Quantity.Label</property>
         </field>
+         <field name="position">
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="Attribute">Position</property>
+            <property name="Label">Products_BOMAbstract/Position.Label</property>
+        </field>
         <field name="toName">
             <property name="SelectAlternateOID">linkto[ToAbstract].oid</property>
             <property name="Select">linkto[ToAbstract].attribute[Name]</property>
