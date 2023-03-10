@@ -33,6 +33,7 @@ import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
+import org.efaps.admin.program.esjp.Listener;
 import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
 import org.efaps.api.ui.IFilterList;
 import org.efaps.db.AttributeQuery;
@@ -46,6 +47,8 @@ import org.efaps.db.SelectBuilder;
 import org.efaps.db.Update;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.uitable.MultiPrint;
+import org.efaps.esjp.db.InstanceUtils;
+import org.efaps.esjp.products.listener.IPriceListListener;
 import org.efaps.esjp.products.util.Products;
 import org.efaps.util.DateTimeUtil;
 import org.efaps.util.EFapsException;
@@ -343,17 +346,28 @@ public abstract class PriceList_Base
      * @throws EFapsException on error
      */
     public boolean groupApplies(final Parameter _parameter,
-                                   final Instance _priceGroupInstance)
+                                final Instance _priceGroupInstance)
         throws EFapsException
     {
         boolean ret = false;
-        if (Products.ACTIVATEPRICEGRP.get() && _priceGroupInstance != null && _priceGroupInstance.isValid()) {
-            final QueryBuilder queryBldr = new QueryBuilder(CIProducts.PriceGroupContact2Contact);
-            queryBldr.addWhereAttrEqValue(CIProducts.PriceGroupContact2Contact.FromLink, _priceGroupInstance);
-            final Instance contactInst = getContactInstance(_parameter);
-            if (contactInst.isValid()) {
-                queryBldr.addWhereAttrEqValue(CIProducts.PriceGroupContact2Contact.ToLink, contactInst);
-                ret = !queryBldr.getQuery().execute().isEmpty();
+        if (Products.ACTIVATEPRICEGRP.get() && InstanceUtils.isValid(_priceGroupInstance)) {
+            if (InstanceUtils.isType(_priceGroupInstance, CIProducts.PriceGroupContact)) {
+                final QueryBuilder queryBldr = new QueryBuilder(CIProducts.PriceGroupContact2Contact);
+                queryBldr.addWhereAttrEqValue(CIProducts.PriceGroupContact2Contact.FromLink, _priceGroupInstance);
+                final Instance contactInst = getContactInstance(_parameter);
+                if (contactInst.isValid()) {
+                    queryBldr.addWhereAttrEqValue(CIProducts.PriceGroupContact2Contact.ToLink, contactInst);
+                    ret = !queryBldr.getQuery().execute().isEmpty();
+                }
+            }
+            if (!ret) {
+                for (final IPriceListListener listener : Listener.get()
+                                .<IPriceListListener>invoke(IPriceListListener.class)) {
+                    ret = listener.groupApplies(_parameter, _priceGroupInstance);
+                    if (ret) {
+                        break;
+                    }
+                }
             }
         }
         return ret;
