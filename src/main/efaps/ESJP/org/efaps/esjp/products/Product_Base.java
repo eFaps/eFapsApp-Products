@@ -30,6 +30,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.EnumUtils;
@@ -39,6 +40,7 @@ import org.apache.commons.text.StringSubstitutor;
 import org.efaps.admin.common.NumberGenerator;
 import org.efaps.admin.common.SystemConfiguration;
 import org.efaps.admin.datamodel.Attribute;
+import org.efaps.admin.datamodel.AttributeSet;
 import org.efaps.admin.datamodel.AttributeType;
 import org.efaps.admin.datamodel.Classification;
 import org.efaps.admin.datamodel.Dimension;
@@ -79,10 +81,12 @@ import org.efaps.db.PrintQuery;
 import org.efaps.db.QueryBuilder;
 import org.efaps.db.SelectBuilder;
 import org.efaps.db.Update;
+import org.efaps.eql.EQL;
 import org.efaps.esjp.admin.datamodel.RangesValue;
 import org.efaps.esjp.ci.CIFormProducts;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.parameter.ParameterUtil;
+import org.efaps.esjp.common.properties.PropertiesUtil;
 import org.efaps.esjp.common.uiform.Create;
 import org.efaps.esjp.common.uiform.Edit;
 import org.efaps.esjp.common.uiform.Field;
@@ -424,6 +428,10 @@ public abstract class Product_Base
     public Return autoComplete4Product(final Parameter _parameter)
         throws EFapsException
     {
+        if (Products.AUTOCOMPLETE.exists()) {
+            return configuredAutoComplete4Product(_parameter);
+        }
+
         final String input = (String) _parameter.get(ParameterValues.OTHERS);
         final List<Map<String, String>> list = new ArrayList<>();
         final Map<String, Map<String, String>> orderMap = new TreeMap<>();
@@ -539,6 +547,136 @@ public abstract class Product_Base
         retVal.put(ReturnValues.VALUES, list);
         return retVal;
     }
+
+    public Return configuredAutoComplete4Product(final Parameter parameter)
+        throws EFapsException
+    {
+        final String input = (String) parameter.get(ParameterValues.OTHERS);
+
+        final var configProperties = Products.AUTOCOMPLETE.get();
+        final var maxResult = Integer.valueOf(configProperties.getProperty("maxResult", "200"));
+        final var barcodes = Boolean.valueOf(configProperties.getProperty("searchBarcodes", "false"));
+
+        final var uiProperties = PropertiesUtil.getProperties(parameter);
+
+        final var types = PropertiesUtil.analyseProperty(uiProperties, "Type", 0).values()
+                        .stream().collect(Collectors.toList());
+        if (types.isEmpty()) {
+            types.add(CIProducts.ProductAbstract.getType().getName());
+        }
+
+        final var term = input.replace("*", "%") + "%";
+
+        final Map<String, Map<String, String>> orderMap = new TreeMap<>();
+        final var typeArr = types.toArray(String[]::new);
+        orderMap.putAll(searchByName(typeArr, term, maxResult));
+        orderMap.putAll(searchByDescription(typeArr, term, maxResult));
+        if (barcodes) {
+            orderMap.putAll(searchByBarcode(typeArr, term, maxResult));
+        }
+
+        final Return retVal = new Return();
+        retVal.put(ReturnValues.VALUES, orderMap.values()
+                        .stream()
+                        .limit(maxResult)
+                        .collect(Collectors.toList()));
+        return retVal;
+    }
+
+
+    public Map<String, Map<String, String>> searchByName(final String[] types,
+                                                         final String searchTerm,
+                                                         final int maxResult)
+        throws EFapsException
+    {
+        final Map<String, Map<String, String>> orderMap = new TreeMap<>();
+        final var eval = EQL.builder().print()
+                        .query(types)
+                        .where()
+                        .attribute(CIProducts.ProductAbstract.Name).like(searchTerm)
+                        .select()
+                        .oid()
+                        .attribute(CIProducts.ProductAbstract.Name, CIProducts.ProductAbstract.Description)
+                        .limit(maxResult)
+                        .evaluate();
+        while (eval.next()) {
+            final String name = eval.get(CIProducts.ProductAbstract.Name);
+            final String description = eval.get(CIProducts.ProductAbstract.Description);
+            final String choice = name + " - " + description;
+            final Map<String, String> map = new HashMap<>();
+            map.put(EFapsKey.AUTOCOMPLETE_KEY.getKey(), eval.get(1));
+            map.put(EFapsKey.AUTOCOMPLETE_VALUE.getKey(), name);
+            map.put(EFapsKey.AUTOCOMPLETE_CHOICE.getKey(), choice);
+            orderMap.put(choice, map);
+        }
+        return orderMap;
+    }
+
+
+    public Map<String, Map<String, String>> searchByDescription(final String[] types,
+                                                                final String searchTerm,
+                                                                final int maxResult)
+        throws EFapsException
+    {
+        final Map<String, Map<String, String>> orderMap = new TreeMap<>();
+        final var eval = EQL.builder().print()
+                        .query(types)
+                        .where()
+                        .attribute(CIProducts.ProductAbstract.Description).ilike(searchTerm)
+                        .select()
+                        .oid()
+                        .attribute(CIProducts.ProductAbstract.Name, CIProducts.ProductAbstract.Description)
+                        .limit(maxResult)
+                        .evaluate();
+        while (eval.next()) {
+            final String name = eval.get(CIProducts.ProductAbstract.Name);
+            final String description = eval.get(CIProducts.ProductAbstract.Description);
+            final String choice = description + " - " + name;
+            final Map<String, String> map = new HashMap<>();
+            map.put(EFapsKey.AUTOCOMPLETE_KEY.getKey(), eval.get(1));
+            map.put(EFapsKey.AUTOCOMPLETE_VALUE.getKey(), name);
+            map.put(EFapsKey.AUTOCOMPLETE_CHOICE.getKey(), choice);
+            orderMap.put(choice, map);
+        }
+        return orderMap;
+    }
+
+    public Map<String, Map<String, String>> searchByBarcode(final String[] types,
+                                                            final String searchTerm,
+                                                            final int maxResult)
+        throws EFapsException
+    {
+
+        final Map<String, Map<String, String>> orderMap = new TreeMap<>();
+
+        final var attrSet = AttributeSet.find(CIProducts.ProductAbstract.getType().getName(),
+                        CIProducts.ProductAbstract.Barcodes.name);
+
+        final var eval = EQL.builder().print()
+                        .query(attrSet.getUUID().toString())
+                        .where()
+                        .attribute("Code").like(searchTerm)
+                        .select()
+                        .attribute("Code").as("code")
+                        .linkto("Barcodes").oid().as("productOid")
+                        .linkto("Barcodes").attribute(CIProducts.ProductAbstract.Name).as("productName")
+                        .linkto("Barcodes").attribute(CIProducts.ProductAbstract.Description).as("productDescription")
+                        .limit(maxResult)
+                        .evaluate();
+        while (eval.next()) {
+            final String code = eval.get("code");
+            final String name = eval.get("productName");
+            final String description = eval.get("productDescription");
+            final String choice = code + ": " + name + " - " + description;
+            final Map<String, String> map = new HashMap<>();
+            map.put(EFapsKey.AUTOCOMPLETE_KEY.getKey(), eval.get("productOid"));
+            map.put(EFapsKey.AUTOCOMPLETE_VALUE.getKey(), name);
+            map.put(EFapsKey.AUTOCOMPLETE_CHOICE.getKey(), choice);
+            orderMap.put(choice, map);
+        }
+        return orderMap;
+    }
+
 
     /**
      * @param _parameter Parameter as passed by the eFaps API

@@ -547,6 +547,16 @@ public final class Products
                     .key(Products.BASE + "DefaultStorageGroup4BOMCalculator")
                     .description("Link to a default StorageGroup instance used by the BOMCalculator.");
 
+    @EFapsSysConfAttribute
+    public static final PropertiesSysConfAttribute AUTOCOMPLETE = new PropertiesSysConfAttribute()
+                    .sysConfUUID(Products.SYSCONFUUID)
+                    .key(Products.BASE + "AutocompleteConfig")
+                    .addDefaultValue("maxResult", "200")
+                    .addDefaultValue("searchBarcodes", "false")
+                    .description("Configuration for Product Autocomplete.\n"
+                                    + "maxResult (Integer): maximum result to be shown\n"
+                                    + "searchBarcodes (Boolean): activate/deactivate search in barcode");
+
     /**
      * Singelton.
      */
