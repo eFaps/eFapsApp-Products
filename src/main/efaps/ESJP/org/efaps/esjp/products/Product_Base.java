@@ -82,6 +82,8 @@ import org.efaps.db.QueryBuilder;
 import org.efaps.db.SelectBuilder;
 import org.efaps.db.Update;
 import org.efaps.eql.EQL;
+import org.efaps.eql.builder.Selectables;
+import org.efaps.eql2.bldr.AbstractQueryEQLBuilder;
 import org.efaps.esjp.admin.datamodel.RangesValue;
 import org.efaps.esjp.ci.CIFormProducts;
 import org.efaps.esjp.ci.CIProducts;
@@ -566,13 +568,32 @@ public abstract class Product_Base
         }
 
         final var term = input.replace("*", "%") + "%";
+        AbstractQueryEQLBuilder<?> storageQuery = null;
+        if (Boolean.valueOf(uiProperties.getProperty("InStock", "false"))) {
+            Instance storageInst = null;
+            final String[] storageArr = parameter.getParameterValues("storage");
+            if (storageArr != null && storageArr.length > 0) {
+                final int selected = getSelectedRow(parameter);
+                storageInst = Instance.get(storageArr[selected]);
+            } else if (Boolean.valueOf(uiProperties.getProperty("UseDefaultWareHouse", "false"))) {
+                storageInst = Storage.getDefaultStorage(parameter);
+            }
+            if (InstanceUtils.isKindOf(storageInst, CIProducts.StorageAbstract)) {
+                storageQuery = EQL.builder()
+                                .nestedQuery(CIProducts.InventoryAbstract)
+                                .where()
+                                .attribute(CIProducts.InventoryAbstract.Storage).eq(storageInst)
+                                .up()
+                                .selectable(Selectables.attribute(CIProducts.InventoryAbstract.Product));
+            }
+        }
 
         final Map<String, Map<String, String>> orderMap = new TreeMap<>();
         final var typeArr = types.toArray(String[]::new);
-        orderMap.putAll(searchByName(typeArr, term, maxResult));
-        orderMap.putAll(searchByDescription(typeArr, term, maxResult));
+        orderMap.putAll(searchByName(typeArr, term, maxResult, storageQuery));
+        orderMap.putAll(searchByDescription(typeArr, term, maxResult, storageQuery));
         if (barcodes) {
-            orderMap.putAll(searchByBarcode(typeArr, term, maxResult));
+            orderMap.putAll(searchByBarcode(typeArr, term, maxResult, storageQuery));
         }
 
         final Return retVal = new Return();
@@ -583,17 +604,23 @@ public abstract class Product_Base
         return retVal;
     }
 
-
     public Map<String, Map<String, String>> searchByName(final String[] types,
                                                          final String searchTerm,
-                                                         final int maxResult)
+                                                         final int maxResult,
+                                                         final AbstractQueryEQLBuilder<?> storageQuery)
         throws EFapsException
     {
         final Map<String, Map<String, String>> orderMap = new TreeMap<>();
-        final var eval = EQL.builder().print()
+        final var where = EQL.builder().print()
                         .query(types)
                         .where()
-                        .attribute(CIProducts.ProductAbstract.Name).like(searchTerm)
+                        .attribute(CIProducts.ProductAbstract.Name).like(searchTerm);
+
+        if (storageQuery != null) {
+            where.and().attribute(CIProducts.ProductAbstract.ID).in(storageQuery);
+        }
+
+        final var eval = where
                         .select()
                         .oid()
                         .attribute(CIProducts.ProductAbstract.Name, CIProducts.ProductAbstract.Description)
@@ -615,19 +642,27 @@ public abstract class Product_Base
 
     public Map<String, Map<String, String>> searchByDescription(final String[] types,
                                                                 final String searchTerm,
-                                                                final int maxResult)
+                                                                final int maxResult,
+                                                                final AbstractQueryEQLBuilder<?> storageQuery)
         throws EFapsException
     {
         final Map<String, Map<String, String>> orderMap = new TreeMap<>();
-        final var eval = EQL.builder().print()
+        final var where = EQL.builder().print()
                         .query(types)
                         .where()
-                        .attribute(CIProducts.ProductAbstract.Description).ilike(searchTerm)
+                        .attribute(CIProducts.ProductAbstract.Description).ilike(searchTerm);
+
+        if (storageQuery != null) {
+            where.and().attribute(CIProducts.ProductAbstract.ID).in(storageQuery);
+        }
+
+        final var eval = where
                         .select()
                         .oid()
                         .attribute(CIProducts.ProductAbstract.Name, CIProducts.ProductAbstract.Description)
                         .limit(maxResult)
                         .evaluate();
+
         while (eval.next()) {
             final String name = eval.get(CIProducts.ProductAbstract.Name);
             final String description = eval.get(CIProducts.ProductAbstract.Description);
@@ -643,7 +678,8 @@ public abstract class Product_Base
 
     public Map<String, Map<String, String>> searchByBarcode(final String[] types,
                                                             final String searchTerm,
-                                                            final int maxResult)
+                                                            final int maxResult,
+                                                            final AbstractQueryEQLBuilder<?> storageQuery)
         throws EFapsException
     {
 
@@ -652,10 +688,16 @@ public abstract class Product_Base
         final var attrSet = AttributeSet.find(CIProducts.ProductAbstract.getType().getName(),
                         CIProducts.ProductAbstract.Barcodes.name);
 
-        final var eval = EQL.builder().print()
+        final var where = EQL.builder().print()
                         .query(attrSet.getUUID().toString())
                         .where()
-                        .attribute("Code").like(searchTerm)
+                        .attribute("Code").like(searchTerm);
+
+        if (storageQuery != null) {
+            where.and().attribute("Barcodes").in(storageQuery);
+        }
+
+        final var eval = where
                         .select()
                         .attribute("Code").as("code")
                         .linkto("Barcodes").oid().as("productOid")
