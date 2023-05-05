@@ -20,7 +20,9 @@ package org.efaps.esjp.products.util;
 import java.util.UUID;
 
 import org.efaps.admin.common.SystemConfiguration;
+import org.efaps.admin.datamodel.IBitEnum;
 import org.efaps.admin.datamodel.IEnum;
+import org.efaps.admin.datamodel.attributetype.BitEnumType;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.api.annotation.EFapsSysConfAttribute;
@@ -325,6 +327,12 @@ public final class Products
                     .key(Products.BASE + "Standart.ActivateBarcodes")
                     .description("Activate the Barcodes field set for standart products.");
 
+    @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute STANDART_ACTCONFBOM = new BooleanSysConfAttribute()
+                    .sysConfUUID(Products.SYSCONFUUID)
+                    .key(Products.BASE + "Standart.ActivateConfigurationBOM")
+                    .description("Activate the ConfigurationBOM for standart products.");
+
     /** See description. */
     @EFapsSysConfAttribute
     public static final BooleanSysConfAttribute STANDART_ACTCLASS = new BooleanSysConfAttribute()
@@ -539,6 +547,16 @@ public final class Products
                     .key(Products.BASE + "DefaultStorageGroup4BOMCalculator")
                     .description("Link to a default StorageGroup instance used by the BOMCalculator.");
 
+    @EFapsSysConfAttribute
+    public static final PropertiesSysConfAttribute AUTOCOMPLETE = new PropertiesSysConfAttribute()
+                    .sysConfUUID(Products.SYSCONFUUID)
+                    .key(Products.BASE + "AutocompleteConfig")
+                    .addDefaultValue("maxResult", "200")
+                    .addDefaultValue("searchBarcodes", "false")
+                    .description("Configuration for Product Autocomplete.\n"
+                                    + "maxResult (Integer): maximum result to be shown\n"
+                                    + "searchBarcodes (Boolean): activate/deactivate search in barcode");
+
     /**
      * Singelton.
      */
@@ -594,6 +612,25 @@ public final class Products
         }
     }
 
+    public enum BOMGroupConfig
+      implements IBitEnum
+    {
+
+        OPTIONAL,
+        ONLYONE;
+
+        @Override
+        public int getInt()
+        {
+            return BitEnumType.getInt4Index(ordinal());
+        }
+
+        @Override
+        public int getBitIndex()
+        {
+            return ordinal();
+        }
+    }
 
     /**
      * @return the SystemConfigruation for Sales

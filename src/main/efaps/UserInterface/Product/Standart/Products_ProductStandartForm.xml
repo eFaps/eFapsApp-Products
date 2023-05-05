@@ -43,8 +43,17 @@
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
             <property name="ModeSearch">EDITABLE</property>
+            <property name="ModeView">NONE</property>
             <property name="Attribute">Name</property>
             <property name="Required">true</property>
+        </field>
+        <field name="slug">
+            <property name="ModeCreate">NONE</property>
+            <property name="ModeEdit">NONE</property>
+            <property name="ModeSearch">NONE</property>
+            <property name="MsgPhrase">Products_SlugMsgPhrase</property>
+            <property name="Label">Products_ProductAbstract/Name.Label</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
         </field>
         <field name="barcodes" character="Set">
             <property name="Attribute">Barcodes</property>
@@ -359,11 +368,13 @@
                 <property name="Inverse">true</property>
             </trigger>
         </field>
-        <field name="name4view">
+        <field name="slug">
+            <property name="ModeCreate">NONE</property>
             <property name="ModeEdit">NONE</property>
             <property name="ModeSearch">NONE</property>
-            <property name="ModeView">READONLY</property>
-            <property name="Attribute">Name</property>
+            <property name="MsgPhrase">Products_SlugMsgPhrase</property>
+            <property name="Label">Products_ProductAbstract/Name.Label</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
         </field>
          <field name="barcodes" character="Set">
             <property name="Attribute">Barcodes</property>

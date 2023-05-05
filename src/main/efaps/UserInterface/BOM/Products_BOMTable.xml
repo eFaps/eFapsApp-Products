@@ -29,6 +29,14 @@
             <property name="Label">Products_BOMAbstract/Type.Label</property>
             <property name="ShowTypeIcon">true</property>
         </field>
+        <field name="group">
+            <property name="Select">linkto[BOMGroupAbstractLink].attribute[Name]</property>
+            <property name="Label">Products_BOMTable.group.Label</property>
+        </field>
+        <field name="position">
+            <property name="Attribute">Position</property>
+            <property name="Label">Products_BOMAbstract/Position.Label</property>
+        </field>
         <field name="fromName">
             <property name="SelectAlternateOID">linkto[FromAbstract].oid</property>
             <property name="Select">linkto[FromAbstract].attribute[Name]</property>

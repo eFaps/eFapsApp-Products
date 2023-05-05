@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2017 The eFaps Team
+ * Copyright 2003 - 2023 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ package org.efaps.esjp.products;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -46,6 +48,7 @@ import org.efaps.esjp.ci.CIFormProducts;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.ci.CITableProducts;
 import org.efaps.esjp.common.AbstractCommon;
+import org.efaps.esjp.common.datetime.DateAndTimeUtils;
 import org.efaps.esjp.db.InstanceUtils;
 import org.efaps.esjp.erp.NumberFormatter;
 import org.efaps.esjp.products.util.Products;
@@ -53,7 +56,6 @@ import org.efaps.ui.wicket.models.field.UIField;
 import org.efaps.ui.wicket.models.objects.AbstractUIPageObject;
 import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
-import org.joda.time.DateTime;
 
 /**
  * TODO description!
@@ -65,10 +67,11 @@ import org.joda.time.DateTime;
 public abstract class PriceMassUpdate_Base
     extends AbstractCommon
 {
+
     /**
      * key used for a Request.
      */
-    private static final String REQUESTKEY = PriceMassUpdate.class.getName() +  ".RequestKey";
+    private static final String REQUESTKEY = PriceMassUpdate.class.getName() + ".RequestKey";
 
     /**
      * Get the Instances of the Products that the update of prices must be done.
@@ -165,7 +168,7 @@ public abstract class PriceMassUpdate_Base
         throws EFapsException
     {
         final Map<Instance, String> ret = new HashMap<>();
-        final DateTime date = getDate4CurrentPrice(_parameter);
+        final var date = getDate4CurrentPrice(_parameter);
         final String priceListType = getProperty(_parameter, "PriceListType");
 
         final QueryBuilder queryBldr = new QueryBuilder(Type.get(priceListType));
@@ -202,7 +205,7 @@ public abstract class PriceMassUpdate_Base
             multi2.execute();
             while (multi2.next()) {
                 valBldr.append(formatter.format(multi2.getAttribute(CIProducts.ProductPricelistPosition.Price)))
-                    .append(" ").append(multi2.<String>getSelect(selCurrSym));
+                                .append(" ").append(multi2.<String>getSelect(selCurrSym));
             }
             ret.put(prodInst, valBldr.toString());
         }
@@ -214,10 +217,10 @@ public abstract class PriceMassUpdate_Base
      * @return a DateTime
      * @throws EFapsException on error
      */
-    protected DateTime getDate4CurrentPrice(final Parameter _parameter)
+    protected OffsetDateTime getDate4CurrentPrice(final Parameter _parameter)
         throws EFapsException
     {
-        return new DateTime().withTimeAtStartOfDay();
+        return DateAndTimeUtils.withTimeAtStartOfDay();
     }
 
     /**
@@ -232,8 +235,8 @@ public abstract class PriceMassUpdate_Base
         final String[] newPrices = _parameter.getParameterValues("newPrice");
         final String[] currencies = _parameter.getParameterValues("currency");
         final DecimalFormat formater = NumberFormatter.get().getTwoDigitsFormatter();
-        @SuppressWarnings("unchecked")
-        final Map<String, String> rowid2oid = (Map<String, String>) _parameter.get(ParameterValues.OIDMAP4UI);
+        @SuppressWarnings("unchecked") final Map<String, String> rowid2oid = (Map<String, String>) _parameter
+                        .get(ParameterValues.OIDMAP4UI);
         for (int i = 0; i < rowIds.length; i++) {
             final String rowId = rowIds[i];
             final Instance prodInst = Instance.get(rowid2oid.get(rowId));
@@ -244,8 +247,9 @@ public abstract class PriceMassUpdate_Base
                     Instance productPricelistInst = null;
                     if (Products.ACTIVATEPRICEGRP.get()) {
                         // check if we want to update (meaning edited today)
-                        final QueryBuilder queryBldr =  new QueryBuilder(Type.get(priceListType));
-                        queryBldr.addWhereAttrEqValue(CIProducts.ProductPricelistAbstract.ProductAbstractLink, prodInst);
+                        final QueryBuilder queryBldr = new QueryBuilder(Type.get(priceListType));
+                        queryBldr.addWhereAttrEqValue(CIProducts.ProductPricelistAbstract.ProductAbstractLink,
+                                        prodInst);
                         queryBldr.addWhereAttrEqValue(CIProducts.ProductPricelistAbstract.ValidFrom,
                                         getDate4ValidFrom(_parameter));
                         queryBldr.addWhereAttrEqValue(CIProducts.ProductPricelistAbstract.ValidUntil,
@@ -259,8 +263,8 @@ public abstract class PriceMassUpdate_Base
                     if (InstanceUtils.isNotValid(productPricelistInst)) {
                         MultiPrintQuery multi = null;
                         if (Products.ACTIVATEPRICEGRP.get()) {
-                            //carry over
-                            final DateTime date = getDate4CurrentPrice(_parameter);
+                            // carry over
+                            final var date = getDate4CurrentPrice(_parameter);
                             final QueryBuilder attrQueryBldr = new QueryBuilder(Type.get(priceListType));
                             attrQueryBldr.addWhereAttrEqValue(CIProducts.ProductPricelistAbstract.ProductAbstractLink,
                                             prodInst);
@@ -291,11 +295,14 @@ public abstract class PriceMassUpdate_Base
                                 carryOverInsert.add(CIProducts.ProductPricelistPosition.ProductPricelist,
                                                 productPricelistInst);
                                 carryOverInsert.add(CIProducts.ProductPricelistPosition.PriceGroupLink,
-                                        multi.<Long>getAttribute(CIProducts.ProductPricelistPosition.PriceGroupLink));
+                                                multi.<Long>getAttribute(
+                                                                CIProducts.ProductPricelistPosition.PriceGroupLink));
                                 carryOverInsert.add(CIProducts.ProductPricelistPosition.Price,
-                                            multi.<BigDecimal>getAttribute(CIProducts.ProductPricelistPosition.Price));
+                                                multi.<BigDecimal>getAttribute(
+                                                                CIProducts.ProductPricelistPosition.Price));
                                 carryOverInsert.add(CIProducts.ProductPricelistPosition.CurrencyId,
-                                            multi.<Long>getAttribute(CIProducts.ProductPricelistPosition.CurrencyId));
+                                                multi.<Long>getAttribute(
+                                                                CIProducts.ProductPricelistPosition.CurrencyId));
                                 carryOverInsert.execute();
                             }
                         }
@@ -305,7 +312,7 @@ public abstract class PriceMassUpdate_Base
                     if (Products.ACTIVATEPRICEGRP.get()) {
                         final Instance pGroupInts = Instance.get(_parameter.getParameterValue(
                                         CIFormProducts.Products_PriceMassUpdateForm.priceGroupLink.name));
-                        final QueryBuilder queryBldr =  new QueryBuilder(CIProducts.ProductPricelistPosition);
+                        final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductPricelistPosition);
                         if (pGroupInts.isValid()) {
                             queryBldr.addWhereAttrEqValue(CIProducts.ProductPricelistPosition.PriceGroupLink,
                                             pGroupInts);
@@ -345,10 +352,10 @@ public abstract class PriceMassUpdate_Base
      * @return a DateTime
      * @throws EFapsException on error
      */
-    protected DateTime getDate4ValidFrom(final Parameter _parameter)
+    protected LocalDate getDate4ValidFrom(final Parameter _parameter)
         throws EFapsException
     {
-        return new DateTime().withTimeAtStartOfDay();
+        return LocalDate.now(Context.getThreadContext().getZoneId());
     }
 
     /**
@@ -356,9 +363,9 @@ public abstract class PriceMassUpdate_Base
      * @return a DateTime
      * @throws EFapsException on error
      */
-    protected DateTime getDate4ValidUntil(final Parameter _parameter)
+    protected LocalDate getDate4ValidUntil(final Parameter _parameter)
         throws EFapsException
     {
-        return new DateTime().plusYears(10).withTimeAtStartOfDay();
+        return LocalDate.now(Context.getThreadContext().getZoneId()).plusYears(10);
     }
 }
