@@ -16,20 +16,23 @@
  */
 package org.efaps.esjp.products.data;
 
+import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.Map;
 
+import org.efaps.admin.datamodel.Type;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Instance;
-import org.efaps.eql.EQL;
-import org.efaps.eql2.StmtFlag;
-import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.data.IOnRow;
 import org.efaps.esjp.data.jaxb.AbstractDef;
 import org.efaps.esjp.data.jaxb.RowListener;
+import org.efaps.esjp.products.PriceMassUpdate;
+import org.efaps.esjp.products.PriceMassUpdate_Base.MassUpdateEntry;
 import org.efaps.util.EFapsException;
-import org.joda.time.LocalDate;
+
+
 
 @EFapsUUID("40eb428a-f673-4c0d-9771-fe2a6f9db8cb")
 @EFapsApplication("eFapsApp-Products")
@@ -38,29 +41,31 @@ public class PriceRowListener
 {
 
     @Override
-    public void run(final Parameter _parameter, final AbstractDef definition, final Instance instance,
-                    final Map<String, Integer> _headers,
-                    final String[] values, final Integer _idx)
+    public void run(final Parameter parameter,
+                    final AbstractDef definition,
+                    final Instance productInstance,
+                    final Map<String, Integer> headers,
+                    final String[] values,
+                    final Integer idx)
         throws EFapsException
     {
         if (definition instanceof RowListener) {
-            final String type = ((RowListener) definition).getProperty("PricelistType");
-            final String currencyId = ((RowListener) definition).getProperty("CurrencyId");
+            final String typeName = ((RowListener) definition).getProperty("PricelistType");
+            final String currencyOid = ((RowListener) definition).getProperty("CurrencyOid");
             final String priceColumn = ((RowListener) definition).getProperty("PriceColumn");
-            final var price = values[_headers.get(priceColumn)].trim();
-            final var pricelistInst = EQL.builder().with(StmtFlag.TRIGGEROFF)
-                            .insert(type)
-                            .set(CIProducts.ProductPricelistAbstract.ProductAbstractLink, instance)
-                            .set(CIProducts.ProductPricelistAbstract.ValidFrom, LocalDate.now().minusDays(1))
-                            .set(CIProducts.ProductPricelistAbstract.ValidUntil, LocalDate.now().plusYears(10))
-                            .execute();
+            // optional
+            final String priceGroupOid = ((RowListener) definition).getProperty("PriceGroupOid");
 
-            EQL.builder()
-                            .insert(CIProducts.ProductPricelistPosition)
-                            .set(CIProducts.ProductPricelistPosition.ProductPricelist, pricelistInst)
-                            .set(CIProducts.ProductPricelistPosition.CurrencyId, currencyId)
-                            .set(CIProducts.ProductPricelistPosition.Price, price)
-                            .execute();
+            final var price = new BigDecimal(values[headers.get(priceColumn)].trim());
+            final var priceGroupInst = Instance.get(priceGroupOid);
+            final var entry = new MassUpdateEntry()
+                            .setProductInstance(productInstance)
+                            .setNewPrice(price)
+                            .setCurrencyInstance(Instance.get(currencyOid));
+            if (priceGroupInst.isValid()) {
+                entry.setPriceGroupInstance(priceGroupInst);
+            }
+            new PriceMassUpdate().execute(parameter, Collections.singletonList(entry), Type.get(typeName));
         }
     }
 }
