@@ -195,12 +195,10 @@ public abstract class PriceMassUpdate_Base
 
                 Update update = null;
                 if (Products.ACTIVATEPRICEGRP.get()) {
-                    final Instance pGroupInts = Instance.get(parameter.getParameterValue(
-                                    CIFormProducts.Products_PriceMassUpdateForm.priceGroupLink.name));
                     final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductPricelistPosition);
-                    if (pGroupInts.isValid()) {
+                    if (InstanceUtils.isValid(entry.getPriceGroupInstance())) {
                         queryBldr.addWhereAttrEqValue(CIProducts.ProductPricelistPosition.PriceGroupLink,
-                                        pGroupInts);
+                                        entry.getPriceGroupInstance());
                     } else {
                         queryBldr.addWhereAttrIsNull(CIProducts.ProductPricelistPosition.PriceGroupLink);
                     }
@@ -215,10 +213,8 @@ public abstract class PriceMassUpdate_Base
                 if (update == null) {
                     update = new Insert(CIProducts.ProductPricelistPosition);
                     update.add(CIProducts.ProductPricelistPosition.ProductPricelist, productPricelistInst);
-                    final Instance pGroupInts = Instance.get(parameter.getParameterValue(
-                                    CIFormProducts.Products_PriceMassUpdateForm.priceGroupLink.name));
-                    if (pGroupInts.isValid()) {
-                        update.add(CIProducts.ProductPricelistPosition.PriceGroupLink, pGroupInts);
+                    if (InstanceUtils.isValid(entry.getPriceGroupInstance())) {
+                        update.add(CIProducts.ProductPricelistPosition.PriceGroupLink, entry.getPriceGroupInstance());
                     }
                 }
                 update.add(CIProducts.ProductPricelistPosition.Price, entry.getNewPrice());
