@@ -47,6 +47,7 @@ import org.efaps.esjp.common.AbstractCommon;
 import org.efaps.esjp.common.uiform.Create;
 import org.efaps.esjp.common.util.InterfaceUtils;
 import org.efaps.esjp.common.util.InterfaceUtils_Base.DojoLibs;
+import org.efaps.esjp.db.InstanceUtils;
 import org.efaps.esjp.erp.AbstractWarning;
 import org.efaps.esjp.erp.IWarning;
 import org.efaps.esjp.erp.WarningUtil;
@@ -371,7 +372,7 @@ public abstract class ProductFamily_Base
             inst = print.getSelect(selFamInts);
         }
         final List<String> parts = new ArrayList<>();
-        while (!inst.getType().isCIType(CIProducts.ProductFamilyRoot)) {
+        while (InstanceUtils.isValid(inst) && !InstanceUtils.isType(inst, CIProducts.ProductFamilyRoot)) {
             final PrintQuery print = new CachedPrintQuery(inst, ProductFamily.CACHEKEY);
             final SelectBuilder selParentInst = SelectBuilder.get().linkto(CIProducts.ProductFamilyStandart.ParentLink)
                             .instance();
@@ -419,7 +420,7 @@ public abstract class ProductFamily_Base
         throws EFapsException
     {
         final Return ret = new Return();
-        final List<IWarning> warnings = new ArrayList<IWarning>();
+        final List<IWarning> warnings = new ArrayList<>();
         final String codePart = _parameter.getParameterValue(CIFormProducts.Products_ProductFamilyForm.codePart.name);
         final AbstractCommand cmd = (AbstractCommand) _parameter.get(ParameterValues.UIOBJECT);
         // CreateMode and FamilyRoot
