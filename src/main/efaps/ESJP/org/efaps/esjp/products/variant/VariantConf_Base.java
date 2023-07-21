@@ -21,13 +21,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
+
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
 
 /**
  * TODO comment!
@@ -51,7 +51,7 @@ public abstract class VariantConf_Base
      */
     @XmlElementWrapper(name = "attributes")
     @XmlElement(name = "variantAttribute")
-    private final List<VariantAttribute> attributes = new ArrayList<VariantAttribute>();
+    private final List<VariantAttribute> attributes = new ArrayList<>();
 
     /**
      * Getter method for the instance variable {@link #entries}.
