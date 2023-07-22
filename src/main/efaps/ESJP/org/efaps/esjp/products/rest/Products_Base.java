@@ -20,8 +20,6 @@ package org.efaps.esjp.products.rest;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.core.Response;
-
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.stmt.selection.Evaluator;
@@ -29,6 +27,8 @@ import org.efaps.eql.EQL;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.products.rest.dto.ProductDTO;
 import org.efaps.util.EFapsException;
+
+import jakarta.ws.rs.core.Response;
 
 @EFapsUUID("234d2afc-724e-4315-b63b-b0ada02eb5b6")
 @EFapsApplication("eFapsApp-Products")
