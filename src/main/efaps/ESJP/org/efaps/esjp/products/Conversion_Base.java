@@ -50,6 +50,7 @@ import org.slf4j.LoggerFactory;
 @EFapsApplication("eFapsApp-Products")
 public abstract class Conversion_Base
 {
+
     private static final Logger LOG = LoggerFactory.getLogger(Conversion.class);
 
     public Return fromUoMFieldValue(final Parameter _parameter)
@@ -113,25 +114,27 @@ public abstract class Conversion_Base
         return ret;
     }
 
-    protected static ConversionValue convert(final ConversionType _conversionType, final Instance _productInstance,
-                                             final BigDecimal _quantity, final UoM _uoM)
+    protected static ConversionValue convert(final ConversionType _conversionType,
+                                             final Instance _productInstance,
+                                             final BigDecimal _quantity,
+                                             final UoM _uoM)
         throws EFapsException
     {
         ConversionValue ret = null;
         final var eval = EQL.builder()
-            .print()
-            .query(CIProducts.Conversion)
-            .where()
-                .attribute(CIProducts.Conversion.ConversionType).eq(1)
-                .and()
-                .attribute(CIProducts.Conversion.ProductLink).eq(_productInstance)
-            .select()
-                .attribute(CIProducts.Conversion.FromQuantity)
-                .attribute(CIProducts.Conversion.FromUoM)
-                .attribute(CIProducts.Conversion.ToQuantity)
-                .attribute(CIProducts.Conversion.ToUoM)
-             .limit(1)
-             .evaluate();
+                        .print()
+                        .query(CIProducts.Conversion)
+                        .where()
+                        .attribute(CIProducts.Conversion.ConversionType).eq(1)
+                        .and()
+                        .attribute(CIProducts.Conversion.ProductLink).eq(_productInstance)
+                        .select()
+                        .attribute(CIProducts.Conversion.FromQuantity)
+                        .attribute(CIProducts.Conversion.FromUoM)
+                        .attribute(CIProducts.Conversion.ToQuantity)
+                        .attribute(CIProducts.Conversion.ToUoM)
+                        .limit(1)
+                        .evaluate();
         if (eval.next()) {
             final Integer fromInt = eval.get(CIProducts.Conversion.FromQuantity);
             final Long fromUoMID = eval.get(CIProducts.Conversion.FromUoM);
@@ -144,25 +147,22 @@ public abstract class Conversion_Base
             // base UoM and the used UoM are the same
             if (fromUoM.equals(_uoM)) {
                 from = new BigDecimal(fromInt);
+            } else if (fromUoM.getDimId() == _uoM.getDimId()) {
+                from = new BigDecimal(fromInt);
+                from = from.multiply(new BigDecimal(_uoM.getNumerator())).divide(
+                                new BigDecimal(_uoM.getDenominator()), RoundingMode.HALF_UP);
             } else {
-                if (fromUoM.getDimId() == _uoM.getDimId()) {
-                    from = new BigDecimal(fromInt);
-                    from = from.multiply(new BigDecimal(_uoM.getNumerator())).divide(
-                                    new BigDecimal(_uoM.getDenominator()), RoundingMode.HALF_UP);
-                } else {
-                    LOG.error("Invalid conversion definition for {}", _productInstance);
-                }
+                LOG.error("Invalid conversion definition for {}", _productInstance);
             }
             if (from != null) {
                 final var to = new BigDecimal(toInt);
                 final var multiplier = to.divide(from, 8, RoundingMode.HALF_UP);
                 var value = _quantity.multiply(multiplier);
                 if (!toUoM.equals(toUoM.getDimension().getBaseUoM())) {
-                    value = value.multiply(new BigDecimal(toUoM.getDenominator())).divide(
-                                    new BigDecimal(toUoM.getNumerator()), 8, RoundingMode.HALF_UP);
+                    value = value.multiply(new BigDecimal(toUoM.getNumerator())).divide(
+                                    new BigDecimal(toUoM.getDenominator()), 8, RoundingMode.HALF_UP);
                 }
-
-                ret = new ConversionValue(value, toUoM);
+                ret = new ConversionValue(value, toUoM.getDimension().getBaseUoM());
             }
         }
         return ret;
