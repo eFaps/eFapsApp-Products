@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2021 The eFaps Team
+ * Copyright 2003 - 2023 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -269,6 +270,7 @@ public abstract class InventoryReport_Base
                     map.put("currency", bean.getCurrency());
                     map.put("cost", bean.getCost());
                     map.put("uoM", bean.getUoM());
+                    map.put("prodSlug", bean.getProdSlug());
                 }
                 quantity = quantity.add(bean.getQuantity()).add(bean.getReserved());
                 map.put("total", bean.getCost().multiply(quantity));
@@ -363,9 +365,9 @@ public abstract class InventoryReport_Base
         {
             final ComparatorChain<InventoryBean> ret = new ComparatorChain<>();
             if (StorageDisplay.ROW.equals(getStorageDisplay(_parameter))) {
-                ret.addComparator((_arg0, _arg1) -> _arg0.getStorage().compareTo(_arg1.getStorage()));
+                ret.addComparator(Comparator.comparing(InventoryBean::getStorage));
             }
-            ret.addComparator((_arg0, _arg1) -> _arg0.getProdName().compareTo(_arg1.getProdName()));
+            ret.addComparator(Comparator.comparing(InventoryBean::getProdName));
             return ret;
         }
 
@@ -774,7 +776,7 @@ public abstract class InventoryReport_Base
                 beans = (List<InventoryBean>) inventory.getInventory(_parameter);
             }
             if (showZeroStock(_parameter)) {
-                final var prod2inv = beans.stream().collect(Collectors.toMap(bean -> bean.getProdInstance(), bean -> bean));
+                final var prod2inv = beans.stream().collect(Collectors.toMap(InventoryBean::getProdInstance, bean -> bean));
                 final var eval = EQL.builder().print()
                                 .query(CIProducts.StoreableProductAbstract)
                                 .where()
