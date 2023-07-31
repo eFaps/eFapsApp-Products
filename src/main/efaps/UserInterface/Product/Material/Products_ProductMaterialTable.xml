@@ -83,12 +83,9 @@
             <property name="Label">Products_ProductAbstract/Active.Label</property>
             <property name="FilterType">PICKLIST</property>
         </field>
-        <field name="buttonOpenInNewWindow">
-            <icon>eFapsActionNewWindow</icon>
-            <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
-            <property name="Target">popup</property>
-            <property name="SortAble">false</property>
-            <property name="Width">15px</property>
+        <field name="defaultUoM">
+            <property name="Select">linkto[DefaultUoM].attribute[Name]</property>
+            <property name="Label">Products_ProductAbstract/DefaultUoM.Label</property>
         </field>
     </definition>
 </ui-table>

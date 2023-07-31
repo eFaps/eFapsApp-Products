@@ -131,5 +131,9 @@
                 <property name="Attribute">org.efaps.products.Standart.ActivateBarcodes</property>
             </trigger>
         </field>
+        <field name="defaultUoM">
+            <property name="Select">linkto[DefaultUoM].attribute[Name]</property>
+            <property name="Label">Products_ProductAbstract/DefaultUoM.Label</property>
+        </field>
     </definition>
 </ui-table>
