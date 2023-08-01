@@ -145,7 +145,7 @@ public abstract class PriceListReport_Base
         /**
          * List of PriceList type shown in the report.
          */
-        private final List<Type> types = new ArrayList<Type>();
+        private final List<Type> types = new ArrayList<>();
 
         /**
          * Show the classification in the report.
@@ -262,8 +262,8 @@ public abstract class PriceListReport_Base
                 final SelectBuilder selProdName = new SelectBuilder(selProd).attribute(CIProducts.ProductAbstract.Name);
                 final SelectBuilder selProdDescr = new SelectBuilder(selProd).attribute(
                                 CIProducts.ProductAbstract.Description);
-                final SelectBuilder selProdDim = new SelectBuilder(selProd).attribute(
-                                CIProducts.ProductAbstract.Dimension);
+                final SelectBuilder selProdUoM = new SelectBuilder(selProd).attribute(
+                                CIProducts.ProductAbstract.DefaultUoM);
                 final SelectBuilder selFamInst = new SelectBuilder(selProd)
                                 .linkto(CIProducts.ProductAbstract.ProductFamilyLink).instance();
                 final SelectBuilder selProdClass = new SelectBuilder(selProd).clazz().type();
@@ -277,7 +277,7 @@ public abstract class PriceListReport_Base
                 if (Products.ACTIVATEPRICEGRP.get()) {
                     multi.addSelect(selPricGrpInst);
                 }
-                multi.addSelect(selProdInst, selProdName, selProdDescr, selProdDim, selCurrency, selTypeInst);
+                multi.addSelect(selProdInst, selProdName, selProdDescr, selProdUoM, selCurrency, selTypeInst);
                 if (isShowClass()) {
                     multi.addSelect(selProdClass);
                 }
@@ -293,11 +293,11 @@ public abstract class PriceListReport_Base
                         map = (Map<String, Object>) values.get(prodInst);
                     } else {
                         boolean skip = false;
-                        map = new HashMap<String, Object>();
+                        map = new HashMap<>();
                         map.put("productOID", prodInst.getOid());
                         map.put("productName", multi.getSelect(selProdName));
                         map.put("productDescr", multi.getSelect(selProdDescr));
-                        map.put("productDim", Dimension.get(multi.<Long>getSelect(selProdDim)).getName());
+                        map.put("productDim", Dimension.getUoM(multi.<Long>getSelect(selProdUoM)).getName());
 
                         if (isShowClass()) {
                             final List<Classification> clazzes = multi.<List<Classification>>getSelect(selProdClass);
@@ -419,7 +419,7 @@ public abstract class PriceListReport_Base
 
             final ComponentColumnBuilder linkColumn = FilteredReport.getLinkColumn(_parameter, "productOID");
 
-            final List<ColumnGridComponentBuilder> grid = new ArrayList<ColumnGridComponentBuilder>();
+            final List<ColumnGridComponentBuilder> grid = new ArrayList<>();
 
             if (getExType().equals(ExportType.HTML)) {
                 _builder.addColumn(linkColumn);
