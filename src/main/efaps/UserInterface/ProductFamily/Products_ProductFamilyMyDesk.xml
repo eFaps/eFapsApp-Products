@@ -34,6 +34,11 @@
                 <property name="Child_Type">Products_ProductFamilyStandart</property>
                 <property name="Child_LinkFrom">ParentLink</property>
             </evaluate>
+            <strctbrws program="org.efaps.esjp.ui.structurbrowser.BaseStructurBrowser">
+                <property name="Type">Products_ProductFamilyRoot</property>
+                <property name="Child_Type">Products_ProductFamilyStandart</property>
+                <property name="Child_LinkFrom">ParentLink</property>
+            </strctbrws>
             <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
                 name="Products_ProductFamilyMyDesk.UI_ACCESSCHECK"
                 method="configCheck"

@@ -38,6 +38,7 @@
             <column name="MODIFIED"     type="DATETIME" not-null="true" />
             <foreign name="T_PRODPRODPRICEPOS_FK_CRTR"  key="CREATOR"   reference="T_USERPERSON(ID)" />
             <foreign name="T_PRODPRODPRICEPOS_FK_MDFR"  key="MODIFIER"  reference="T_USERPERSON(ID)" />
+            <index  name="T_PRODPRODPRICEPOS_INDEX_MODIFIED" columns="MODIFIED"/>
         </database>
     </definition>
 </datamodel-sqltable>

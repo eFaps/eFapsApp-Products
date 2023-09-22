@@ -2,7 +2,7 @@
 
 <!--
 
- Copyright 2003 - 2013 The eFaps Team
+ Copyright 2003 - 2023 The eFaps Team
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -15,11 +15,6 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
-
- Author:          The eFaps Team
- Revision:        $Rev$
- Last Changed:    $Date$
- Last Changed By: $Author$
 
 -->
 
@@ -58,6 +53,7 @@
             <foreign name="T_PRODTRANSACTION_FK_DOCID"      key="DOCID"     reference="T_ERPDOC(ID)" />
             <foreign name="T_PRODTRANSACTION_FK_CRTR"       key="CREATOR"   reference="T_USERPERSON(ID)" />
             <foreign name="T_PRODTRANSACTION_FK_MDFR"       key="MODIFIER"  reference="T_USERPERSON(ID)" />
+            <index  name="T_PRODTRANSACTION_INDEX_DATE" columns="DATE"/>
         </database>
     </definition>
 </datamodel-sqltable>

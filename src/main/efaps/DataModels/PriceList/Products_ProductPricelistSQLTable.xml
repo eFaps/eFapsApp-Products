@@ -41,6 +41,7 @@
             <foreign name="T_PRODPRODPRICE_FK_CRTR" key="CREATOR" reference="T_USERPERSON(ID) " />
             <foreign name="T_PRODPRODPRICE_FK_MDFR" key="MODIFIER" reference="T_USERPERSON(ID) " />
             <foreign name="T_PRODPRODPRICE_FK_PRODID" key="PRODID" reference="T_PRODPRODUCT(ID)" />
+            <index  name="T_PRODPRODPRICE_INDEX_MODIFIED" columns="MODIFIED"/>
         </database>
     </definition>
 </datamodel-sqltable>
