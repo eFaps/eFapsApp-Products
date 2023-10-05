@@ -156,6 +156,18 @@ public class CreateTransactionMutation
         final var productOid = (String) values.get(productOidVariable);
         if (OIDUtil.isOID(productOid)) {
             ret = Instance.get(productOid);
+        } else {
+            final var productNameVariable = props.getProperty("ProductNameVariable", "productName");
+            final var productName = (String) values.get(productNameVariable);
+            final var eval = EQL.builder().print().query(CIProducts.ProductAbstract)
+                            .where()
+                            .attribute(CIProducts.ProductAbstract.Name).eq(productName)
+                            .select()
+                            .oid()
+                            .evaluate();
+            if (eval.next()) {
+                ret = eval.inst();
+            }
         }
         if (!InstanceUtils.isKindOf(ret, CIProducts.StoreableProductAbstract)) {
             resultBldr.error(GraphqlErrorBuilder.newError(environment)
