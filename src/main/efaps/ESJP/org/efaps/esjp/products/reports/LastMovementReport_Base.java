@@ -258,9 +258,15 @@ public abstract class LastMovementReport_Base
                     queryBldr.addOrderByAttributeDesc(CIProducts.TransactionAbstract.Date);
                     final MultiPrintQuery multi = queryBldr.getPrint();
                     multi.setEnforceSorted(true);
+
+                    final SelectBuilder selDoc = SelectBuilder.get().linkto(CIProducts.TransactionAbstract.Document);
+                    final SelectBuilder selDocTypeName = new SelectBuilder(selDoc)
+                                    .linkfrom(CIERP.Document2DocumentTypeAbstract.DocumentLinkAbstract)
+                                    .linkto(CIERP.Document2DocumentTypeAbstract.DocumentTypeLinkAbstract)
+                                    .attribute(CIERP.DocumentTypeAbstract.Name);
                     final SelectBuilder selProdInst = SelectBuilder.get().linkto(
                                     CIProducts.TransactionAbstract.Product).instance();
-                    multi.addSelect(selProdInst);
+                    multi.addSelect(selProdInst, selDocTypeName);
                     multi.addAttribute(CIProducts.TransactionAbstract.Date,
                                     CIProducts.TransactionAbstract.Quantity);
                     multi.execute();
@@ -271,7 +277,9 @@ public abstract class LastMovementReport_Base
                             final DateTime transDate = multi.getAttribute(CIProducts.TransactionAbstract.Date);
                             final BigDecimal quantity = multi.getAttribute(CIProducts.TransactionAbstract.Quantity);
 
-                            if (validateThreshold(_parameter, multi.getCurrentInstance(), quantity, prodInst)) {
+                            if (validateThreshold(_parameter, multi.getCurrentInstance(), quantity, prodInst)
+                                            && includeMovement(multi.getCurrentInstance(), prodInst,
+                                                            multi.getSelect(selDocTypeName))) {
                                 final Iterator<DataBean> beanIter = beanList.iterator();
                                 final DataBean bean = beanIter.next();
                                 bean.setDate(date);
@@ -290,36 +298,12 @@ public abstract class LastMovementReport_Base
                 }
                 final ComparatorChain<DataBean> chain = new ComparatorChain<>();
                 if (!StorageDisplay.NONE.equals(getStorageDisplay(_parameter))) {
-                    chain.addComparator(new Comparator<DataBean>()
-                    {
-                        @Override
-                        public int compare(final DataBean _bean0,
-                                           final DataBean _bean1)
-                        {
-                            return _bean0.getStorage().compareTo(_bean1.getStorage());
-                        }
-                    });
+                    chain.addComparator(Comparator.comparing(DataBean::getStorage));
                 }
                 if (!TypeDisplay.NONE.equals(getTypeDisplay(_parameter))) {
-                    chain.addComparator(new Comparator<DataBean>()
-                    {
-                        @Override
-                        public int compare(final DataBean _bean0,
-                                           final DataBean _bean1)
-                        {
-                            return _bean0.getProdType().compareTo(_bean1.getProdType());
-                        }
-                    });
+                    chain.addComparator(Comparator.comparing(DataBean::getProdType));
                 }
-                chain.addComparator(new Comparator<DataBean>()
-                {
-                    @Override
-                    public int compare(final DataBean _bean0,
-                                       final DataBean _bean1)
-                    {
-                        return _bean0.getProdName().compareTo(_bean1.getProdName());
-                    }
-                });
+                chain.addComparator(Comparator.comparing(DataBean::getProdName));
                 Collections.sort(tmpBeans, chain);
 
                 ret =  new JRBeanCollectionDataSource(tmpBeans);
@@ -351,6 +335,21 @@ public abstract class LastMovementReport_Base
                     (_transactionInstance.getType().isCIType(CIProducts.TransactionInbound)
                             || _transactionInstance.getType().isCIType(CIProducts.TransactionIndividualInbound))
                                 && _quantity.compareTo(new BigDecimal(getInThreshold(_parameter, _prodInst))) > 0;
+        }
+
+        protected boolean includeMovement(final Instance transactionInstance,
+                                          final Instance productInstance,
+                                          final String documentType)
+            throws EFapsException
+        {
+            final boolean out = transactionInstance.getType().isCIType(CIProducts.TransactionOutbound)
+                            || transactionInstance.getType().isCIType(CIProducts.TransactionIndividualOutbound);
+
+            final String key = productInstance.getType().getName() + (out ? ".out" : ".in") + ".include."
+                            + (documentType == null ? "NONE" : documentType);
+            final boolean include = "true".equals(Products.REPLASTMOVE.get().getProperty(key, "true"));
+            LOG.info("Include Movement: {} --> {}", key, include);
+            return include;
         }
 
         /**
