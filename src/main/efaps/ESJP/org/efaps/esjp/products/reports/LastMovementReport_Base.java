@@ -345,9 +345,13 @@ public abstract class LastMovementReport_Base
             final boolean out = transactionInstance.getType().isCIType(CIProducts.TransactionOutbound)
                             || transactionInstance.getType().isCIType(CIProducts.TransactionIndividualOutbound);
 
+            final String defaultValueKey = (out ? "out" : "in") + ".include";
+
+            final String defaultValue = Products.REPLASTMOVE.get().getProperty(defaultValueKey, "true");
+
             final String key = productInstance.getType().getName() + (out ? ".out" : ".in") + ".include."
                             + (documentType == null ? "NONE" : documentType);
-            final boolean include = "true".equals(Products.REPLASTMOVE.get().getProperty(key, "true"));
+            final boolean include = "true".equals(Products.REPLASTMOVE.get().getProperty(key, defaultValue));
             LOG.info("Include Movement: {} --> {}", key, include);
             return include;
         }
