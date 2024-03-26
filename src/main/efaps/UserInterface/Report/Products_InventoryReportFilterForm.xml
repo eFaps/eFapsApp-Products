@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
 
-  Copyright 2003 - 2016 The eFaps Team
+    Copyright © 2003 - 2024 The eFaps Team (-)
 
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
+        http://www.apache.org/licenses/LICENSE-2.0
 
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
 
 -->
+
+
 <ui-form xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>d73a09c7-4566-4e8f-851c-6bc2e96b3912</uuid>
@@ -97,7 +99,8 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_InventoryReportFilterForm.classDisplay.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                <!-- Products-Configuration -->
+                
+
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.report.InventoryReport.Classification.Activate</property>
             </trigger>
@@ -114,7 +117,8 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_InventoryReportFilterForm.familyDisplay.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                <!-- Products-Configuration -->
+                
+
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.report.InventoryReport.Family.Activate</property>
             </trigger>
@@ -138,7 +142,8 @@
              <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_InventoryReportFilterForm.productTreeView.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                <!-- Products-Configuration -->
+                
+
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.TreeView.Activate</property>
             </trigger>
@@ -155,7 +160,8 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_InventoryReportFilterForm.individualDisplay.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                <!-- Products-Configuration -->
+                
+
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.ActivateIndividual</property>
             </trigger>

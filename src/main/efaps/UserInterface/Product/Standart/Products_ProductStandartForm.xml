@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
 
-  Copyright 2003 - 2016 The eFaps Team
+    Copyright © 2003 - 2024 The eFaps Team (-)
 
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
+        http://www.apache.org/licenses/LICENSE-2.0
 
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
 
 -->
+
+
 <ui-form xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>3611151d-515a-431b-8f48-3214fa89ce8f</uuid>
@@ -33,7 +35,8 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductStandartForm.classification.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                <!-- Products-Configuration -->
+                
+
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Standart.ActivateClassification</property>
             </trigger>
@@ -65,7 +68,8 @@
                 name="Products_ProductStandartForm.barcodes.UI_ACCESSCHECK.1"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI"
                 index="1">
-                <!-- Products-Configuration -->
+                
+
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Standart.ActivateBarcodes</property>
             </trigger>
@@ -92,7 +96,8 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductStandartForm.image.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                <!-- Products-Configuration -->
+                
+
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="AttributeExists">org.efaps.products.Standart.Image</property>
             </trigger>
@@ -137,7 +142,8 @@
                 name="Products_ProductFamilyMyDesk.UI_ACCESSCHECK"
                 method="configCheck"
                 event="UI_ACCESSCHECK" index="1">
-                <!-- Products-Configuration -->
+                
+
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.ActivateIndividual</property>
             </trigger>
@@ -145,7 +151,8 @@
                 name="Products_ProductFamilyMyDesk.UI_ACCESSCHECK"
                 method="configCheck"
                 event="UI_ACCESSCHECK" index="2">
-                <!-- Products-Configuration -->
+                
+
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Standart.ActivateIndividual</property>
             </trigger>
@@ -161,7 +168,8 @@
                 name="Products_ProductStandartForm.note.UI_ACCESSCHECK"
                 method="configCheck"
                 event="UI_ACCESSCHECK">
-                <!-- Products-Configuration -->
+                
+
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Standart.ActivateNote</property>
             </trigger>
@@ -212,7 +220,8 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductStandartForm.classification.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                <!-- Products-Configuration -->
+                
+
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Standart.ActivateClassification</property>
             </trigger>
@@ -230,7 +239,8 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductStandartForm.productFamily.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                <!-- Products-Configuration -->
+                
+
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Standart.ActivateFamilies</property>
             </trigger>
@@ -243,7 +253,8 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductStandartForm.nameGroup.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                <!-- Products-Configuration -->
+                
+
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Standart.ActivateFamilies</property>
             </trigger>
@@ -256,7 +267,8 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductStandartForm.namePrefix.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                <!-- Products-Configuration -->
+                
+
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Standart.ActivateFamilies</property>
             </trigger>
@@ -270,7 +282,8 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductStandartForm.namePrefix.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                <!-- Products-Configuration -->
+                
+
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Standart.ActivateFamilies</property>
             </trigger>
@@ -286,7 +299,8 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductStandartForm.nameSuffix.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                <!-- Products-Configuration -->
+                
+
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Standart.ActivateFamilies</property>
             </trigger>
@@ -306,7 +320,8 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductStandartForm.namePrefix4Edit.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                <!-- Products-Configuration -->
+                
+
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Standart.ActivateFamilies</property>
             </trigger>
@@ -329,7 +344,8 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductStandartForm.nameSuffix4Edit.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                <!-- Products-Configuration -->
+                
+
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Standart.ActivateFamilies</property>
             </trigger>
@@ -346,7 +362,8 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductStandartForm.updateButton.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                <!-- Products-Configuration -->
+                
+
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Standart.ActivateFamilies</property>
             </trigger>
@@ -362,7 +379,8 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductStandartForm.name.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                <!-- Products-Configuration -->
+                
+
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Standart.ActivateFamilies</property>
                 <property name="Inverse">true</property>
@@ -386,7 +404,8 @@
                 name="Products_ProductStandartForm.barcodes.UI_ACCESSCHECK.1"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI"
                 index="1">
-                <!-- Products-Configuration -->
+                
+
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Standart.ActivateBarcodes</property>
             </trigger>
@@ -399,7 +418,8 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductStandartForm.descriptionGroup.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                <!-- Products-Configuration -->
+                
+
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="AttributeExists">org.efaps.products.Standart.Descriptions</property>
             </trigger>
@@ -426,7 +446,8 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductStandartForm.setDescriptionButton.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                <!-- Products-Configuration -->
+                
+
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="AttributeExists">org.efaps.products.Standart.Descriptions</property>
             </trigger>
@@ -445,7 +466,8 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductStandartForm.image.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                <!-- Products-Configuration -->
+                
+
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="AttributeExists">org.efaps.products.Standart.Image</property>
             </trigger>
@@ -509,7 +531,8 @@
                 name="Products_ProductFamilyMyDesk.UI_ACCESSCHECK"
                 method="configCheck"
                 event="UI_ACCESSCHECK" index="1">
-                <!-- Products-Configuration -->
+                
+
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.ActivateIndividual</property>
             </trigger>
@@ -517,7 +540,8 @@
                 name="Products_ProductFamilyMyDesk.UI_ACCESSCHECK"
                 method="configCheck"
                 event="UI_ACCESSCHECK" index="2">
-                <!-- Products-Configuration -->
+                
+
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Standart.ActivateIndividual</property>
             </trigger>
@@ -533,7 +557,8 @@
                 name="Products_ProductStandartForm.note.UI_ACCESSCHECK"
                 method="configCheck"
                 event="UI_ACCESSCHECK">
-                <!-- Products-Configuration -->
+                
+
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Standart.ActivateNote</property>
             </trigger>

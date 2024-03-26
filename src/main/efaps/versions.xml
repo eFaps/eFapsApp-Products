@@ -1,27 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
 
-  Copyright 2003 - 2013 The eFaps Team
+    Copyright © 2003 - 2024 The eFaps Team (-)
 
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
+        http://www.apache.org/licenses/LICENSE-2.0
 
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-
-  Author:          The eFaps Team
-  Revision:        $Rev$
-  Last Changed:    $Date$
-  Last Changed By: $Author$
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
 
 -->
+
+
+
 
 <install xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
@@ -67,14 +64,17 @@
         RunLevel.init("shell");
         RunLevel.execute();
 
-        <!-- Products_MyDesk, MainToolBar -->
+        
+
         UIUpdate update = new UIUpdate();
         update.add2Menu("0ff70869-361c-4971-bd09-6cf79a0a7dfb", "87001cc3-c45c-44de-b8f1-776df507f268", 2);
 
-        <!-- connect the Products_Contacts_ContactTree_Product Menu to the Contacts_ContactTree menu from contacts -->
+        
+
         update.add2Menu("0ecba961-c0bf-48b8-93a5-4d098bc0c022", "e1944ac8-4007-476c-a5c8-2bfbdb2b79f9",-1);
 
-        <!-- Products_Products, Admin_Help_MainMenu -->
+        
+
         update.add2Help("8e74046b-28cd-4079-bac4-5cf0a04f47e5", "dead549e-5cc6-49f9-9a79-8e33aa139f6d",-1);
 
      </script>
