@@ -24,7 +24,7 @@
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>a27bb168-973f-4212-9117-d446b07929fb</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev: 13029 $</file-revision>
+    
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductCostTextPositionSearch</name>

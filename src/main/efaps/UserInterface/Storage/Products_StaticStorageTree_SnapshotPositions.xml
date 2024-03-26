@@ -22,7 +22,7 @@
 --><ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>e9e88de4-e690-4403-a00f-7644fa602614</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev: 5316 $</file-revision>
+    
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_StaticStorageTree_SnapshotPositions</name>

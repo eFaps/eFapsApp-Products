@@ -23,7 +23,7 @@
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>c39908f1-f7b2-448f-b38f-3a43c33ddbea</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
+    
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductGenericTree_Product_Menu_Action_AddExistingProduct_Search</name>

@@ -23,7 +23,7 @@
 
     <uuid>a8b380a2-b547-45e7-b340-6077caa4818a</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
+    
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_StorageGroupAbstractTable</name>

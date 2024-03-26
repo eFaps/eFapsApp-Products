@@ -26,7 +26,7 @@
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>a0e7f7d6-faa5-4ab6-993e-cb94c38dcb7c</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev$</file-revision>
+    
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_TransactionAbstractTree_Menu_Action_Edit</name>

@@ -28,7 +28,7 @@
             xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>c162f9fe-aae6-4954-b7c5-72d197c00d92</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev: 5316 $</file-revision>
+    
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_TreeViewNodeTree_Menu_Action_Edit</name>

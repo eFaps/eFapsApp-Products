@@ -26,7 +26,7 @@
               xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>5d2d4268-c6d9-41b4-9872-70d354547bc4</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev: 6408 $</file-revision>
+    
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Showsalespackage_Products</name>

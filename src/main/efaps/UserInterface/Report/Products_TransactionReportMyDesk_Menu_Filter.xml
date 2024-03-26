@@ -24,7 +24,7 @@
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>930c018c-a6c3-4347-a542-d1287fef61e1</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev: 14618 $</file-revision>
+    
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_TransactionReportMyDesk_Menu_Filter</name>

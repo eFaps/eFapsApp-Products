@@ -24,7 +24,7 @@
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>d3e571f8-74b7-4e79-8639-73b548090251</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev: 14618 $</file-revision>
+    
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_LastMovementReportMyDesk</name>

@@ -24,7 +24,7 @@
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>4b17cfc4-db5a-4594-b96b-3b877c749e25</uuid>
     <file-application>eFapsApp-Products</file-application>
-    <file-revision>$Rev: 14788 $</file-revision>
+    
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_TransactionReportMyDesk_Menu_DownloadPDF</name>
