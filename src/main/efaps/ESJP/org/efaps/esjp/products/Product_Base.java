@@ -100,6 +100,8 @@ import org.efaps.esjp.erp.IWarning;
 import org.efaps.esjp.erp.WarningUtil;
 import org.efaps.esjp.products.util.Products;
 import org.efaps.esjp.products.util.Products.ProductIndividual;
+import org.efaps.esjp.ui.rest.provider.ITableProvider;
+import org.efaps.esjp.ui.rest.provider.StandardTableProvider;
 import org.efaps.ui.wicket.models.objects.UIForm;
 import org.efaps.ui.wicket.models.objects.UIForm.ElementType;
 import org.efaps.ui.wicket.models.objects.UITable;
@@ -120,6 +122,7 @@ import org.joda.time.DateTime;
 @EFapsApplication("eFapsApp-Products")
 public abstract class Product_Base
     extends CommonDocument
+    implements ITableProvider
 {
 
     /**
@@ -220,6 +223,7 @@ public abstract class Product_Base
     {
         final Create create = new Create()
         {
+
             @Override
             protected void add2basicInsert(final Parameter _parameter,
                                            final Insert _insert)
@@ -307,6 +311,7 @@ public abstract class Product_Base
     {
         final Edit create = new Edit()
         {
+
             @Override
             protected void add2MainUpdate(final Parameter _parameter,
                                           final Update _update)
@@ -637,7 +642,6 @@ public abstract class Product_Base
         return orderMap;
     }
 
-
     public Map<String, Map<String, String>> searchByDescription(final String[] types,
                                                                 final String searchTerm,
                                                                 final int maxResult,
@@ -716,7 +720,6 @@ public abstract class Product_Base
         }
         return orderMap;
     }
-
 
     /**
      * @param _parameter Parameter as passed by the eFaps API
@@ -798,9 +801,8 @@ public abstract class Product_Base
                 if (Products.FAMILY_ACTIVATE.get()) {
                     final IFilterList filterList = (IFilterList) _parameter.get(ParameterValues.OTHERS);
                     for (final IFilter filter : filterList) {
-                        if (filter instanceof IMapFilter && "productFamilyLink".equals(org.efaps.admin.ui.field.Field
+                        if (filter instanceof final IMapFilter mapFilter && "productFamilyLink".equals(org.efaps.admin.ui.field.Field
                                         .get(filter.getFieldId()).getName())) {
-                            final IMapFilter mapFilter = (IMapFilter) filter;
                             if (mapFilter.containsKey(EFapsKey.SELECTEDROW_NAME.getKey())) {
                                 if (!mapFilter.containsKey(EFapsKey.SELECTEALL_NAME.getKey())) {
                                     final String[] oids = (String[]) mapFilter.get(EFapsKey.SELECTEDROW_NAME.getKey());
@@ -873,12 +875,11 @@ public abstract class Product_Base
         final Return ret = new Return();
         StringBuilder js = new StringBuilder();
         final UIForm uiform = (UIForm) _parameter.get(ParameterValues.CLASS);
-        final String sessKey =  uiform.getCallingCommand().getUUID() + "-" + UITable.UserCacheKey.FILTER.getValue();
-        final String gridXKey =  uiform.getCallingCommand().getUUID() + "-" + CacheKey.DBFILTER.getValue();
+        final String sessKey = uiform.getCallingCommand().getUUID() + "-" + UITable.UserCacheKey.FILTER.getValue();
+        final String gridXKey = uiform.getCallingCommand().getUUID() + "-" + CacheKey.DBFILTER.getValue();
         String[] oids = null;
         if (Context.getThreadContext().containsSessionAttribute(sessKey)) {
-            @SuppressWarnings("unchecked")
-            final Map<String, TableFilter> sessfilter = (Map<String, TableFilter>) Context
+            @SuppressWarnings("unchecked") final Map<String, TableFilter> sessfilter = (Map<String, TableFilter>) Context
                             .getThreadContext().getSessionAttribute(sessKey);
             if (sessfilter.containsKey("productFamilyLink")) {
                 final TableFilter tfilter = sessfilter.get("productFamilyLink");
@@ -900,7 +901,7 @@ public abstract class Product_Base
 
         if (ArrayUtils.isNotEmpty(oids)) {
             final StringBuilder oidJs = new StringBuilder()
-                .append("var selected = [");
+                            .append("var selected = [");
             final List<Instance> familyInsts = new ArrayList<>();
             for (final String oid : oids) {
                 final Instance instance = Instance.get(oid);
@@ -937,27 +938,30 @@ public abstract class Product_Base
                 }
             } else {
                 js.append(oidJs)
-                    .append("var nl = query(\"[name='selectedRow']\").forEach(function(node){\n")
-                    .append("if (array.indexOf(selected, node.value) > -1) {\n")
-                    .append("domAttr.set(node, \"checked\", \"checked\");\n")
-                    .append("};\n")
-                    .append("});\n");
+                                .append("var nl = query(\"[name='selectedRow']\").forEach(function(node){\n")
+                                .append("if (array.indexOf(selected, node.value) > -1) {\n")
+                                .append("domAttr.set(node, \"checked\", \"checked\");\n")
+                                .append("};\n")
+                                .append("});\n");
             }
             js = InterfaceUtils.wrapInDojoRequire(_parameter, js, DojoLibs.QUERY, DojoLibs.DOMATTR, DojoLibs.ARRAY,
                             DojoLibs.REGISTRY);
         }
         if (!ElementType.GRID.equals(uiform.getElements().get(0).getType())) {
             js.append("_container_.onLoadDeferred.then(function() {\n")
-                .append("setTimeout(function(){\n")
-                .append("positionTableColumns(eFapsTable100);\n")
-                .append("}, 500);\n")
-                .append("});\n");
+                            .append("setTimeout(function(){\n")
+                            .append("positionTableColumns(eFapsTable100);\n")
+                            .append("}, 500);\n")
+                            .append("});\n");
         }
         ret.put(ReturnValues.SNIPLETT, InterfaceUtils.wrappInScriptTag(_parameter, js, true, 1000));
         return ret;
     }
 
-    protected void eval(final Map<Instance, String> _inst2key, final List<GridRow> _rows, final String _key) {
+    protected void eval(final Map<Instance, String> _inst2key,
+                        final List<GridRow> _rows,
+                        final String _key)
+    {
         int i = 0;
         for (final GridRow row : _rows) {
             if (_inst2key.containsKey(row.getInstance())) {
@@ -1042,12 +1046,10 @@ public abstract class Product_Base
             final long selectedUoM;
             if (dUoMId == null) {
                 selectedUoM = Dimension.get(dimId).getBaseUoM().getId();
+            } else if (Dimension.getUoM(dUoMId).getDimension().equals(Dimension.get(dimId))) {
+                selectedUoM = dUoMId;
             } else {
-                if (Dimension.getUoM(dUoMId).getDimension().equals(Dimension.get(dimId))) {
-                    selectedUoM = dUoMId;
-                } else {
-                    selectedUoM = Dimension.get(dimId).getBaseUoM().getId();
-                }
+                selectedUoM = Dimension.get(dimId).getBaseUoM().getId();
             }
             map.put("uoM", getUoMFieldStr(selectedUoM, dimId));
             add2updateFields4Product(_parameter, map);
@@ -1075,7 +1077,7 @@ public abstract class Product_Base
                                             final Map<String, Object> _map)
         throws EFapsException
     {
-        //to be used by implementations
+        // to be used by implementations
     }
 
     /**
@@ -1301,9 +1303,9 @@ public abstract class Product_Base
                             for (final Attribute attr : subClassType.getAttributes().values()) {
                                 if (addAttribute(attr, addedAttributes)
                                                 && !subClassType.getLinkAttributeName().equals(attr.getName())) {
-                                    if (_attrMap.containsKey(subClassType.getName() + "_" +  attr.getName())) {
+                                    if (_attrMap.containsKey(subClassType.getName() + "_" + attr.getName())) {
                                         subInsert.add(attr, _attrMap.get(subClassType.getName()
-                                                        + "_" +  attr.getName()));
+                                                        + "_" + attr.getName()));
                                     } else {
                                         final Object object = multi.getAttribute(attr);
                                         if (object instanceof Object[]) {
@@ -1439,7 +1441,7 @@ public abstract class Product_Base
     {
         final Return ret = new Return();
         final List<IWarning> warnings = new ArrayList<>();
-        final String name =  getNameFromUI(_parameter, _parameter.getInstance());
+        final String name = getNameFromUI(_parameter, _parameter.getInstance());
         final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductAbstract);
         queryBldr.addWhereAttrEqValue(CIProducts.ProductAbstract.Name, name);
         if (_parameter.getInstance() != null && _parameter.getInstance().isValid()
@@ -1470,7 +1472,7 @@ public abstract class Product_Base
      */
     protected String getNameFromUI(final Parameter _parameter,
                                    final Instance _instance)
-                                       throws EFapsException
+        throws EFapsException
     {
         String ret = null;
         if (_parameter.getParameterValue(CIFormProducts.Products_ProductForm.name.name) != null) {
@@ -1534,7 +1536,7 @@ public abstract class Product_Base
     }
 
     /**
-     * Gets the costing for a  product.
+     * Gets the costing for a product.
      *
      * @param _parameter Parameter as passed by the eFaps API
      * @return the costing4 product
@@ -1629,7 +1631,8 @@ public abstract class Product_Base
         }
         Integer val = 1;
         final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductAbstract);
-        // do not include the individual products, because they have their own naming
+        // do not include the individual products, because they have their own
+        // naming
         queryBldr.addWhereAttrNotEqValue(CIProducts.ProductAbstract.Type, CIProducts.ProductBatch.getType().getId(),
                         CIProducts.ProductIndividual.getType().getId());
         queryBldr.addWhereAttrEqValue(CIProducts.ProductAbstract.ProductFamilyLink, _famInst);
@@ -1692,7 +1695,7 @@ public abstract class Product_Base
      */
     public Instance getProduct4Individual(final Parameter _parameter,
                                           final Instance _individualProdInst)
-         throws EFapsException
+        throws EFapsException
     {
         Instance ret = null;
         final QueryBuilder queryBldr = new QueryBuilder(CIProducts.StoreableProductAbstract2IndividualAbstract);
@@ -1723,7 +1726,7 @@ public abstract class Product_Base
      */
     public Instance getGeneric4Replacment(final Parameter _parameter,
                                           final Instance _replInst)
-         throws EFapsException
+        throws EFapsException
     {
         Instance ret = null;
         final QueryBuilder queryBldr = new QueryBuilder(CIProducts.ProductGeneric2Product);
@@ -1809,7 +1812,7 @@ public abstract class Product_Base
         }
 
         final Set<Classification> clazzes = type.getClassifiedByTypes();
-        for (final Classification clazz  : clazzes) {
+        for (final Classification clazz : clazzes) {
             if (descriptions.containsKey(clazz.getName())) {
                 text = descriptions.getProperty(clazz.getName());
                 final Form clazzForm = clazz.getTypeForm();
@@ -1845,9 +1848,9 @@ public abstract class Product_Base
         if (ret != null && !StringUtils.isEmpty(_field.getAttribute())) {
             final Attribute attr = _type.getAttribute(_field.getAttribute());
             if (attr.getAttributeType().getUIProvider() instanceof LinkWithRangesUI) {
-                @SuppressWarnings("unchecked")
-                final List<IOption> options = (List<IOption>) attr.getAttributeType().getUIProvider().getValue(
-                                UIValue.get(_field, attr, ret));
+                @SuppressWarnings("unchecked") final List<IOption> options = (List<IOption>) attr.getAttributeType()
+                                .getUIProvider().getValue(
+                                                UIValue.get(_field, attr, ret));
                 for (final IOption option : options) {
                     if (String.valueOf(option.getValue()).equals(ret)) {
                         ret = option.getLabel();
@@ -1858,12 +1861,23 @@ public abstract class Product_Base
         return ret;
     }
 
+    @Override
+    public Collection<Map<String, ?>> getValues(final AbstractCommand cmd,
+                                         final List<org.efaps.admin.ui.field.Field> fields,
+                                         final Map<String, String> properties,
+                                         final String oid)
+        throws EFapsException
+    {
+         return new StandardTableProvider().getValues(cmd, fields, properties, oid);
+    }
+
     /**
      * Warning for invalid name.
      */
     public static class ProductNameInvalidWarning
         extends AbstractWarning
     {
+
         /**
          * Constructor.
          */
