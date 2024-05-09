@@ -129,7 +129,7 @@ public class CreateTransactionMutation
             final var individual = eval.get(CIProducts.StoreableProductAbstract.Individual);
             if (ProductIndividual.BATCH.equals(individual) || ProductIndividual.INDIVIDUAL.equals(individual)) {
                 resultBldr.error(GraphqlErrorBuilder.newError(environment)
-                                .message("Product Instance found for  '" + productInstance
+                                .message("Product found for  '" + productInstance.getOid()
                                                 + "' is not a valid product.")
                                 .build());
             } else {
