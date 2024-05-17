@@ -51,6 +51,7 @@
             <foreign name="T_PRODPRODUCT_FK_ASSOCID"    key="ASSOCID"   reference="T_CMASSOC(ID)"/>
             <foreign name="T_PRODPRODUCT_FK_DIMID"      key="DIMID"     reference="T_DMDIM(ID)"/>
             <foreign name="T_PRODPRODUCT_FK_UOMID"      key="UOMID"     reference="T_DMUOM(ID)"/>
+            <index  name="T_PRODPRODUCT_INDEX_TYPEIDASSOCID" columns="ASSOCID,TYPEID"/>
         </database>
     </definition>
 
@@ -85,6 +86,7 @@
             <foreign name="T_PRODPRODUCT_FK_ASSOCID"    key="ASSOCID"   reference="T_CMASSOC(ID)"/>
             <foreign name="T_PRODPRODUCT_FK_DIMID"      key="DIMID"     reference="T_DMDIM(ID)"/>
             <foreign name="T_PRODPRODUCT_FK_UOMID"      key="UOMID"     reference="T_DMUOM(ID)"/>
+            <index  name="T_PRODPRODUCT_INDEX_TYPEIDASSOCID" columns="ASSOCID,TYPEID"/>
         </database>
     </definition>
 </datamodel-sqltable>
