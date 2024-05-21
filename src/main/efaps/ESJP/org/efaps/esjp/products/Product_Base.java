@@ -62,6 +62,7 @@ import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.admin.ui.AbstractCommand;
+import org.efaps.admin.ui.AbstractUserInterfaceObject;
 import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
 import org.efaps.admin.ui.Form;
 import org.efaps.api.ui.IFilter;
@@ -1862,13 +1863,13 @@ public abstract class Product_Base
     }
 
     @Override
-    public Collection<Map<String, ?>> getValues(final AbstractCommand cmd,
-                                         final List<org.efaps.admin.ui.field.Field> fields,
-                                         final Map<String, String> properties,
-                                         final String oid)
+    public Collection<Map<String, ?>> getValues(final AbstractUserInterfaceObject cmd,
+                                                final List<org.efaps.admin.ui.field.Field> fields,
+                                                final Map<String, String> properties,
+                                                final String oid)
         throws EFapsException
     {
-         return new StandardTableProvider().getValues(cmd, fields, properties, oid);
+        return new StandardTableProvider().getValues(cmd, fields, properties, oid);
     }
 
     /**
