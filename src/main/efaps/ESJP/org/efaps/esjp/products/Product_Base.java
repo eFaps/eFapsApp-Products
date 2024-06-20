@@ -892,8 +892,14 @@ public abstract class Product_Base
         } else if (Context.getThreadContext().containsSessionAttribute(gridXKey)) {
             final IFilterList filterList = (IFilterList) Context.getThreadContext().getSessionAttribute(gridXKey);
             final Optional<IFilter> optional = filterList.stream()
-                            .filter(x -> org.efaps.admin.ui.field.Field
-                                            .get(x.getFieldId()).getName().equals("productFamilyLink"))
+                            .filter(x -> {
+                                try {
+                                    return org.efaps.admin.ui.field.Field
+                                                    .get(x.getFieldId()).getName().equals("productFamilyLink");
+                                } catch (final Exception ex) {
+                                }
+                                return false;
+                            })
                             .findFirst();
             if (optional.isPresent()) {
                 oids = (String[]) ((IMapFilter) optional.get()).get("selectedRow");
