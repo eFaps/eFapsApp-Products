@@ -96,6 +96,7 @@ public class CreateBatchMutation
             if (InstanceUtils.isKindOf(productInstance, CIProducts.StoreableProductAbstract)) {
                 ret = productInstance;
             } else {
+                LOG.error("OID {} is not a valid product.", productOid);
                 resultBldr.error(GraphqlErrorBuilder.newError(environment)
                                 .message("OID '" + productOid + "' is not a valid product.")
                                 .build());
@@ -114,11 +115,13 @@ public class CreateBatchMutation
                 if (InstanceUtils.isKindOf(productInst, CIProducts.StoreableProductAbstract)) {
                     ret = productInst;
                 } else {
+                    LOG.error("Instance found for {} is not a valid product.", productName);
                     resultBldr.error(GraphqlErrorBuilder.newError(environment)
                                     .message("Instance found for  '" + productName + "' is not a valid product.")
                                     .build());
                 }
             } else {
+                LOG.error("Product {} cannot be found.", productName);
                 resultBldr.error(GraphqlErrorBuilder.newError(environment)
                                 .message("Product" + productName + "' cannot be found.")
                                 .build());

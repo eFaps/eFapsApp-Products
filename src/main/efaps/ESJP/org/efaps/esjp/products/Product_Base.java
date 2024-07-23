@@ -1373,7 +1373,7 @@ public abstract class Product_Base
     {
         boolean ret = false;
         final String key = (_attr.getTable() != null ? _attr.getTable().getName() : _attr.getName())
-                        + _attr.getSqlColNames();
+                        + StringUtils.join(_attr.getSqlColNames(), "-");
         if (!_addedAttributes.contains(key)) {
             _addedAttributes.add(key);
             final AttributeType attrType = _attr.getAttributeType();
