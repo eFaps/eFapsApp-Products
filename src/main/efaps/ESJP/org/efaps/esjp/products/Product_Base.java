@@ -131,6 +131,8 @@ public abstract class Product_Base
      */
     public static final String CACHEKEY4PRODUCT = Product.class.getName() + ".CacheKey4Product";
 
+
+    private ITableProvider tableProvider;
     /**
      * @param _parameter _parameter
      * @return rangevalue
@@ -1869,13 +1871,22 @@ public abstract class Product_Base
     }
 
     @Override
-    public Collection<Map<String, ?>> getValues(final AbstractUserInterfaceObject cmd,
-                                                final List<org.efaps.admin.ui.field.Field> fields,
-                                                final Map<String, String> properties,
-                                                final String oid)
+    public ITableProvider init(AbstractUserInterfaceObject cmd,
+                               List<org.efaps.admin.ui.field.Field> fields,
+                               Map<String, String> properties,
+                               String oid)
         throws EFapsException
     {
-        return new StandardTableProvider().getValues(cmd, fields, properties, oid);
+        tableProvider = new StandardTableProvider();
+        return tableProvider.init(cmd, fields, properties, oid);
+    }
+
+    @Override
+    public Collection<Map<String, ?>> getValues()
+        throws EFapsException
+    {
+
+        return tableProvider.getValues();
     }
 
     /**
