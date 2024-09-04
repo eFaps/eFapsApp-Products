@@ -33,6 +33,7 @@
         <childs>
             <child>Products_ProductTree_PricelistRetail</child>
             <child>Products_ProductSalesPartList_BOM</child>
+            <child>Products_ProductSalesPartList_BOMGroup</child>
         </childs>
         <property name="Target">content</property>
         <property name="TargetMode">view</property>

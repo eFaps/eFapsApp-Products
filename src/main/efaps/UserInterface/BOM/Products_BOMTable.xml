@@ -17,8 +17,6 @@
 
 -->
 
-
-
 <ui-table xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>9ecfe8ca-fb20-4bd4-b9a6-1744909e8c16</uuid>
@@ -30,6 +28,7 @@
             <property name="Attribute">Type</property>
             <property name="Label">Products_BOMAbstract/Type.Label</property>
             <property name="ShowTypeIcon">true</property>
+            <property name="HRef">TREE</property>
         </field>
         <field name="group">
             <property name="Select">linkto[BOMGroupAbstractLink].attribute[Name]</property>

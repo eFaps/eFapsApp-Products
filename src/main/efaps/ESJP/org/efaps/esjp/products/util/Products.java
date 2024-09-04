@@ -412,6 +412,12 @@ public final class Products
                     .key(Products.BASE + "SalesPartList.ActivateBarcodes")
                     .description("Activate the Barcodes field set for SalesPartList.");
 
+    @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute SALESPARTLIST_ACTCONFBOM = new BooleanSysConfAttribute()
+                    .sysConfUUID(Products.SYSCONFUUID)
+                    .key(Products.BASE + "SalesPartList.ActivateConfigurationBOM")
+                    .description("Activate the ConfigurationBOM for SalesPartList.");
+
     /** See description. */
     @EFapsSysConfAttribute
     public static final BooleanSysConfAttribute SERV_ACTIVATE = new BooleanSysConfAttribute()
@@ -551,9 +557,10 @@ public final class Products
                     .key(Products.BASE + "AutocompleteConfig")
                     .addDefaultValue("maxResult", "200")
                     .addDefaultValue("searchBarcodes", "false")
-                    .description("Configuration for Product Autocomplete.\n"
-                                    + "maxResult (Integer): maximum result to be shown\n"
-                                    + "searchBarcodes (Boolean): activate/deactivate search in barcode");
+                    .description("""
+                        Configuration for Product Autocomplete.
+                        maxResult (Integer): maximum result to be shown
+                        searchBarcodes (Boolean): activate/deactivate search in barcode""");
 
     /**
      * Singelton.
