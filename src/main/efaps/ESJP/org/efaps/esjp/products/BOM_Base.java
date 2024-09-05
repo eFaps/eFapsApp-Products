@@ -93,7 +93,8 @@ public abstract class BOM_Base
                 throws EFapsException
             {
                 final var eval = EQL.builder()
-                                .print(parameter.getInstance())
+                                .print(parameter.getInstance() == null ? parameter.getCallInstance()
+                                                : parameter.getInstance())
                                 .linkto(CIProducts.BOMAbstract.FromAbstract)
                                 .instance().as("prodInst")
                                 .evaluate();
@@ -183,15 +184,13 @@ public abstract class BOM_Base
                                     .divide(new BigDecimal(defaultUoM.getNumerator()), BigDecimal.ROUND_HALF_UP);
                 }
                 bean.setUoM(defaultUoM);
+            } else if (!uom.equals(uom.getDimension().getBaseUoM())) {
+                quantity = quantity.multiply(new BigDecimal(uom.getNumerator()))
+                                .setScale(8, BigDecimal.ROUND_HALF_UP)
+                                .divide(new BigDecimal(uom.getDenominator()), BigDecimal.ROUND_HALF_UP);
+                bean.setUoM(uom.getDimension().getBaseUoM());
             } else {
-                if (!uom.equals(uom.getDimension().getBaseUoM())) {
-                    quantity = quantity.multiply(new BigDecimal(uom.getNumerator()))
-                                    .setScale(8, BigDecimal.ROUND_HALF_UP)
-                                    .divide(new BigDecimal(uom.getDenominator()), BigDecimal.ROUND_HALF_UP);
-                    bean.setUoM(uom.getDimension().getBaseUoM());
-                } else {
-                    bean.setUoM(uom);
-                }
+                bean.setUoM(uom);
             }
             bean.setQuantity(quantity.multiply(_quantity));
         }

@@ -31,8 +31,11 @@
             <property name="HRef">TREE</property>
         </field>
         <field name="group">
-            <property name="Select">linkto[BOMGroupAbstractLink].attribute[Name]</property>
+            <property name="SelectAlternateOID">linkto[BOMGroupAbstractLink].oid</property>
+            <property name="Phrase">$&lt;linkto[BOMGroupAbstractLink].attribute[Weight]&gt;-$&lt;linkto[BOMGroupAbstractLink].attribute[Name]&gt;</property>
             <property name="Label">Products_BOMTable.group.Label</property>
+            <property name="HRef">TREE</property>
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
         </field>
         <field name="position">
             <property name="Attribute">Position</property>
@@ -51,7 +54,6 @@
         <field name="quantity">
             <property name="Attribute">Quantity</property>
             <property name="Label">Products_BOMAbstract/Quantity.Label</property>
-            <property name="HRef">TREE</property>
         </field>
         <field name="uom4View">
             <property name="Width">1</property>

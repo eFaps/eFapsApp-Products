@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
     Copyright © 2003 - 2024 The eFaps Team (-)
 
@@ -16,24 +15,17 @@
     limitations under the License.
 
 -->
-
-
-<ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>5f299205-19d7-422e-97cc-56e5100134ed</uuid>
+<datamodel-type
+    xmlns="http://www.efaps.org/xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd"
+>
+    <uuid>f31843b0-c374-46be-81cb-c7fecc564bc7</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ConfigurationBOMTree</name>
-        <target>
-            <menu>Products_ConfigurationBOMTree_Menu</menu>
-            <form>Products_ConfigurationBOMForm</form>
-        </target>
-        <type>Products_ConfigurationBOM</type>
-        <childs>
-            <child>Products_ConfigurationBOMTree_Actions</child>
-        </childs>
-        <property name="Target">content</property>
-        <property name="TargetMode">view</property>
+        <name>Products_ActionAbstract</name>
+        <parent>Products_ObjectAbstract</parent>
+        <purpose abstract="true"/>
     </definition>
-</ui-menu>
+</datamodel-type>
