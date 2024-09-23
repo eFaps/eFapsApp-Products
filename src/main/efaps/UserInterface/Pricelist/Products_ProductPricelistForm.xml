@@ -26,7 +26,7 @@
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductPricelistForm</name>
-        
+
 
         <field name="type">
             <property name="Attribute">Type</property>
@@ -36,6 +36,7 @@
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
             <property name="Attribute">ValidFrom</property>
+            <property name="UIType">DATE</property>
         </field>
         <field name="validUntil">
             <property name="Columns">40</property>
@@ -43,6 +44,7 @@
             <property name="ModeEdit">EDITABLE</property>
             <property name="Attribute">ValidUntil</property>
             <property name="Required">true</property>
+            <property name="UIType">DATE</property>
             <trigger program="org.efaps.esjp.products.PriceList" method="getValidUntilUI"
                 name="Products_ProductPricelistForm.validUntil.UI_FIELD_VALUE" event="UI_FIELD_VALUE" />
         </field>

@@ -16,13 +16,12 @@
 package org.efaps.esjp.products;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
-import org.efaps.admin.datamodel.Attribute;
 import org.efaps.admin.datamodel.Type;
 import org.efaps.admin.datamodel.ui.IUIValue;
 import org.efaps.admin.event.Parameter;
@@ -43,12 +42,12 @@ import org.efaps.db.PrintQuery;
 import org.efaps.db.QueryBuilder;
 import org.efaps.db.SelectBuilder;
 import org.efaps.db.Update;
+import org.efaps.eql.EQL;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.uitable.MultiPrint;
 import org.efaps.esjp.db.InstanceUtils;
 import org.efaps.esjp.products.listener.IPriceListListener;
 import org.efaps.esjp.products.util.Products;
-import org.efaps.util.DateTimeUtil;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -99,41 +98,33 @@ public abstract class PriceList_Base
     public Return trigger4Insert(final Parameter _parameter)
         throws EFapsException
     {
-        final Map<?, ?> values = (Map<?, ?>) _parameter.get(ParameterValues.NEW_VALUES);
-        final Instance costInstance = _parameter.getInstance();
-        final Map<String, Object[]> name2Value = new HashMap<>();
-        String typename = null;
-        for (final Entry<?, ?> entry : values.entrySet()) {
-            final Attribute attr = (Attribute) entry.getKey();
-            if (typename == null) {
-                typename = attr.getParent().getName();
-            }
-            name2Value.put(attr.getName(), (Object[]) entry.getValue());
-        }
-        final Object from = name2Value.get(CIProducts.ProductPricelistAbstract.ValidFrom.name)[0];
-        final var date = DateTimeUtil.toDateTime(from);
+        final Instance priceListInstance = _parameter.getInstance();
 
-        final Map<?, ?> properties = (Map<?, ?>) _parameter.get(ParameterValues.PROPERTIES);
-        if (properties.containsKey("Type")) {
-            typename = (String) properties.get("Type");
-        }
-        final QueryBuilder queryBldr = new QueryBuilder(Type.get(typename));
-        queryBldr.addWhereAttrGreaterValue(CIProducts.ProductPricelistAbstract.ValidUntil, date);
-        queryBldr.addWhereAttrEqValue(CIProducts.ProductPricelistAbstract.ProductAbstractLink, getProdId(costInstance));
+        final var eval = EQL.builder().print(priceListInstance)
+            .attribute(CIProducts.ProductPricelistAbstract.ValidFrom)
+            .evaluate();
+        eval.next();
+
+        final LocalDate validFrom = eval.get(CIProducts.ProductPricelistAbstract.ValidFrom);
+
+        final QueryBuilder queryBldr = new QueryBuilder(eval.inst().getType());
+        queryBldr.addWhereAttrGreaterValue(CIProducts.ProductPricelistAbstract.ValidUntil, validFrom);
+        queryBldr.addWhereAttrEqValue(CIProducts.ProductPricelistAbstract.ProductAbstractLink,
+                        getProdId(priceListInstance));
         add2QueryBuilder4TriggerInsert(_parameter, queryBldr);
         final InstanceQuery query = queryBldr.getQuery();
         query.execute();
         final List<String> updateOIDs = new ArrayList<>();
         while (query.next()) {
             final String oid = query.getCurrentValue().getOid();
-            if (!costInstance.getOid().equals(oid)) {
+            if (!priceListInstance.getOid().equals(oid)) {
                 updateOIDs.add(oid);
             }
         }
 
         for (final String oid : updateOIDs) {
             final Update update = new Update(oid);
-            update.add(CIProducts.ProductPricelistAbstract.ValidUntil, date.minusDays(1));
+            update.add(CIProducts.ProductPricelistAbstract.ValidUntil, validFrom.minusDays(1));
             update.executeWithoutTrigger();
         }
         return new Return();
@@ -250,12 +241,10 @@ public abstract class PriceList_Base
 
                         if (fieldName.equalsIgnoreCase("dateRange")) {
                             listProducts.put(multi.getCurrentInstance(), dateRange);
+                        } else if (fieldName.equalsIgnoreCase("validFrom")) {
+                            listProducts.put(multi.getCurrentInstance(), fromDateStr);
                         } else {
-                            if (fieldName.equalsIgnoreCase("validFrom")) {
-                                listProducts.put(multi.getCurrentInstance(), fromDateStr);
-                            } else {
-                                listProducts.put(multi.getCurrentInstance(), untilDateStr);
-                            }
+                            listProducts.put(multi.getCurrentInstance(), untilDateStr);
                         }
                     }
                 }
