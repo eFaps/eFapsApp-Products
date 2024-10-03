@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
     Copyright © 2003 - 2024 The eFaps Team (-)
 
@@ -16,19 +15,13 @@
     limitations under the License.
 
 -->
-
 <ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>bfd25c10-8e62-43b4-94c3-71db43573289</uuid>
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>a39f8b61-51e2-47fc-bab3-b291f229a42c</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductStandartTree_Image</name>
-        <access>
-            <role>Products_Admin</role>
-            <role>Products_Modifier</role>
-            <role>Products_Reader</role>
-        </access>
+        <name>Products_ProductSalesPartListTree_Image</name>
         <target>
             <menu>Products_ProductTree_Image_Menu</menu>
             <table>Products_Product2ImageTable</table>
@@ -36,12 +29,11 @@
                 <property name="Type">Products_Product2ImageAbstract</property>
                 <property name="LinkFrom">ProductAbstractLink</property>
             </evaluate>
-            <trigger program="org.efaps.esjp.admin.access.AccessCheck4UI"
-                name="Products_ProductMaterialMyDesk.UI_ACCESSCHECK"
-                method="configCheck"
-                event="UI_ACCESSCHECK">
+            <trigger event="UI_ACCESSCHECK" method="configCheck"
+                name="Products_ProductSalesPartListTree_Image.UI_ACCESSCHECK"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI">
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
-                <property name="AttributeExists">org.efaps.products.Standart.Image</property>
+                <property name="AttributeExists">org.efaps.products.SalesPartList.Image</property>
             </trigger>
         </target>
         <property name="Target">content</property>

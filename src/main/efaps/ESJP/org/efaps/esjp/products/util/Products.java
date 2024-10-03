@@ -379,7 +379,7 @@ public final class Products
 
     /** See description. */
     @EFapsSysConfAttribute
-    public static final PropertiesSysConfAttribute STANDARTIMG = new PropertiesSysConfAttribute()
+    public static final PropertiesSysConfAttribute STANDART_IMG = new PropertiesSysConfAttribute()
                     .sysConfUUID(Products.SYSCONFUUID)
                     .key(Products.BASE + "Standart.Image")
                     .addDefaultValue("Image4Doc.Create", "false")
@@ -417,6 +417,22 @@ public final class Products
                     .sysConfUUID(Products.SYSCONFUUID)
                     .key(Products.BASE + "SalesPartList.ActivateConfigurationBOM")
                     .description("Activate the ConfigurationBOM for SalesPartList.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final PropertiesSysConfAttribute SALESPARTLIST_IMG = new PropertiesSysConfAttribute()
+                    .sysConfUUID(Products.SYSCONFUUID)
+                    .key(Products.BASE + "SalesPartList.Image")
+                    .addDefaultValue("Image4Doc.Create", "false")
+                    .addDefaultValue("Image4Doc.Width", "250")
+                    .addDefaultValue("Image4Doc.Height", "250")
+                    .addDefaultValue("Image4Doc.Enlarge", "false")
+                    .addDefaultValue("Thumbnail.Create", "true")
+                    .addDefaultValue("Thumbnail.Width", "150")
+                    .addDefaultValue("Thumbnail.Height", "150")
+                    .addDefaultValue("Thumbnail.Enlarge", "false")
+                    .description("Configuration for Image.");
+
 
     /** See description. */
     @EFapsSysConfAttribute

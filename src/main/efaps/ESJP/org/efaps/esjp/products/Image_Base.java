@@ -22,7 +22,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -31,8 +30,6 @@ import javax.imageio.ImageIO;
 
 import org.apache.commons.imaging.ImageFormats;
 import org.apache.commons.imaging.ImageInfo;
-import org.apache.commons.imaging.ImageReadException;
-import org.apache.commons.imaging.ImageWriteException;
 import org.apache.commons.imaging.Imaging;
 import org.apache.commons.io.IOUtils;
 import org.efaps.admin.datamodel.Type;
@@ -80,6 +77,7 @@ public abstract class Image_Base
 
     /**
      * Grants access to the field used as a link to the original file.
+     *
      * @param _parameter Parameter as passed by the eFaps API
      * @return Return with true if access is granted
      * @throws EFapsException on error
@@ -99,6 +97,7 @@ public abstract class Image_Base
 
     /**
      * Grants access to the field used as a link to the original file.
+     *
      * @param _parameter Parameter as passed by the eFaps API
      * @return Return with true if access is granted
      * @throws EFapsException on error
@@ -124,7 +123,7 @@ public abstract class Image_Base
         if (!res.isEmpty()) {
             final PrintQuery print = new PrintQuery(res.get(0));
             final SelectBuilder selImageOid = new SelectBuilder()
-                .linkto(CIProducts.Product2ImageAbstract.ImageAbstractLink).oid();
+                            .linkto(CIProducts.Product2ImageAbstract.ImageAbstractLink).oid();
             print.addSelect(selImageOid);
             print.execute();
             imageOid = print.<String>getSelect(selImageOid);
@@ -132,7 +131,7 @@ public abstract class Image_Base
             if (imageInst.getType().equals(CIProducts.ImageThumbnail.getType())) {
                 final PrintQuery imPrint = new PrintQuery(imageInst);
                 final SelectBuilder selLinkOid = new SelectBuilder()
-                    .linkto(CIProducts.ImageThumbnail.OriginalLink).oid();
+                                .linkto(CIProducts.ImageThumbnail.OriginalLink).oid();
                 imPrint.addSelect(selLinkOid);
                 imPrint.execute();
                 linkOid = imPrint.<String>getSelect(selLinkOid);
@@ -170,7 +169,6 @@ public abstract class Image_Base
         return retVal;
     }
 
-
     /**
      * @param _parameter Parameter as passed by the eFaps API
      * @return Return with true if access is granted
@@ -187,7 +185,9 @@ public abstract class Image_Base
         uploadImage(_parameter, imageInst, fileItem);
         Properties props = new Properties();
         if (parentInst.getType().isCIType(CIProducts.ProductStandart)) {
-            props = Products.STANDARTIMG.get();
+            props = Products.STANDART_IMG.get();
+        } else if (parentInst.getType().isCIType(CIProducts.ProductSalesPartList)) {
+            props = Products.SALESPARTLIST_IMG.get();
         }
         if (props.containsKey("Image4Doc.Create") && "true".equalsIgnoreCase(props.getProperty("Image4Doc.Create"))) {
             final int width = Integer.parseInt(props.getProperty("Image4Doc.Width", "250"));
@@ -235,13 +235,14 @@ public abstract class Image_Base
         final Instance prodInst = print.getSelect(selProdInst);
         Properties props = new Properties();
         if (prodInst.getType().isCIType(CIProducts.ProductStandart)) {
-            props = Products.STANDARTIMG.get();
+            props = Products.STANDART_IMG.get();
+        } else if (prodInst.getType().isCIType(CIProducts.ProductSalesPartList)) {
+            props = Products.SALESPARTLIST_IMG.get();
         }
         final String imageType = getProperty(_parameter, "ImageType", "Thumbnail");
         final Checkout checkout = new Checkout(imgInst);
         final InputStream inputStream = checkout.execute();
         final String fileName = checkout.getFileName();
-
 
         ParameterUtil.setParameterValues(_parameter, "description4Create",
                         print.<String>getSelect(selImgDescr));
@@ -286,7 +287,7 @@ public abstract class Image_Base
     {
         final File ret;
         try {
-            ret =  createNewImageFile(_parameter, _prefix, _fileItem.getInputStream(), _fileItem.getName(), _dim);
+            ret = createNewImageFile(_parameter, _prefix, _fileItem.getInputStream(), _fileItem.getName(), _dim);
         } catch (final IOException e) {
             throw new EFapsException(this.getClass(), "createNewImage", e, _parameter);
         }
@@ -296,15 +297,14 @@ public abstract class Image_Base
     /**
      * Creates the new image file.
      *
-     * @param _parameter    Parameter as passed by the eFaps API
-     * @param _prefix       Prefix
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _prefix Prefix
      * @param _imageStream the _image stream
      * @param _imageName the _image name
-     * @param _dim          Dimension of the new image
+     * @param _dim Dimension of the new image
      * @return new File
      * @throws EFapsException on error
      */
-    @SuppressWarnings("rawtypes")
     protected File createNewImageFile(final Parameter _parameter,
                                       final String _prefix,
                                       final InputStream _imageStream,
@@ -316,7 +316,7 @@ public abstract class Image_Base
         try {
             final byte[] bytes = IOUtils.toByteArray(_imageStream);
             final ImageInfo info = Imaging.getImageInfo(new ByteArrayInputStream(bytes), _imageName);
-            ret = new FileUtil().getFile(_prefix + _imageName, info.getFormat().getExtension());
+            ret = new FileUtil().getFile(_prefix + _imageName, info.getFormat().getDefaultExtension());
 
             final FileOutputStream os = new FileOutputStream(ret);
 
@@ -330,13 +330,9 @@ public abstract class Image_Base
                 final ResampleOp resampleOp = new ResampleOp(_dim);
                 // resampleOp.setUnsharpenMask(AdvancedResizeOp.UnsharpenMask.Normal);
                 final BufferedImage rescaledTomato = resampleOp.filter(image, null);
-                Imaging.writeImage(rescaledTomato, os, info.getFormat(), new HashMap<>());
+                Imaging.writeImage(rescaledTomato, os, info.getFormat());
             }
-        } catch (final ImageReadException e) {
-            throw new EFapsException(this.getClass(), "createNewImage", e, _parameter);
         } catch (final IOException e) {
-            throw new EFapsException(this.getClass(), "createNewImage", e, _parameter);
-        } catch (final ImageWriteException e) {
             throw new EFapsException(this.getClass(), "createNewImage", e, _parameter);
         }
         return ret;
@@ -368,9 +364,9 @@ public abstract class Image_Base
     }
 
     /**
-     * @param _parameter    Parameter as passed by the eFaps API
-     * @param _imageInst    Instance the imgae will be check in to
-     * @param _fileItem      file to be checked in
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _imageInst Instance the imgae will be check in to
+     * @param _fileItem file to be checked in
      * @throws EFapsException on error
      */
     protected void uploadImage(final Parameter _parameter,
@@ -385,16 +381,13 @@ public abstract class Image_Base
             updateImage(_parameter, _imageInst, info);
         } catch (final IOException e) {
             throw new EFapsException(this.getClass(), "uploadImage", e, _parameter);
-        } catch (final ImageReadException e) {
-            throw new EFapsException(this.getClass(), "uploadImage", e, _parameter);
         }
     }
 
-
     /**
-     * @param _parameter    Parameter as passed by the eFaps API
-     * @param _imageInst    Instance the imgae will be check in to
-     * @param _file         file to be checked in
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _imageInst Instance the imgae will be check in to
+     * @param _file file to be checked in
      * @throws EFapsException on error
      */
     protected void uploadImage(final Parameter _parameter,
@@ -410,16 +403,13 @@ public abstract class Image_Base
             updateImage(_parameter, _imageInst, info);
         } catch (final IOException e) {
             throw new EFapsException(this.getClass(), "uploadImage", e, _parameter);
-        } catch (final ImageReadException e) {
-            throw new EFapsException(this.getClass(), "uploadImage", e, _parameter);
         }
     }
 
-
     /**
-     * @param _parameter    Parameter as passed by the eFaps API
-     * @param _imageInst    instance of the image to be update with the info
-     * @param _info         ImageInfo
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _imageInst instance of the image to be update with the info
+     * @param _info ImageInfo
      * @throws EFapsException on error
      */
     protected void updateImage(final Parameter _parameter,
@@ -463,9 +453,9 @@ public abstract class Image_Base
     }
 
     /**
-     * @param _parameter    Parameter as passed by the eFaps API
-     * @param _type Type    of image to be created
-     * @param _origInst     Instance of the original file
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _type Type of image to be created
+     * @param _origInst Instance of the original file
      * @return instance of newly create file
      * @throws EFapsException on error
      */

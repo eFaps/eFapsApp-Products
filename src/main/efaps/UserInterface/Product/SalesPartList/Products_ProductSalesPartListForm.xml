@@ -353,6 +353,8 @@
             <property name="Label">Products_ProductForm.image.Label</property>
             <property name="ModeEdit">NONE</property>
             <property name="UIType">SNIPPLET</property>
+            <property name="ValueType">IMAGE</property>
+            <property name="SelectAlternateOID">linkfrom[Products_Product2ImageAbstract#ProductAbstractLink].linkto[ImageAbstractLink].oid.first</property>
             <trigger event="UI_FIELD_VALUE"
                 method="getImageFieldValueUI"
                 name="Products_ImageForm.image.UI_FIELD_VALUE"
@@ -364,7 +366,7 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductSalesPartListForm.image.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-             <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="AttributeExists">org.efaps.products.SalesPartList.Image</property>
             </trigger>
         </field>
