@@ -420,6 +420,13 @@ public final class Products
 
     /** See description. */
     @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute SALESPARTLIST_ACTNOTE = new BooleanSysConfAttribute()
+                    .sysConfUUID(Products.SYSCONFUUID)
+                    .key(Products.BASE + "SalesPartList.ActivateNote")
+                    .description("Activate the note field for SalesPartList.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
     public static final PropertiesSysConfAttribute SALESPARTLIST_IMG = new PropertiesSysConfAttribute()
                     .sysConfUUID(Products.SYSCONFUUID)
                     .key(Products.BASE + "SalesPartList.Image")
