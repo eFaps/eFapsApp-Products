@@ -645,7 +645,8 @@ public final class Products
     {
 
         OPTIONAL,
-        ONLYONE;
+        ONLYONE,
+        CHARGEABLE;
 
         @Override
         public int getInt()
