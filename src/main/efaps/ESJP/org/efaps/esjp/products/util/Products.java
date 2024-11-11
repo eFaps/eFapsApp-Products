@@ -661,6 +661,25 @@ public final class Products
         }
     }
 
+    public enum ConfigurationBOMFlag
+        implements IBitEnum
+      {
+
+          DEFAULT;
+
+          @Override
+          public int getInt()
+          {
+              return BitEnumType.getInt4Index(ordinal());
+          }
+
+          @Override
+          public int getBitIndex()
+          {
+              return ordinal();
+          }
+  }
+
     /**
      * @return the SystemConfigruation for Sales
      * @throws CacheReloadException on error

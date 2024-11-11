@@ -17,22 +17,15 @@
 
 -->
 
-
-
-
 <datamodel-type  xmlns="http://www.efaps.org/xsd"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>123fe017-cacb-401f-8ea8-9ad944f6bc1e</uuid>
     <file-application>eFapsApp-Products</file-application>
-    
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_AlternativeBOM</name>
         <parent>Products_BOMAbstract</parent>
-
-        
-
         <attribute>
             <name>From</name>
             <type>Link</type>

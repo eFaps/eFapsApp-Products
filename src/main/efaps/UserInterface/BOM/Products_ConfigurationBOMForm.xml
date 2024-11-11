@@ -65,6 +65,11 @@
             <property name="Attribute">Position</property>
             <property name="Label">Products_BOMAbstract/Position.Label</property>
         </field>
+        <field name="flags">
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="Attribute">Flags</property>
+            <property name="Label">Products_ConfigurationBOM/Flags.Label</property>
+        </field>
         <field name="toName">
             <property name="SelectAlternateOID">linkto[ToAbstract].oid</property>
             <property name="Select">linkto[ToAbstract].attribute[Name]</property>

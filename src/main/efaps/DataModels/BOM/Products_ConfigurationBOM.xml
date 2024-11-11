@@ -47,5 +47,13 @@
             <sqltable>Products_BOMSQLTable</sqltable>
             <sqlcolumn>GROUPID</sqlcolumn>
         </attribute>
+        <attribute>
+            <name>Flags</name>
+            <type>BitEnum</type>
+            <className>org.efaps.esjp.products.util.Products$ConfigurationBOMFlag</className>
+            <sqltable>Products_BOMSQLTable</sqltable>
+            <sqlcolumn>INT1</sqlcolumn>
+            <defaultvalue>0</defaultvalue>
+        </attribute>
     </definition>
 </datamodel-type>
