@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
     Copyright © 2003 - 2024 The eFaps Team (-)
 
@@ -16,15 +15,13 @@
     limitations under the License.
 
 -->
-
-
 <ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>282ae6ac-bfc5-43d9-a584-16ca79c797a8</uuid>
+    <uuid>ea17c174-e4c1-4821-b60d-14b6505c0bb3</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductTree_BOM_Menu_Action_AddExistingAsConfigurationBOM</name>
+        <name>Products_ProductSalesPartListTree_BOM_Menu_Action_AddExistingAsConfigurationBOM</name>
         <access>
             <role>Products_Modifier</role>
             <role>Products_Admin</role>
@@ -36,13 +33,9 @@
                 <property name="ConnectParentAttribute">From</property>
                 <property name="ConnectType">Products_ConfigurationBOM</property>
             </execute>
-            <trigger event="UI_ACCESSCHECK" method="configCheck"
-                name="Products_ProductStandartTree_BOMGroup.UI_ACCESSCHECK"
-                program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                
-
+            <trigger event="UI_ACCESSCHECK" method="configCheck" name="Products_ProductStandartTree_BOMGroup.UI_ACCESSCHECK" program="org.efaps.esjp.admin.access.AccessCheck4UI">
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
-                <property name="Attribute">org.efaps.products.Standart.ActivateConfigurationBOM</property>
+                <property name="Attribute">org.efaps.products.SalesPartList.ActivateConfigurationBOM</property>
             </trigger>
         </target>
         <property name="Target">modal</property>

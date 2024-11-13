@@ -36,8 +36,8 @@
             <child>Products_ProductTree_PricelistPurchase</child>
             <child>Products_ProductTree_Cost</child>
             <child>Products_ProductTree_Product</child>
-            <child>Products_ProductTree_BOM</child>
             <child>Products_ProductStandartTree_BOMGroup</child>
+            <child>Products_ProductStandartTree_BOM</child>
             <child>Products_ProductTree_Individual</child>
             <child>Products_ProductStandartTree_Image</child>
             <child>Products_ProductTree_Contacts</child>

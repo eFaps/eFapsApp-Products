@@ -39,7 +39,7 @@
             <property name="ModeCreate">EDITABLE</property>
             <property name="Attribute">Description</property>
         </field>
-         <field name="weight">
+        <field name="weight">
             <property name="ModeEdit">EDITABLE</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="Attribute">Weight</property>
@@ -49,6 +49,21 @@
             <property name="ModeEdit">EDITABLE</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="Attribute">Config</property>
+        </field>
+        <field character="Group" name="quantityGroup">
+            <property name="GroupCount">2</property>
+            <property name="ModeEdit">READONLY</property>
+            <property name="ModeCreate">READONLY</property>
+        </field>
+        <field name="minQuantity">
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="Attribute">MinQuantity</property>
+        </field>
+        <field name="maxQuantity">
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="Attribute">MaxQuantity</property>
         </field>
         <field character="Group" name="createGroup">
             <property name="GroupCount">2</property>

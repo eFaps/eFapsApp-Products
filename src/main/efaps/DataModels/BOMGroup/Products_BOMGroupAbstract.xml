@@ -51,7 +51,7 @@
             <sqltable>Products_ProductGenericDependendSQLTable</sqltable>
             <sqlcolumn>PRODUCTID</sqlcolumn>
         </attribute>
-          <attribute>
+        <attribute>
             <name>Weight</name>
             <type>Integer</type>
             <sqltable>Products_ProductGenericDependendSQLTable</sqltable>

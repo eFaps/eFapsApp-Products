@@ -20,23 +20,29 @@
 <ui-menu xmlns="http://www.efaps.org/xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>60258627-9601-4bfc-bc72-3a3245318201</uuid>
+    <uuid>febbc6d2-fb2c-4778-8c55-99434bd426f7</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductSalesPartListTree</name>
+        <name>Products_ProductSalesPartListTree_BOM</name>
+        <access>
+            <role>Products_Admin</role>
+            <role>Products_Modifier</role>
+        </access>
         <target>
-            <menu>Products_ProductSalesPartListTree_Menu</menu>
-            <form>Products_ProductSalesPartListForm</form>
+            <menu>Products_ProductSalesPartListTree_BOM_Menu</menu>
+            <table>Products_BOMTable</table>
+            <evaluate
+                program="org.efaps.esjp.common.uitable.MultiPrint">
+                <property name="Type01">Products_BOMAbstract</property>
+                <property name="LinkFrom01">FromAbstract</property>
+                <property name="Type02">Products_BOMAbstract</property>
+                <property name="LinkFrom02">ToAbstract</property>
+                <property name="ExpandChildTypes">true</property>
+            </evaluate>
         </target>
-        <type>Products_ProductSalesPartList</type>
-        <childs>
-            <child>Products_ProductTree_PricelistRetail</child>
-            <child>Products_ProductSalesPartListTree_BOMGroup</child>
-            <child>Products_ProductSalesPartListTree_BOM</child>
-            <child>Products_ProductSalesPartListTree_Image</child>
-        </childs>
         <property name="Target">content</property>
         <property name="TargetMode">view</property>
+        <property name="TargetShowCheckBoxes">true</property>
     </definition>
 </ui-menu>

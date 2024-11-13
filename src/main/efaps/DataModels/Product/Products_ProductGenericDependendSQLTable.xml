@@ -33,13 +33,15 @@
             <column name="STR2"   type="STRING_SHORT" length="256"/>
             <column name="INT1"   type="INTEGER"/>
             <column name="INT2"   type="INTEGER"/>
-            <column name="CREATOR" not-null="true" type="INTEGER"/>
-            <column name="CREATED" not-null="true" type="DATETIME"/>
+            <column name="DEC1"   type="DECIMAL"      length="15" scale="4"/>
+            <column name="DEC2"   type="DECIMAL"      length="15" scale="4"/>
+            <column name="CREATOR"  not-null="true" type="INTEGER"/>
+            <column name="CREATED"  not-null="true" type="DATETIME"/>
             <column name="MODIFIER" not-null="true" type="INTEGER"/>
             <column name="MODIFIED" not-null="true" type="DATETIME"/>
             <foreign key="PRODUCTID" name="T_PRODPRODUCT_FK_PRODUCTID" reference="T_PRODPRODUCT(ID)"/>
-            <foreign key="CREATOR" name="T_PRODPRODUCT_FK_CRTR" reference="T_USERPERSON(ID)"/>
-            <foreign key="MODIFIER" name="T_PRODPRODUCT_FK_MDFR" reference="T_USERPERSON(ID)"/>
+            <foreign key="CREATOR"   name="T_PRODPRODUCT_FK_CRTR"      reference="T_USERPERSON(ID)"/>
+            <foreign key="MODIFIER"  name="T_PRODPRODUCT_FK_MDFR"      reference="T_USERPERSON(ID)"/>
         </database>
     </definition>
 </datamodel-sqltable>

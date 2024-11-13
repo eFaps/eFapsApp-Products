@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
     Copyright © 2003 - 2024 The eFaps Team (-)
 
@@ -16,31 +15,26 @@
     limitations under the License.
 
 -->
-
-<ui-menu xmlns="http://www.efaps.org/xsd"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>febbc6d2-fb2c-4778-8c55-99434bd426f7</uuid>
+    <uuid>bd71a1ce-a61a-486c-98c3-5c1e9e3af87c</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductSalesPartList_BOM</name>
-        <access>
-            <role>Products_Admin</role>
-            <role>Products_Modifier</role>
-        </access>
+        <name>Products_ProductSalesPartListTree_BOMGroup</name>
         <target>
-            <menu>Products_ProductSalesPartList_BOM_Menu</menu>
-            <table>Products_BOMTable</table>
-            <evaluate
-                program="org.efaps.esjp.common.uitable.MultiPrint">
-                <property name="Type01">Products_BOMAbstract</property>
-                <property name="LinkFrom01">FromAbstract</property>
-                <property name="Type02">Products_BOMAbstract</property>
-                <property name="LinkFrom02">ToAbstract</property>
-                <property name="ExpandChildTypes">true</property>
+            <menu>Products_ProductTree_BOMGroup_Menu</menu>
+            <table>Products_BOMGroupTable</table>
+            <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
+                <property name="Type">Products_BOMGroupAbstract</property>
+                <property name="LinkFrom">ProductAbstractLink</property>
             </evaluate>
-            <help>org.efaps.wiki.products.Showproducts.wiki</help>
+            <trigger event="UI_ACCESSCHECK" method="configCheck"
+                name="Products_ProductSalesPartList_BOMGroup.UI_ACCESSCHECK"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI">
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.SalesPartList.ActivateConfigurationBOM</property>
+            </trigger>
         </target>
         <property name="Target">content</property>
         <property name="TargetMode">view</property>

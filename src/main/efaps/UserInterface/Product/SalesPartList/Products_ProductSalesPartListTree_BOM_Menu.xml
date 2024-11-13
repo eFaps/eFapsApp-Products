@@ -20,23 +20,13 @@
 <ui-menu xmlns="http://www.efaps.org/xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>60258627-9601-4bfc-bc72-3a3245318201</uuid>
+    <uuid>ce3b5605-6c05-42ab-9662-ab1be84cf3b0</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductSalesPartListTree</name>
-        <target>
-            <menu>Products_ProductSalesPartListTree_Menu</menu>
-            <form>Products_ProductSalesPartListForm</form>
-        </target>
-        <type>Products_ProductSalesPartList</type>
+        <name>Products_ProductSalesPartListTree_BOM_Menu</name>
         <childs>
-            <child>Products_ProductTree_PricelistRetail</child>
-            <child>Products_ProductSalesPartListTree_BOMGroup</child>
-            <child>Products_ProductSalesPartListTree_BOM</child>
-            <child>Products_ProductSalesPartListTree_Image</child>
+            <child>Products_ProductSalesPartListTree_BOM_Menu_Action</child>
         </childs>
-        <property name="Target">content</property>
-        <property name="TargetMode">view</property>
     </definition>
 </ui-menu>

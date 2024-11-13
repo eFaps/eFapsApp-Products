@@ -41,5 +41,17 @@ xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.
             <sqlcolumn>INT1</sqlcolumn>
             <defaultvalue>0</defaultvalue>
         </attribute>
+        <attribute>
+            <name>MinQuantity</name>
+            <type>Decimal</type>
+            <sqltable>Products_ProductGenericDependendSQLTable</sqltable>
+            <sqlcolumn>DEC1</sqlcolumn>
+        </attribute>
+        <attribute>
+            <name>MaxQuantity</name>
+            <type>Decimal</type>
+            <sqltable>Products_ProductGenericDependendSQLTable</sqltable>
+            <sqlcolumn>DEC2</sqlcolumn>
+        </attribute>
     </definition>
 </datamodel-type>

@@ -24,10 +24,10 @@
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_ProductSalesPartList_BOM_Menu_Action</name>
+        <name>Products_ProductSalesPartListTree_BOM_Menu_Action</name>
         <childs>
             <child>Products_ProductTree_BOM_Menu_Action_AddExistingAsSalesBOM</child>
-            <child>Products_ProductTree_BOM_Menu_Action_AddExistingAsConfigurationBOM</child>
+            <child>Products_ProductSalesPartListTree_BOM_Menu_Action_AddExistingAsConfigurationBOM</child>
             <child>Products_ProductTree_BOM_Menu_Action_EditBOMQuantity</child>
             <child>Products_ProductTree_BOM_Menu_Action_Disconnect</child>
         </childs>
