@@ -81,6 +81,7 @@ import org.efaps.db.QueryBuilder;
 import org.efaps.db.SelectBuilder;
 import org.efaps.db.Update;
 import org.efaps.eql.EQL;
+import org.efaps.eql.builder.Query;
 import org.efaps.eql.builder.Selectables;
 import org.efaps.eql2.bldr.AbstractQueryEQLBuilder;
 import org.efaps.esjp.admin.datamodel.RangesValue;
@@ -113,6 +114,8 @@ import org.efaps.ui.wicket.models.objects.grid.UIFieldGrid;
 import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * TODO comment!
@@ -125,6 +128,7 @@ public abstract class Product_Base
     extends CommonDocument
     implements ITableProvider
 {
+    private static final Logger LOG = LoggerFactory.getLogger(Product.class);
 
     /**
      * CacheKey for ExchangeRates.
@@ -1871,13 +1875,38 @@ public abstract class Product_Base
     }
 
     @Override
-    public ITableProvider init(AbstractUserInterfaceObject cmd,
-                               List<org.efaps.admin.ui.field.Field> fields,
-                               Map<String, String> properties,
-                               String oid)
+    public ITableProvider init(final AbstractUserInterfaceObject cmd,
+                               final List<org.efaps.admin.ui.field.Field> fields,
+                               final Map<String, String> properties,
+                               final String oid)
         throws EFapsException
     {
-        tableProvider = new StandardTableProvider();
+        LOG.info("evaluating: {}", cmd.getName());
+        if (cmd.getName().equals("inventoryIndividualTable")) {
+            tableProvider = new StandardTableProvider()
+            {
+
+                @Override
+                protected Query evalQuery(List<Type> types)
+                    throws EFapsException
+                {
+                    final var query = super.evalQuery(types);
+
+                    final var subQuery = EQL.builder()
+                                    .nestedQuery(CIProducts.StoreableProductAbstract2IndividualAbstract)
+                                    .where()
+                                    .attribute(CIProducts.StoreableProductAbstract2IndividualAbstract.FromAbstract)
+                                    .eq(Instance.get(oid)).up()
+                                    .selectable(Selectables.attribute(
+                                                    CIProducts.StoreableProductAbstract2IndividualAbstract.ToAbstract));
+
+                    query.where().attribute(CIProducts.InventoryAbstract.Product).in(subQuery);
+                    return query;
+                }
+            };
+        } else {
+            tableProvider = new StandardTableProvider();
+        }
         return tableProvider.init(cmd, fields, properties, oid);
     }
 
@@ -1885,7 +1914,6 @@ public abstract class Product_Base
     public Collection<Map<String, ?>> getValues()
         throws EFapsException
     {
-
         return tableProvider.getValues();
     }
 
