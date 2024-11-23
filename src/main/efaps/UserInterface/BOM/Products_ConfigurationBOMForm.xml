@@ -55,6 +55,11 @@
             <property name="Select">linkto[BOMGroupConfigurationLink].attribute[Name]</property>
             <property name="Label">Products_ConfigurationBOMForm.group.Label</property>
         </field>
+        <field name="description">
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="Attribute">Description</property>
+            <property name="Label">Products_BOMAbstract/Description.Label</property>
+        </field>
         <field name="quantity">
             <property name="ModeEdit">EDITABLE</property>
             <property name="Attribute">Quantity</property>

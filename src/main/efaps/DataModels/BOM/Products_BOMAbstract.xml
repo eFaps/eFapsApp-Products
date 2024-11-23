@@ -113,5 +113,11 @@
             <sqltable>Products_BOMSQLTable</sqltable>
             <sqlcolumn>UOMID</sqlcolumn>
         </attribute>
+        <attribute>
+            <name>Description</name>
+            <type>String</type>
+            <sqltable>Products_BOMSQLTable</sqltable>
+            <sqlcolumn>DESCR</sqlcolumn>
+        </attribute>
     </definition>
 </datamodel-type>
