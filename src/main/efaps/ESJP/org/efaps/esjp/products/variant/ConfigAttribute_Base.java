@@ -16,7 +16,7 @@
 package org.efaps.esjp.products.variant;
 
 import org.efaps.admin.datamodel.IJaxb;
-import org.efaps.admin.datamodel.ui.UIValue;
+import org.efaps.admin.datamodel.ui.IUIValue;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
@@ -40,7 +40,7 @@ public abstract class ConfigAttribute_Base
 
     @Override
     public String getUISnipplet(final TargetMode _mode,
-                                final UIValue _value)
+                                final IUIValue _value)
         throws EFapsException
     {
         return null;
