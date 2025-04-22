@@ -30,6 +30,8 @@
         <name>Products_ProductStandartForm</name>
         <field name="classification" character="Classification">
             <property name="Classification">Products_ProductStandartClass</property>
+            <property name="ClassificationConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+            <property name="ClassificationAttribute">org.efaps.products.Standart.RootClassifications</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
             <trigger event="UI_ACCESSCHECK" method="configCheck"
@@ -138,8 +140,6 @@
                 name="Products_ProductFamilyMyDesk.UI_ACCESSCHECK"
                 method="configCheck"
                 event="UI_ACCESSCHECK" index="1">
-
-
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.ActivateIndividual</property>
             </trigger>
@@ -147,8 +147,6 @@
                 name="Products_ProductFamilyMyDesk.UI_ACCESSCHECK"
                 method="configCheck"
                 event="UI_ACCESSCHECK" index="2">
-
-
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Standart.ActivateIndividual</property>
             </trigger>
@@ -164,8 +162,6 @@
                 name="Products_ProductStandartForm.note.UI_ACCESSCHECK"
                 method="configCheck"
                 event="UI_ACCESSCHECK">
-
-
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Standart.ActivateNote</property>
             </trigger>
@@ -211,6 +207,8 @@
         <name>Products_ProductStandartForm</name>
         <field name="classification" character="Classification">
             <property name="Classification">Products_ProductStandartClass</property>
+            <property name="ClassificationConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+            <property name="ClassificationAttribute">org.efaps.products.Standart.RootClassifications</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
             <trigger event="UI_ACCESSCHECK" method="configCheck"

@@ -341,6 +341,14 @@ public final class Products
 
     /** See description. */
     @EFapsSysConfAttribute
+    public static final ListSysConfAttribute STANDART_CLASS = new ListSysConfAttribute()
+                    .sysConfUUID(Products.SYSCONFUUID)
+                    .key(Products.BASE + "Standart.RootClassifications")
+                    .addDefaultValue("Products_ProductStandartClass")
+                    .description("List of root classifications for standart products.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
     public static final BooleanSysConfAttribute STANDART_ACTIND = new BooleanSysConfAttribute()
                     .sysConfUUID(Products.SYSCONFUUID)
                     .key(Products.BASE + "Standart.ActivateIndividual")
@@ -438,7 +446,7 @@ public final class Products
     public static final ListSysConfAttribute SALESPARTLIST_CLASS = new ListSysConfAttribute()
                     .sysConfUUID(Products.SYSCONFUUID)
                     .key(Products.BASE + "SalesPartList.RootClassifications")
-                    .description("List of root classifications.");
+                    .description("List of root classifications for SalesPartList.");
 
 
     /** See description. */
