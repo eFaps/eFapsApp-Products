@@ -28,6 +28,18 @@
             <profile name="eFaps" />
         </profiles>
         <name>Products_ProductSalesPartListForm</name>
+        <field name="classification" character="Classification">
+            <property name="ClassificationConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+            <property name="ClassificationAttribute">org.efaps.products.SalesPartList.RootClassifications</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <trigger event="UI_ACCESSCHECK" method="configCheck"
+                name="Products_ProductSalesPartListForm.classification.UI_ACCESSCHECK"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI">
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.SalesPartList.ActivateClassification</property>
+            </trigger>
+        </field>
         <field name="name">
             <property name="Columns">40</property>
             <property name="ModeCreate">EDITABLE</property>
@@ -165,6 +177,18 @@
             <profile name="sales" />
         </profiles>
         <name>Products_ProductSalesPartListForm</name>
+        <field name="classification" character="Classification">
+            <property name="ClassificationConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+            <property name="ClassificationAttribute">org.efaps.products.SalesPartList.RootClassifications</property>
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <trigger event="UI_ACCESSCHECK" method="configCheck"
+                name="Products_ProductSalesPartListForm.classification.UI_ACCESSCHECK"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI">
+                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+                <property name="Attribute">org.efaps.products.SalesPartList.ActivateClassification</property>
+            </trigger>
+        </field>
         <field name="productFamily">
             <property name="Select">linkto[ProductFamilyLink].instance</property>
             <property name="Label">Products_ProductAbstract/ProductFamilyLink.Label</property>

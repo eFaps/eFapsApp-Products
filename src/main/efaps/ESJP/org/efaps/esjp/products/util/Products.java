@@ -29,6 +29,7 @@ import org.efaps.api.annotation.EFapsSystemConfiguration;
 import org.efaps.esjp.admin.common.systemconfiguration.BooleanSysConfAttribute;
 import org.efaps.esjp.admin.common.systemconfiguration.EnumSysConfAttribute;
 import org.efaps.esjp.admin.common.systemconfiguration.IntegerSysConfAttribute;
+import org.efaps.esjp.admin.common.systemconfiguration.ListSysConfAttribute;
 import org.efaps.esjp.admin.common.systemconfiguration.PropertiesSysConfAttribute;
 import org.efaps.esjp.admin.common.systemconfiguration.StringSysConfAttribute;
 import org.efaps.esjp.admin.common.systemconfiguration.SysConfLink;
@@ -424,6 +425,21 @@ public final class Products
                     .sysConfUUID(Products.SYSCONFUUID)
                     .key(Products.BASE + "SalesPartList.ActivateNote")
                     .description("Activate the note field for SalesPartList.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute SALESPARTLIST_ACTCLASS = new BooleanSysConfAttribute()
+                    .sysConfUUID(Products.SYSCONFUUID)
+                    .key(Products.BASE + "SalesPartList.ActivateClassification")
+                    .description("Activate the classifcation for SalesPartList.");
+
+    /** See description. */
+    @EFapsSysConfAttribute
+    public static final ListSysConfAttribute SALESPARTLIST_CLASS = new ListSysConfAttribute()
+                    .sysConfUUID(Products.SYSCONFUUID)
+                    .key(Products.BASE + "SalesPartList.RootClassifications")
+                    .description("List of root classifications.");
+
 
     /** See description. */
     @EFapsSysConfAttribute

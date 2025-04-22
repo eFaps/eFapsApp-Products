@@ -17,22 +17,17 @@
 
 -->
 
-
-
-
 <datamodel-type  xmlns="http://www.efaps.org/xsd"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>9254d34a-c5a0-476a-9fae-cd1c55ca43dc</uuid>
     <file-application>eFapsApp-Products</file-application>
-    
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductPartList</name>
         <parent>Products_UnstoreableProductAbstract</parent>
         <trigger program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType"
                  name="Products_ProductPartList.ACCESSCHECK" event="ACCESSCHECK" />
-
         <trigger program="org.efaps.esjp.common.cache.CacheUtils"
             method="cleanQueryCacheTrigger" name="Products_ProductPartList.INSERT_POST"
             event="INSERT_POST">
@@ -48,7 +43,5 @@
             event="DELETE_POST">
             <property name="CacheName">org.efaps.esjp.products.Product.CacheKey4Product</property>
         </trigger>
-
-
     </definition>
 </datamodel-type>
