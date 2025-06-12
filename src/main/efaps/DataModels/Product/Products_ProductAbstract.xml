@@ -337,7 +337,7 @@
             <sqlcolumn>MODIFIED</sqlcolumn>
         </attribute>
         <index msgPhrase="Products_IndexProductMsgPhrase">
-            <field id="name"        key="index.Product.Name" select="attribute[Name]"          type="TEXT" />
+            <field id="name"        key="index.Product.Name" select="attribute[Name]"          type="STRING" />
             <field id="description" key="index.Product.Description" select="attribute[Description]"   type="TEXT" />
         </index>
     </definition>
@@ -468,7 +468,7 @@
             <sqlcolumn>MODIFIED</sqlcolumn>
         </attribute>
         <index msgPhrase="Products_IndexProductMsgPhrase">
-            <field id="name"        key="index.Product.Name" select="attribute[Name]"          type="TEXT" />
+            <field id="name"        key="index.Product.Name" select="attribute[Name]"          type="STRING" />
             <field id="description" key="index.Product.Description" select="attribute[Description]"   type="TEXT" />
         </index>
     </definition>
