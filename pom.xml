@@ -27,7 +27,7 @@
     </parent>
     <packaging>jar</packaging>
     <groupId>org.efaps.apps</groupId>
-    <artifactId>products</artifactId>
+    <artifactId>efaps-app-products</artifactId>
     <name>eFaps ERP Products Module</name>
     <description>
     </description>
