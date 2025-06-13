@@ -141,7 +141,7 @@
         <!-- eFaps ERP Common Module -->
         <dependency>
             <groupId>org.efaps.apps</groupId>
-            <artifactId>contacts</artifactId>
+            <artifactId>efaps-app-contacts</artifactId>
             <version>${efaps.app.dependencies}</version>
         </dependency>
 
