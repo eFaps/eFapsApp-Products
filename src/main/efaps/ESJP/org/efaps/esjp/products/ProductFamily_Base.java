@@ -135,19 +135,27 @@ public abstract class ProductFamily_Base
      * @param _insert the insert
      * @throws EFapsException on error
      */
-    protected void add2create(final Parameter _parameter,
-                              final Insert _insert)
+    @SuppressWarnings("unchecked")
+    protected void add2create(final Parameter parameter,
+                              final Insert insert)
         throws EFapsException
     {
-        final Instance parentInst = Instance.get(((String[]) Context.getThreadContext().getSessionAttribute(
-                        CIFormProducts.Products_ProductFamilyForm.parentOID.name))[0]);
+        final Instance parentInst;
+        if (parameter.get(ParameterValues.PAYLOAD) != null) {
+            final var values = (Map<String, ?>) parameter.get(ParameterValues.PAYLOAD);
+            final List<String> oids = (List<String>) values.get("eFapsSelectedOids");
+            parentInst = Instance.get(oids.get(0));
+        } else {
+            parentInst = Instance.get(((String[]) Context.getThreadContext().getSessionAttribute(
+                            CIFormProducts.Products_ProductFamilyForm.parentOID.name))[0]);
+        }
 
         final PrintQuery print = new PrintQuery(parentInst);
         print.addAttribute(CIProducts.ProductFamilyAbstract.ProductLineLink);
         print.execute();
 
-        _insert.add(CIProducts.ProductFamilyStandart.ParentLink, parentInst);
-        _insert.add(CIProducts.ProductFamilyStandart.ProductLineLink,
+        insert.add(CIProducts.ProductFamilyStandart.ParentLink, parentInst);
+        insert.add(CIProducts.ProductFamilyStandart.ProductLineLink,
                         print.<Long>getAttribute(CIProducts.ProductFamilyAbstract.ProductLineLink));
     }
 
