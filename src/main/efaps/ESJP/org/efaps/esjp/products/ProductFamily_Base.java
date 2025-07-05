@@ -388,18 +388,20 @@ public abstract class ProductFamily_Base
             inst = print.getSelect(selParentInst);
             parts.add(print.<String>getAttribute(CIProducts.ProductFamilyAbstract.Name));
         }
-        final PrintQuery print = new CachedPrintQuery(inst, ProductFamily.CACHEKEY);
-        final SelectBuilder selLineName = SelectBuilder.get().linkto(CIProducts.ProductFamilyAbstract.ProductLineLink)
-                        .attribute(CIProducts.ProductLineAbstract.Name);
-        print.addSelect(selLineName);
-        print.addAttribute(CIProducts.ProductFamilyAbstract.Name);
-        print.execute();
-        parts.add(print.<String>getAttribute(CIProducts.ProductFamilyAbstract.Name));
 
-        if (includeLine) {
-            parts.add(print.getSelect(selLineName));
+        if (InstanceUtils.isValid(inst)) {
+            final PrintQuery print = new CachedPrintQuery(inst, ProductFamily.CACHEKEY);
+            final SelectBuilder selLineName = SelectBuilder.get().linkto(CIProducts.ProductFamilyAbstract.ProductLineLink)
+                            .attribute(CIProducts.ProductLineAbstract.Name);
+            print.addSelect(selLineName);
+            print.addAttribute(CIProducts.ProductFamilyAbstract.Name);
+            print.execute();
+            parts.add(print.<String>getAttribute(CIProducts.ProductFamilyAbstract.Name));
+
+            if (includeLine) {
+                parts.add(print.getSelect(selLineName));
+            }
         }
-
         final List<String> finalParts;
         switch (nameDef) {
             case LAST:
