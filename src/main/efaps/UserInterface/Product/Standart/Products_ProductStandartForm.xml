@@ -94,8 +94,6 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductStandartForm.image.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-
-
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="AttributeExists">org.efaps.products.Standart.Image</property>
             </trigger>
@@ -235,6 +233,16 @@
                 <property name="Attribute">org.efaps.products.Standart.ActivateFamilies</property>
             </trigger>
         </field>
+        <field name="productFamilyModule">
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="UIType">BUTTON</property>
+            <ui-module>Products_ProductFamilyFormModule</ui-module>
+            <trigger event="UI_ACCESSCHECK" method="isRest"
+                name="Products_ProductStandartForm.productFamilyModule.UI_ACCESSCHECK"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI">
+            </trigger>
+        </field>
+
         <field character="Group" name="nameGroup">
             <property name="GroupCount">3</property>
             <property name="ModeCreate">READONLY</property>
@@ -337,6 +345,10 @@
             <property name="CmdIcon">ACCEPT</property>
             <property name="UIType">BUTTON</property>
             <picker name="Products_ProductFamilyPicker" />
+            <trigger event="UI_ACCESSCHECK" method="isNotRest"
+                name="Products_ProductStandartForm.productFamilyModule.UI_ACCESSCHECK"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI">
+            </trigger>
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductStandartForm.updateButton.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
