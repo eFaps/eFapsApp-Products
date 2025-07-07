@@ -28,6 +28,7 @@ import org.efaps.util.EFapsException;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -39,10 +40,25 @@ public class ProductFamilyController
 
     @GET
     @Produces({ MediaType.APPLICATION_JSON })
-    public Response getReport()
+    public Response getFamilyTree(@QueryParam("productOid") final String productOid)
         throws EFapsException
     {
-        return Response.ok(loadFamilyTree())
+        String current = null;
+        if (productOid != null) {
+            final var eval = EQL.builder().print(productOid)
+                            .linkto(CIProducts.ProductAbstract.ProductFamilyLink).oid().as("famOid")
+                            .evaluate();
+            if (eval.next()) {
+                current = eval.get("famOid");
+            }
+        }
+
+        final var dto = ProductFamilyResponseDto.builder()
+                        .withCurrent(current)
+                        .withFamilies(loadFamilyTree())
+                        .build();
+
+        return Response.ok(dto)
                         .build();
     }
 

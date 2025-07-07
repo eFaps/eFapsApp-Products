@@ -18,6 +18,8 @@ package org.efaps.esjp.products.rest.modules;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 
@@ -67,6 +69,12 @@ public class ProductFamilyDto
     public List<ProductFamilyDto> getChildren()
     {
         return children;
+    }
+
+    @Override
+    public String toString()
+    {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
     }
 
     public static Builder builder()
