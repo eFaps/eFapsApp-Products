@@ -1878,6 +1878,7 @@ public abstract class Product_Base
     public ITableProvider init(final AbstractUserInterfaceObject cmd,
                                final List<org.efaps.admin.ui.field.Field> fields,
                                final Map<String, String> properties,
+                               final TargetMode targetMode,
                                final String oid)
         throws EFapsException
     {
@@ -1907,7 +1908,7 @@ public abstract class Product_Base
         } else {
             tableProvider = new StandardTableProvider();
         }
-        return tableProvider.init(cmd, fields, properties, oid);
+        return tableProvider.init(cmd, fields, properties, targetMode, oid);
     }
 
     @Override
