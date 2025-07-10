@@ -111,7 +111,6 @@ import org.efaps.ui.wicket.models.objects.UITable.TableFilter;
 import org.efaps.ui.wicket.models.objects.grid.CacheKey;
 import org.efaps.ui.wicket.models.objects.grid.GridRow;
 import org.efaps.ui.wicket.models.objects.grid.UIFieldGrid;
-import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -548,9 +547,9 @@ public abstract class Product_Base
                 final String oid = (String) multi.getAttribute(CIProducts.ProductAbstract.OID);
                 final String choice = nameSearch ? name + " - " + desc : desc + " - " + name;
                 final Map<String, String> map = new HashMap<>();
-                map.put(EFapsKey.AUTOCOMPLETE_KEY.getKey(), oid);
-                map.put(EFapsKey.AUTOCOMPLETE_VALUE.getKey(), name);
-                map.put(EFapsKey.AUTOCOMPLETE_CHOICE.getKey(), choice);
+                map.put("eFapsAutoCompleteKEY", oid);
+                map.put("eFapsAutoCompleteVALUE", name);
+                map.put("eFapsAutoCompleteCHOICE", choice);
                 orderMap.put(choice, map);
             }
             list.addAll(orderMap.values());
@@ -641,9 +640,9 @@ public abstract class Product_Base
             final String description = eval.get(CIProducts.ProductAbstract.Description);
             final String choice = name + " - " + description;
             final Map<String, String> map = new HashMap<>();
-            map.put(EFapsKey.AUTOCOMPLETE_KEY.getKey(), eval.get(1));
-            map.put(EFapsKey.AUTOCOMPLETE_VALUE.getKey(), name);
-            map.put(EFapsKey.AUTOCOMPLETE_CHOICE.getKey(), choice);
+            map.put("eFapsAutoCompleteKEY", eval.get(1));
+            map.put("eFapsAutoCompleteVALUE", name);
+            map.put("eFapsAutoCompleteCHOICE", choice);
             orderMap.put(choice, map);
         }
         return orderMap;
@@ -677,9 +676,9 @@ public abstract class Product_Base
             final String description = eval.get(CIProducts.ProductAbstract.Description);
             final String choice = description + " - " + name;
             final Map<String, String> map = new HashMap<>();
-            map.put(EFapsKey.AUTOCOMPLETE_KEY.getKey(), eval.get(1));
-            map.put(EFapsKey.AUTOCOMPLETE_VALUE.getKey(), name);
-            map.put(EFapsKey.AUTOCOMPLETE_CHOICE.getKey(), choice);
+            map.put("eFapsAutoCompleteKEY", eval.get(1));
+            map.put("eFapsAutoCompleteVALUE", name);
+            map.put("eFapsAutoCompleteCHOICE", choice);
             orderMap.put(choice, map);
         }
         return orderMap;
@@ -720,9 +719,9 @@ public abstract class Product_Base
             final String description = eval.get("productDescription");
             final String choice = code + ": " + name + " - " + description;
             final Map<String, String> map = new HashMap<>();
-            map.put(EFapsKey.AUTOCOMPLETE_KEY.getKey(), eval.get("productOid"));
-            map.put(EFapsKey.AUTOCOMPLETE_VALUE.getKey(), name);
-            map.put(EFapsKey.AUTOCOMPLETE_CHOICE.getKey(), choice);
+            map.put("eFapsAutoCompleteKEY", eval.get("productOid"));
+            map.put("eFapsAutoCompleteVALUE", name);
+            map.put("eFapsAutoCompleteCHOICE", choice);
             orderMap.put(choice, map);
         }
         return orderMap;
@@ -765,7 +764,7 @@ public abstract class Product_Base
                 final Dimension dim = Dimension.get(print.<Long>getAttribute(CIProducts.ProductAbstract.Dimension));
                 final Long defUoM = print.getAttribute(CIProducts.ProductAbstract.DefaultUoM);
 
-                map.put(EFapsKey.PICKER_VALUE.getKey(), name);
+                map.put("eFapsPickerValue4Field", name);
                 map.put("product", prodInst.getOid());
                 map.put("productDesc", desc);
                 map.put("uoM", getUoMFieldStr(defUoM == null ? dim.getBaseUoM().getId() : defUoM, dim.getId()));
@@ -810,9 +809,9 @@ public abstract class Product_Base
                     for (final IFilter filter : filterList) {
                         if (filter instanceof final IMapFilter mapFilter && "productFamilyLink".equals(org.efaps.admin.ui.field.Field
                                         .get(filter.getFieldId()).getName())) {
-                            if (mapFilter.containsKey(EFapsKey.SELECTEDROW_NAME.getKey())) {
-                                if (!mapFilter.containsKey(EFapsKey.SELECTEALL_NAME.getKey())) {
-                                    final String[] oids = (String[]) mapFilter.get(EFapsKey.SELECTEDROW_NAME.getKey());
+                            if (mapFilter.containsKey("selectedRow")) {
+                                if (!mapFilter.containsKey("selecteAll")) {
+                                    final String[] oids = (String[]) mapFilter.get("selectedRow");
                                     final List<Instance> familyInsts = new ArrayList<>();
                                     for (final String oid : oids) {
                                         final Instance instance = Instance.get(oid);
@@ -1074,7 +1073,7 @@ public abstract class Product_Base
             retVal.put(ReturnValues.VALUES, list);
             final StringBuilder js = new StringBuilder();
             js.append("document.getElementsByName('productAutoComplete')[").append(selected).append("].focus()");
-            map.put(EFapsKey.FIELDUPDATE_JAVASCRIPT.getKey(), js.toString());
+            map.put("eFapsFieldUpdateJS", js.toString());
         }
         return retVal;
     }
@@ -1224,9 +1223,9 @@ public abstract class Product_Base
                 final String desc = multi.<String>getAttribute(CIProducts.ProductAbstract.Description);
                 final String choice = nameSearch ? name + " - " + desc : desc + " - " + name;
                 final Map<String, String> map = new HashMap<>();
-                map.put(EFapsKey.AUTOCOMPLETE_KEY.getKey(), multi.getCurrentInstance().getOid());
-                map.put(EFapsKey.AUTOCOMPLETE_VALUE.getKey(), name);
-                map.put(EFapsKey.AUTOCOMPLETE_CHOICE.getKey(), choice);
+                map.put("eFapsAutoCompleteKEY", multi.getCurrentInstance().getOid());
+                map.put("eFapsAutoCompleteVALUE", name);
+                map.put("eFapsAutoCompleteCHOICE", choice);
                 map.put("uoM", getUoMFieldStr(multi.<Long>getAttribute(CIProducts.ProductAbstract.Dimension)));
                 list.add(map);
             }

@@ -63,7 +63,6 @@ import org.efaps.esjp.erp.NumberFormatter;
 import org.efaps.esjp.erp.WarningUtil;
 import org.efaps.esjp.products.Inventory_Base.InventoryBean;
 import org.efaps.esjp.products.util.Products;
-import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -361,9 +360,9 @@ public abstract class Storage_Base
         while (multi.next()) {
             final String name = multi.<String>getAttribute(CIProducts.StorageAbstract.Name);
             final Map<String, String> map = new HashMap<>();
-            map.put(EFapsKey.AUTOCOMPLETE_KEY.getKey(), multi.getAttribute(key).toString());
-            map.put(EFapsKey.AUTOCOMPLETE_VALUE.getKey(), name);
-            map.put(EFapsKey.AUTOCOMPLETE_CHOICE.getKey(), name);
+            map.put("eFapsAutoCompleteKEY", multi.getAttribute(key).toString());
+            map.put("eFapsAutoCompleteVALUE", name);
+            map.put("eFapsAutoCompleteCHOICE", name);
             orderMap.put(name, map);
         }
         list.addAll(orderMap.values());

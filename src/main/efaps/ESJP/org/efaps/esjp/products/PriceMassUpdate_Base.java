@@ -53,7 +53,6 @@ import org.efaps.esjp.erp.NumberFormatter;
 import org.efaps.esjp.products.util.Products;
 import org.efaps.ui.wicket.models.field.UIField;
 import org.efaps.ui.wicket.models.objects.AbstractUIPageObject;
-import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,7 +82,7 @@ public abstract class PriceMassUpdate_Base
     public Return execute(final Parameter _parameter)
         throws EFapsException
     {
-        final String[] rowIds = _parameter.getParameterValues(EFapsKey.TABLEROW_NAME.getKey());
+        final String[] rowIds = _parameter.getParameterValues("eFapsTRID");
         final String[] newPrices = _parameter.getParameterValues("newPrice");
         final String[] currencies = _parameter.getParameterValues("currency");
         final DecimalFormat formater = NumberFormatter.get().getTwoDigitsFormatter();
@@ -233,7 +232,7 @@ public abstract class PriceMassUpdate_Base
         throws EFapsException
     {
         final Return ret = new Return();
-        final String[] rowKeys = _parameter.getParameterValues(EFapsKey.TABLEROW_NAME.getKey());
+        final String[] rowKeys = _parameter.getParameterValues("eFapsTRID");
         final Map<String, String> mapping = ((AbstractUIPageObject) ((UIField) _parameter.get(ParameterValues.CLASS))
                         .getParent()).getUiID2Oid();
         final List<Instance> instances = new ArrayList<>();

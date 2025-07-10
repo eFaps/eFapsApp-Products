@@ -32,14 +32,13 @@ import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.QueryBuilder;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.erp.CommonDocument;
-import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
 
 /**
  * TODO comment!
  *
  * @author The eFaps Team
- * 
+ *
  */
 @EFapsUUID("005cbb83-b622-4d75-ba45-fb7bd8d93de3")
 @EFapsApplication("eFapsApp-Products")
@@ -77,9 +76,9 @@ public abstract class StorageGroup_Base
                 final String name = multi.<String>getAttribute(CIProducts.StorageGroupAbstract.Name);
                 final String description = multi.<String>getAttribute(CIProducts.StorageGroupAbstract.Description);
                 final Map<String, String> map = new HashMap<>();
-                map.put(EFapsKey.AUTOCOMPLETE_KEY.getKey(), multi.getCurrentInstance().getOid());
-                map.put(EFapsKey.AUTOCOMPLETE_VALUE.getKey(), name);
-                map.put(EFapsKey.AUTOCOMPLETE_CHOICE.getKey(), name + " - " + description);
+                map.put("eFapsAutoCompleteKEY", multi.getCurrentInstance().getOid());
+                map.put("eFapsAutoCompleteVALUE", name);
+                map.put("eFapsAutoCompleteCHOICE", name + " - " + description);
                 tmpMap.put(name, map);
             }
             list.addAll(tmpMap.values());

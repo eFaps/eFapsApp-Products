@@ -49,7 +49,6 @@ import org.efaps.esjp.common.uiform.Create;
 import org.efaps.esjp.erp.AbstractWarning;
 import org.efaps.esjp.erp.IWarning;
 import org.efaps.esjp.erp.WarningUtil;
-import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
 
 /**
@@ -158,8 +157,8 @@ public abstract class TreeView_Base
         throws EFapsException
     {
         final String input = (String) _parameter.get(ParameterValues.OTHERS);
-        final List<Map<String, String>> list = new ArrayList<Map<String, String>>();
-        final Map<String, Map<String, String>> orderMap = new TreeMap<String, Map<String, String>>();
+        final List<Map<String, String>> list = new ArrayList<>();
+        final Map<String, Map<String, String>> orderMap = new TreeMap<>();
 
         final String key = containsProperty(_parameter, "Key") ? getProperty(_parameter, "Key") : "OID";
 
@@ -172,10 +171,10 @@ public abstract class TreeView_Base
         multi.execute();
         while (multi.next()) {
             final String label = multi.<String>getAttribute(CIProducts.TreeViewAbstract.Label);
-            final Map<String, String> map = new HashMap<String, String>();
-            map.put(EFapsKey.AUTOCOMPLETE_KEY.getKey(), multi.getAttribute(key).toString());
-            map.put(EFapsKey.AUTOCOMPLETE_VALUE.getKey(), label);
-            map.put(EFapsKey.AUTOCOMPLETE_CHOICE.getKey(), label);
+            final Map<String, String> map = new HashMap<>();
+            map.put("eFapsAutoCompleteKEY", multi.getAttribute(key).toString());
+            map.put("eFapsAutoCompleteVALUE", label);
+            map.put("eFapsAutoCompleteCHOICE", label);
             orderMap.put(label, map);
         }
         list.addAll(orderMap.values());
@@ -196,7 +195,7 @@ public abstract class TreeView_Base
         throws EFapsException
     {
         final Return ret = new Return();
-        final List<IWarning> warnings = new ArrayList<IWarning>();
+        final List<IWarning> warnings = new ArrayList<>();
         Instance parentInst = _parameter.getInstance();
         if (parentInst == null || parentInst != null && !parentInst.getType().isKindOf(CIProducts.TreeViewAbstract)) {
             parentInst = Instance.get(((String[]) Context.getThreadContext().getSessionAttribute(

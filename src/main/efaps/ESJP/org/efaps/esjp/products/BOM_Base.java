@@ -39,7 +39,6 @@ import org.efaps.db.Update;
 import org.efaps.eql.EQL;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.uiform.Field;
-import org.efaps.ui.wicket.util.EFapsKey;
 import org.efaps.util.EFapsException;
 
 /**
@@ -114,7 +113,7 @@ public abstract class BOM_Base
     {
         @SuppressWarnings("unchecked") final Map<String, String> oidMap = (Map<String, String>) _parameter
                         .get(ParameterValues.OIDMAP4UI);
-        final String[] rowKeys = _parameter.getParameterValues(EFapsKey.TABLEROW_NAME.getKey());
+        final String[] rowKeys = _parameter.getParameterValues("eFapsTRID");
         final String[] quantity = _parameter.getParameterValues("quantity");
         for (int i = 0; i < rowKeys.length; i++) {
             final Instance inst = Instance.get(oidMap.get(rowKeys[i]));
