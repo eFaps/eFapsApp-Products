@@ -60,6 +60,7 @@ import org.efaps.db.Update;
 import org.efaps.esjp.ci.CIFormProducts;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.ci.CITableProducts;
+import org.efaps.esjp.common.datetime.JodaTimeUtils;
 import org.efaps.esjp.common.parameter.ParameterUtil;
 import org.efaps.esjp.common.util.InterfaceUtils;
 import org.efaps.esjp.db.InstanceUtils;
@@ -72,7 +73,6 @@ import org.efaps.esjp.products.Inventory_Base.InventoryBean;
 import org.efaps.esjp.products.listener.IOnTransaction;
 import org.efaps.esjp.products.util.Products;
 import org.efaps.esjp.products.util.Products.ProductIndividual;
-import org.efaps.ui.wicket.util.DateUtil;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -1315,7 +1315,7 @@ public abstract class Transaction_Base
                         CITableProducts.Products_InventorySet4ProductsTable.product.name);
         final String dateStr = _parameter.getParameterValue(
                         CIFormProducts.Products_InventorySet4ProductsForm.date.name + "_eFapsDate");
-        final DateTime date = DateUtil.getDateFromParameter(dateStr);
+        final DateTime date = JodaTimeUtils.getDateFromParameter(dateStr);
 
         if (!ArrayUtils.isEmpty(products)) {
             final List<Map<String, Object>> list = new ArrayList<>();
@@ -1356,7 +1356,7 @@ public abstract class Transaction_Base
                         CITableProducts.Products_InventorySet4ProductsTable.uoM.name);
         final String dateStr = _parameter.getParameterValue(
                         CIFormProducts.Products_InventorySet4ProductsForm.date.name + "_eFapsDate");
-        final DateTime date = DateUtil.getDateFromParameter(dateStr);
+        final DateTime date = JodaTimeUtils.getDateFromParameter(dateStr);
 
         if (!ArrayUtils.isEmpty(quantities)) {
             final int i = getSelectedRow(_parameter);
@@ -1413,7 +1413,7 @@ public abstract class Transaction_Base
                 final Instance prodInst = Instance.get(_parameter.getParameterValues("product")[selected]);
                 final String dateStr = _parameter.getParameterValue(
                                 CIFormProducts.Products_InventorySet4ProductsForm.date.name + "_eFapsDate");
-                final DateTime date = DateUtil.getDateFromParameter(dateStr);
+                final DateTime date = JodaTimeUtils.getDateFromParameter(dateStr);
 
                 // validate that a product was selected
                 if (prodInst.isValid()) {
