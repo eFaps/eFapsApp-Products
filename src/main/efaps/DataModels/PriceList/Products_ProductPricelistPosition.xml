@@ -109,17 +109,17 @@
         <trigger program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType"
             name="Products_ProductPricelistPosition.ACCESSCHECK"
             event="ACCESSCHECK" />
-        <trigger program="org.efaps.esjp.common.cache.CacheUtils" method="cleanQueryCacheTrigger"
-            index="2" name="Products_ProductPricelistPosition.INSERT_POST" event="INSERT_POST">
-            <property name="CacheName">org.efaps.esjp.sales.PriceUtil.CacheKey</property>
+                <trigger event="INSERT_POST" name="Products_ProductPricelistPosition.INSERT_POST"
+             program="org.efaps.esjp.common.history.InsertRelatedHistoryTrigger">
+            <property name="Select4HistoryInstance">linkto[ProductPricelist].linkto[ProductAbstractLink].instance</property>
         </trigger>
-        <trigger program="org.efaps.esjp.common.cache.CacheUtils" method="cleanQueryCacheTrigger"
-            name="Products_ProductPricelistPosition.UPDATE_POST" event="UPDATE_POST">
-            <property name="CacheName">org.efaps.esjp.sales.PriceUtil.CacheKey</property>
+        <trigger event="UPDATE_POST" name="Products_ProductPricelistPosition.UPDATE_POST"
+            program="org.efaps.esjp.common.history.UpdateRelatedHistoryTrigger">
+            <property name="Select4HistoryInstance">linkto[ProductPricelist].linkto[ProductAbstractLink].instance</property>
         </trigger>
-        <trigger program="org.efaps.esjp.common.cache.CacheUtils" method="cleanQueryCacheTrigger"
-            name="Products_ProductPricelistPosition.DELETE_POST" event="DELETE_POST">
-            <property name="CacheName">org.efaps.esjp.sales.PriceUtil.CacheKey</property>
+        <trigger event="DELETE_PRE" name="Products_ProductPricelistPosition.DELETE_PRE"
+            program="org.efaps.esjp.common.history.DeleteRelatedHistoryTrigger">
+            <property name="Select4HistoryInstance">linkto[ProductPricelist].linkto[ProductAbstractLink].instance</property>
         </trigger>
     </definition>
 </datamodel-type>

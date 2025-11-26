@@ -25,16 +25,10 @@
                  xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>563462aa-3033-4957-97b8-aeaa4d43e660</uuid>
     <file-application>eFapsApp-Products</file-application>
-    
-
     <definition>
-
         <version-expression>(version==latest)</version-expression>
         <name>Products_Product2ImageOriginal</name>
         <parent>Products_Product2ImageAbstract</parent>
-
-        
-
         <attribute>
             <name>ProductLink</name>
             <type>Link</type>
@@ -49,5 +43,19 @@
             <sqltable>Products_Product2ImageSQLTable</sqltable>
             <sqlcolumn>IMAGEID</sqlcolumn>
         </attribute>
+        <trigger program="org.efaps.esjp.common.history.ConnectHistoryTrigger"
+            name="Products_Product2ImageOriginal.INSERT_POST"
+            event="INSERT_POST">
+            <property name="Select4HistoryInstance">linkto[ProductLink].instance</property>
+            <property name="Select4ConnectInstance">linkto[ImageLink].instance</property>
+            <property name="Select4ConnectAttribute">linkto[ImageLink].attribute[Description]</property>
+        </trigger>
+        <trigger program="org.efaps.esjp.common.history.DisconnectHistoryTrigger"
+            name="Products_Product2ImageOriginal.DELETE_PRE"
+            event="DELETE_PRE">
+            <property name="Select4HistoryInstance">linkto[ProductLink].instance</property>
+            <property name="Select4ConnectInstance">linkto[ImageLink].instance</property>
+            <property name="Select4ConnectAttribute">linkto[ImageLink].attribute[Description]</property>
+        </trigger>
     </definition>
 </datamodel-type>

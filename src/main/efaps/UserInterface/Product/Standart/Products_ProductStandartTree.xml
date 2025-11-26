@@ -44,6 +44,7 @@
             <child>Products_ProductTree_Transaction</child>
             <child>Products_ProductTree_Costing</child>
             <child>Products_ProductTree_TransactionResultReport</child>
+            <child>Common_History_ObjectTree_HistoryLog</child>
         </childs>
         <property name="Target">content</property>
         <property name="TargetMode">view</property>
