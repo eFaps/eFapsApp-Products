@@ -35,6 +35,7 @@
             <child>Products_ProductSalesPartListTree_BOMGroup</child>
             <child>Products_ProductSalesPartListTree_BOM</child>
             <child>Products_ProductSalesPartListTree_Image</child>
+            <child>Common_History_ObjectTree_HistoryLog</child>
         </childs>
         <property name="Target">content</property>
         <property name="TargetMode">view</property>

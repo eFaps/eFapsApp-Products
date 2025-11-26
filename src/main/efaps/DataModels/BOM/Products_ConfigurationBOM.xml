@@ -55,5 +55,17 @@
             <sqlcolumn>INT1</sqlcolumn>
             <defaultvalue>0</defaultvalue>
         </attribute>
+        <trigger event="INSERT_POST" name="Products_ConfigurationBOM.INSERT_POST"
+             program="org.efaps.esjp.common.history.InsertRelatedHistoryTrigger">
+            <property name="Select4HistoryInstance">linkto[From].instance</property>
+        </trigger>
+        <trigger event="UPDATE_POST" name="Products_ConfigurationBOM.UPDATE_POST"
+            program="org.efaps.esjp.common.history.UpdateRelatedHistoryTrigger">
+            <property name="Select4HistoryInstance">linkto[From].instance</property>
+        </trigger>
+        <trigger event="DELETE_PRE" name="Products_ConfigurationBOM.DELETE_PRE"
+            program="org.efaps.esjp.common.history.DeleteRelatedHistoryTrigger">
+            <property name="Select4HistoryInstance">linkto[From].instance</property>
+        </trigger>
     </definition>
 </datamodel-type>

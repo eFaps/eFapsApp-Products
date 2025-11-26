@@ -53,5 +53,17 @@ xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.
             <sqltable>Products_ProductGenericDependendSQLTable</sqltable>
             <sqlcolumn>DEC2</sqlcolumn>
         </attribute>
+         <trigger event="INSERT_POST" name="Products_BOMGroupConfiguration.INSERT_POST"
+             program="org.efaps.esjp.common.history.InsertRelatedHistoryTrigger">
+            <property name="Select4HistoryInstance">linkto[ProductLink].instance</property>
+        </trigger>
+        <trigger event="UPDATE_POST" name="Products_BOMGroupConfiguration.UPDATE_POST"
+            program="org.efaps.esjp.common.history.UpdateRelatedHistoryTrigger">
+            <property name="Select4HistoryInstance">linkto[ProductLink].instance</property>
+        </trigger>
+        <trigger event="DELETE_PRE" name="Products_BOMGroupConfiguration.DELETE_PRE"
+            program="org.efaps.esjp.common.history.DeleteRelatedHistoryTrigger">
+            <property name="Select4HistoryInstance">linkto[ProductLink].instance</property>
+        </trigger>
     </definition>
 </datamodel-type>
