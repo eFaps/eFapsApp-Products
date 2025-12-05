@@ -1887,10 +1887,10 @@ public abstract class Product_Base
             {
 
                 @Override
-                protected Query evalQuery(List<Type> types)
+                protected Query evalQuery()
                     throws EFapsException
                 {
-                    final var query = super.evalQuery(types);
+                    final var query = super.evalQuery();
 
                     final var subQuery = EQL.builder()
                                     .nestedQuery(CIProducts.StoreableProductAbstract2IndividualAbstract)
