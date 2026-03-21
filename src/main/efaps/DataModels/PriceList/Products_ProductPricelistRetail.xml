@@ -24,7 +24,6 @@
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>0eefc758-0be6-4c40-8cf9-a4f88986f76e</uuid>
     <file-application>eFapsApp-Products</file-application>
-
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductPricelistRetail</name>
@@ -37,11 +36,11 @@
             <sqlcolumn>PRODID</sqlcolumn>
         </attribute>
         <trigger program="org.efaps.esjp.products.PriceList" method="trigger4Insert"
-            name="Products_ProductPricelistRetail.INSERT_POST" event="INSERT_POST">
+            name="Products_ProductPricelistRetail.INSERT_POST.1" event="INSERT_POST" index="1">
             <property name="Type">Products_ProductPricelistRetail</property>
         </trigger>
-        <trigger event="INSERT_POST" name="Products_ProductPricelistRetail.INSERT_POST"
-             program="org.efaps.esjp.common.history.InsertRelatedHistoryTrigger">
+        <trigger event="INSERT_POST" name="Products_ProductPricelistRetail.INSERT_POST.2"
+             program="org.efaps.esjp.common.history.InsertRelatedHistoryTrigger" index="2">
             <property name="Select4HistoryInstance">linkto[ProductLink].instance</property>
         </trigger>
         <trigger event="UPDATE_POST" name="Products_ProductPricelistRetail.UPDATE_POST"
@@ -52,7 +51,8 @@
             program="org.efaps.esjp.common.history.DeleteRelatedHistoryTrigger">
             <property name="Select4HistoryInstance">linkto[ProductLink].instance</property>
         </trigger>
-        <trigger program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType" name="Products_ProductPricelist.ACCESSCHECK"
+        <trigger program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType"
+            name="Products_ProductPricelist.ACCESSCHECK"
             event="ACCESSCHECK" />
     </definition>
 </datamodel-type>

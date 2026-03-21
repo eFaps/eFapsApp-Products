@@ -26,8 +26,6 @@
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductPricelistForm</name>
-
-
         <field name="type">
             <property name="Attribute">Type</property>
         </field>
@@ -55,6 +53,7 @@
         </field>
         <field name="createGroup" character="Group">
             <property name="GroupCount">2</property>
+            <property name="ModeEdit">NONE</property>
         </field>
         <field name="creator">
             <property name="SelectAlternateOID">linkto[Creator].oid</property>
@@ -62,13 +61,16 @@
             <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
             <property name="ModeSearch">NONE</property>
             <property name="ShowTypeIcon">true</property>
+            <property name="ModeEdit">NONE</property>
         </field>
         <field name="created">
             <property name="Attribute">Created</property>
             <property name="ModeSearch">NONE</property>
+            <property name="ModeEdit">NONE</property>
         </field>
         <field name="modifyGroup" character="Group">
             <property name="GroupCount">2</property>
+            <property name="ModeEdit">NONE</property>
         </field>
         <field name="modifier">
             <property name="SelectAlternateOID">linkto[Modifier].oid</property>
@@ -76,10 +78,12 @@
             <property name="HRef">${COMMONURL}/MenuTree.jsp</property>
             <property name="ModeSearch">NONE</property>
             <property name="ShowTypeIcon">true</property>
+            <property name="ModeEdit">NONE</property>
         </field>
         <field name="modified">
             <property name="Attribute">Modified</property>
             <property name="ModeSearch">NONE</property>
+            <property name="ModeEdit">NONE</property>
         </field>
     </definition>
 </ui-form>

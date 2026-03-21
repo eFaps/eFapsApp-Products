@@ -75,11 +75,11 @@ public abstract class PriceList_Base
         throws EFapsException
     {
         final IUIValue fValue = (IUIValue) _parameter.get(ParameterValues.UIOBJECT);
-        final DateTime value;
+        final Object value;
         if (TargetMode.CREATE.equals(_parameter.get(ParameterValues.ACCESSMODE))) {
             value = new DateTime().plusYears(10);
         } else {
-            value = (DateTime) fValue.getObject();
+            value = fValue.getObject();
         }
         final Return ret = new Return();
         ret.put(ReturnValues.VALUES, value);
