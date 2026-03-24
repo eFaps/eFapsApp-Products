@@ -1633,8 +1633,8 @@ public abstract class Product_Base
      * @return the suffix4 family
      * @throws EFapsException on error
      */
-    public String getSuffix4Family(final Parameter _parameter,
-                                   final Instance _famInst)
+    public String getSuffix4Family(final Parameter parameter,
+                                   final Instance prodFamInst)
         throws EFapsException
     {
         Integer length = Products.FAMILY_SUFFIXLENGTH.get();
@@ -1647,7 +1647,7 @@ public abstract class Product_Base
         // naming
         queryBldr.addWhereAttrNotEqValue(CIProducts.ProductAbstract.Type, CIProducts.ProductBatch.getType().getId(),
                         CIProducts.ProductIndividual.getType().getId());
-        queryBldr.addWhereAttrEqValue(CIProducts.ProductAbstract.ProductFamilyLink, _famInst);
+        queryBldr.addWhereAttrEqValue(CIProducts.ProductAbstract.ProductFamilyLink, prodFamInst);
         queryBldr.addOrderByAttributeDesc(CIProducts.ProductAbstract.Name);
         queryBldr.setLimit(1);
         final MultiPrintQuery multi = queryBldr.getPrint();

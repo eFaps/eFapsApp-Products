@@ -16,13 +16,18 @@
 package org.efaps.esjp.products.rest.modules;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Instance;
 import org.efaps.eql.EQL;
 import org.efaps.esjp.ci.CIProducts;
+import org.efaps.esjp.common.parameter.ParameterUtil;
+import org.efaps.esjp.db.InstanceUtils;
+import org.efaps.esjp.products.Product;
 import org.efaps.util.EFapsException;
 
 import jakarta.ws.rs.GET;
@@ -69,12 +74,16 @@ public class ProductFamilyController
         final var eval = EQL.builder().print().query(CIProducts.ProductFamilyRoot)
                         .select()
                         .attribute(CIProducts.ProductFamilyRoot.Name, CIProducts.ProductFamilyRoot.CodePart)
+                        .linkto(CIProducts.ProductFamilyRoot.ProductLineLink)
+                        .attribute(CIProducts.ProductLineAbstract.CodePart).as("linePart")
                         .evaluate();
         while (eval.next()) {
+            final String linePart = eval.get("linePart");
+            final String codePart = eval.get(CIProducts.ProductFamilyRoot.CodePart);
             dtos.add(ProductFamilyDto.builder()
                             .withOid(eval.inst().getOid())
                             .withLabel(eval.get(CIProducts.ProductFamilyRoot.Name))
-                            .withCodePart(eval.get(CIProducts.ProductFamilyRoot.CodePart))
+                            .withCodePart(linePart + codePart)
                             .withChildren(loadChildren(eval.inst()))
                             .build());
         }
@@ -102,4 +111,21 @@ public class ProductFamilyController
         }
         return dtos;
     }
+
+    @GET
+    @Path("/product-suffix")
+    @Produces({ MediaType.APPLICATION_JSON })
+    public Response getSuffix(@QueryParam("productFamilyOid") final String productFamilyOid)
+        throws EFapsException
+    {
+        final var productFamilyInst = Instance.get(productFamilyOid);
+        final Map<String, String> payload = new HashMap<>();
+        if (InstanceUtils.isKindOf(productFamilyInst, CIProducts.ProductFamilyAbstract)) {
+            final var suffix = new Product().getSuffix4Family(ParameterUtil.instance(), productFamilyInst);
+            payload.put("suffix", suffix);
+        }
+        return Response.ok(payload)
+                        .build();
+    }
+
 }
