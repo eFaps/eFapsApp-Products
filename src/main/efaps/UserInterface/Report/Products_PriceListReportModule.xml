@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
     Copyright © 2003 - 2024 The eFaps Team (-)
 
@@ -16,27 +15,14 @@
     limitations under the License.
 
 -->
-
-<ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<ui-module xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>7d72a596-60d4-4060-83b8-b76455c06fd6</uuid>
+    <uuid>9808cdab-9090-4922-a545-a4ba5fefabaa</uuid>
     <file-application>eFapsApp-Products</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Products_PriceListReport</name>
-        <access>
-            <role>Products_Admin</role>
-            <role>Products_Modifier</role>
-            <role>Products_Reader</role>
-            <role>Sales_Admin</role>
-        </access>
-        <target>
-            <menu>Products_PriceListReport_Menu</menu>
-            <form>Products_PriceListReportForm</form>
-            <module>Products_PriceListReportModule</module>
-        </target>
-        <property name="Target">content</property>
-        <property name="TargetMode">view</property>
-        <property name="TargetShowCheckBoxes">true</property>
+        <name>Products_PriceListReportModule</name>
+        <property name="ModuleKey">FilteredReport</property>
+        <property name="FilteredReport">org.efaps.esjp.products.reports.PriceListReport</property>
     </definition>
-</ui-command>
+</ui-module>

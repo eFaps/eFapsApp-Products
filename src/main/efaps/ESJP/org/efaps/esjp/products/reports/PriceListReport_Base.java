@@ -17,6 +17,8 @@ package org.efaps.esjp.products.reports;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,6 +28,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.efaps.admin.datamodel.AttributeSet;
 import org.efaps.admin.datamodel.Classification;
@@ -39,6 +42,7 @@ import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.AttributeQuery;
+import org.efaps.db.Context;
 import org.efaps.db.Instance;
 import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.PrintQuery;
@@ -50,10 +54,15 @@ import org.efaps.esjp.common.jasperreport.AbstractDynamicReport;
 import org.efaps.esjp.common.parameter.ParameterUtil;
 import org.efaps.esjp.db.InstanceUtils;
 import org.efaps.esjp.erp.FilteredReport;
+import org.efaps.esjp.erp.rest.modules.IFilteredReportProvider;
 import org.efaps.esjp.products.ProductFamily;
 import org.efaps.esjp.products.util.Products;
+import org.efaps.esjp.ui.rest.dto.ValueDto;
+import org.efaps.esjp.ui.rest.dto.ValueType;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.builder.DynamicReports;
@@ -67,16 +76,14 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRRewindableDataSource;
 import net.sf.jasperreports.engine.data.JRMapCollectionDataSource;
 
-/**
- * TODO comment!
- *
- * @author The eFaps Team
- */
 @EFapsUUID("d7679319-39ed-4b12-a7c2-97a6c6ad8954")
 @EFapsApplication("eFapsApp-Products")
 public abstract class PriceListReport_Base
     extends FilteredReport
+    implements IFilteredReportProvider
 {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PriceListReport.class);
 
     /**
      * @param _parameter Parameter as passed by the eFasp API
@@ -117,12 +124,56 @@ public abstract class PriceListReport_Base
         return ret;
     }
 
-    /**
-     * @param _parameter Parameter as passed by the eFasp API
-     * @return new Report instance
-     * @throws EFapsException on error
-     */
-    protected AbstractDynamicReport getReport(final Parameter _parameter)
+    @Override
+    public List<ValueDto> getFilters()
+    {
+        final List<ValueDto> ret = new ArrayList<>();
+
+        try {
+            ZoneId zoneId = ZoneId.systemDefault();
+            clearCache(ParameterUtil.instance());
+            zoneId = Context.getThreadContext().getZoneId();
+            final var filterMap = getFilterMap();
+            String dateValue = LocalDate.now(zoneId).toString();
+            Object barCodeTypeValue = null;
+
+            if (filterMap != null) {
+                if (filterMap.containsKey("date")) {
+                    dateValue = ((DateTime) filterMap.get("date")).toLocalDate().toString();
+                }
+                if (filterMap.containsKey("barCodeType")) {
+                    barCodeTypeValue = filterMap.get("barCodeType");
+                }
+            }
+            ret.add(ValueDto.builder()
+                            .withName("dateFrom")
+                            .withLabel(DBProperties.getProperty("org.efaps.esjp.products.reports.PriceListReport.date"))
+                            .withType(ValueType.DATE)
+                            .withRequired(true)
+                            .withValue(dateValue)
+                            .build());
+
+            if (Products.REPPRICELIST_ACTBARCODE.get()) {
+                final var barCodeTypeOptions = getOptions4AttrDef("Products_AttributeDefinitionBarcodeType");
+                ret.add(ValueDto.builder()
+                                .withName("barCodeType")
+                                .withLabel(DBProperties.getProperty(
+                                                "org.efaps.esjp.products.reports.PriceListReport.barCodeType"))
+                                .withType(ValueType.CHECKBOX)
+                                .withValue(barCodeTypeValue)
+                                .withOptions(barCodeTypeOptions)
+                                .build());
+            }
+
+        } catch (final EFapsException e) {
+            LOG.error("Catched", e);
+        }
+
+        return ret;
+    }
+
+    @Override
+    public AbstractDynamicReport getReport(final Parameter _parameter)
         throws EFapsException
     {
         return new DynPriceListReport(_parameter, this);
@@ -170,13 +221,13 @@ public abstract class PriceListReport_Base
             throws EFapsException
         {
             filteredReport = _report;
-            final Map<Integer, String> typesMap = analyseProperty(_parameter, "Type");
+            final var props = Products.REPPRICELIST.get();
+            final Map<Integer, String> typesMap = analyseProperty(_parameter, props, "Type");
             for (final Entry<Integer, String> typeEntry : typesMap.entrySet()) {
                 final String typeStr = typeEntry.getValue();
                 final Type type = isUUID(typeStr) ? Type.get(UUID.fromString(typeStr)) : Type.get(typeStr);
                 types.add(type);
             }
-            final var props = Products.REPPRICELIST.get();
             showClass = "true".equalsIgnoreCase(props.getProperty("ShowClassification", "true"));
             showFamily = "true".equalsIgnoreCase(props.getProperty("ShowFamily", "true"));
             showBarcodes = Products.REPPRICELIST_ACTBARCODE.get();
@@ -234,7 +285,7 @@ public abstract class PriceListReport_Base
             } else {
                 final Map<Instance, Map<String, ?>> values = new HashMap<>();
 
-                final QueryBuilder priceListQueryBuilder = getQueryBldrFromProperties(_parameter);
+                final QueryBuilder priceListQueryBuilder = getQueryBldrFromProperties(Products.REPPRICELIST.get());
                 add2PriceListQueryBuilder(_parameter, priceListQueryBuilder);
 
                 if (isActiveProductsOnly()) {
@@ -326,8 +377,15 @@ public abstract class PriceListReport_Base
                             }
                         }
                         if (isShowBarcodes() && filterMap.containsKey("barCodeType")) {
-                            final AttrDefFilterValue filter = (AttrDefFilterValue) filterMap.get("barCodeType");
-                            final Set<Instance> selectedTypes = filter.getObject() == null ? Collections.emptySet() :filter.getObject();
+                            final Set<Instance> selectedTypes;
+                            if (filterMap.get("barCodeType") instanceof final AttrDefFilterValue filter) {
+                                selectedTypes = filter.getObject() == null ? Collections.emptySet()
+                                                : filter.getObject();
+                            } else {
+                                selectedTypes = ((List<String>) filterMap.get("barCodeType")).stream()
+                                                .map(Instance::get).collect(Collectors.toSet());
+                            }
+
                             final var attrSet = AttributeSet.find(CIProducts.ProductAbstract.getType().getName(),
                                             CIProducts.ProductAbstract.Barcodes.name);
                             // attrSet.getType();
@@ -373,15 +431,17 @@ public abstract class PriceListReport_Base
                 }
 
                 final List<Map<String, ?>> lstVal = new ArrayList<>(values.values());
-                Collections.sort(lstVal, (_o1, _o2) -> _o1.get("productName").toString()
-                                .compareTo(_o2.get("productName").toString()));
+                Collections.sort(lstVal, (_o1,
+                                          _o2) -> _o1.get("productName").toString()
+                                                          .compareTo(_o2.get("productName").toString()));
                 ret = new JRMapCollectionDataSource(lstVal);
                 getFilteredReport().cache(_parameter, ret);
             }
             return ret;
         }
 
-        protected void add2Value(final Instance _productInst, final Map<String, Object> _map)
+        protected void add2Value(final Instance _productInst,
+                                 final Map<String, Object> _map)
             throws EFapsException
         {
         }
@@ -394,13 +454,15 @@ public abstract class PriceListReport_Base
             final TextColumnBuilder<String> productName = DynamicReports.col.column(DBProperties
                             .getProperty(PriceListReport.class.getName() + ".productName"), "productName",
                             DynamicReports.type.stringType());
-            @SuppressWarnings("rawtypes")
-            final TextColumnBuilder<List> productBarcodeTypes = DynamicReports.col.column(DBProperties
-                            .getProperty(PriceListReport.class.getName() + ".productBarcodeTypes"), "productBarcodeTypes",
+            @SuppressWarnings("rawtypes") final TextColumnBuilder<List> productBarcodeTypes = DynamicReports.col.column(
+                            DBProperties
+                                            .getProperty(PriceListReport.class.getName() + ".productBarcodeTypes"),
+                            "productBarcodeTypes",
                             DynamicReports.type.listType());
-            @SuppressWarnings("rawtypes")
-            final TextColumnBuilder<List> productBarcodes = DynamicReports.col.column(DBProperties
-                            .getProperty(PriceListReport.class.getName() + ".productBarcodes"), "productBarcodes",
+            @SuppressWarnings("rawtypes") final TextColumnBuilder<List> productBarcodes = DynamicReports.col.column(
+                            DBProperties
+                                            .getProperty(PriceListReport.class.getName() + ".productBarcodes"),
+                            "productBarcodes",
                             DynamicReports.type.listType());
             final TextColumnBuilder<String> productDescr = DynamicReports.col.column(DBProperties
                             .getProperty(PriceListReport.class.getName() + ".productDescr"), "productDescr",
@@ -415,13 +477,13 @@ public abstract class PriceListReport_Base
                             .getProperty(PriceListReport.class.getName() + ".productDim"), "productDim",
                             DynamicReports.type.stringType()).setWidth(50);
 
-            final ComponentColumnBuilder linkColumn = FilteredReport.getLinkColumn(_parameter, "productOID");
-
             final List<ColumnGridComponentBuilder> grid = new ArrayList<>();
-
-            if (getExType().equals(ExportType.HTML)) {
-                _builder.addColumn(linkColumn);
-                grid.add(linkColumn);
+            if (!isRest()) {
+                final ComponentColumnBuilder linkColumn = FilteredReport.getLinkColumn(_parameter, "productOID");
+                if (getExType().equals(ExportType.HTML)) {
+                    _builder.addColumn(linkColumn);
+                    grid.add(linkColumn);
+                }
             }
             grid.add(productName);
             _builder.addColumn(productName);
@@ -498,7 +560,8 @@ public abstract class PriceListReport_Base
 
                         final var colsBldrs = add2PriceColumnBldrs(price, currency);
                         _builder.addColumn(colsBldrs);
-                        final ColumnTitleGroupBuilder subTitleGroup = DynamicReports.grid.titleGroup(subTitle, colsBldrs);
+                        final ColumnTitleGroupBuilder subTitleGroup = DynamicReports.grid.titleGroup(subTitle,
+                                        colsBldrs);
                         titleGroup.add(subTitleGroup);
                     }
                 } else {
