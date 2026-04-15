@@ -17,37 +17,33 @@
 
 -->
 
-
-
-
 <datamodel-type  xmlns="http://www.efaps.org/xsd"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>1fd87ce9-5ee3-4cd3-b582-5ff53b7c35f5</uuid>
     <file-application>eFapsApp-Products</file-application>
-    
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductMaterial</name>
         <parent>Products_StoreableProductAbstract</parent>
+        <attribute>
+            <name>Status</name>
+            <type>Status</type>
+            <typelink>Products_ProductStatus</typelink>
+            <sqltable>Products_ProductSQLTable</sqltable>
+            <sqlcolumn>STATUS</sqlcolumn>
+            <trigger program="org.efaps.esjp.admin.datamodel.StatusValue"
+                name="Products_ProductMaterial.StatusAbstract.RANGE_VALUE"
+                event="RANGE_VALUE">
+            </trigger>
+        </attribute>
         <trigger program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType"
                  name="Products_ProductMaterial.ACCESSCHECK" event="ACCESSCHECK" />
-
-        <trigger program="org.efaps.esjp.common.cache.CacheUtils"
-            method="cleanQueryCacheTrigger" name="Products_ProductMaterial.INSERT_POST"
-            event="INSERT_POST">
-            <property name="CacheName">org.efaps.esjp.products.Product.CacheKey4Product</property>
-        </trigger>
-        <trigger program="org.efaps.esjp.common.cache.CacheUtils"
-            method="cleanQueryCacheTrigger" name="Products_ProductMaterial.UPDATE_POST"
-            event="UPDATE_POST">
-            <property name="CacheName">org.efaps.esjp.products.Product.CacheKey4Product</property>
-        </trigger>
-        <trigger program="org.efaps.esjp.common.cache.CacheUtils"
-            method="cleanQueryCacheTrigger" name="Products_ProductMaterial.DELETE_POST"
-            event="DELETE_POST">
-            <property name="CacheName">org.efaps.esjp.products.Product.CacheKey4Product</property>
-        </trigger>
-
+        <trigger program="org.efaps.esjp.common.history.InsertHistoryTrigger"
+            name="Products_ProductMaterial.INSERT_POST"
+            event="INSERT_POST"/>
+        <trigger program="org.efaps.esjp.common.history.UpdateHistoryTrigger"
+            name="Products_ProductMaterial.UPDATE_POST"
+            event="UPDATE_POST"/>
     </definition>
 </datamodel-type>

@@ -57,8 +57,6 @@
                 name="Products_ProductStandartForm.classification.UI_ACCESSCHECK.1"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI"
                 index="1">
-                
-
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Standart.ActivateClassification</property>
             </trigger>
@@ -66,8 +64,6 @@
                 name="Products_ProductStandartTable.classification.UI_ACCESSCHECK.2"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI"
                 index="2">
-                
-
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Standart.ActivateFamilies</property>
                 <property name="Inverse">true</property>
@@ -85,8 +81,6 @@
                 name="Products_ProductStandartForm.classificationWithFamily.UI_ACCESSCHECK.1"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI"
                 index="1">
-                
-
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Standart.ActivateClassification</property>
             </trigger>
@@ -94,8 +88,6 @@
                 name="Products_ProductStandartTable.classificationWithFamily.UI_ACCESSCHECK.2"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI"
                 index="2">
-                
-
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Standart.ActivateFamilies</property>
             </trigger>
@@ -114,16 +106,16 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductStandartTable.productFamilyLink.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                    
-
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Standart.ActivateFamilies</property>
             </trigger>
         </field>
-        <field name="active">
-            <property name="Attribute">Active</property>
-            <property name="Label">Products_ProductNonStockTable/Active.Label</property>
-            <property name="FilterType">PICKLIST</property>
+        <field name="status">
+            <property name="Attribute">Status</property>
+            <property name="Label">Products_ProductAbstract/Status.Label</property>
+            <property name="FilterType">STATUS</property>
+            <property name="FilterBase">DATABASE</property>
+            <property name="FilterDefault">Active</property>
         </field>
         <field name="barcodes">
             <property name="Select">linkfrom[Products_ProductAbstract:Barcodes#Barcodes].attribute[Code]</property>
@@ -133,8 +125,6 @@
                 name="Products_ProductStandartTable.barcodes.UI_ACCESSCHECK.1"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI"
                 index="1">
-                
-
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Standart.ActivateBarcodes</property>
             </trigger>

@@ -43,6 +43,7 @@ import org.efaps.admin.datamodel.AttributeType;
 import org.efaps.admin.datamodel.Classification;
 import org.efaps.admin.datamodel.Dimension;
 import org.efaps.admin.datamodel.Dimension.UoM;
+import org.efaps.admin.datamodel.Status;
 import org.efaps.admin.datamodel.Type;
 import org.efaps.admin.datamodel.attributetype.CompanyLinkType;
 import org.efaps.admin.datamodel.attributetype.CreatedType;
@@ -249,16 +250,25 @@ public abstract class Product_Base
      * @param _insert the _insert
      * @throws EFapsException on error
      */
-    protected void add2Create(final Parameter _parameter,
-                              final Insert _insert)
+    protected void add2Create(final Parameter parameter,
+                              final Insert insert)
         throws EFapsException
     {
-        if (isFamilyActivated(_parameter, _insert.getInstance())) {
-            final Instance famInst = Instance.get(_parameter
+        if (isFamilyActivated(parameter, insert.getInstance())) {
+            final Instance famInst = Instance.get(parameter
                             .getParameterValue(CIFormProducts.Products_ProductForm.productFamilyLink.name));
             if (famInst.isValid()) {
-                _insert.add(CIProducts.ProductAbstract.ProductFamilyLink, famInst);
-                _insert.add(CIProducts.ProductAbstract.Name, getNameFromUI(_parameter, _insert.getInstance()));
+                insert.add(CIProducts.ProductAbstract.ProductFamilyLink, famInst);
+                insert.add(CIProducts.ProductAbstract.Name, getNameFromUI(parameter, insert.getInstance()));
+            }
+        }
+        final var statusId = parameter.getParameterValue("Status");
+        if (statusId != null) {
+            final var status = Status.get(Long.valueOf(statusId));
+            if (status.getKey().equals(CIProducts.ProductCostStatus.Active.key)) {
+                insert.add(CIProducts.ProductAbstract.Active, true);
+            } else {
+                insert.add(CIProducts.ProductAbstract.Active, false);
             }
         }
     }
@@ -337,17 +347,26 @@ public abstract class Product_Base
      * @param _update the _update
      * @throws EFapsException on error
      */
-    protected void add2Edit(final Parameter _parameter,
-                            final Update _update)
+    protected void add2Edit(final Parameter parameter,
+                            final Update update)
         throws EFapsException
     {
-        if (isFamilyActivated(_parameter, _update.getInstance())) {
-            final Instance famInst = Instance.get(_parameter
+        if (isFamilyActivated(parameter, update.getInstance())) {
+            final Instance famInst = Instance.get(parameter
                             .getParameterValue(CIFormProducts.Products_ProductForm.productFamilyLink.name));
             if (famInst.isValid()) {
-                _update.add(CIProducts.ProductAbstract.ProductFamilyLink, famInst);
+                update.add(CIProducts.ProductAbstract.ProductFamilyLink, famInst);
             }
-            _update.add(CIProducts.ProductAbstract.Name, getNameFromUI(_parameter, _update.getInstance()));
+            update.add(CIProducts.ProductAbstract.Name, getNameFromUI(parameter, update.getInstance()));
+        }
+        final var statusId = parameter.getParameterValue("Status");
+        if (statusId != null) {
+            final var status = Status.get(Long.valueOf(statusId));
+            if (status.getKey().equals(CIProducts.ProductCostStatus.Active.key)) {
+                update.add(CIProducts.ProductAbstract.Active, true);
+            } else {
+                update.add(CIProducts.ProductAbstract.Active, false);
+            }
         }
     }
 

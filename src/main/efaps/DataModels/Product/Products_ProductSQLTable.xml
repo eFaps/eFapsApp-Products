@@ -38,6 +38,7 @@
             <column name="DIMID"        type="INTEGER"         not-null="true" />
             <column name="UOMID"        type="INTEGER"/>
             <column name="ACTIVE"       type="BOOLEAN"/>
+            <column name="STATUS"       type="INTEGER"      not-null="true"/>
             <column name="INDIVIDUAL"   type="INTEGER"/>
             <column name="FAMILYID"     type="INTEGER"/>
             <column name="CODE"         type="STRING_SHORT"                     length="32"/>
@@ -71,6 +72,7 @@
             <column name="DIMID"        type="INTEGER"          not-null="true" />
             <column name="UOMID"        type="INTEGER"/>
             <column name="ACTIVE"       type="BOOLEAN"/>
+            <column name="STATUS"       type="INTEGER"      not-null="true"/>
             <column name="INDIVIDUAL"   type="INTEGER"/>
             <column name="FAMILYID"     type="INTEGER"/>
             <column name="CODE"         type="STRING_SHORT"                         length="32"/>

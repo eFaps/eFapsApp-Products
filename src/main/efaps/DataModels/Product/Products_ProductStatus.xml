@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+
+    Copyright © 2003 - 2024 The eFaps Team (-)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<datamodel-statusgroup xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>017f70fe-db1f-40f1-b224-ee81bc69cd1f</uuid>
+    <file-application>eFapsApp-Products</file-application>
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <name>Products_ProductStatus</name>
+        <parent>Admin_DataModel_StatusAbstract</parent>
+        <status key="Active">
+            <description>The product is ready to sell and can be published </description>
+        </status>
+        <status key="Archived">
+            <description>The product is no longer being sold and isn't available to customers </description>
+        </status>
+        <status key="Draft">
+            <description>The product isn't ready to sell and is unavailable to customers</description>
+        </status>
+        <status key="Unlisted">
+            <description>The product is active but you need a direct link to view it. The product doesn't show up in search etc.</description>
+        </status>
+    </definition>
+</datamodel-statusgroup>
