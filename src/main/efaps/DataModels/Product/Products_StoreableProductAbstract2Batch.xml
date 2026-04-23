@@ -40,5 +40,37 @@
             <sqltable>Products_Product2ProductAbstractSQLTable</sqltable>
             <sqlcolumn>TOID</sqlcolumn>
         </attribute>
+        <trigger program="org.efaps.esjp.common.history.ConnectHistoryTrigger"
+            name="Products_StoreableProductAbstract2Batch.INSERT_POST.1"
+            event="INSERT_POST"
+            index="1">
+            <property name="Select4HistoryInstance">linkto[FromLink].instance</property>
+            <property name="Select4ConnectInstance">linkto[ToLink].instance</property>
+            <property name="Select4ConnectAttribute">linkto[ToLink].attribute[Name]</property>
+        </trigger>
+         <trigger program="org.efaps.esjp.common.history.ConnectHistoryTrigger"
+            name="Products_StoreableProductAbstract2Batch.INSERT_POST.2"
+            event="INSERT_POST"
+            index="2">
+            <property name="Select4HistoryInstance">linkto[ToLink].instance</property>
+            <property name="Select4ConnectInstance">linkto[FromLink].instance</property>
+            <property name="Select4ConnectAttribute">linkto[FromLink].attribute[Name]</property>
+        </trigger>
+        <trigger program="org.efaps.esjp.common.history.DisconnectHistoryTrigger"
+            name="Products_StoreableProductAbstract2Batch.DELETE_PRE.1"
+            event="DELETE_PRE"
+            index="1">
+            <property name="Select4HistoryInstance">linkto[FromLink].instance</property>
+             <property name="Select4ConnectInstance">linkto[ToLink].instance</property>
+            <property name="Select4ConnectAttribute">linkto[ToLink].attribute[Name]</property>
+        </trigger>
+         <trigger program="org.efaps.esjp.common.history.DisconnectHistoryTrigger"
+            name="Products_StoreableProductAbstract2Batch.DELETE_PRE.2"
+            event="DELETE_PRE"
+            index="2">
+            <property name="Select4HistoryInstance">linkto[ToLink].instance</property>
+             <property name="Select4ConnectInstance">linkto[FromLink].instance</property>
+            <property name="Select4ConnectAttribute">linkto[FromLink].attribute[Name]</property>
+        </trigger>
     </definition>
 </datamodel-type>
