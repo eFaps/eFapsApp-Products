@@ -82,10 +82,11 @@
             <property name="ModeView">READONLY</property>
             <property name="Required">true</property>
         </field>
-        <field name="active">
-            <property name="Attribute">Active</property>
+        <field name="status">
+            <property name="Attribute">Status</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+            <property name="Required">true</property>
         </field>
         <field name="individual">
             <property name="Attribute">Individual</property>
@@ -383,10 +384,11 @@
             <property name="ModeView">READONLY</property>
             <property name="Label">Products_ProductAbstract/DefaultUoM.Label</property>
         </field>
-        <field name="active">
-            <property name="Attribute">Active</property>
+         <field name="status">
+            <property name="Attribute">Status</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+            <property name="Required">true</property>
         </field>
         <field name="individual">
             <property name="Attribute">Individual</property>

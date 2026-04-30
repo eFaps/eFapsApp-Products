@@ -17,21 +17,16 @@
 
 -->
 
-
-
-
 <ui-form xmlns="http://www.efaps.org/xsd"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>15997e78-ea81-4931-85f0-a8a09f502f94</uuid>
     <file-application>eFapsApp-Products</file-application>
-    
+
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductComponentForm</name>
-        
-
-        <field name="name">
+       <field name="name">
             <property name="Columns">40</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
@@ -52,10 +47,11 @@
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
         </field>
-        <field name="active">
-            <property name="Attribute">Active</property>
+         <field name="status">
+            <property name="Attribute">Status</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+            <property name="Required">true</property>
         </field>
         <field name="inventoryHeading" character="Heading">
             <property name="Level">1</property>

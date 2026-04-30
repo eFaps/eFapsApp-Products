@@ -56,9 +56,7 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductMaterialTable.classification.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                
-
-                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+              <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Material.ActivateClassification</property>
             </trigger>
         </field>
@@ -76,16 +74,16 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductForm.namePrefix.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                    
-
-                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+               <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Material.ActivateFamilies</property>
             </trigger>
         </field>
-        <field name="active">
-            <property name="Attribute">Active</property>
-            <property name="Label">Products_ProductAbstract/Active.Label</property>
-            <property name="FilterType">PICKLIST</property>
+        <field name="status">
+            <property name="Attribute">Status</property>
+            <property name="Label">Products_ProductAbstract/Status.Label</property>
+            <property name="FilterType">STATUS</property>
+            <property name="FilterBase">DATABASE</property>
+            <property name="FilterDefault">Active</property>
         </field>
         <field name="defaultUoM">
             <property name="Select">linkto[DefaultUoM].attribute[Name]</property>

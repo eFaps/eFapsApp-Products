@@ -73,10 +73,11 @@
             <property name="ModeView">READONLY</property>
             <property name="Required">true</property>
         </field>
-        <field name="active">
-            <property name="Attribute">Active</property>
+        <field name="status">
+            <property name="Attribute">Status</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+            <property name="Required">true</property>
         </field>
         <field character="Group" name="createGroup">
             <property name="GroupCount">2</property>
@@ -124,9 +125,7 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductBariantBaseForm.classification.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                
-
-                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+               <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Variant.ActivateClassification</property>
             </trigger>
         </field>
@@ -138,9 +137,7 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductBariantBaseForm.nameGroup.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                
-
-                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+               <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Variant.ActivateFamilies</property>
             </trigger>
         </field>
@@ -152,9 +149,7 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductBariantBaseForm.namePrefix.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                
-
-                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+              <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Variant.ActivateFamilies</property>
             </trigger>
         </field>
@@ -167,9 +162,7 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductBariantBaseForm.namePrefix.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                
-
-                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+               <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Variant.ActivateFamilies</property>
             </trigger>
         </field>
@@ -183,9 +176,7 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductBariantBaseForm.nameSuffix.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                
-
-                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+              <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Variant.ActivateFamilies</property>
             </trigger>
         </field>
@@ -204,9 +195,7 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductBariantBaseForm.namePrefix4Edit.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                
-
-                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+               <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Variant.ActivateFamilies</property>
             </trigger>
         </field>
@@ -228,8 +217,6 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductBariantBaseForm.nameSuffix4Edit.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                
-
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Variant.ActivateFamilies</property>
             </trigger>
@@ -246,9 +233,7 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductBariantBaseForm.updateButton.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                
-
-                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+               <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Variant.ActivateFamilies</property>
             </trigger>
         </field>
@@ -263,9 +248,7 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductBariantBaseForm.productFamily.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                
-
-                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+               <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Variant.ActivateFamilies</property>
             </trigger>
         </field>
@@ -280,9 +263,7 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductBariantBaseForm.name.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                
-
-                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+               <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.Variant.ActivateFamilies</property>
                 <property name="Inverse">true</property>
             </trigger>
@@ -326,10 +307,11 @@
             <property name="ModeView">READONLY</property>
             <property name="Required">true</property>
         </field>
-        <field name="active">
-            <property name="Attribute">Active</property>
+         <field name="status">
+            <property name="Attribute">Status</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+            <property name="Required">true</property>
         </field>
         <field name="salesUnit">
             <property name="Attribute">SalesUnit</property>

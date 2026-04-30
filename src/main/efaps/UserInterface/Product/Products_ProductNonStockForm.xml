@@ -17,9 +17,6 @@
 
 -->
 
-
-
-
 <ui-form xmlns="http://www.efaps.org/xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
@@ -80,8 +77,8 @@
             <property name="ModeView">READONLY</property>
             <property name="Required">true</property>
         </field>
-        <field name="active">
-            <property name="Attribute">Active</property>
+        <field name="status">
+            <property name="Attribute">Status</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
             <property name="Required">true</property>
@@ -119,16 +116,12 @@
             <property name="Label">Products_ProductAbstract/Modified.Label</property>
         </field>
     </definition>
-
-
     <definition>
         <version-expression>(version==latest)</version-expression>
         <profiles>
             <profile name="sales" />
         </profiles>
         <name>Products_ProductNonStockForm</name>
-        
-
         <field name="classification" character="Classification">
             <property name="Classification">Products_Class</property>
             <property name="ModeCreate">EDITABLE</property>
@@ -193,8 +186,8 @@
             <property name="ModeView">READONLY</property>
             <property name="Required">true</property>
         </field>
-        <field name="active">
-            <property name="Attribute">Active</property>
+        <field name="status">
+            <property name="Attribute">Status</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
             <property name="Required">true</property>
@@ -257,8 +250,6 @@
             <profile name="POS" />
         </profiles>
         <name>Products_ProductNonStockForm</name>
-        
-
         <field name="classification" character="Classification">
             <property name="Classification">Products_Class</property>
             <property name="ModeCreate">EDITABLE</property>
@@ -323,8 +314,8 @@
             <property name="ModeView">READONLY</property>
             <property name="Required">true</property>
         </field>
-        <field name="active">
-            <property name="Attribute">Active</property>
+        <field name="status">
+            <property name="Attribute">Status</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
             <property name="Required">true</property>

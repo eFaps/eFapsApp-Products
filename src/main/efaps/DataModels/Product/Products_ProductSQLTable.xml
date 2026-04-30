@@ -53,7 +53,7 @@
             <foreign name="T_PRODPRODUCT_FK_DIMID"      key="DIMID"     reference="T_DMDIM(ID)"/>
             <foreign name="T_PRODPRODUCT_FK_UOMID"      key="UOMID"     reference="T_DMUOM(ID)"/>
             <index  name="T_PRODPRODUCT_INDEX_TYPEIDASSOCID" columns="ASSOCID,TYPEID"/>
-            <index  name="T_PRODPRODUCT_INDEX_TYPEIDASSOCID" columns="STATUS,TYPEID,ASSOCID"/>
+            <index  name="T_PRODPRODUCT_INDEX_STATUSTYPEIDASSOCID" columns="STATUS,TYPEID,ASSOCID"/>
         </database>
     </definition>
 
@@ -90,7 +90,7 @@
             <foreign name="T_PRODPRODUCT_FK_DIMID"      key="DIMID"     reference="T_DMDIM(ID)"/>
             <foreign name="T_PRODPRODUCT_FK_UOMID"      key="UOMID"     reference="T_DMUOM(ID)"/>
             <index  name="T_PRODPRODUCT_INDEX_TYPEIDASSOCID" columns="ASSOCID,TYPEID"/>
-            <index  name="T_PRODPRODUCT_INDEX_TYPEIDASSOCID" columns="STATUS,TYPEID,ASSOCID"/>
+            <index  name="T_PRODPRODUCT_INDEX_STATUSTYPEIDASSOCID" columns="STATUS,TYPEID,ASSOCID"/>
         </database>
     </definition>
 </datamodel-sqltable>

@@ -21,9 +21,7 @@
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>cef43b36-01a4-4f1b-ae1c-9afee19a5e51</uuid>
     <file-application>eFapsApp-Products</file-application>
-    
-
-    <definition>
+   <definition>
         <version-expression>(version==latest)</version-expression>
         <profiles>
             <profile name="eFaps" />
@@ -56,10 +54,11 @@
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
         </field>
-        <field name="active">
-            <property name="Attribute">Active</property>
+        <field name="status">
+            <property name="Attribute">Status</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+            <property name="Required">true</property>
         </field>
         <field character="Group" name="createGroup">
             <property name="GroupCount">2</property>
@@ -142,10 +141,11 @@
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
         </field>
-        <field name="active">
-            <property name="Attribute">Active</property>
+        <field name="status">
+            <property name="Attribute">Status</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+            <property name="Required">true</property>
         </field>
         <field name="salesUnit">
             <property name="Attribute">SalesUnit</property>

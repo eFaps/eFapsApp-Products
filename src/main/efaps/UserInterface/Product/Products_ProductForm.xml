@@ -17,9 +17,6 @@
 
 -->
 
-
-
-
 <ui-form xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>5142d865-8a1d-4409-a56f-b1c5c92d01ef</uuid>
@@ -78,10 +75,11 @@
             <property name="ModeView">READONLY</property>
             <property name="Required">true</property>
         </field>
-        <field name="active">
-            <property name="Attribute">Active</property>
+         <field name="status">
+            <property name="Attribute">Status</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+            <property name="Required">true</property>
         </field>
         <field name="individual">
             <property name="Attribute">Individual</property>
@@ -153,8 +151,6 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductForm.nameGroup.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                
-
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.ActivateFamilies</property>
             </trigger>
@@ -167,8 +163,6 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductForm.namePrefix.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                
-
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.ActivateFamilies</property>
             </trigger>
@@ -182,8 +176,6 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductForm.namePrefix.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                
-
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.ActivateFamilies</property>
             </trigger>
@@ -198,8 +190,6 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductForm.nameSuffix.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                
-
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.ActivateFamilies</property>
             </trigger>
@@ -219,8 +209,6 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductForm.namePrefix4Edit.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                
-
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.ActivateFamilies</property>
             </trigger>
@@ -243,9 +231,7 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductFamilyMyDesk.nameSuffix4Edit.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                
-
-                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+               <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.ActivateFamilies</property>
             </trigger>
         </field>
@@ -261,9 +247,7 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductForm.updateButton.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                
-
-                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+               <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.ActivateFamilies</property>
             </trigger>
         </field>
@@ -279,9 +263,7 @@
             <trigger event="UI_ACCESSCHECK" method="configCheck"
                 name="Products_ProductForm.namePrefix.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                
-
-                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+               <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.ActivateFamilies</property>
             </trigger>
         </field>
@@ -297,9 +279,7 @@
                 name="Products_ProductForm.updateButton.UI_ACCESSCHECK"
                 method="configCheck"
                 event="UI_ACCESSCHECK">
-                
-
-                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+               <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.ActivateFamilies</property>
                 <property name="Inverse">true</property>
             </trigger>
@@ -345,10 +325,11 @@
             <property name="ModeView">READONLY</property>
             <property name="Label">Products_ProductAbstract/DefaultUoM.Label</property>
         </field>
-        <field name="active">
-            <property name="Attribute">Active</property>
+       <field name="status">
+            <property name="Attribute">Status</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+            <property name="Required">true</property>
         </field>
         <field name="individual">
             <property name="Attribute">Individual</property>
@@ -358,9 +339,7 @@
                 name="Products_ProductFamilyMyDesk.UI_ACCESSCHECK"
                 method="configCheck"
                 event="UI_ACCESSCHECK">
-                
-
-                <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
+               <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.ActivateIndividual</property>
             </trigger>
         </field>
@@ -435,9 +414,7 @@
             <profile name="POS"/>
         </profiles>
         <name>Products_ProductForm</name>
-        
-
-        <field name="classification" character="Classification">
+      <field name="classification" character="Classification">
             <property name="Classification">Products_Class</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
@@ -480,10 +457,11 @@
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
         </field>
-        <field name="active">
-            <property name="Attribute">Active</property>
+        <field name="status">
+            <property name="Attribute">Status</property>
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
+            <property name="Required">true</property>
         </field>
         <field name="individual">
             <property name="Attribute">Individual</property>
