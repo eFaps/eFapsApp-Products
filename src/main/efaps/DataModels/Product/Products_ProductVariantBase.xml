@@ -32,6 +32,17 @@
             <sqltable>Products_ProductVariantSQLTable</sqltable>
             <sqlcolumn>VARIANTCONF</sqlcolumn>
         </attribute>
+         <attribute>
+            <name>Status</name>
+            <type>Status</type>
+            <typelink>Products_ProductStatus</typelink>
+            <sqltable>Products_ProductSQLTable</sqltable>
+            <sqlcolumn>STATUS</sqlcolumn>
+            <trigger program="org.efaps.esjp.admin.datamodel.StatusValue"
+                name="Products_ProductVariantBase.StatusAbstract.RANGE_VALUE"
+                event="RANGE_VALUE">
+            </trigger>
+        </attribute>
         <trigger event="ACCESSCHECK"
             name="Products_ProductGeneric.ACCESSCHECK"
             program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType"/>

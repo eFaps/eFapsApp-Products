@@ -21,11 +21,22 @@
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>daf80f53-d685-438d-902a-acbb2ea68f95</uuid>
     <file-application>eFapsApp-Products</file-application>
-    
+
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductSupply</name>
         <parent>Products_StoreableProductAbstract</parent>
+         <attribute>
+            <name>Status</name>
+            <type>Status</type>
+            <typelink>Products_ProductStatus</typelink>
+            <sqltable>Products_ProductSQLTable</sqltable>
+            <sqlcolumn>STATUS</sqlcolumn>
+            <trigger program="org.efaps.esjp.admin.datamodel.StatusValue"
+                name="Products_ProductSupply.StatusAbstract.RANGE_VALUE"
+                event="RANGE_VALUE">
+            </trigger>
+        </attribute>
         <trigger event="ACCESSCHECK" name="Products_ProductSupply.ACCESSCHECK"
             program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType" />
 
