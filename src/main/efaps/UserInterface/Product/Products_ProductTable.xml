@@ -43,7 +43,7 @@
             <property name="ModeSearch">READONLY</property>
         </field>
          <field name="status">
-            <property name="Attribute">Status</property>
+            <property name="Attribute">StatusAbstract</property>
             <property name="Label">Products_ProductAbstract/Status.Label</property>
             <property name="FilterType">STATUS</property>
             <property name="FilterBase">DATABASE</property>
