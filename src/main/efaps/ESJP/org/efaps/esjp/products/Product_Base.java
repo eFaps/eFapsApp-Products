@@ -1897,7 +1897,8 @@ public abstract class Product_Base
                                final List<org.efaps.admin.ui.field.Field> fields,
                                final Map<String, String> properties,
                                final TargetMode targetMode,
-                               final String oid)
+                               final String oid,
+                               final List<String> selectedOids)
         throws EFapsException
     {
         LOG.info("evaluating: {}", cmd.getName());
@@ -1926,7 +1927,7 @@ public abstract class Product_Base
         } else {
             tableProvider = new StandardTableProvider();
         }
-        return tableProvider.init(cmd, fields, properties, targetMode, oid);
+        return tableProvider.init(cmd, fields, properties, targetMode, oid, selectedOids);
     }
 
     @Override

@@ -52,6 +52,7 @@
             <property name="ModeEdit">EDITABLE</property>
             <property name="Label">Products_PriceMassUpdateTable.newPrice.Label</property>
             <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="ValueType">INPUT</property>
         </field>
         <field name="currency">
             <property name="ModeEdit">EDITABLE</property>

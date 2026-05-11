@@ -33,6 +33,8 @@ import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
+import org.efaps.admin.ui.AbstractUserInterfaceObject;
+import org.efaps.admin.ui.AbstractUserInterfaceObject.TargetMode;
 import org.efaps.db.Context;
 import org.efaps.db.Insert;
 import org.efaps.db.Instance;
@@ -41,6 +43,7 @@ import org.efaps.db.MultiPrintQuery;
 import org.efaps.db.QueryBuilder;
 import org.efaps.db.SelectBuilder;
 import org.efaps.db.Update;
+import org.efaps.eql.EQL;
 import org.efaps.esjp.ci.CIERP;
 import org.efaps.esjp.ci.CIFormProducts;
 import org.efaps.esjp.ci.CIProducts;
@@ -51,6 +54,7 @@ import org.efaps.esjp.db.InstanceUtils;
 import org.efaps.esjp.erp.CurrencyInst;
 import org.efaps.esjp.erp.NumberFormatter;
 import org.efaps.esjp.products.util.Products;
+import org.efaps.esjp.ui.rest.provider.ITableProvider;
 import org.efaps.ui.wicket.models.field.UIField;
 import org.efaps.ui.wicket.models.objects.AbstractUIPageObject;
 import org.efaps.util.EFapsException;
@@ -66,6 +70,7 @@ import org.slf4j.LoggerFactory;
 @EFapsApplication("eFapsApp-Products")
 public abstract class PriceMassUpdate_Base
     extends AbstractCommon
+    implements ITableProvider
 {
 
     private static final Logger LOG = LoggerFactory.getLogger(PriceMassUpdate.class);
@@ -74,47 +79,80 @@ public abstract class PriceMassUpdate_Base
      */
     private static final String REQUESTKEY = PriceMassUpdate.class.getName() + ".RequestKey";
 
+    private List<String> selectedOids;
+
     /**
      * @param _parameter Parameter as passed by the eFaps API
      * @return empty Return
      * @throws EFapsException on error
      */
-    public Return execute(final Parameter _parameter)
+    @SuppressWarnings("unchecked")
+    public Return execute(final Parameter parameter)
         throws EFapsException
     {
-        final String[] rowIds = _parameter.getParameterValues("eFapsTRID");
-        final String[] newPrices = _parameter.getParameterValues("newPrice");
-        final String[] currencies = _parameter.getParameterValues("currency");
         final DecimalFormat formater = NumberFormatter.get().getTwoDigitsFormatter();
-        @SuppressWarnings("unchecked") final Map<String, String> rowid2oid = (Map<String, String>) _parameter
-                        .get(ParameterValues.OIDMAP4UI);
-        final String priceListTypeName = getProperty(_parameter, "PriceListType");
-
-        final List<MassUpdateEntry> entries = new ArrayList<>();
-        final Instance pGroupInst = Instance.get(_parameter.getParameterValue(
-                        CIFormProducts.Products_PriceMassUpdateForm.priceGroupLink.name));
-        for (int i = 0; i < rowIds.length; i++) {
-            final String rowId = rowIds[i];
-            final Instance prodInst = Instance.get(rowid2oid.get(rowId));
-            if (prodInst.isValid() && !newPrices[i].isEmpty()) {
-                try {
-                    final var newPrice = formater.parse(newPrices[i]);
-                    final var currencyInstance = CurrencyInst.get(Long.valueOf(currencies[i])).getInstance();
-                    final var entry = new MassUpdateEntry()
-                                    .setProductInstance(prodInst)
-                                    .setNewPrice(newPrice)
-                                    .setCurrencyInstance(currencyInstance);
-                    if (pGroupInst.isValid()) {
-                        entry.setPriceGroupInstance(pGroupInst);
+        if (isRest()) {
+            final var payload = (Map<String, Object>) parameter.get(ParameterValues.PAYLOAD);
+            final List<String> selectedOids = (List<String>) payload.get("eFapsSelectedOids");
+            final List<String> newPrices = (List<String>) payload.get("newPrice");
+            final List<Number> currencies = (List<Number>) payload.get("currency");
+            final var priceGroupInst = Instance.get((String) payload.get("priceGroupLink"));
+            final List<MassUpdateEntry> entries = new ArrayList<>();
+            int idx = 0;
+            for (final String oid : selectedOids) {
+                final var prodInst = Instance.get(oid);
+                if (InstanceUtils.isKindOf(prodInst, CIProducts.ProductAbstract) && newPrices.get(idx) != null) {
+                    try {
+                        final var newPrice = formater.parse(newPrices.get(idx));
+                        final var currencyInstance = CurrencyInst.get(currencies.get(idx).longValue()).getInstance();
+                        entries.add(new MassUpdateEntry()
+                                        .setProductInstance(prodInst)
+                                        .setNewPrice(newPrice)
+                                        .setCurrencyInstance(currencyInstance)
+                                        .setPriceGroupInstance(priceGroupInst));
+                    } catch (final ParseException e) {
+                        LOG.error("Could not parse number in line {}", idx);
                     }
-                    entries.add(entry);
+                }
+                idx++;
+            }
+            execute(parameter, entries, CIProducts.ProductPricelistRetail.getType());
+        } else {
+            final String[] rowIds = parameter.getParameterValues("eFapsTRID");
+            final String[] newPrices = parameter.getParameterValues("newPrice");
+            final String[] currencies = parameter.getParameterValues("currency");
 
-                } catch (final ParseException e) {
-                    LOG.error("Could not parse number in line {}", i);
+            final Map<String, String> rowid2oid = (Map<String, String>) parameter
+                            .get(ParameterValues.OIDMAP4UI);
+            final String priceListTypeName = getProperty(parameter, "PriceListType");
+
+            final List<MassUpdateEntry> entries = new ArrayList<>();
+            final Instance pGroupInst = Instance.get(parameter.getParameterValue(
+                            CIFormProducts.Products_PriceMassUpdateForm.priceGroupLink.name));
+            for (int i = 0; i < rowIds.length; i++) {
+                final String rowId = rowIds[i];
+                final Instance prodInst = Instance.get(rowid2oid.get(rowId));
+                if (prodInst.isValid() && !newPrices[i].isEmpty()) {
+                    try {
+                        final var newPrice = formater.parse(newPrices[i]);
+                        final var currencyInstance = CurrencyInst.get(Long.valueOf(currencies[i])).getInstance();
+                        final var entry = new MassUpdateEntry()
+                                        .setProductInstance(prodInst)
+                                        .setNewPrice(newPrice)
+                                        .setCurrencyInstance(currencyInstance);
+                        if (pGroupInst.isValid()) {
+                            entry.setPriceGroupInstance(pGroupInst);
+                        }
+                        entries.add(entry);
+
+                    } catch (final ParseException e) {
+                        LOG.error("Could not parse number in line {}", i);
+                    }
                 }
             }
+            execute(parameter, entries, Type.get(priceListTypeName));
         }
-        execute(_parameter, entries, Type.get(priceListTypeName));
+
         return new Return();
     }
 
@@ -221,33 +259,51 @@ public abstract class PriceMassUpdate_Base
         }
     }
 
-    /**
-     * Field update for price group.
-     *
-     * @param _parameter Parameter as passed by the eFaps API
-     * @return the return
-     * @throws EFapsException on error
-     */
-    public Return fieldUpdate4PriceGroup(final Parameter _parameter)
+    @SuppressWarnings("unchecked")
+    public Return fieldUpdate4PriceGroup(final Parameter parameter)
         throws EFapsException
     {
         final Return ret = new Return();
-        final String[] rowKeys = _parameter.getParameterValues("eFapsTRID");
-        final Map<String, String> mapping = ((AbstractUIPageObject) ((UIField) _parameter.get(ParameterValues.CLASS))
-                        .getParent()).getUiID2Oid();
-        final List<Instance> instances = new ArrayList<>();
-        for (final String rowKey : rowKeys) {
-            instances.add(Instance.get(mapping.get(rowKey)));
+        if (isRest()) {
+            final var payload = (Map<String, Object>) parameter.get(ParameterValues.PAYLOAD);
+            final var priceGroupInst = Instance.get((String) payload.get("priceGroupLink"));
+            final List<String> selectedOids = (List<String>) payload.get("eFapsSelectedOids");
+            final Collection<Map<String, Object>> valueList = new ArrayList<>();
+            for (final String oid : selectedOids) {
+                final Map<String, Object> map = new HashMap<>();
+                valueList.add(map);
+                map.put("currentPrice", "");
+                final var prodInst = Instance.get(oid);
+                if (InstanceUtils.isKindOf(prodInst, CIProducts.ProductAbstract)) {
+                    final var price = ProductPrice.getPrice(prodInst, CIProducts.ProductPricelistRetail,
+                                    priceGroupInst);
+                    if (price != null) {
+                        map.put("currentPrice", price.getAmount());
+                        map.put("currency", price.getCurrencyId());
+                    }
+                }
+            }
+            ret.put(ReturnValues.VALUES, valueList);
+        } else {
+
+            final String[] rowKeys = parameter.getParameterValues("eFapsTRID");
+            final Map<String, String> mapping = ((AbstractUIPageObject) ((UIField) parameter
+                            .get(ParameterValues.CLASS))
+                            .getParent()).getUiID2Oid();
+            final List<Instance> instances = new ArrayList<>();
+            for (final String rowKey : rowKeys) {
+                instances.add(Instance.get(mapping.get(rowKey)));
+            }
+            final Collection<Map<String, Object>> valueList = new ArrayList<>();
+            final Map<Instance, String> values = getValues(parameter, instances);
+            for (final Instance inst : instances) {
+                final Map<String, Object> map = new HashMap<>();
+                valueList.add(map);
+                map.put(CITableProducts.Products_PriceMassUpdateTable.currentPrice.name,
+                                values.containsKey(inst) ? values.get(inst) : "");
+            }
+            ret.put(ReturnValues.VALUES, valueList);
         }
-        final Collection<Map<String, Object>> valueList = new ArrayList<>();
-        final Map<Instance, String> values = getValues(_parameter, instances);
-        for (final Instance inst : instances) {
-            final Map<String, Object> map = new HashMap<>();
-            valueList.add(map);
-            map.put(CITableProducts.Products_PriceMassUpdateTable.currentPrice.name,
-                            values.containsKey(inst) ? values.get(inst) : "");
-        }
-        ret.put(ReturnValues.VALUES, valueList);
         return ret;
     }
 
@@ -334,6 +390,55 @@ public abstract class PriceMassUpdate_Base
         }
         ret.put(ReturnValues.VALUES, instances);
         return ret;
+    }
+
+    @Override
+    public Collection<Map<String, ?>> getValues()
+        throws EFapsException
+    {
+
+        final var prodInsts = selectedOids.stream().map(Instance::get)
+                        .filter(inst -> InstanceUtils.isKindOf(inst, CIProducts.ProductAbstract))
+                        .toArray(Instance[]::new);
+
+        final var eval = EQL.builder().print(prodInsts)
+                        .attribute(CIProducts.ProductAbstract.Name, CIProducts.ProductAbstract.Description)
+                        .evaluate();
+        final Map<String, Map<String, ?>> objects = new HashMap<>();
+
+        while (eval.next()) {
+            final var map = new HashMap<String, Object>();
+            map.put("oid", eval.inst().getOid());
+            map.put("type", eval.inst().getType().getLabel());
+            map.put("name", eval.get(CIProducts.ProductAbstract.Name));
+            map.put("description", eval.get(CIProducts.ProductAbstract.Description));
+
+            final var price = ProductPrice.getPrice(eval.inst(), CIProducts.ProductPricelistRetail);
+            if (price != null) {
+                map.put("currentPrice", price.getAmount());
+                map.put("currency", price.getCurrencyId());
+            }
+            objects.put(eval.inst().getOid(), map);
+        }
+        // we need it sorted as in the UI
+        final List<Map<String, ?>> values = new ArrayList<>();
+        for (final var oid : selectedOids) {
+            values.add(objects.containsKey(oid) ? objects.get(oid) : new HashMap<>());
+        }
+        return values;
+    }
+
+    @Override
+    public ITableProvider init(final AbstractUserInterfaceObject cmd,
+                               final List<org.efaps.admin.ui.field.Field> fields,
+                               final Map<String, String> properties,
+                               final TargetMode targetMode,
+                               final String oid,
+                               final List<String> selectedOids)
+        throws EFapsException
+    {
+        this.selectedOids = selectedOids;
+        return this;
     }
 
     /**

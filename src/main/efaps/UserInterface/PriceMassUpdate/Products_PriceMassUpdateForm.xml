@@ -43,8 +43,6 @@
                 name="Products_PriceMassUpdateForm.priceGroupLink.UI_ACCESSCHECK"
                 method="configCheck"
                 event="UI_ACCESSCHECK">
-                
-
                 <property name="SystemConfig">e53cd705-e463-47dc-a400-4ace4ed72071</property>
                 <property name="Attribute">org.efaps.products.PriceGroup.Activate</property>
             </trigger>
