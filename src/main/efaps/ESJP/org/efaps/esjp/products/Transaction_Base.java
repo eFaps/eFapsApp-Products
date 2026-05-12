@@ -29,6 +29,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.efaps.admin.access.AccessTypeEnums;
 import org.efaps.admin.datamodel.Attribute;
 import org.efaps.admin.datamodel.Dimension;
@@ -57,6 +58,7 @@ import org.efaps.db.PrintQuery;
 import org.efaps.db.QueryBuilder;
 import org.efaps.db.SelectBuilder;
 import org.efaps.db.Update;
+import org.efaps.eql.EQL;
 import org.efaps.esjp.ci.CIFormProducts;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.ci.CITableProducts;
@@ -212,13 +214,14 @@ public abstract class Transaction_Base
             if (transactionType.isCIType(CIProducts.TransactionIndividualInbound)) {
                 transLists.add(createTransaction(parameter, CIProducts.TransactionInbound.getType()));
             } else {
-                transLists.add(createTransaction(parameter,  CIProducts.TransactionOutbound.getType()));
+                transLists.add(createTransaction(parameter, CIProducts.TransactionOutbound.getType()));
             }
         }
         transLists.add(createTransaction(_parameter, transactionType));
         if (!transLists.isEmpty()) {
             for (final IOnTransaction listener : Listener.get().<IOnTransaction>invoke(IOnTransaction.class)) {
-                final File file  = listener.createDocuments4Transactions(_parameter, transLists.toArray(new Instance[transLists.size()]));
+                final File file = listener.createDocuments4Transactions(_parameter,
+                                transLists.toArray(new Instance[transLists.size()]));
                 if (file != null) {
                     ret.put(ReturnValues.VALUES, file);
                     ret.put(ReturnValues.TRUE, true);
@@ -314,7 +317,8 @@ public abstract class Transaction_Base
 
         if (oids != null) {
             final Instance transInst = Instance.get(oids[0]);
-            // manuall access check because operation is executed withou triggers!
+            // manuall access check because operation is executed withou
+            // triggers!
             if (transInst.isValid() && transInst.getType().hasAccess(transInst,
                             AccessTypeEnums.MODIFY.getAccessType())) {
                 final PrintQuery print = new PrintQuery(transInst);
@@ -553,8 +557,9 @@ public abstract class Transaction_Base
     }
 
     /**
-     * Post update of a transaction, the related costing will be marked
-     * as not "UpToDate".
+     * Post update of a transaction, the related costing will be marked as not
+     * "UpToDate".
+     *
      * @param _parameter Parameter as passed by the eFaps API
      * @return new empty Return
      * @throws EFapsException on errro
@@ -575,7 +580,6 @@ public abstract class Transaction_Base
         }
         return new Return();
     }
-
 
     /**
      * Store date product4 trigger.
@@ -601,7 +605,7 @@ public abstract class Transaction_Base
     /**
      * Sets the position number.
      *
-     * @param _parameter    Parameter as passed by the eFaps API
+     * @param _parameter Parameter as passed by the eFaps API
      * @throws EFapsException on error
      */
     protected void setPositionNumber(final Parameter _parameter)
@@ -621,8 +625,8 @@ public abstract class Transaction_Base
     /**
      * Update position numbers.
      *
-     * @param _parameter    Parameter as passed by the eFaps API
-     * @param _current      update current instance also
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _current update current instance also
      * @throws EFapsException on error
      */
     protected void updatePositionNumbers(final Parameter _parameter,
@@ -650,10 +654,10 @@ public abstract class Transaction_Base
     }
 
     /**
-     * @param _parameter    Parameter as passed by the eFaps API
-     * @param _date         date of the transaction to be updated
-     * @param _prodId       id of the product the transactions belong to
-     * @param _instance     instance
+     * @param _parameter Parameter as passed by the eFaps API
+     * @param _date date of the transaction to be updated
+     * @param _prodId id of the product the transactions belong to
+     * @param _instance instance
      * @throws EFapsException on error
      */
     protected void updatePositionNumbers(final Parameter _parameter,
@@ -725,7 +729,7 @@ public abstract class Transaction_Base
         print.executeWithoutAccessCheck();
 
         final Instance productInst = print.getSelect(selProductInst);
-        //valid product and it is not a infinite product
+        // valid product and it is not a infinite product
         if (productInst != null && productInst.isValid()
                         && !productInst.getType().isCIType(CIProducts.ProductInfinite)) {
 
@@ -740,7 +744,7 @@ public abstract class Transaction_Base
 
             final CIType inventory;
             if (instance.getType().isKindOf(CIProducts.TransactionIndividualInbound.getType())
-                             || instance.getType().isKindOf(CIProducts.TransactionIndividualOutbound.getType())) {
+                            || instance.getType().isKindOf(CIProducts.TransactionIndividualOutbound.getType())) {
                 inventory = CIProducts.InventoryIndividual;
             } else {
                 inventory = CIProducts.Inventory;
@@ -751,7 +755,7 @@ public abstract class Transaction_Base
             queryBldr.addWhereAttrEqValue(CIProducts.InventoryAbstract.Product, productInst);
             final MultiPrintQuery multi = queryBldr.getPrint();
             multi.addAttribute(CIProducts.InventoryAbstract.Quantity,
-                               CIProducts.InventoryAbstract.Reserved);
+                            CIProducts.InventoryAbstract.Reserved);
             multi.executeWithoutAccessCheck();
 
             BigDecimal reserved = BigDecimal.ZERO;
@@ -842,7 +846,7 @@ public abstract class Transaction_Base
     public Return moveInventory(final Parameter _parameter)
         throws EFapsException
     {
-        final Return ret =  new Return();
+        final Return ret = new Return();
         final Instance storageFromInst = _parameter.getInstance();
         final String date = _parameter.getParameterValue(
                         CIFormProducts.Products_InventoryMoveMassiveForm.date.name);
@@ -895,8 +899,10 @@ public abstract class Transaction_Base
                 }
 
                 final String newDesc = DBProperties.getFormatedDBProperty(Transaction.class.getName()
-                        + ".moveInventory.Description", new Object[] { desc, quantityAr[x],
-                            Dimension.getUoM(Long.parseLong(uoM[x])).getName(), productDesc, storageFrom, storateTo });
+                                + ".moveInventory.Description",
+                                new Object[] { desc, quantityAr[x],
+                                                Dimension.getUoM(Long.parseLong(uoM[x])).getName(), productDesc,
+                                                storageFrom, storateTo });
                 final Instance prodInstTmp;
                 if (individual) {
                     prodInstTmp = prodPrint.getSelect(selProdInst);
@@ -924,7 +930,8 @@ public abstract class Transaction_Base
 
         if (!transLists.isEmpty()) {
             for (final IOnTransaction listener : Listener.get().<IOnTransaction>invoke(IOnTransaction.class)) {
-                final File file  = listener.createDocuments4Transactions(_parameter, transLists.toArray(new Instance[transLists.size()]));
+                final File file = listener.createDocuments4Transactions(_parameter,
+                                transLists.toArray(new Instance[transLists.size()]));
                 if (file != null) {
                     ret.put(ReturnValues.VALUES, file);
                     ret.put(ReturnValues.TRUE, true);
@@ -961,18 +968,18 @@ public abstract class Transaction_Base
      * @throws EFapsException on error
      */
     protected Instance addProductTransaction(final CIType _ciType,
-                                               final Object _quantity,
-                                               final Object _storage,
-                                               final Object _uoM,
-                                               final Object _date,
-                                               final Object _product,
-                                               final String _description)
+                                             final Object _quantity,
+                                             final Object _storage,
+                                             final Object _uoM,
+                                             final Object _date,
+                                             final Object _product,
+                                             final String _description)
         throws EFapsException
     {
         final Insert insert = new Insert(_ciType);
         insert.add(CIProducts.TransactionAbstract.Quantity, _quantity);
         insert.add(CIProducts.TransactionInOutAbstract.Storage, _storage);
-        insert.add(CIProducts.TransactionInOutAbstract.UoM,_uoM);
+        insert.add(CIProducts.TransactionInOutAbstract.UoM, _uoM);
         insert.add(CIProducts.TransactionAbstract.Date, _date);
         insert.add(CIProducts.TransactionAbstract.Product, _product);
         insert.add(CIProducts.TransactionAbstract.Description, _description);
@@ -1024,13 +1031,14 @@ public abstract class Transaction_Base
                     if (newStock.compareTo(BigDecimal.ZERO) == -1) {
                         if (!heading) {
                             html.append(DBProperties.getProperty("esjp.Products_Transaction.validateMove.Text"))
-                                .append("<br>");
+                                            .append("<br>");
                             heading = true;
                         }
                         html.append(DBProperties.getProperty("esjp.Products_Transaction.validateMove.Prod"))
-                            .append(" ").append(multi.<String>getSelect(selDescr)).append(" - ")
-                            .append(DBProperties.getProperty("esjp.Products_Transaction.validateMove.Stock"))
-                            .append(stock).append("<br>");
+                                        .append(" ").append(multi.<String>getSelect(selDescr)).append(" - ")
+                                        .append(DBProperties
+                                                        .getProperty("esjp.Products_Transaction.validateMove.Stock"))
+                                        .append(stock).append("<br>");
                         check = false;
                     }
                 }
@@ -1133,86 +1141,91 @@ public abstract class Transaction_Base
         return ret;
     }
 
-    /**
-     * Method to change the inventory for a date.
-     *
-     * @param _parameter as passed from eFaps API.
-     * @return new Return.
-     * @throws EFapsException on error.
-     */
-    public Return setInventory(final Parameter _parameter)
+    @SuppressWarnings("unchecked")
+    public Return setInventory(final Parameter parameter)
         throws EFapsException
     {
         final Return ret = new Return();
-        final String dateStr = _parameter.getParameterValue(
-                        CIFormProducts.Products_InventorySet4ProductsForm.date.name);
-        final DateTime date = new DateTime(dateStr);
-        final String descr = _parameter
-                        .getParameterValue(CIFormProducts.Products_InventorySet4ProductsForm.description.name);
 
-        final Instance storageInst = _parameter.getCallInstance();
-        final String[] products = _parameter
-                        .getParameterValues(CITableProducts.Products_InventorySet4ProductsTable.product.name);
-        final String[] quantities = _parameter
-                        .getParameterValues(CITableProducts.Products_InventorySet4ProductsTable.quantity.name);
-        final String[] uoMs = _parameter
-                        .getParameterValues(CITableProducts.Products_InventorySet4ProductsTable.uoM.name);
+        final var payload = (Map<String, Object>) parameter.get(ParameterValues.PAYLOAD);
+        final var localDateStr = (String) payload.get("date");
+        final DateTime date = new DateTime(localDateStr);
+        final var descr = (String) payload.get("description");
+        final var storageInst = Instance.get((String) payload.get("eFapsParentOID"));
+        final var quantities = (List<String>) payload.get("quantity");
 
-        final List<Instance> transLists = new ArrayList<>();
-        if (products != null) {
-            for (int i = 0; i < products.length; i++) {
-                Instance productInst = Instance.get(products[i]);
-                BigDecimal quantity = null;
-                try {
-                    quantity = (BigDecimal) NumberFormatter.get().getFormatter().parse(quantities[i]);
-                } catch (final ParseException e) {
-                    LOG.error("Catched ParserException", e);
-                }
-                final Long uoMId = Long.parseLong(uoMs[i]);
-
-                if (productInst != null && productInst.isValid() && quantity != null && uoMId != null) {
-                    final InventoryBean inventoryBean = Inventory.getInventory4Product(_parameter,
-                                    storageInst, date, productInst);
-                    final boolean individual = productInst.getType().isKindOf(
-                                    CIProducts.ProductIndividualAbstract.getType());
-
-                    final BigDecimal currQuantity;
-                    if (inventoryBean == null) {
-                        currQuantity = BigDecimal.ZERO;
-                    } else {
-                        currQuantity = inventoryBean.getQuantity();
-                    }
-                    final BigDecimal moveQty;
-                    final CIType type;
-                    if (quantity.compareTo(currQuantity) != 0) {
-                        if (quantity.compareTo(currQuantity) > 0) {
-                            moveQty = quantity.subtract(currQuantity);
-                            type = CIProducts.TransactionInbound;
-                            if (individual) {
-                                final Instance trans = addProductTransaction(CIProducts.TransactionIndividualInbound,
-                                            moveQty, storageInst, uoMId, date, productInst, descr);
-                                transLists.add(trans);
-                                productInst = new Product().getProduct4Individual(_parameter, productInst);
-                            }
-                        } else {
-                            moveQty = currQuantity.subtract(quantity);
-                            type = CIProducts.TransactionOutbound;
-                            if (individual) {
-                                final Instance trans = addProductTransaction(CIProducts.TransactionIndividualOutbound,
-                                            moveQty, storageInst, uoMId, date, productInst, descr);
-                                transLists.add(trans);
-                                productInst = new Product().getProduct4Individual(_parameter, productInst);
-                            }
-                        }
-                        final Instance trans = addProductTransaction(type, moveQty, storageInst, uoMId, date, productInst, descr);
-                        transLists.add(trans);
-                    }
-                }
+        final List<Pair<Instance, Long>> pairs = new ArrayList<>();
+        final var selectedOids = (List<String>) payload.get("eFapsSelectedOids");
+        for (final String oid : selectedOids) {
+            final var eval = EQL.builder().print(oid)
+                            .linkto(CIProducts.InventoryAbstract.Product).instance().as("prodInst")
+                            .attribute(CIProducts.InventoryAbstract.UoM)
+                            .evaluate();
+            if (eval.next()) {
+                final var prodInst = (Instance) eval.get("prodInst");
+                final var uoMId = (Long) eval.get(CIProducts.InventoryAbstract.UoM);
+                pairs.add(Pair.of(prodInst, uoMId));
             }
         }
+
+        final List<Instance> transLists = new ArrayList<>();
+        int idx = 0;
+        for (final var pair : pairs) {
+            var productInst = pair.getLeft();
+            final Long uoMId = pair.getRight();
+            BigDecimal quantity = null;
+            try {
+                quantity = (BigDecimal) NumberFormatter.get().getFormatter().parse(quantities.get(idx));
+            } catch (final ParseException e) {
+                LOG.error("Catched ParserException", e);
+            }
+
+            if (productInst != null && productInst.isValid() && quantity != null && uoMId != null) {
+                final InventoryBean inventoryBean = Inventory.getInventory4Product(parameter,
+                                storageInst, date, productInst);
+                final boolean individual = productInst.getType().isKindOf(
+                                CIProducts.ProductIndividualAbstract.getType());
+
+                final BigDecimal currQuantity;
+                if (inventoryBean == null) {
+                    currQuantity = BigDecimal.ZERO;
+                } else {
+                    currQuantity = inventoryBean.getQuantity();
+                }
+                final BigDecimal moveQty;
+                final CIType type;
+                if (quantity.compareTo(currQuantity) != 0) {
+                    if (quantity.compareTo(currQuantity) > 0) {
+                        moveQty = quantity.subtract(currQuantity);
+                        type = CIProducts.TransactionInbound;
+                        if (individual) {
+                            final Instance trans = addProductTransaction(CIProducts.TransactionIndividualInbound,
+                                            moveQty, storageInst, uoMId, date, productInst, descr);
+                            transLists.add(trans);
+                            productInst = new Product().getProduct4Individual(parameter, productInst);
+                        }
+                    } else {
+                        moveQty = currQuantity.subtract(quantity);
+                        type = CIProducts.TransactionOutbound;
+                        if (individual) {
+                            final Instance trans = addProductTransaction(CIProducts.TransactionIndividualOutbound,
+                                            moveQty, storageInst, uoMId, date, productInst, descr);
+                            transLists.add(trans);
+                            productInst = new Product().getProduct4Individual(parameter, productInst);
+                        }
+                    }
+                    final Instance trans = addProductTransaction(type, moveQty, storageInst, uoMId, date, productInst,
+                                    descr);
+                    transLists.add(trans);
+                }
+            }
+            idx++;
+        }
+
         if (!transLists.isEmpty()) {
             for (final IOnTransaction listener : Listener.get().<IOnTransaction>invoke(IOnTransaction.class)) {
-                final File file  = listener.createDocuments4Transactions(_parameter, transLists.toArray(new Instance[transLists.size()]));
+                final File file = listener.createDocuments4Transactions(parameter,
+                                transLists.toArray(new Instance[transLists.size()]));
                 if (file != null) {
                     ret.put(ReturnValues.VALUES, file);
                     ret.put(ReturnValues.TRUE, true);
@@ -1311,8 +1324,7 @@ public abstract class Transaction_Base
         throws EFapsException
     {
         final Return ret = new Return();
-        final String[] products = _parameter.getParameterValues(
-                        CITableProducts.Products_InventorySet4ProductsTable.product.name);
+        final String[] products = _parameter.getParameterValues("product");
         final String dateStr = _parameter.getParameterValue(
                         CIFormProducts.Products_InventorySet4ProductsForm.date.name + "_eFapsDate");
         final DateTime date = JodaTimeUtils.getDateFromParameter(dateStr);
@@ -1325,68 +1337,13 @@ public abstract class Transaction_Base
                 final Instance productInst = Instance.get(product);
                 if (productInst != null && productInst.isValid()) {
                     final InventoryBean inventoryBean = Inventory.getInventory4Product(_parameter,
-                                _parameter.getInstance(), date, productInst);
+                                    _parameter.getInstance(), date, productInst);
                     final BigDecimal quantity = inventoryBean == null ? BigDecimal.ZERO : inventoryBean.getQuantity();
                     map.put(CITableProducts.Products_InventorySet4ProductsTable.quantityInStock.name,
-                                NumberFormatter.get().getFormatter().format(quantity));
+                                    NumberFormatter.get().getFormatter().format(quantity));
                 }
             }
             ret.put(ReturnValues.VALUES, list);
-        }
-        return ret;
-    }
-
-
-    /**
-     * Update fields for quantity for set inventory.
-     *
-     * @param _parameter the _parameter
-     * @return the return
-     * @throws EFapsException the e faps exception
-     */
-    public Return updateFields4Quantity4SetInventory(final Parameter _parameter)
-        throws EFapsException
-    {
-        final Return ret = new Return();
-        final String[] quantities = _parameter.getParameterValues(
-                        CITableProducts.Products_InventorySet4ProductsTable.quantity.name);
-        final String[] products = _parameter.getParameterValues(
-                        CITableProducts.Products_InventorySet4ProductsTable.product.name);
-        final String[] uoMs = _parameter.getParameterValues(
-                        CITableProducts.Products_InventorySet4ProductsTable.uoM.name);
-        final String dateStr = _parameter.getParameterValue(
-                        CIFormProducts.Products_InventorySet4ProductsForm.date.name + "_eFapsDate");
-        final DateTime date = JodaTimeUtils.getDateFromParameter(dateStr);
-
-        if (!ArrayUtils.isEmpty(quantities)) {
-            final int i = getSelectedRow(_parameter);
-            final String quantityStr = quantities[i];
-            final Instance productInst = Instance.get(products[i]);
-            BigDecimal quantity = null;
-            try {
-                quantity = (BigDecimal) NumberFormatter.get().getFormatter().parse(quantityStr);
-            } catch (final ParseException e) {
-                LOG.error("Catched ParserException", e);
-            }
-            final Long uoMId = Long.parseLong(uoMs[i]);
-
-            if (productInst != null && productInst.isValid() && quantity != null && uoMId != null) {
-                final InventoryBean inventoryBean = Inventory.getInventory4Product(_parameter,
-                                _parameter.getCallInstance(), date, productInst);
-                final BigDecimal currQuantity;
-                if (inventoryBean == null) {
-                    currQuantity = BigDecimal.ZERO;
-                } else {
-                    currQuantity = inventoryBean.getQuantity();
-                }
-                final BigDecimal moveQty = quantity.subtract(currQuantity);
-                final List<Map<String, Object>> list = new ArrayList<>();
-                final Map<String, Object> map = new HashMap<>();
-                list.add(map);
-                ret.put(ReturnValues.VALUES, list);
-                map.put(CITableProducts.Products_InventorySet4ProductsTable.alteration.name,
-                                NumberFormatter.get().getFormatter().format(moveQty));
-            }
         }
         return ret;
     }
@@ -1401,7 +1358,8 @@ public abstract class Transaction_Base
     public Return updateFields4Product4SetInventory(final Parameter _parameter)
         throws EFapsException
     {
-        final Product product = new Product() {
+        final Product product = new Product()
+        {
 
             @Override
             protected void add2updateFields4Product(final Parameter _parameter,
@@ -1462,7 +1420,8 @@ public abstract class Transaction_Base
         BigDecimal quantityReserved = BigDecimal.ZERO;
 
         final QueryBuilder quanInvent = new QueryBuilder(transType.isKindOf(CIProducts.TransactionIndividualAbstract)
-                        ? CIProducts.InventoryIndividual : CIProducts.Inventory);
+                        ? CIProducts.InventoryIndividual
+                        : CIProducts.Inventory);
         quanInvent.addWhereAttrEqValue(CIProducts.InventoryAbstract.Product, productInst);
         quanInvent.addWhereAttrEqValue(CIProducts.InventoryAbstract.Storage, storageId);
 
@@ -1679,6 +1638,7 @@ public abstract class Transaction_Base
     public static class TransDateProd
         implements Serializable
     {
+
         /**
          * Serializable.
          */
@@ -1730,6 +1690,7 @@ public abstract class Transaction_Base
     public static class InsufficientStock4Transaction
         extends AbstractWarning
     {
+
         /**
          * Constructor.
          */
@@ -1745,6 +1706,7 @@ public abstract class Transaction_Base
     public static class TransactionVerify
         extends AbstractWarning
     {
+
         /**
          * Constructor.
          */
@@ -1753,4 +1715,3 @@ public abstract class Transaction_Base
         }
     }
 }
-

@@ -17,8 +17,6 @@
 
 -->
 
-
-
 <ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>c7d6f77f-56d1-4952-bd90-0e327f7db3e5</uuid>
@@ -32,13 +30,11 @@
         </access>
         <target>
             <form>Products_InventorySet4ProductsForm</form>
-            <execute program="org.efaps.esjp.products.Transaction" method="setInventory" >
+            <execute program="org.efaps.esjp.products.SetInventory" method="execute" >
                 <property name="TransactionDocument">53a57515-60cc-46d1-923e-e4a879054093</property>
                 <property name="UseNumberGenerator4Name">true</property>
                 <property name="StatusGroup">Sales_TransactionDocumentStatus</property>
                 <property name="Status">Open</property>
-                
-
                 <property name="JasperConfig">c9a1cbc3-fd35-4463-80d2-412422a3802f</property>
                 <property name="JasperConfigReport">org.efaps.sales.TransactionDocument.JasperReport</property>
                 <property name="JasperConfigMime">org.efaps.sales.TransactionDocument.Mime</property>

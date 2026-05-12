@@ -34,9 +34,10 @@
             <property name="ModeCreate">EDITABLE</property>
             <property name="Label">Products_TransactionAbstract/Quantity.Label</property>
             <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
-            <trigger event="UI_FIELD_UPDATE" method="updateFields4Quantity4SetInventory"
+            <property name="ValueType">INPUT</property>
+            <trigger event="UI_FIELD_UPDATE" method="updateFields4Quantity"
                 name="Products_InventorySet4ProductsTable.quantity.UI_FIELD_UPDATE"
-                program="org.efaps.esjp.products.Transaction" />
+                program="org.efaps.esjp.products.SetInventory" />
         </field>
         <field name="alteration">
             <property name="Label">Products_InventorySet4ProductsTable.alteration.Label</property>
@@ -44,16 +45,10 @@
             <property name="Width">1</property>
             <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
         </field>
-        <field name="product">
+        <field name="productName">
             <property name="ModeCreate">EDITABLE</property>
             <property name="Label">Products_TransactionAbstract/Product.Label</property>
             <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
-            <trigger event="UI_FIELD_AUTOCOMPLETE" method="autoComplete4MassiveProductsInStorage"
-                name="Products_InventorySet4ProductsTable.product.UI_FIELD_AUTOCOMPLETE"
-                program="org.efaps.esjp.products.Product" />
-            <trigger event="UI_FIELD_UPDATE" method="updateFields4Product4SetInventory"
-                name="Products_InventorySet4ProductsTable.product.UI_FIELD_UPDATE"
-                program="org.efaps.esjp.products.Transaction" />
         </field>
         <field name="productDesc">
             <property name="ModeCreate">READONLY</property>
@@ -61,12 +56,9 @@
             <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
         </field>
         <field name="uoM">
-            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeCreate">READONLY</property>
             <property name="Label">Products_TransactionAbstract/UoM.Label</property>
-            <property name="UIType">DROPDOWN</property>
-            <trigger event="UI_FIELD_VALUE" method="getUoMDropDownFieldValue"
-                name="Products_InventorySet4ProductsTable.uoM.UI_FIELD_VALUE"
-                program="org.efaps.esjp.common.uiform.Field" />
+            <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
         </field>
     </definition>
 </ui-table>
