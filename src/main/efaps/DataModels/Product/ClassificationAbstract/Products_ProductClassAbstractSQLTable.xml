@@ -35,6 +35,7 @@
             <column name="MODIFIED"     not-null="true" type="DATETIME"/>
             <column name="DEC1"                         type="DECIMAL" length="12" scale="4"/>
             <column name="BOOL1"                        type="BOOLEAN"/>
+            <column name="BOOL2"                        type="BOOLEAN"/>
             <foreign key="PRODUCTID"    name="T_PRODCLASSABST_FK_PRODUCTID"     reference="T_PRODPRODUCT(ID)"/>
             <foreign key="TYPEID"       name="T_PRODCLASSABST_FK_TYPEID"        reference="T_CMABSTRACT(ID)"/>
             <foreign key="CREATOR"      name="T_PRODCLASSABST_FK_CRTR"          reference="T_USERPERSON(ID)"/>
