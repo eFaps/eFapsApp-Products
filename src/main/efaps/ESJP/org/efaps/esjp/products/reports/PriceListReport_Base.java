@@ -18,7 +18,6 @@ package org.efaps.esjp.products.reports;
 import java.io.File;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -58,6 +57,7 @@ import org.efaps.esjp.erp.rest.modules.IFilteredReportProvider;
 import org.efaps.esjp.products.ProductFamily;
 import org.efaps.esjp.products.util.Products;
 import org.efaps.esjp.ui.rest.dto.ValueDto;
+import org.efaps.esjp.ui.rest.dto.ValueDto.Builder;
 import org.efaps.esjp.ui.rest.dto.ValueType;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
@@ -125,50 +125,60 @@ public abstract class PriceListReport_Base
     }
 
     @Override
+    public Object evalDefaultValue4Key(final String key)
+    {
+        return switch (key) {
+            case "dateFrom": {
+                try {
+                    final var zoneId = Context.getThreadContext().getZoneId();
+                    yield LocalDate.now(zoneId);
+                } catch (final EFapsException e) {
+                    LOG.error("Catched", e);
+                }
+            }
+            default:
+                yield null;
+        };
+    }
+
+
+    @Override
     public List<ValueDto> getFilters()
     {
         final List<ValueDto> ret = new ArrayList<>();
-
+        final var filterMap = getFilterMap();
         try {
-            ZoneId zoneId = ZoneId.systemDefault();
-            clearCache(ParameterUtil.instance());
-            zoneId = Context.getThreadContext().getZoneId();
-            final var filterMap = getFilterMap();
-            String dateValue = LocalDate.now(zoneId).toString();
-            Object barCodeTypeValue = null;
-
-            if (filterMap != null) {
-                if (filterMap.containsKey("date")) {
-                    dateValue = ((DateTime) filterMap.get("date")).toLocalDate().toString();
-                }
-                if (filterMap.containsKey("barCodeType")) {
-                    barCodeTypeValue = filterMap.get("barCodeType");
+            for (final var filterDef : getFilterDefinitions()) {
+                final var value = filterMap.get(filterDef.getName());
+                switch (filterDef.getName()) {
+                    default -> ret.add(filterDef.withValue(value).build());
                 }
             }
-            ret.add(ValueDto.builder()
-                            .withName("dateFrom")
-                            .withLabel(DBProperties.getProperty("org.efaps.esjp.products.reports.PriceListReport.date"))
-                            .withType(ValueType.DATE)
-                            .withRequired(true)
-                            .withValue(dateValue)
-                            .build());
-
-            if (Products.REPPRICELIST_ACTBARCODE.get()) {
-                final var barCodeTypeOptions = getOptions4AttrDef("Products_AttributeDefinitionBarcodeType");
-                ret.add(ValueDto.builder()
-                                .withName("barCodeType")
-                                .withLabel(DBProperties.getProperty(
-                                                "org.efaps.esjp.products.reports.PriceListReport.barCodeType"))
-                                .withType(ValueType.CHECKBOX)
-                                .withValue(barCodeTypeValue)
-                                .withOptions(barCodeTypeOptions)
-                                .build());
-            }
-
         } catch (final EFapsException e) {
             LOG.error("Catched", e);
         }
+        return ret;
+    }
 
+    @Override
+    public List<Builder> getFilterDefinitions()
+        throws EFapsException
+    {
+        final List<Builder> ret = new ArrayList<>();
+        ret.add(ValueDto.builder()
+                        .withName("dateFrom")
+                        .withLabel(getLabel("date"))
+                        .withType(ValueType.DATE)
+                        .withRequired(true));
+
+        if (Products.REPPRICELIST_ACTBARCODE.get()) {
+            final var barCodeTypeOptions = getOptions4AttrDef("Products_AttributeDefinitionBarcodeType");
+            ret.add(ValueDto.builder()
+                            .withName("barCodeType")
+                            .withLabel(getLabel("barCodeType"))
+                            .withType(ValueType.CHECKBOX)
+                            .withOptions(barCodeTypeOptions));
+        }
         return ret;
     }
 
