@@ -29,5 +29,17 @@
             <sqltable>Products_ObjectAbstractSQLTable</sqltable>
             <sqlcolumn>DEC1</sqlcolumn>
         </attribute>
+          <trigger event="INSERT_POST" name="Products_ConfigurationBOMPriceAdjustmentAction.INSERT_POST"
+             program="org.efaps.esjp.common.history.InsertRelatedHistoryTrigger">
+            <property name="Select4HistoryInstance">linkto[ConfigurationBOMLink].linkto[From].instance</property>
+        </trigger>
+        <trigger event="UPDATE_POST" name="Products_ConfigurationBOMPriceAdjustmentAction.UPDATE_POST"
+            program="org.efaps.esjp.common.history.UpdateRelatedHistoryTrigger">
+            <property name="Select4HistoryInstance">linkto[ConfigurationBOMLink].linkto[From].instance</property>
+        </trigger>
+        <trigger event="DELETE_PRE" name="Products_ConfigurationBOMPriceAdjustmentAction.DELETE_PRE"
+            program="org.efaps.esjp.common.history.DeleteRelatedHistoryTrigger">
+            <property name="Select4HistoryInstance">linkto[ConfigurationBOMLink].linkto[From].instance</property>
+        </trigger>
     </definition>
 </datamodel-type>
