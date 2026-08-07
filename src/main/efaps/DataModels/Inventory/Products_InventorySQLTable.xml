@@ -17,14 +17,11 @@
 
 -->
 
-
-
-
 <datamodel-sqltable xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>64b9af39-706d-429e-bbd4-703920f9f133</uuid>
     <file-application>eFapsApp-Products</file-application>
-    
+
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_InventorySQLTable</name>
@@ -38,10 +35,16 @@
             <column name="PRODUCTID"    type="INTEGER"    not-null="true"/>
             <column name="STORAGEID"    type="INTEGER"    not-null="true"/>
             <column name="UOMID"        type="INTEGER"    not-null="true"/>
+            <column name="CREATOR"      type="INTEGER"         not-null="true"/>
+            <column name="CREATED"      type="DATETIME"        not-null="true"/>
+            <column name="MODIFIER"     type="INTEGER"         not-null="true"/>
+            <column name="MODIFIED"     type="DATETIME"        not-null="true"/>
             <foreign name="T_PRODINVENTORY_FK_COMPANYID" key="COMPANYID" reference="T_USERABSTRACT(ID)"/>
             <foreign name="T_PRODINVENTORY_FK_PRODUCTID" key="PRODUCTID" reference="T_PRODPRODUCT(ID)"/>
             <foreign name="T_PRODINVENTORY_FK_STORAGEID" key="STORAGEID" reference="T_PRODSTORAGE(ID)"/>
             <foreign name="T_PRODINVENTORY_FK_UOMID"     key="UOMID"     reference="T_DMUOM(ID)"/>
+            <foreign name="T_PRODINVENTORY_FK_CRTR"      key="CREATOR"   reference="T_USERPERSON(ID)"/>
+            <foreign name="T_PRODINVENTORY_FK_MDFR"      key="MODIFIER"  reference="T_USERPERSON(ID)"/>
         </database>
     </definition>
 </datamodel-sqltable>
