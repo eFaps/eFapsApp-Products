@@ -46,17 +46,19 @@ public class UpdateProductMutation
         LOG.info("Evaluating instance to update");
         final var nameVariableName = props.getProperty("NameVariable");
         if (nameVariableName == null) {
-            super.evalInstance(environment, props);
+            ret = super.evalInstance(environment, props);
         }
-        final var inputValue = environment.<String>getArgument(nameVariableName);
-        final var eval = EQL.builder().print().query(CIProducts.ProductAbstract)
-                        .where()
-                        .attribute(CIProducts.ProductAbstract.Name).eq(inputValue)
-                        .select()
-                        .oid()
-                        .evaluate();
-        if (eval.next()) {
-            ret = eval.inst();
+        if (!ret.isValid()) {
+            final var inputValue = environment.<String>getArgument(nameVariableName);
+            final var eval = EQL.builder().print().query(CIProducts.ProductAbstract)
+                            .where()
+                            .attribute(CIProducts.ProductAbstract.Name).eq(inputValue)
+                            .select()
+                            .oid()
+                            .evaluate();
+            if (eval.next()) {
+                ret = eval.inst();
+            }
         }
         return ret;
     }
