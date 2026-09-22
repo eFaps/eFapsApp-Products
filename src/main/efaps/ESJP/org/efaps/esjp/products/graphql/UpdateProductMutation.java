@@ -22,6 +22,7 @@ import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Instance;
 import org.efaps.eql.EQL;
 import org.efaps.esjp.ci.CIProducts;
+import org.efaps.esjp.db.InstanceUtils;
 import org.efaps.esjp.graphql.BaseUpdateMutation;
 import org.efaps.util.EFapsException;
 import org.slf4j.Logger;
@@ -48,7 +49,7 @@ public class UpdateProductMutation
         if (nameVariableName == null) {
             ret = super.evalInstance(environment, props);
         }
-        if (!ret.isValid()) {
+        if (!InstanceUtils.isKindOf(ret, CIProducts.ProductAbstract)) {
             final var inputValue = environment.<String>getArgument(nameVariableName);
             final var eval = EQL.builder().print().query(CIProducts.ProductAbstract)
                             .where()
@@ -60,6 +61,7 @@ public class UpdateProductMutation
                 ret = eval.inst();
             }
         }
+        LOG.info("--> {}", ret);
         return ret;
     }
 }
