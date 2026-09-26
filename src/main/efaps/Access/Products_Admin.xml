@@ -17,9 +17,6 @@
 
 -->
 
-
-
-
 <access-set xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>934e6933-73a7-4917-8c03-c122aa7e33b8</uuid>
@@ -50,6 +47,7 @@
         <type>Products_ProductCostAlternative</type>
         <type>Products_ProductPricelistRetail</type>
         <type>Products_ProductPricelistPurchase</type>
+        <type>Products_ProductPricelistSale</type>
         <type>Products_ProductPricelistPosition</type>
         <type>Products_Inventory</type>
         <type>Products_InventoryValue</type>

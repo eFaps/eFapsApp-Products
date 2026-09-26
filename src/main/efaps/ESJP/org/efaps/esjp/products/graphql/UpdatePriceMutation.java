@@ -15,6 +15,7 @@
  */
 package org.efaps.esjp.products.graphql;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
@@ -83,7 +84,7 @@ public class UpdatePriceMutation
     {
         if (InstanceUtils.isKindOf(instance, CIProducts.ProductAbstract)) {
             final var properties = getProperties(environment);
-            final var priceListTypeStr = properties.getProperty("priceListType",
+            final var priceListTypeStr = properties.getProperty("PriceListType",
                             CIProducts.ProductPricelistRetail.uuid.toString());
             Type priceListType;
             if (UUIDUtil.isUUID(priceListTypeStr)) {
@@ -106,10 +107,18 @@ public class UpdatePriceMutation
             } else if (currencyVal instanceof Long) {
                 currency = CurrencyInst.get((Long) currencyVal).getInstance();
             }
+
+            final var validFromVar =  properties.getProperty("ValidFromVariable", "validFrom");
+            final var validFrom = values.get(validFromVar);
+            final var validUntilVar =  properties.getProperty("ValidUntilVariable", "validUntil");
+            final var validUntil = values.get(validUntilVar);
+
             final var entry = new MassUpdateEntry()
                             .setProductInstance(instance)
                             .setNewPrice((Number) price)
-                            .setCurrencyInstance(currency);
+                            .setCurrencyInstance(currency)
+                            .setValidFrom(evalDate(validFrom))
+                            .setValidUntil(evalDate(validUntil));
             final var parameter = ParameterUtil.instance();
             new PriceMassUpdate().execute(parameter, Collections.singleton(entry), priceListType);
             resultBldr.data(instance.getOid());
@@ -119,6 +128,17 @@ public class UpdatePriceMutation
                             .build());
         }
         return instance;
+    }
 
+    protected LocalDate evalDate(final Object dateObject)
+    {
+        LocalDate ret = null;
+        if (dateObject != null) {
+            LOG.info("evaluating date for: {}", dateObject);
+            if (dateObject instanceof final String dateStr) {
+                ret = LocalDate.parse(dateStr);
+            }
+        }
+        return ret;
     }
 }

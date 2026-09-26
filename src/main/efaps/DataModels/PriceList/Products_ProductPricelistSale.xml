@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+
+    Copyright © 2003 - 2024 The eFaps Team (-)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<datamodel-type xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>21107ae1-3885-498b-9e42-fa56a278a19a</uuid>
+    <file-application>eFapsApp-Products</file-application>
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <name>Products_ProductPricelistSale</name>
+        <parent>Products_ProductPricelistAbstract</parent>
+        <attribute>
+            <name>ProductLink</name>
+            <type>Link</type>
+            <typelink>Products_ProductAbstract</typelink>
+            <sqltable>Products_ProductPricelistSQLTable</sqltable>
+            <sqlcolumn>PRODID</sqlcolumn>
+        </attribute>
+        <trigger event="INSERT_POST" index="1" method="trigger4Insert"
+            name="Products_ProductPricelistSale.INSERT_POST.1"
+            program="org.efaps.esjp.products.PriceList">
+            <property name="Type">Products_ProductPricelistSale</property>
+        </trigger>
+        <trigger event="INSERT_POST" index="2"
+            name="Products_ProductPricelistSale.INSERT_POST.2"
+            program="org.efaps.esjp.common.history.InsertRelatedHistoryTrigger">
+            <property name="Select4HistoryInstance">linkto[ProductLink].instance</property>
+        </trigger>
+        <trigger event="UPDATE_POST"
+            name="Products_ProductPricelistSale.UPDATE_POST"
+            program="org.efaps.esjp.common.history.UpdateRelatedHistoryTrigger">
+            <property name="Select4HistoryInstance">linkto[ProductLink].instance</property>
+        </trigger>
+        <trigger event="DELETE_PRE"
+            name="Products_ProductPricelistSale.DELETE_PRE"
+            program="org.efaps.esjp.common.history.DeleteRelatedHistoryTrigger">
+            <property name="Select4HistoryInstance">linkto[ProductLink].instance</property>
+        </trigger>
+        <trigger event="ACCESSCHECK"
+            name="Products_ProductPricelistSale.ACCESSCHECK"
+            program="org.efaps.esjp.admin.access.SimpleAccessCheckOnType"/>
+    </definition>
+</datamodel-type>

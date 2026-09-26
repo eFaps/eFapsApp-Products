@@ -17,15 +17,11 @@
 
 -->
 
-
-
-
 <ui-menu xmlns="http://www.efaps.org/xsd"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>48d5ce0a-c078-445c-881f-23a8940275ef</uuid>
     <file-application>eFapsApp-Products</file-application>
-    
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Products_ProductTree_PricelistRetail</name>
@@ -34,7 +30,7 @@
             <role>Products_Modifier</role>
             <role>Products_Reader</role>
         </access>
-        
+
 
         <target>
             <menu>Products_ProductTree_PricelistRetail_Menu</menu>
@@ -45,7 +41,7 @@
             </evaluate>
             <help>org.efaps.wiki.products.Showproducts.wiki</help>
         </target>
-        
+
 
         <property name="Target">content</property>
         <property name="TargetMode">view</property>

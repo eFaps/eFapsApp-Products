@@ -32,6 +32,7 @@
         <childs>
             <child>Products_ProductStandartTree_Conversion</child>
             <child>Products_ProductTree_PricelistRetail</child>
+            <child>Products_ProductTree_PricelistSale</child>
             <child>Products_ProductTree_PricelistMinRetail</child>
             <child>Products_ProductTree_PricelistPurchase</child>
             <child>Products_ProductTree_Cost</child>

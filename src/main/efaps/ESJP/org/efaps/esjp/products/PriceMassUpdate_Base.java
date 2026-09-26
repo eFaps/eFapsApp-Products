@@ -165,15 +165,19 @@ public abstract class PriceMassUpdate_Base
             final Instance prodInst = entry.getProductInstance();
             if (prodInst.isValid()) {
                 Instance productPricelistInst = null;
+
+                final var validFrom = entry.getValidFrom() == null ? getDate4ValidFrom(parameter)
+                                : entry.getValidFrom();
+                final var validUntil = entry.getValidUntil() == null ? getDate4ValidUntil(parameter)
+                                : entry.getValidUntil();
+
                 if (Products.ACTIVATEPRICEGRP.get()) {
                     // check if we want to update (meaning edited today)
                     final QueryBuilder queryBldr = new QueryBuilder(priceListType);
                     queryBldr.addWhereAttrEqValue(CIProducts.ProductPricelistAbstract.ProductAbstractLink,
                                     prodInst);
-                    queryBldr.addWhereAttrEqValue(CIProducts.ProductPricelistAbstract.ValidFrom,
-                                    getDate4ValidFrom(parameter));
-                    queryBldr.addWhereAttrEqValue(CIProducts.ProductPricelistAbstract.ValidUntil,
-                                    getDate4ValidUntil(parameter));
+                    queryBldr.addWhereAttrEqValue(CIProducts.ProductPricelistAbstract.ValidFrom, validFrom);
+                    queryBldr.addWhereAttrEqValue(CIProducts.ProductPricelistAbstract.ValidUntil, validUntil);
                     final InstanceQuery query = queryBldr.getQuery();
                     query.execute();
                     if (query.next()) {
@@ -205,8 +209,8 @@ public abstract class PriceMassUpdate_Base
 
                     final Insert insert = new Insert(priceListType);
                     insert.add(CIProducts.ProductPricelistAbstract.ProductAbstractLink, prodInst);
-                    insert.add(CIProducts.ProductPricelistAbstract.ValidFrom, getDate4ValidFrom(parameter));
-                    insert.add(CIProducts.ProductPricelistAbstract.ValidUntil, getDate4ValidUntil(parameter));
+                    insert.add(CIProducts.ProductPricelistAbstract.ValidFrom, validFrom);
+                    insert.add(CIProducts.ProductPricelistAbstract.ValidUntil, validUntil);
                     insert.execute();
                     productPricelistInst = insert.getInstance();
                     if (multi != null) {
@@ -505,6 +509,8 @@ public abstract class PriceMassUpdate_Base
         private Number newPrice;
         private Instance currencyInstance;
         private Instance priceGroupInstance;
+        private LocalDate validFrom;
+        private LocalDate validUntil;
 
         public Instance getCurrencyInstance()
         {
@@ -547,6 +553,28 @@ public abstract class PriceMassUpdate_Base
         public MassUpdateEntry setProductInstance(final Instance productInstance)
         {
             this.productInstance = productInstance;
+            return this;
+        }
+
+        public LocalDate getValidFrom()
+        {
+            return validFrom;
+        }
+
+        public MassUpdateEntry setValidFrom(LocalDate validFrom)
+        {
+            this.validFrom = validFrom;
+            return this;
+        }
+
+        public LocalDate getValidUntil()
+        {
+            return validUntil;
+        }
+
+        public MassUpdateEntry setValidUntil(LocalDate validUntil)
+        {
+            this.validUntil = validUntil;
             return this;
         }
     }
