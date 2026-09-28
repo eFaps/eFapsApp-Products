@@ -56,21 +56,22 @@ public class UpdatePriceMutation
                                     final Properties props)
         throws EFapsException
     {
-        Instance ret = null;
         LOG.info("Evaluating product instance for UpdatePriceMutation");
-        final var nameVariableName = props.getProperty("NameVariable");
-        if (nameVariableName == null) {
-            super.evalInstance(environment, props);
-        }
-        final var inputValue = environment.<String>getArgument(nameVariableName);
-        final var eval = EQL.builder().print().query(CIProducts.ProductAbstract)
-                        .where()
-                        .attribute(CIProducts.ProductAbstract.Name).eq(inputValue)
-                        .select()
-                        .oid()
-                        .evaluate();
-        if (eval.next()) {
-            ret = eval.inst();
+        Instance ret = null;
+        final var arguments = evalArgumentValues(environment, props);
+        if (arguments.containsKey("name")) {
+            final var inputValue = (String) arguments.get("name");
+            final var eval = EQL.builder().print().query(CIProducts.ProductAbstract)
+                            .where()
+                            .attribute(CIProducts.ProductAbstract.Name).eq(inputValue)
+                            .select()
+                            .oid()
+                            .evaluate();
+            if (eval.next()) {
+                ret = eval.inst();
+            }
+        } else {
+            ret = super.evalInstance(environment, props);
         }
         return ret;
     }
@@ -82,6 +83,7 @@ public class UpdatePriceMutation
                                    final Map<String, Object> values)
         throws EFapsException
     {
+        LOG.info("Update Price with: {},values: {}", instance, values);
         if (InstanceUtils.isKindOf(instance, CIProducts.ProductAbstract)) {
             final var properties = getProperties(environment);
             final var priceListTypeStr = properties.getProperty("PriceListType",
@@ -92,11 +94,8 @@ public class UpdatePriceMutation
             } else {
                 priceListType = Type.get(priceListTypeStr);
             }
-            final var priceVar = properties.getProperty("PriceVariable", "price");
-            final var price = values.get(priceVar);
-
-            final var currencyVar = properties.getProperty("CurrencyVariable", "currency");
-            final var currencyVal = values.get(currencyVar);
+            final var price = values.get("price");
+            final var currencyVal = values.get("currency");
             Instance currency = null;
             if (currencyVal instanceof String) {
                 if (OIDUtil.isOID((String) currencyVal)) {
@@ -108,10 +107,8 @@ public class UpdatePriceMutation
                 currency = CurrencyInst.get((Long) currencyVal).getInstance();
             }
 
-            final var validFromVar =  properties.getProperty("ValidFromVariable", "validFrom");
-            final var validFrom = values.get(validFromVar);
-            final var validUntilVar =  properties.getProperty("ValidUntilVariable", "validUntil");
-            final var validUntil = values.get(validUntilVar);
+            final var validFrom = values.get("validFrom");
+            final var validUntil = values.get("validUntil");
 
             final var entry = new MassUpdateEntry()
                             .setProductInstance(instance)
@@ -134,9 +131,11 @@ public class UpdatePriceMutation
     {
         LocalDate ret = null;
         if (dateObject != null) {
-            LOG.info("evaluating date for: {}", dateObject);
+            LOG.info("evaluating date for: {} - {}", dateObject, dateObject.getClass());
             if (dateObject instanceof final String dateStr) {
                 ret = LocalDate.parse(dateStr);
+            } else if (dateObject instanceof final LocalDate localDate) {
+                ret = localDate;
             }
         }
         return ret;
